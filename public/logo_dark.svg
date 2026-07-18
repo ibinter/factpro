@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" width="480" height="160" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <linearGradient id="iconGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0062CC"/>
+      <stop offset="100%" stop-color="#002D5B"/>
+    </linearGradient>
+    <linearGradient id="goldGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0C040"/>
+      <stop offset="100%" stop-color="#D4A017"/>
+    </linearGradient>
+    <filter id="glow2">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow2">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#00000060"/>
+    </filter>
+  </defs>
+
+  <!-- Fond sombre -->
+  <rect width="480" height="160" rx="16" fill="#0F1B2D"/>
+
+  <!-- Halo lumineux arrière -->
+  <ellipse cx="80" cy="80" rx="90" ry="70" fill="#0062CC" opacity="0.08"/>
+
+  <!-- Icône -->
+  <rect x="16" y="16" width="128" height="128" rx="22" fill="url(#iconGrad2)" filter="url(#shadow2)"/>
+
+  <!-- Coins QR dorés -->
+  <rect x="27" y="27" width="22" height="4" rx="2" fill="url(#goldGrad2)"/>
+  <rect x="27" y="27" width="4" height="22" rx="2" fill="url(#goldGrad2)"/>
+  <rect x="111" y="27" width="22" height="4" rx="2" fill="url(#goldGrad2)"/>
+  <rect x="129" y="27" width="4" height="22" rx="2" fill="url(#goldGrad2)"/>
+  <rect x="27" y="129" width="22" height="4" rx="2" fill="url(#goldGrad2)"/>
+  <rect x="27" y="107" width="4" height="26" rx="2" fill="url(#goldGrad2)"/>
+  <rect x="111" y="129" width="22" height="4" rx="2" fill="url(#goldGrad2)"/>
+  <rect x="129" y="107" width="4" height="26" rx="2" fill="url(#goldGrad2)"/>
+
+  <!-- F géométrique -->
+  <rect x="44" y="38" width="10" height="84" rx="4" fill="#ffffff" filter="url(#glow2)"/>
+  <rect x="44" y="38" width="56" height="10" rx="4" fill="#ffffff"/>
+  <rect x="44" y="74" width="40" height="9" rx="4" fill="url(#goldGrad2)"/>
+
+  <!-- Éclair -->
+  <polygon points="88,50 76,76 85,76 73,106 100,72 88,72 100,50" fill="url(#goldGrad2)" filter="url(#glow2)"/>
+
+  <!-- QR point bas -->
+  <rect x="62" y="104" width="18" height="18" rx="4" fill="url(#goldGrad2)" opacity="0.8"/>
+  <rect x="67" y="109" width="8" height="8" rx="2" fill="#002D5B"/>
+
+  <!-- IBIG texte -->
+  <text x="163" y="76" font-family="'Segoe UI', Arial, sans-serif" font-size="50" font-weight="800" letter-spacing="-1" fill="#FFFFFF">IBIG</text>
+
+  <!-- Séparateur -->
+  <rect x="278" y="28" width="3" height="96" rx="2" fill="url(#goldGrad2)" opacity="0.7"/>
+
+  <!-- FactPro -->
+  <text x="292" y="76" font-family="'Segoe UI', Arial, sans-serif" font-size="50" font-weight="300" fill="#7BBFFF">Fact</text>
+  <text x="369" y="76" font-family="'Segoe UI', Arial, sans-serif" font-size="50" font-weight="700" fill="#FFFFFF">Pro</text>
+
+  <!-- Tagline -->
+  <text x="163" y="104" font-family="'Segoe UI', Arial, sans-serif" font-size="13" font-weight="400" letter-spacing="3" fill="#6B8BB0">FACTURATION  PROFESSIONNELLE</text>
+
+  <!-- URL -->
+  <text x="163" y="128" font-family="'Segoe UI', Arial, sans-serif" font-size="11.5" fill="url(#goldGrad2)" opacity="0.9">factpro.ibigsoft.com</text>
+
+  <!-- Ligne déco -->
+  <rect x="163" y="136" width="295" height="2" rx="1" fill="url(#goldGrad2)" opacity="0.4"/>
+</svg>

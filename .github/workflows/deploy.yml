@@ -1,0 +1,110 @@
+name: Deploy — Production LWS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environnement cible'
+        required: true
+        default: 'production'
+        type: choice
+        options: [production, staging]
+
+jobs:
+  deploy:
+    name: Déploiement ${{ github.event.inputs.environment || 'production' }}
+    runs-on: ubuntu-latest
+    environment: production
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, bcmath, gd, zip
+
+      - name: Install dependencies (production)
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Build assets production
+        run: |
+          npm ci
+          npm run build
+
+      - name: Create deployment archive
+        run: |
+          tar -czf deploy.tar.gz \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='tests' \
+            --exclude='storage/logs/*' \
+            .
+
+      - name: Upload to LWS via SSH
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.LWS_HOST }}
+          username: ${{ secrets.LWS_USERNAME }}
+          key: ${{ secrets.LWS_SSH_KEY }}
+          port: ${{ secrets.LWS_PORT || 22 }}
+          source: deploy.tar.gz
+          target: /tmp/
+
+      - name: Execute remote deployment
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.LWS_HOST }}
+          username: ${{ secrets.LWS_USERNAME }}
+          key: ${{ secrets.LWS_SSH_KEY }}
+          port: ${{ secrets.LWS_PORT || 22 }}
+          script: |
+            set -e
+            DEPLOY_DIR="/home/${{ secrets.LWS_USERNAME }}/factpro"
+            BACKUP_DIR="/home/${{ secrets.LWS_USERNAME }}/backups/$(date +%Y%m%d_%H%M%S)"
+
+            # Backup
+            mkdir -p "$BACKUP_DIR"
+            cp -r "$DEPLOY_DIR/storage/app" "$BACKUP_DIR/" 2>/dev/null || true
+            cp "$DEPLOY_DIR/.env" "$BACKUP_DIR/.env.bak" 2>/dev/null || true
+
+            # Maintenance mode
+            cd "$DEPLOY_DIR" && php artisan down --secret="${{ secrets.DEPLOY_SECRET }}"
+
+            # Deploy
+            cd /tmp && tar -xzf deploy.tar.gz -C "$DEPLOY_DIR" --strip-components=0
+
+            # Post-deploy
+            cd "$DEPLOY_DIR"
+            cp "$BACKUP_DIR/.env.bak" .env 2>/dev/null || true
+            php artisan migrate --force
+            php artisan config:cache
+            php artisan route:cache
+            php artisan view:cache
+            php artisan storage:link
+            php artisan queue:restart
+
+            # Back online
+            php artisan up
+
+            echo "Déploiement terminé à $(date)"
+
+      - name: Health check post-déploiement
+        run: |
+          sleep 10
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://${{ secrets.LWS_DOMAIN }}/health)
+          if [ "$STATUS" != "200" ]; then
+            echo "Health check échoué (HTTP $STATUS)"
+            exit 1
+          fi
+          echo "Health check OK (HTTP $STATUS)"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Déploiement échoué — voir les logs GitHub Actions"

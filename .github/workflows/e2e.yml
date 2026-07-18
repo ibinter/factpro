@@ -1,0 +1,125 @@
+name: E2E Tests (Playwright)
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: factpro_test
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_USER: factpro
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_mysql, gd, zip, bcmath, intl
+          coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction
+
+      - name: Setup Laravel environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          sed -i 's/DB_CONNECTION=.*/DB_CONNECTION=mysql/' .env
+          sed -i 's/DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/DB_PORT=.*/DB_PORT=3306/' .env
+          sed -i 's/DB_DATABASE=.*/DB_DATABASE=factpro_test/' .env
+          sed -i 's/DB_USERNAME=.*/DB_USERNAME=root/' .env
+          sed -i 's/DB_PASSWORD=.*/DB_PASSWORD=password/' .env
+          echo "APP_URL=http://localhost:8000" >> .env
+          echo "QUEUE_CONNECTION=sync" >> .env
+
+      - name: Run migrations and seeders
+        run: |
+          php artisan migrate --force
+          php artisan db:seed --class=PlansSeeder --force
+          php artisan db:seed --class=DemoSeeder --force
+
+      - name: Create storage link
+        run: php artisan storage:link
+
+      - name: Cache Laravel config
+        run: php artisan config:cache
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build frontend assets
+        run: npm run build
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Start Laravel server
+        run: |
+          php artisan serve --port=8000 &
+          # Attendre que le serveur soit prêt
+          for i in $(seq 1 30); do
+            curl -s http://localhost:8000 > /dev/null && break
+            sleep 1
+          done
+          echo "Serveur Laravel démarré"
+
+      - name: Run E2E tests
+        run: npx playwright test
+        env:
+          APP_URL: http://localhost:8000
+          CI: true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ github.run_number }}
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Upload test traces (échecs uniquement)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-${{ github.run_number }}
+          path: test-results/
+          retention-days: 7

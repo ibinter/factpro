@@ -1,0 +1,28 @@
+name: Security Audit
+
+on:
+  schedule:
+    - cron: '0 6 * * 1'  # Chaque lundi à 6h UTC
+  workflow_dispatch:
+
+jobs:
+  audit:
+    name: Audit de sécurité des dépendances
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Composer audit (CVE check)
+        run: composer audit
+
+      - name: NPM audit (high severity)
+        run: npm audit --audit-level=high || true

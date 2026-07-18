@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" width="480" height="160" font-family="'Segoe UI', Arial, sans-serif">
+  <defs>
+    <!-- Gradient fond icône -->
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0062CC"/>
+      <stop offset="100%" stop-color="#002D5B"/>
+    </linearGradient>
+    <!-- Gradient gold accent -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0C040"/>
+      <stop offset="100%" stop-color="#C88000"/>
+    </linearGradient>
+    <!-- Glow effect -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Shadow -->
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#00000030"/>
+    </filter>
+  </defs>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ICÔNE PRINCIPALE                           -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Fond icône — carré arrondi bleu dégradé -->
+  <rect x="8" y="8" width="144" height="144" rx="28" ry="28" fill="url(#iconGrad)" filter="url(#shadow)"/>
+
+  <!-- Coins QR code anti-falsification (signature visuelle) -->
+  <!-- Coin haut-gauche -->
+  <rect x="20" y="20" width="26" height="4" rx="2" fill="url(#goldGrad)"/>
+  <rect x="20" y="20" width="4" height="26" rx="2" fill="url(#goldGrad)"/>
+  <!-- Coin haut-droit -->
+  <rect x="114" y="20" width="26" height="4" rx="2" fill="url(#goldGrad)"/>
+  <rect x="136" y="20" width="4" height="26" rx="2" fill="url(#goldGrad)"/>
+  <!-- Coin bas-gauche -->
+  <rect x="20" y="128" width="26" height="4" rx="2" fill="url(#goldGrad)"/>
+  <rect x="20" y="106" width="4" height="26" rx="2" fill="url(#goldGrad)"/>
+  <!-- Coin bas-droit -->
+  <rect x="114" y="128" width="26" height="4" rx="2" fill="url(#goldGrad)"/>
+  <rect x="136" y="106" width="4" height="26" rx="2" fill="url(#goldGrad)"/>
+
+  <!-- Document stylisé fond blanc semi-transparent -->
+  <rect x="42" y="34" width="76" height="92" rx="7" ry="7" fill="#ffffff" opacity="0.12"/>
+  <rect x="42" y="34" width="76" height="92" rx="7" ry="7" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.25"/>
+
+  <!-- F majuscule géométrique -->
+  <!-- Barre verticale du F -->
+  <rect x="56" y="42" width="11" height="76" rx="4" fill="#ffffff" filter="url(#glow)"/>
+  <!-- Barre horizontale haute -->
+  <rect x="56" y="42" width="50" height="11" rx="4" fill="#ffffff"/>
+  <!-- Barre horizontale milieu -->
+  <rect x="56" y="76" width="36" height="10" rx="4" fill="url(#goldGrad)"/>
+
+  <!-- Éclair / flash — symbole rapidité -->
+  <polygon points="96,56 84,82 92,82 80,108 106,76 95,76 107,56" fill="url(#goldGrad)" opacity="0.9" filter="url(#glow)"/>
+
+  <!-- Point carré QR centre (signature) -->
+  <rect x="70" y="107" width="20" height="20" rx="4" fill="url(#goldGrad)" opacity="0.7"/>
+  <rect x="75" y="112" width="10" height="10" rx="2" fill="url(#iconGrad)"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TYPOGRAPHIE                                 -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- IBIG — texte principal -->
+  <text x="174" y="78"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="52"
+        font-weight="800"
+        letter-spacing="-1"
+        fill="#002D5B">IBIG</text>
+
+  <!-- Ligne séparatrice dorée verticale -->
+  <rect x="292" y="30" width="3" height="100" rx="2" fill="url(#goldGrad)" opacity="0.6"/>
+
+  <!-- FactPro — texte secondaire -->
+  <text x="305" y="78"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="52"
+        font-weight="300"
+        letter-spacing="0"
+        fill="#0062CC">Fact</text>
+  <text x="385" y="78"
+        font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif"
+        font-size="52"
+        font-weight="700"
+        letter-spacing="0"
+        fill="#002D5B">Pro</text>
+
+  <!-- Tagline -->
+  <text x="174" y="108"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="14"
+        font-weight="400"
+        letter-spacing="3"
+        fill="#6B7C93">FACTURATION  PROFESSIONNELLE</text>
+
+  <!-- Domaine -->
+  <text x="174" y="132"
+        font-family="'Segoe UI', Arial, sans-serif"
+        font-size="12"
+        font-weight="400"
+        fill="url(#goldGrad)"
+        opacity="0.9">factpro.ibigsoft.com</text>
+
+  <!-- Bordure bas dorée décorative -->
+  <rect x="174" y="140" width="290" height="2" rx="1" fill="url(#goldGrad)" opacity="0.5"/>
+
+</svg>

@@ -1,0 +1,74 @@
+{
+    "name": "IBIG FactPro",
+    "short_name": "FactPro",
+    "description": "Facturation professionnelle — devis, factures, POS, QR anti-falsification",
+    "lang": "fr",
+    "start_url": "/dashboard",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#002D5B",
+    "theme_color": "#002D5B",
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512-maskable.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "categories": ["business", "finance", "productivity"],
+    "shortcuts": [
+        {
+            "name": "Nouvelle facture",
+            "short_name": "Facture",
+            "description": "Créer une nouvelle facture",
+            "url": "/documents/create?type=invoice",
+            "icons": [
+                {
+                    "src": "/icons/icon-192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Caisse",
+            "short_name": "Caisse",
+            "description": "Ouvrir le point de vente",
+            "url": "/pos",
+            "icons": [
+                {
+                    "src": "/icons/icon-192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        },
+        {
+            "name": "Tableau de bord",
+            "short_name": "Dashboard",
+            "description": "Voir le tableau de bord",
+            "url": "/dashboard",
+            "icons": [
+                {
+                    "src": "/icons/icon-192.png",
+                    "sizes": "192x192",
+                    "type": "image/png"
+                }
+            ]
+        }
+    ]
+}

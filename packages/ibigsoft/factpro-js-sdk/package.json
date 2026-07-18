@@ -1,0 +1,15 @@
+{
+  "name": "@ibigsoft/factpro-sdk",
+  "version": "1.0.0",
+  "description": "SDK JavaScript officiel pour l'API FactPro",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "keywords": ["factpro", "invoicing", "api", "sdk", "ibigsoft"],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
