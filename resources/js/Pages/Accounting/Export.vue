@@ -28,8 +28,8 @@ const formatHelp = {
             'Dans Sage 100, allez dans Comptabilité > Traitements > Import des écritures.',
             'Choisissez le format « Import paramétrable » (CSV).',
             'Sélectionnez le fichier .txt téléchargé.',
-            'Mappez les colonnes selon l'ordre du fichier (JournalCode, EcritureDate, CompteNum…).',
-            'Lancez l'import et vérifiez les journaux.',
+            "Mappez les colonnes selon l'ordre du fichier (JournalCode, EcritureDate, CompteNum…).",
+            "Lancez l'import et vérifiez les journaux.",
         ],
     },
     quickbooks: {
@@ -37,7 +37,7 @@ const formatHelp = {
         steps: [
             'Dans QuickBooks, allez dans Fichier > Utilitaires > Importer > Fichiers IIF.',
             'Sélectionnez le fichier .iif téléchargé.',
-            'Confirmez l'import et vérifiez les transactions dans le journal.',
+            "Confirmez l'import et vérifiez les transactions dans le journal.",
         ],
     },
     pennylane: {

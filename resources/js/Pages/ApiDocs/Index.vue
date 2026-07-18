@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import AppLayout from '@/Layouts/AppLayout.vue'
+import AppLayout from '@/Layouts/AuthenticatedLayout.vue'
 import JsSdk from './JsSdk.vue'
 
 const props = defineProps({

@@ -235,7 +235,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { router } from '@inertiajs/vue3'
-import AppLayout from '@/Layouts/AppLayout.vue'
+import AppLayout from '@/Layouts/AuthenticatedLayout.vue'
 
 const props = defineProps({
   program: Object,

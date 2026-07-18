@@ -302,7 +302,7 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { router } from '@inertiajs/vue3'
-import AppLayout from '@/Layouts/AppLayout.vue'
+import AppLayout from '@/Layouts/AuthenticatedLayout.vue'
 
 const props = defineProps({
   rules:     { type: Array, default: () => [] },

@@ -270,7 +270,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { router, usePage } from '@inertiajs/vue3'
-import AppLayout from '@/Layouts/AppLayout.vue'
+import AppLayout from '@/Layouts/AuthenticatedLayout.vue'
 
 const props = defineProps({
   forecast: Object,

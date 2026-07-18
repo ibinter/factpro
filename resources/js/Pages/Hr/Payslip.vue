@@ -162,7 +162,7 @@
 
 <script setup>
 import { router } from '@inertiajs/vue3'
-import AppLayout from '@/Layouts/AppLayout.vue'
+import AppLayout from '@/Layouts/AuthenticatedLayout.vue'
 
 const props = defineProps({
   payslip:  { type: Object, default: null },
