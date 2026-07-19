@@ -151,6 +151,9 @@ class DocumentController extends Controller
             && in_array($document->type, ['quote', 'invoice'], true)
             && $paymentPlan === null;
 
+        $license = $this->licenses->currentFor($request->user());
+        $planCode = $license?->plan?->code;
+
         return Inertia::render('Documents/Show', [
             'document' => $document,
             'typeLabel' => $document->type_label,
@@ -160,7 +163,8 @@ class DocumentController extends Controller
             'canCreatePlan' => $canCreatePlan,
             'canFacturX' => ($document->isFinalized() || in_array($document->status, ['paid'], true))
                 && in_array($document->type, ['invoice', 'credit_note'], true)
-                && $this->licenses->currentFor($request->user())?->plan?->code === 'enterprise',
+                && $planCode === 'enterprise',
+            'hasApprovalAccess' => $license !== null && $license->isUsable(),
         ]);
     }
 

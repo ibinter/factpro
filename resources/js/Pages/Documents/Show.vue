@@ -18,6 +18,7 @@ const props = defineProps({
     paymentPlan: { type: Object, default: null },
     canCreatePlan: { type: Boolean, default: false },
     canFacturX: { type: Boolean, default: false },
+    hasApprovalAccess: { type: Boolean, default: true },
 });
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
@@ -635,19 +636,31 @@ const planProgress = computed(() => {
                 </div>
 
                 <!-- Soumettre à validation (si status = none et document draft) -->
-                <div v-else-if="document.approval_status === 'none' && document.status === 'draft'" class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6">
-                    <div class="flex items-center justify-between">
+                <div v-else-if="document.approval_status === 'none' && document.status === 'draft'" class="rounded-lg border border-dashed bg-gray-50 p-6"
+                    :class="hasApprovalAccess ? 'border-gray-300' : 'border-amber-200 bg-amber-50'">
+                    <div class="flex items-center justify-between gap-4">
                         <div>
-                            <h3 class="font-semibold text-gray-700">Circuit de validation</h3>
-                            <p class="mt-1 text-sm text-gray-500">Ce document n'est pas encore soumis à validation.</p>
+                            <h3 class="font-semibold" :class="hasApprovalAccess ? 'text-gray-700' : 'text-amber-800'">
+                                Circuit de validation
+                            </h3>
+                            <p v-if="hasApprovalAccess" class="mt-1 text-sm text-gray-500">
+                                Ce document n'est pas encore soumis à validation.
+                            </p>
+                            <p v-else class="mt-1 text-sm text-amber-700">
+                                Le circuit de validation n'est pas disponible sur votre plan actuel.
+                                <br><span class="text-xs text-amber-600">Passez à un plan supérieur pour activer cette fonctionnalité.</span>
+                            </p>
                         </div>
-                        <button
-                            class="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+                        <button v-if="hasApprovalAccess"
+                            class="flex-shrink-0 rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
                             :disabled="submittingApproval"
                             @click="submitForApproval"
                         >
                             {{ submittingApproval ? 'Envoi…' : 'Soumettre à validation' }}
                         </button>
+                        <span v-else class="flex-shrink-0 rounded-md bg-amber-100 px-3 py-1.5 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
+                            🔒 Plan requis
+                        </span>
                     </div>
                 </div>
 
