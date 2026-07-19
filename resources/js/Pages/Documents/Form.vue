@@ -38,21 +38,125 @@ const groupedTypes = computed(() => {
 
 // ── Schéma par type ───────────────────────────────────────────────────────────
 const TYPE_SCHEMAS = {
-    invoice:         { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: true,  clientLabel: 'Client',                  extraSection: null },
-    quote:           { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: false, clientLabel: 'Prospect / Client',        extraSection: 'quote' },
-    proforma:        { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: true,  clientLabel: 'Client',                  extraSection: null },
-    sales_order:     { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: false, clientLabel: 'Client',                  extraSection: 'sales_order' },
-    purchase_order:  { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur',             extraSection: 'purchase_order' },
-    delivery_note:   { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client destinataire',     extraSection: 'delivery_note' },
-    credit_note:     { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client',                  extraSection: 'credit_note' },
-    payment_receipt: { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Reçu de',                 extraSection: 'payment_receipt' },
-    deposit_invoice: { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Client',                  extraSection: 'deposit_invoice' },
-    balance_invoice: { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Client',                  extraSection: 'balance_invoice' },
-    work_order:      { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client',                  extraSection: 'work_order' },
-    pos_ticket:      { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client (optionnel)',       extraSection: 'pos_ticket' },
-    quittance:       { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Locataire',               extraSection: 'quittance' },
-    rma:             { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                  extraSection: 'rma' },
-    remittance:      { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Bénéficiaire',            extraSection: 'remittance' },
+    // Vente & Facturation
+    invoice:              { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: true,  clientLabel: 'Client',                    extraSection: null },
+    simple_invoice:       { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: true,  clientLabel: 'Client',                    extraSection: null },
+    export_invoice:       { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: true,  clientLabel: 'Client Import',             extraSection: 'export' },
+    tax_exempt_invoice:   { showLines: true,  showPrices: true,  showTax: false, showDiscount: true,  showDueDate: true,  clientLabel: 'Client',                    extraSection: null },
+    rectification_invoice:{ showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Client',                    extraSection: 'credit_note' },
+    quote:                { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: false, clientLabel: 'Prospect / Client',         extraSection: 'quote' },
+    commercial_offer:     { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: false, clientLabel: 'Prospect / Client',         extraSection: 'quote' },
+    commercial_proposal:  { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: false, clientLabel: 'Prospect / Client',         extraSection: 'quote' },
+    proforma:             { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: true,  clientLabel: 'Client',                    extraSection: null },
+    sales_order:          { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: false, clientLabel: 'Client',                    extraSection: 'sales_order' },
+    reservation_order:    { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'sales_order' },
+    picking_order:        { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'delivery_note' },
+    delivery_note:        { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client destinataire',       extraSection: 'delivery_note' },
+    dispatch_order:       { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client destinataire',       extraSection: 'delivery_note' },
+    credit_note:          { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'credit_note' },
+    payment_receipt:      { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Reçu de',                   extraSection: 'payment_receipt' },
+    deposit_invoice:      { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Client',                    extraSection: 'deposit_invoice' },
+    balance_invoice:      { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Client',                    extraSection: 'balance_invoice' },
+    pos_ticket:           { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client (optionnel)',         extraSection: 'pos_ticket' },
+    quittance:            { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Locataire',                 extraSection: 'quittance' },
+    stock_exit_sale:      { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'delivery_note' },
+    commercial_contract:  { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: true,  clientLabel: 'Partie contractante',       extraSection: 'admin' },
+    remittance:           { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Bénéficiaire',              extraSection: 'remittance' },
+
+    // Achats & Fournisseurs
+    purchase_request:     { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur souhaité',      extraSection: 'achats_gen' },
+    price_request:        { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur consulté',      extraSection: 'achats_gen' },
+    supplier_consultation:{ showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur',               extraSection: 'achats_gen' },
+    purchase_order:       { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur',               extraSection: 'purchase_order' },
+    goods_receipt:        { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur',               extraSection: 'achats_gen' },
+    supplier_invoice:     { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Fournisseur',               extraSection: null },
+    supplier_credit:      { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur',               extraSection: 'credit_note' },
+    supplier_return:      { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur',               extraSection: 'achats_gen' },
+    debit_note:           { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur',               extraSection: 'finance_gen' },
+    supplier_credit_note: { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur',               extraSection: 'finance_gen' },
+
+    // Stocks & Inventaire
+    stock_entry:          { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur (optionnel)',   extraSection: 'stocks' },
+    stock_exit:           { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Destinataire (optionnel)', extraSection: 'stocks' },
+    stock_transfer:       { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Responsable (optionnel)',  extraSection: 'stocks' },
+    stock_consumption:    { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Responsable (optionnel)',  extraSection: 'stocks' },
+    inventory:            { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Responsable (optionnel)',  extraSection: 'stocks' },
+    stock_adjustment:     { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Responsable (optionnel)',  extraSection: 'stocks' },
+    destruction_note:     { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Responsable (optionnel)',  extraSection: 'stocks' },
+    manufacturing_order:  { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Responsable (optionnel)',  extraSection: 'stocks' },
+    transformation_note:  { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Responsable (optionnel)',  extraSection: 'stocks' },
+
+    // SAV & Maintenance
+    rma:                  { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'rma' },
+    sav_sheet:            { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'sav' },
+    repair_order:         { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'sav' },
+    intervention_report:  { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'sav' },
+    maintenance_order:    { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'sav' },
+    warranty_certificate: { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'sav' },
+    maintenance_contract: { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Client',                    extraSection: 'sav' },
+
+    // BTP & Travaux
+    work_order:           { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
+    service_order:        { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
+    progress_statement:   { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
+    provisional_account:  { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
+    final_account:        { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
+    provisional_acceptance:{ showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",         extraSection: 'btp' },
+    final_acceptance:     { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
+    site_report:          { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
+
+    // Logistique & Transport
+    shipping_note:        { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Destinataire',              extraSection: 'logistique' },
+    waybill:              { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Destinataire',              extraSection: 'logistique' },
+    packing_list:         { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Destinataire',              extraSection: 'logistique' },
+    loading_slip:         { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Destinataire',              extraSection: 'logistique' },
+    inter_depot_transfer: { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Responsable',               extraSection: 'logistique' },
+    delivery_manifest:    { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Destinataire',              extraSection: 'logistique' },
+
+    // Finance & Trésorerie
+    expense_report:       { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Employé / Bénéficiaire',   extraSection: 'finance_gen' },
+    cash_voucher:         { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Bénéficiaire',              extraSection: 'finance_gen' },
+    bank_deposit:         { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Banque',                    extraSection: 'finance_gen' },
+    bank_withdrawal:      { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Bénéficiaire',              extraSection: 'finance_gen' },
+    bill_of_exchange:     { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: true,  clientLabel: 'Tireur / Tiré',             extraSection: 'finance_gen' },
+    promissory_note:      { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: true,  clientLabel: 'Souscripteur',              extraSection: 'finance_gen' },
+
+    // Ressources Humaines
+    mission_order:        { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Employé',                   extraSection: 'rh' },
+    leave_request:        { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Employé',                   extraSection: 'rh' },
+    payslip:              { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Employé',                   extraSection: 'rh' },
+    salary_advance:       { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Employé',                   extraSection: 'rh' },
+    service_note:         { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Employé / Destinataire',    extraSection: 'admin' },
+    absence_authorization:{ showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Employé',                   extraSection: 'rh' },
+
+    // Administratif & Juridique
+    contract:             { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: true,  clientLabel: 'Partie contractante',       extraSection: 'admin' },
+    minutes:              { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Participants / Signataires', extraSection: 'admin' },
+    attestation:          { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Bénéficiaire',              extraSection: 'admin' },
+    certificate:          { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Bénéficiaire',              extraSection: 'admin' },
+    reminder_letter:      { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'admin' },
+    formal_notice:        { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                    extraSection: 'admin' },
+    acknowledgement:      { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Expéditeur',                extraSection: 'admin' },
+    authorization:        { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Bénéficiaire',              extraSection: 'admin' },
+
+    // Immobilier & Location
+    lease_contract:       { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: true,  clientLabel: 'Locataire',                 extraSection: 'immobilier_gen' },
+    entry_inventory:      { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Locataire',                 extraSection: 'immobilier_gen' },
+    exit_inventory:       { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Locataire',                 extraSection: 'immobilier_gen' },
+    rent_notice:          { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: true,  clientLabel: 'Locataire',                 extraSection: 'quittance' },
+    deposit_receipt:      { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Locataire',                 extraSection: 'payment_receipt' },
+
+    // Export & Douane
+    origin_certificate:   { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Exportateur',               extraSection: 'export' },
+    customs_declaration:  { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Importateur / Exportateur', extraSection: 'export' },
+    boarding_pass_doc:    { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Expéditeur',                extraSection: 'export' },
+    export_invoice_custom:{ showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: true,  clientLabel: 'Client Import',             extraSection: 'export' },
+
+    // Santé & Médical
+    medical_invoice:      { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Patient',                   extraSection: 'sante' },
+    prescription:         { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Patient',                   extraSection: 'sante' },
+    lab_order:            { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Patient',                   extraSection: 'sante' },
+    care_sheet:           { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Patient',                   extraSection: 'sante' },
 };
 
 // Schéma générique pour les types non mappés explicitement
@@ -761,6 +865,359 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
                         <div>
                             <InputLabel value="Objet / Motif" />
                             <TextInput v-model="form.meta.purpose" class="mt-1 block w-full" placeholder="Objet ou motif du document" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── STOCKS & INVENTAIRE ────────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'stocks'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-green-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-600 text-lg">📦</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations de mouvement de stock</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div>
+                            <InputLabel value="Entrepôt / Dépôt source" />
+                            <TextInput v-model="form.meta.warehouse_from" class="mt-1 block w-full" placeholder="Ex: Dépôt principal" />
+                        </div>
+                        <div>
+                            <InputLabel value="Entrepôt / Dépôt destination" />
+                            <TextInput v-model="form.meta.warehouse_to" class="mt-1 block w-full" placeholder="Ex: Dépôt secondaire, Production…" />
+                        </div>
+                        <div>
+                            <InputLabel value="Motif du mouvement" />
+                            <select v-model="form.meta.movement_reason" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option value="">— Choisir —</option>
+                                <option>Réapprovisionnement</option>
+                                <option>Transfert interne</option>
+                                <option>Inventaire annuel</option>
+                                <option>Inventaire tournant</option>
+                                <option>Ajustement d'écart</option>
+                                <option>Destruction / Casse</option>
+                                <option>Production / Transformation</option>
+                                <option>Retour fournisseur</option>
+                                <option>Autre</option>
+                            </select>
+                        </div>
+                        <div>
+                            <InputLabel value="Responsable inventaire" />
+                            <TextInput v-model="form.meta.inventory_manager" class="mt-1 block w-full" placeholder="Nom du responsable" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date de comptage / mouvement" />
+                            <TextInput v-model="form.meta.stock_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                    </div>
+                    <p class="mt-3 text-xs text-green-700 bg-green-50 rounded-lg px-3 py-2">
+                        📋 <strong>{{ typeLabel }} :</strong> Listez les articles ci-dessous avec les quantités. Les prix ne sont pas affichés sur ce type de document.
+                    </p>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SAV & MAINTENANCE ──────────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'sav'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-yellow-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-yellow-100 text-yellow-600 text-lg">🔧</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations SAV / Maintenance</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div>
+                            <InputLabel value="Appareil / Équipement" />
+                            <TextInput v-model="form.meta.device_name" class="mt-1 block w-full" placeholder="Ex: Imprimante HP LaserJet 400" />
+                        </div>
+                        <div>
+                            <InputLabel value="Numéro de série" />
+                            <TextInput v-model="form.meta.serial_number" class="mt-1 block w-full" placeholder="N° de série ou référence" />
+                        </div>
+                        <div>
+                            <InputLabel value="Technicien responsable" />
+                            <TextInput v-model="form.meta.technician" class="mt-1 block w-full" placeholder="Nom du technicien" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date d'intervention" />
+                            <TextInput v-model="form.meta.intervention_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Symptôme / Panne décrite par le client" />
+                            <TextInput v-model="form.meta.symptom_description" class="mt-1 block w-full" placeholder="Description du problème signalé" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── BTP & TRAVAUX ──────────────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'btp'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-orange-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-orange-600 text-lg">🏗️</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations chantier / travaux</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Nom / Description du chantier *" />
+                            <TextInput v-model="form.meta.site_name" class="mt-1 block w-full" placeholder="Ex: Construction villa R+2 — Cocody" />
+                        </div>
+                        <div>
+                            <InputLabel value="Lieu du chantier" />
+                            <TextInput v-model="form.meta.site_location" class="mt-1 block w-full" placeholder="Adresse ou commune" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date de début des travaux" />
+                            <TextInput v-model="form.meta.work_start_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date de fin prévue" />
+                            <TextInput v-model="form.meta.work_end_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Chef de chantier / Technicien" />
+                            <TextInput v-model="form.meta.technician" class="mt-1 block w-full" placeholder="Nom du responsable" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── LOGISTIQUE & TRANSPORT ─────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'logistique'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-sky-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sky-600 text-lg">🚚</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations de transport</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Adresse de départ" />
+                            <TextInput v-model="form.meta.origin_address" class="mt-1 block w-full" placeholder="Point de départ / entrepôt expéditeur" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date d'expédition" />
+                            <TextInput v-model="form.meta.shipment_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Adresse de destination" />
+                            <TextInput v-model="form.meta.delivery_address" class="mt-1 block w-full" placeholder="Adresse de livraison / réception" />
+                        </div>
+                        <div>
+                            <InputLabel value="Transporteur" />
+                            <TextInput v-model="form.meta.carrier" class="mt-1 block w-full" placeholder="Ex: DHL, livreur interne…" />
+                        </div>
+                        <div>
+                            <InputLabel value="N° de tracking" />
+                            <TextInput v-model="form.meta.tracking_number" class="mt-1 block w-full" placeholder="Référence d'expédition" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── FINANCE & TRÉSORERIE ───────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'finance_gen'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-emerald-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-lg">💵</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations financières</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Montant" />
+                            <div class="mt-1 flex items-center gap-2">
+                                <TextInput v-model.number="form.meta.amount" type="number" min="0" class="block w-full" placeholder="0" />
+                                <span class="text-sm font-medium text-gray-500">{{ form.currency }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <InputLabel value="Mode de paiement" />
+                            <select v-model="form.meta.payment_method" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option v-for="m in MODES_PAIEMENT" :key="m" :value="m">{{ m }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <InputLabel value="Référence document associé" />
+                            <TextInput v-model="form.meta.document_reference" class="mt-1 block w-full" placeholder="Ex: FAC-2026-0012" />
+                        </div>
+                        <div>
+                            <InputLabel value="Motif / Objet" />
+                            <TextInput v-model="form.meta.payment_purpose" class="mt-1 block w-full" placeholder="Objet du versement ou de l'opération" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── RESSOURCES HUMAINES ────────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'rh'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-violet-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-violet-100 text-violet-600 text-lg">👤</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations RH</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div>
+                            <InputLabel value="Poste / Fonction" />
+                            <TextInput v-model="form.meta.job_title" class="mt-1 block w-full" placeholder="Ex: Comptable, Technicien…" />
+                        </div>
+                        <div>
+                            <InputLabel value="Département / Service" />
+                            <TextInput v-model="form.meta.department" class="mt-1 block w-full" placeholder="Ex: Finance, Logistique…" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date de début" />
+                            <TextInput v-model="form.meta.start_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date de fin" />
+                            <TextInput v-model="form.meta.end_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Motif / Objet" />
+                            <TextInput v-model="form.meta.purpose" class="mt-1 block w-full" placeholder="Motif de la demande ou de la mission" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── ADMINISTRATIF ──────────────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'admin'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 text-lg">📋</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations administratives</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Objet / Titre du document" />
+                            <TextInput v-model="form.meta.purpose" class="mt-1 block w-full" placeholder="Objet ou titre principal" />
+                        </div>
+                        <div>
+                            <InputLabel value="Signataire(s) / Autorité" />
+                            <TextInput v-model="form.meta.signatories" class="mt-1 block w-full" placeholder="Ex: DG, RH, Direction…" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── ACHATS GÉNÉRIQUES ──────────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'achats_gen'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-indigo-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 text-lg">🛒</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations achat / fournisseur</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Date de livraison souhaitée" />
+                            <TextInput v-model="form.meta.delivery_date_expected" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Contact fournisseur" />
+                            <TextInput v-model="form.meta.supplier_contact" class="mt-1 block w-full" placeholder="Nom, email ou tél." />
+                        </div>
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Adresse de livraison (réception)" />
+                            <TextInput v-model="form.meta.delivery_address" class="mt-1 block w-full" placeholder="Votre adresse d'entrepôt / siège" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── IMMOBILIER GÉNÉRIQUE ───────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'immobilier_gen'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-amber-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-amber-600 text-lg">🏠</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations immobilières</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Adresse du bien" />
+                            <TextInput v-model="form.meta.property_address" class="mt-1 block w-full" placeholder="Adresse complète du bien immobilier" />
+                        </div>
+                        <div>
+                            <InputLabel value="Type de bien" />
+                            <select v-model="form.meta.property_type" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option value="">— Choisir —</option>
+                                <option>Appartement</option><option>Villa</option><option>Studio</option>
+                                <option>Bureau</option><option>Local commercial</option><option>Entrepôt</option><option>Terrain</option>
+                            </select>
+                        </div>
+                        <div>
+                            <InputLabel value="Superficie (m²)" />
+                            <TextInput v-model="form.meta.surface_area" type="number" min="0" class="mt-1 block w-full" placeholder="Ex: 85" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── EXPORT & DOUANE ────────────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'export'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-teal-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-teal-100 text-teal-600 text-lg">🌐</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations export / douane</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div>
+                            <InputLabel value="Pays de destination" />
+                            <TextInput v-model="form.meta.destination_country" class="mt-1 block w-full" placeholder="Ex: France, Sénégal…" />
+                        </div>
+                        <div>
+                            <InputLabel value="Incoterm" />
+                            <select v-model="form.meta.incoterm" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option value="">— Choisir —</option>
+                                <option>EXW</option><option>FOB</option><option>CIF</option><option>DAP</option><option>DDP</option>
+                            </select>
+                        </div>
+                        <div>
+                            <InputLabel value="N° de déclaration douanière" />
+                            <TextInput v-model="form.meta.customs_ref" class="mt-1 block w-full" placeholder="Référence douanière" />
+                        </div>
+                        <div>
+                            <InputLabel value="Pays d'origine des marchandises" />
+                            <TextInput v-model="form.meta.origin_country" class="mt-1 block w-full" placeholder="Ex: Côte d'Ivoire" />
+                        </div>
+                        <div>
+                            <InputLabel value="Port / Aéroport d'embarquement" />
+                            <TextInput v-model="form.meta.port_of_loading" class="mt-1 block w-full" placeholder="Ex: Port d'Abidjan" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SANTÉ & MÉDICAL ────────────────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'sante'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-rose-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 text-rose-600 text-lg">🏥</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations médicales</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div>
+                            <InputLabel value="Date de naissance du patient" />
+                            <TextInput v-model="form.meta.patient_dob" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Médecin / Praticien" />
+                            <TextInput v-model="form.meta.doctor_name" class="mt-1 block w-full" placeholder="Nom du médecin ou praticien" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date de consultation / acte" />
+                            <TextInput v-model="form.meta.consultation_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Diagnostic / Motif de consultation" />
+                            <TextInput v-model="form.meta.diagnosis" class="mt-1 block w-full" placeholder="Motif ou diagnostic principal" />
                         </div>
                     </div>
                 </div>

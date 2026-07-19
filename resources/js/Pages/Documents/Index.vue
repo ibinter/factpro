@@ -148,11 +148,13 @@ const paymentPct = (doc) => {
 
 // ── Drawer types ─────────────────────────────────────────────────────────────
 const drawerOpen = ref(false);
+const drawerSearch = ref('');
 
-// Types groupés par catégorie pour le drawer
 const typesByCategory = computed(() => {
+    const q = drawerSearch.value.toLowerCase().trim();
     const groups = {};
     (props.types ?? []).forEach(t => {
+        if (q && !t.label.toLowerCase().includes(q)) return;
         const cat = t.category ?? 'other';
         if (!groups[cat]) groups[cat] = [];
         groups[cat].push(t);
@@ -403,9 +405,19 @@ const newDocGroups = [
                                     </svg>
                                 </button>
                             </div>
+                            <!-- Recherche -->
+                            <div class="px-4 pt-3 pb-1">
+                                <div class="relative">
+                                    <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                    </svg>
+                                    <input v-model="drawerSearch" type="search" placeholder="Rechercher un type…"
+                                        class="block w-full rounded-lg border-gray-200 bg-gray-50 pl-9 pr-3 py-1.5 text-sm text-gray-700 placeholder-gray-400 focus:border-brand-500 focus:ring-brand-500 focus:bg-white transition-colors" />
+                                </div>
+                            </div>
                             <!-- Tous types -->
-                            <div class="px-4 pt-3">
-                                <button type="button" @click="type = ''; drawerOpen = false"
+                            <div class="px-4 pt-2">
+                                <button type="button" @click="type = ''; drawerSearch = ''; drawerOpen = false"
                                     class="w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors"
                                     :class="!type ? 'bg-brand-600 text-white' : 'text-gray-600 hover:bg-gray-50'">
                                     Tous les types
@@ -587,7 +599,7 @@ const newDocGroups = [
                                                 </button>
                                                 <Link :href="route('documents.create', { type: type || 'invoice' })"
                                                     class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
-                                                    + {{ type ? getTypeConf(type).label : 'Nouvelle facture' }}
+                                                    + {{ type ? ((props.types ?? []).find(t => t.value === type)?.label ?? 'Nouveau document') : 'Nouvelle facture' }}
                                                 </Link>
                                             </div>
                                         </div>
