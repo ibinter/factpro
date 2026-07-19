@@ -1,5 +1,4 @@
 <script setup>
-import { Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 defineProps({
@@ -13,32 +12,32 @@ const open = ref(false);
 <template>
     <nav class="sticky top-0 z-40 border-b border-gray-100 bg-white/90 backdrop-blur">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-            <Link href="/" class="flex items-center">
+            <a href="/" class="flex items-center">
                 <img src="/logo.svg" alt="IBIG FactPro" class="h-10 w-auto" />
-            </Link>
+            </a>
 
             <!-- Liens desktop -->
             <div class="hidden items-center gap-8 md:flex">
                 <a href="/#fonctionnalites" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Fonctionnalités</a>
-                <Link :href="route('public.pricing')" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Tarifs</Link>
+                <a href="/pricing" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Tarifs</a>
                 <a href="/#faq" class="text-sm font-semibold text-gray-600 hover:text-brand-600">FAQ</a>
             </div>
 
             <div class="hidden items-center gap-3 md:flex">
-                <Link
+                <a
                     v-if="canLogin"
-                    :href="route('login')"
+                    href="/login"
                     class="px-3 py-2 text-sm font-semibold text-brand-900 hover:text-brand-600"
                 >
                     Se connecter
-                </Link>
-                <Link
+                </a>
+                <a
                     v-if="canRegister"
-                    :href="route('register')"
+                    href="/register"
                     class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-bold text-white shadow transition hover:bg-brand-700"
                 >
                     Essai gratuit
-                </Link>
+                </a>
             </div>
 
             <!-- Burger mobile -->
@@ -58,23 +57,23 @@ const open = ref(false);
         <div v-show="open" class="border-t border-gray-100 bg-white px-6 py-4 md:hidden">
             <div class="flex flex-col gap-3">
                 <a href="/#fonctionnalites" class="text-sm font-semibold text-gray-700" @click="open = false">Fonctionnalités</a>
-                <Link :href="route('public.pricing')" class="text-sm font-semibold text-gray-700">Tarifs</Link>
+                <a href="/pricing" class="text-sm font-semibold text-gray-700">Tarifs</a>
                 <a href="/#faq" class="text-sm font-semibold text-gray-700" @click="open = false">FAQ</a>
                 <div class="mt-2 flex flex-col gap-2">
-                    <Link
+                    <a
                         v-if="canLogin"
-                        :href="route('login')"
+                        href="/login"
                         class="rounded-lg border border-gray-200 px-4 py-2 text-center text-sm font-semibold text-brand-900"
                     >
                         Se connecter
-                    </Link>
-                    <Link
+                    </a>
+                    <a
                         v-if="canRegister"
-                        :href="route('register')"
+                        href="/register"
                         class="rounded-lg bg-brand-600 px-4 py-2 text-center text-sm font-bold text-white"
                     >
                         Essai gratuit 7 jours
-                    </Link>
+                    </a>
                 </div>
             </div>
         </div>
