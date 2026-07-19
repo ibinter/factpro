@@ -64,7 +64,8 @@ const FR = {
         h1b: 'pour chaque entrepreneur',
         sub: 'Devis, factures et documents commerciaux professionnels avec QR anti-falsification, impression thermique, Mobile Money et multi-devises. Du vendeur de rue au directeur de PME.',
         cta1: 'Démarrer l\'essai gratuit 7 jours →',
-        cta2: 'Voir les tarifs',
+        cta2: 'Voir une démo live →',
+        cta3: 'Voir les tarifs',
         note: 'Sans carte bancaire · Résiliable à tout moment',
     },
     stats: [
@@ -125,7 +126,8 @@ const EN = {
         h1b: 'for every entrepreneur',
         sub: 'Professional quotes, invoices and commercial documents with QR anti-fraud, thermal printing, Mobile Money and multi-currency. From street vendors to SME directors.',
         cta1: 'Start free 7-day trial →',
-        cta2: 'View pricing',
+        cta2: 'See live demo →',
+        cta3: 'View pricing',
         note: 'No credit card · Cancel anytime',
     },
     stats: [
@@ -251,10 +253,16 @@ const partnerCommissions = [
                            style="background:#F0C040;color:#001d3d">
                             {{ t.hero.cta1 }}
                         </a>
-                        <a href="/pricing"
-                           class="inline-flex items-center rounded-xl border px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10"
+                        <a href="/demo-login"
+                           class="inline-flex items-center gap-2 rounded-xl border px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10"
                            style="border-color:rgba(255,255,255,.3)">
+                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                             {{ t.hero.cta2 }}
+                        </a>
+                        <a href="/pricing"
+                           class="inline-flex items-center rounded-xl border px-8 py-3.5 text-base font-semibold text-white/70 transition hover:bg-white/10 hover:text-white"
+                           style="border-color:rgba(255,255,255,.15)">
+                            {{ t.hero.cta3 }}
                         </a>
                     </div>
                     <p class="mt-4 text-xs text-white/50">{{ t.hero.note }}</p>
