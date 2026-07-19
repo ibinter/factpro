@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Services\LicenseService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -43,6 +44,28 @@ class CustomerController extends Controller
         Customer::create([...$data, 'company_id' => $company->id]);
 
         return back()->with('success', 'Client créé avec succès.');
+    }
+
+    /** Création rapide depuis un formulaire document (retourne JSON, sans rechargement). */
+    public function quickStore(Request $request, LicenseService $licenses): JsonResponse
+    {
+        $company = $request->user()->currentCompany;
+
+        if ($licenses->limitReached($request->user(), 'customers', $company->customers()->count())) {
+            return response()->json(['error' => 'Limite de clients atteinte pour votre forfait.'], 422);
+        }
+
+        $data = $request->validate([
+            'type'    => ['required', 'in:individual,company'],
+            'name'    => ['required', 'string', 'max:255'],
+            'email'   => ['nullable', 'email', 'max:255'],
+            'phone'   => ['nullable', 'string', 'max:50'],
+            'address' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $customer = Customer::create([...$data, 'company_id' => $company->id]);
+
+        return response()->json(['id' => $customer->id, 'name' => $customer->name, 'email' => $customer->email]);
     }
 
     public function update(Request $request, Customer $customer): RedirectResponse

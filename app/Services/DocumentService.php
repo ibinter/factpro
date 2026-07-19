@@ -51,21 +51,28 @@ class DocumentService
     private function syncLines(Document $document, array $lines): void
     {
         foreach (array_values($lines) as $index => $line) {
-            $quantity = (float) ($line['quantity'] ?? 1);
-            $unitPrice = (float) ($line['unit_price'] ?? 0);
-            $discount = (float) ($line['discount_percent'] ?? 0);
-            $lineTotal = round($quantity * $unitPrice * (1 - $discount / 100), 2);
+            $quantity      = (float) ($line['quantity'] ?? 1);
+            $unitPrice     = (float) ($line['unit_price'] ?? 0);
+            $discountType  = $line['line_discount_type'] ?? 'percent';
+            $discountValue = (float) ($line['discount_percent'] ?? 0);
+
+            if ($discountType === 'fixed') {
+                $lineTotal = max(0, round($quantity * $unitPrice - $discountValue, 2));
+            } else {
+                $lineTotal = round($quantity * $unitPrice * (1 - $discountValue / 100), 2);
+            }
 
             $document->lines()->create([
-                'product_id' => $line['product_id'] ?? null,
-                'description' => $line['description'] ?? '',
-                'quantity' => $quantity,
-                'unit' => $line['unit'] ?? 'unité',
-                'unit_price' => $unitPrice,
-                'discount_percent' => $discount,
-                'tax_rate' => (float) ($line['tax_rate'] ?? 0),
-                'line_total' => $lineTotal,
-                'sort_order' => $index,
+                'product_id'         => $line['product_id'] ?? null,
+                'description'        => $line['description'] ?? '',
+                'quantity'           => $quantity,
+                'unit'               => $line['unit'] ?? 'unité',
+                'unit_price'         => $unitPrice,
+                'line_discount_type' => $discountType,
+                'discount_percent'   => $discountValue,
+                'tax_rate'           => (float) ($line['tax_rate'] ?? 0),
+                'line_total'         => $lineTotal,
+                'sort_order'         => $index,
             ]);
         }
     }
@@ -124,7 +131,7 @@ class DocumentService
             foreach ($source->lines as $line) {
                 $copy->lines()->create($line->only([
                     'product_id', 'description', 'quantity', 'unit', 'unit_price',
-                    'discount_percent', 'tax_rate', 'line_total', 'sort_order',
+                    'line_discount_type', 'discount_percent', 'tax_rate', 'line_total', 'sort_order',
                 ]));
             }
 

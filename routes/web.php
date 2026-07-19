@@ -88,6 +88,7 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
 
     Route::resource('customers', CustomerController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::post('/customers/quick', [CustomerController::class, 'quickStore'])->name('customers.quick');
     Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
 
     Route::resource('documents', DocumentController::class);

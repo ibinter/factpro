@@ -63,6 +63,52 @@ const submitLogo = () => {
         },
     });
 };
+
+// Upload signature
+const sigForm = useForm({ signature: null });
+const sigInput = ref(null);
+const sigPreview = ref(props.company.signature_path ? `/storage/${props.company.signature_path}` : null);
+
+const onSigChange = (e) => {
+    const file = e.target.files[0];
+    sigForm.signature = file ?? null;
+    sigPreview.value = file ? URL.createObjectURL(file) : sigPreview.value;
+};
+const submitSig = () => {
+    sigForm.post(route('companies.signature'), {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => { sigForm.reset(); if (sigInput.value) sigInput.value.value = ''; },
+    });
+};
+
+// Upload cachet
+const stampForm = useForm({ stamp: null });
+const stampInput = ref(null);
+const stampPreview = ref(props.company.stamp_path ? `/storage/${props.company.stamp_path}` : null);
+
+const onStampChange = (e) => {
+    const file = e.target.files[0];
+    stampForm.stamp = file ?? null;
+    stampPreview.value = file ? URL.createObjectURL(file) : stampPreview.value;
+};
+const submitStamp = () => {
+    stampForm.post(route('companies.stamp'), {
+        forceFormData: true,
+        preserveScroll: true,
+        onSuccess: () => { stampForm.reset(); if (stampInput.value) stampInput.value.value = ''; },
+    });
+};
+
+// Paramètres signature/cachet
+const sigSettings = useForm({
+    show_signature:  props.company.show_signature  ?? false,
+    show_stamp:      props.company.show_stamp      ?? false,
+    signature_label: props.company.signature_label ?? '',
+});
+const saveSigSettings = () => {
+    sigSettings.patch(route('companies.signature-settings'), { preserveScroll: true });
+};
 </script>
 
 <template>
@@ -227,6 +273,79 @@ const submitLogo = () => {
                     <span v-if="form.recentlySuccessful" class="text-sm text-green-600">Enregistré.</span>
                     <PrimaryButton :disabled="form.processing" @click="submit">Enregistrer les paramètres</PrimaryButton>
                 </div>
+
+                <!-- Signature & Cachet -->
+                <section class="rounded-lg bg-white p-6 shadow">
+                    <h3 class="text-lg font-semibold text-gray-800">Signature & Cachet</h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Ajoutez votre signature numérique et votre tampon d'entreprise. Ils apparaîtront automatiquement sur les PDF générés si l'option est activée.
+                    </p>
+
+                    <!-- Activation + libellé -->
+                    <div class="mt-5 rounded-lg bg-gray-50 p-4 space-y-3">
+                        <div class="flex items-center gap-3">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" v-model="sigSettings.show_signature" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+                                <span class="text-sm text-gray-700 font-medium">Afficher la signature sur les PDF</span>
+                            </label>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" v-model="sigSettings.show_stamp" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+                                <span class="text-sm text-gray-700 font-medium">Afficher le cachet sur les PDF</span>
+                            </label>
+                        </div>
+                        <div v-if="sigSettings.show_signature">
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Libellé signataire</label>
+                            <input v-model="sigSettings.signature_label" type="text"
+                                placeholder="Ex : Le Directeur Général, Signé par..."
+                                class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500 max-w-xs" />
+                        </div>
+                        <div class="flex justify-end">
+                            <PrimaryButton @click="saveSigSettings" :disabled="sigSettings.processing" class="text-xs py-1.5 px-3">
+                                <span v-if="sigSettings.recentlySuccessful" class="text-green-300 mr-1">✓</span>
+                                Sauvegarder les réglages
+                            </PrimaryButton>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid gap-6 sm:grid-cols-2">
+                        <!-- Signature -->
+                        <div class="rounded-lg border border-dashed border-gray-300 p-4">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Signature numérique</h4>
+                            <div class="mb-3 flex h-20 items-center justify-center rounded-md bg-gray-50 border border-gray-200 overflow-hidden">
+                                <img v-if="sigPreview" :src="sigPreview" alt="Signature" class="max-h-full max-w-full object-contain" />
+                                <span v-else class="text-xs text-gray-400">Aucune signature</span>
+                            </div>
+                            <input ref="sigInput" type="file" accept=".jpg,.jpeg,.png,.webp"
+                                class="block w-full text-xs text-gray-500 file:mr-2 file:rounded file:border-0 file:bg-brand-50 file:px-2 file:py-1 file:text-xs file:font-medium file:text-brand-700"
+                                @change="onSigChange" />
+                            <p class="mt-1 text-[10px] text-gray-400">PNG avec fond transparent recommandé. Max 2 Mo.</p>
+                            <InputError :message="sigForm.errors.signature" class="mt-1" />
+                            <PrimaryButton class="mt-2 text-xs" :disabled="!sigForm.signature || sigForm.processing" @click="submitSig">
+                                Uploader la signature
+                            </PrimaryButton>
+                        </div>
+
+                        <!-- Cachet -->
+                        <div class="rounded-lg border border-dashed border-gray-300 p-4">
+                            <h4 class="text-sm font-semibold text-gray-700 mb-3">Cachet / Tampon</h4>
+                            <div class="mb-3 flex h-20 items-center justify-center rounded-md bg-gray-50 border border-gray-200 overflow-hidden">
+                                <img v-if="stampPreview" :src="stampPreview" alt="Cachet" class="max-h-full max-w-full object-contain" />
+                                <span v-else class="text-xs text-gray-400">Aucun cachet</span>
+                            </div>
+                            <input ref="stampInput" type="file" accept=".jpg,.jpeg,.png,.webp"
+                                class="block w-full text-xs text-gray-500 file:mr-2 file:rounded file:border-0 file:bg-brand-50 file:px-2 file:py-1 file:text-xs file:font-medium file:text-brand-700"
+                                @change="onStampChange" />
+                            <p class="mt-1 text-[10px] text-gray-400">PNG avec fond transparent recommandé. Max 2 Mo.</p>
+                            <InputError :message="stampForm.errors.stamp" class="mt-1" />
+                            <PrimaryButton class="mt-2 text-xs" :disabled="!stampForm.stamp || stampForm.processing" @click="submitStamp">
+                                Uploader le cachet
+                            </PrimaryButton>
+                        </div>
+                    </div>
+                </section>
+
             </div>
         </div>
     </AuthenticatedLayout>

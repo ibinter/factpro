@@ -107,6 +107,7 @@ class CompanyController extends Controller
                 'id', 'name', 'legal_name', 'email', 'phone', 'address', 'city',
                 'country', 'currency', 'tax_id', 'trade_register', 'logo_path',
                 'invoice_footer', 'default_template', 'default_tax_rate',
+                'signature_path', 'stamp_path', 'signature_label', 'show_signature', 'show_stamp',
             ]),
             'templates' => collect(config('pdf_templates'))
                 ->map(fn ($t, $key) => ['key' => $key, 'name' => $t['name'], 'family' => $t['family']])
@@ -167,6 +168,69 @@ class CompanyController extends Controller
         $company->update(['logo_path' => $path]);
 
         return back()->with('success', 'Logo de la société mis à jour.');
+    }
+
+    /** Upload de la signature numérique de l'entreprise (image PNG/JPG). */
+    public function uploadSignature(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        $company = $user->currentCompany;
+        abort_unless($company, 404);
+        $this->authorizeManage($user, $company);
+
+        $request->validate([
+            'signature' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        if ($company->signature_path) {
+            Storage::disk('public')->delete($company->signature_path);
+        }
+
+        $path = $request->file('signature')->store('companies/signatures', 'public');
+        $company->update(['signature_path' => $path]);
+
+        return back()->with('success', 'Signature mise à jour.');
+    }
+
+    /** Upload du cachet/tampon de l'entreprise (image PNG/JPG transparente recommandée). */
+    public function uploadStamp(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        $company = $user->currentCompany;
+        abort_unless($company, 404);
+        $this->authorizeManage($user, $company);
+
+        $request->validate([
+            'stamp' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
+        if ($company->stamp_path) {
+            Storage::disk('public')->delete($company->stamp_path);
+        }
+
+        $path = $request->file('stamp')->store('companies/stamps', 'public');
+        $company->update(['stamp_path' => $path]);
+
+        return back()->with('success', 'Cachet mis à jour.');
+    }
+
+    /** Active/désactive signature et cachet, met à jour le libellé signataire. */
+    public function updateSignatureSettings(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        $company = $user->currentCompany;
+        abort_unless($company, 404);
+        $this->authorizeManage($user, $company);
+
+        $data = $request->validate([
+            'show_signature'   => 'boolean',
+            'show_stamp'       => 'boolean',
+            'signature_label'  => 'nullable|string|max:100',
+        ]);
+
+        $company->update($data);
+
+        return back()->with('success', 'Paramètres de signature enregistrés.');
     }
 
     /**

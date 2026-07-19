@@ -213,7 +213,17 @@
                     <td class="num">{{ number_format((float) $line->quantity, 2, ',', ' ') }}</td>
                     <td>{{ $line->unit }}</td>
                     <td class="num">{{ number_format((float) $line->unit_price, 0, ',', ' ') }}</td>
-                    <td class="num">{{ number_format((float) $line->discount_percent, 0) }}</td>
+                    <td class="num">
+                        @if ((float) $line->discount_percent > 0)
+                            @if (($line->line_discount_type ?? 'percent') === 'fixed')
+                                {{ number_format((float) $line->discount_percent, 0, ',', ' ') }}
+                            @else
+                                {{ number_format((float) $line->discount_percent, 0) }}%
+                            @endif
+                        @else
+                            —
+                        @endif
+                    </td>
                     <td class="num">{{ number_format((float) $line->tax_rate, 0) }}</td>
                     <td class="num">{{ number_format((float) $line->line_total, 0, ',', ' ') }}</td>
                 </tr>
@@ -277,6 +287,7 @@
         </tr>
     </table>
 @include('pdf.partials.signature')
+@include('pdf.partials.company-stamp')
 </main>
 
 </body>
