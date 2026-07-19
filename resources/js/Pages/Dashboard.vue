@@ -4,7 +4,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
 
 const props = defineProps({
-    stats: Object,
+    stats: { type: Object, default: () => ({}) },
     statusBreakdown: Object,
     recentDocuments: Array,
     chart: Array,
@@ -23,10 +23,10 @@ const fmtMoney = (n) => fmt(n) + ' XOF';
 const animatedValues = ref({ revenue: 0, outstanding: 0, invoices: 0, quotes: 0 });
 onMounted(() => {
     const targets = {
-        revenue: props.stats.revenue_month,
-        outstanding: props.stats.outstanding,
-        invoices: props.stats.invoices_month,
-        quotes: props.stats.quotes_pending,
+        revenue: props.stats?.revenue_month ?? 0,
+        outstanding: props.stats?.outstanding ?? 0,
+        invoices: props.stats?.invoices_month ?? 0,
+        quotes: props.stats?.quotes_pending ?? 0,
     };
     const steps = 40;
     let step = 0;

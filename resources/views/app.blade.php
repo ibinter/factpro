@@ -28,10 +28,6 @@
     <body class="font-sans antialiased">
         @inertia
 
-        <script>
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js'));
-            }
-        </script>
+        {{-- Service Worker registered once in app.js --}}
     </body>
 </html>

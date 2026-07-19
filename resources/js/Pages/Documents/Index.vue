@@ -5,10 +5,10 @@ import { ref, watch, computed } from 'vue';
 
 const props = defineProps({
     documents: Object,
-    filters: Object,
+    filters: { type: Object, default: () => ({}) },
     types: Array,
     categories: { type: Object, default: () => ({}) },
-    stats: Object,
+    stats: { type: Object, default: () => ({}) },
 });
 
 // ── Filtres ───────────────────────────────────────────────────────────────────
