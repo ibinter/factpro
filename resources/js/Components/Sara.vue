@@ -7,11 +7,11 @@ const input = ref('');
 const loading = ref(false);
 const messagesEl = ref(null);
 const messages = ref([
-    { role: 'assistant', content: 'Bonjour ! Je suis SARA, votre assistante IA FactPro. Comment puis-je vous aider aujourd\'hui ?' }
+    { role: 'assistant', content: "Bonjour ! Je suis SARA, votre assistante IA FactPro. Comment puis-je vous aider aujourd'hui ?" }
 ]);
 
 const suggestions = [
-    'C\'est quoi l\'essai gratuit ?',
+    "C'est quoi l'essai gratuit ?",
     'Quels sont les tarifs ?',
     'Est-ce compatible mobile ?',
     'Comment fonctionne le QR ?',
@@ -25,12 +25,12 @@ async function send(text) {
     loading.value = true;
     await scrollBottom();
     try {
-        const { data } = await axios.post('/api/sara/chat', {
-            messages: messages.value.filter(m => m.role !== 'system').slice(-10),
-        });
+        const history = messages.value.slice(-10).map(m => ({ role: m.role, content: m.content }));
+        const { data } = await axios.post('/api/sara/chat', { messages: history });
         messages.value.push({ role: 'assistant', content: data.reply });
-    } catch {
-        messages.value.push({ role: 'assistant', content: 'Désolée, je rencontre un problème technique. Réessayez dans un instant.' });
+    } catch (e) {
+        const err = e.response?.data?.error ?? e.response?.data?.message ?? null;
+        messages.value.push({ role: 'assistant', content: err ?? 'Désolée, problème de connexion. Réessayez.' });
     } finally {
         loading.value = false;
         await scrollBottom();

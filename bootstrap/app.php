@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->validateCsrfTokens(except: [
             'webhooks/*',
+            'api/sara/chat',
         ]);
 
         $middleware->alias([

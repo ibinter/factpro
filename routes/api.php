@@ -69,3 +69,9 @@ Route::prefix('v1')
         Route::get('/documents/{uuid}', [DocumentApiController::class, 'show'])->whereUuid('uuid')->name('documents.show');
         Route::get('/documents/{uuid}/pdf', [DocumentApiController::class, 'pdf'])->whereUuid('uuid')->name('documents.pdf');
     });
+
+// SARA — chatbot IA Groq (public, sans auth, throttlé)
+use App\Http\Controllers\SaraController;
+Route::post('/sara/chat', [SaraController::class, 'chat'])
+    ->middleware('throttle:30,1')
+    ->name('sara.chat');

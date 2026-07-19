@@ -3,7 +3,6 @@
 // Pages de vente publiques (cahier §1/§22) — possédé par l'agent Landing.
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PublicVerifyController;
-use App\Http\Controllers\SaraController;
 use Illuminate\Support\Facades\Route;
 
 // Grille tarifaire détaillée (Inertia).
@@ -25,7 +24,3 @@ Route::get('/api/public/verify/{uuid}', [PublicVerifyController::class, 'api'])
     ->middleware('throttle:120,1')
     ->name('public.verify.api');
 
-// SARA — chatbot IA Groq (public, throttlé).
-Route::post('/api/sara/chat', [SaraController::class, 'chat'])
-    ->middleware('throttle:30,1')
-    ->name('sara.chat');
