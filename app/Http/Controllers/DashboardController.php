@@ -22,17 +22,43 @@ class DashboardController extends Controller
         $invoices = (clone $base)->where('type', 'invoice');
         $monthStart = now()->startOfMonth();
 
+        $prevMonthStart = now()->subMonth()->startOfMonth();
+        $prevMonthEnd   = now()->subMonth()->endOfMonth();
+
+        $revenueMonth = (float) (clone $invoices)->where('issue_date', '>=', $monthStart)
+            ->whereNotIn('status', ['cancelled', 'draft'])->sum('total');
+        $revenuePrev  = (float) (clone $invoices)
+            ->whereBetween('issue_date', [$prevMonthStart, $prevMonthEnd])
+            ->whereNotIn('status', ['cancelled', 'draft'])->sum('total');
+
+        $invoicesMonth = (clone $invoices)->where('issue_date', '>=', $monthStart)->count();
+        $invoicesPrev  = (clone $invoices)->whereBetween('issue_date', [$prevMonthStart, $prevMonthEnd])->count();
+
         $stats = [
-            'revenue_month' => (float) (clone $invoices)->where('issue_date', '>=', $monthStart)
-                ->whereNotIn('status', ['cancelled', 'draft'])->sum('total'),
-            'outstanding' => (float) (clone $invoices)->whereIn('status', ['sent', 'partial', 'overdue', 'viewed'])
+            'revenue_month'      => $revenueMonth,
+            'revenue_prev'       => $revenuePrev,
+            'revenue_trend'      => $revenuePrev > 0 ? round((($revenueMonth - $revenuePrev) / $revenuePrev) * 100, 1) : null,
+            'outstanding'        => (float) (clone $invoices)->whereIn('status', ['sent', 'partial', 'overdue', 'viewed'])
                 ->selectRaw('COALESCE(SUM(total - amount_paid), 0) as due')->value('due'),
-            'invoices_month' => (clone $invoices)->where('issue_date', '>=', $monthStart)->count(),
-            'quotes_pending' => (clone $base)->where('type', 'quote')
+            'invoices_month'     => $invoicesMonth,
+            'invoices_prev'      => $invoicesPrev,
+            'invoices_trend'     => $invoicesPrev > 0 ? round((($invoicesMonth - $invoicesPrev) / $invoicesPrev) * 100, 1) : null,
+            'quotes_pending'     => (clone $base)->where('type', 'quote')
                 ->whereIn('status', ['draft', 'sent', 'viewed'])->count(),
-            'customers' => $company->customers()->count(),
-            'products' => $company->products()->count(),
+            'customers'          => $company->customers()->count(),
+            'products'           => $company->products()->count(),
+            'paid_count'         => (clone $invoices)->where('status', 'paid')->count(),
+            'total_invoices'     => (clone $invoices)->whereNotIn('status', ['draft'])->count(),
         ];
+
+        // Répartition des statuts des documents récents (30 jours)
+        $statusBreakdown = (clone $base)
+            ->where('issue_date', '>=', now()->subDays(30))
+            ->whereNotIn('type', ['pos_ticket'])
+            ->selectRaw('status, COUNT(*) as count')
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
 
         $recentDocuments = (clone $base)
             ->with('customer:id,name')
@@ -56,6 +82,7 @@ class DashboardController extends Controller
 
         return Inertia::render('Dashboard', [
             'stats' => $stats,
+            'statusBreakdown' => $statusBreakdown,
             'recentDocuments' => $recentDocuments,
             'chart' => $chart,
             'monthlyRevenue' => CacheService::rememberForCompany(
