@@ -47,7 +47,7 @@
     .company-name { font-size: 140%; font-weight: bold; text-transform: uppercase; }
     .sep      { overflow: hidden; white-space: nowrap; border-bottom: 1px dashed #000; margin: 3px 0; }
     .total-line { font-size: 140%; font-weight: bold; }
-    .watermark-box { border: 1px dashed #000; padding: 2px; margin: 4px 0; font-weight: bold; text-align: center; }
+    .watermark-box { font-size: 75%; text-align: center; margin: 2px 0; opacity: 0.6; }
     .cut      { text-align: center; margin: 8px auto; width: 104mm; color: #000; font-size: 9pt; }
     .section-title { font-weight: bold; text-transform: uppercase; background: #000; color: #fff; padding: 1px 3px; margin: 3px 0 2px; font-size: 8pt; }
     .url      { word-break: break-all; }
@@ -208,10 +208,6 @@
             </table>
         @endif
 
-        @if ($watermark)
-            <div class="watermark-box upper">** {{ $watermark }} **</div>
-        @endif
-
         {{-- QR code centré --}}
         <div class="sep"></div>
         <div class="qr center">
@@ -231,6 +227,9 @@
             <div class="small">Document authentifié — IBIG FactPro</div>
             <div class="small">Conservation : 10 ans (Art. L123-22 C. com.)</div>
         </div>
+        @if ($watermark)
+            <div class="watermark-box">[ {{ $watermark }} ]</div>
+        @endif
 
     </div>
 @endfor

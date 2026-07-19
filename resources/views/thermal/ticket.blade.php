@@ -38,7 +38,7 @@
     .company-name { font-size: 135%; font-weight: bold; text-transform: uppercase; }
     .sep { overflow: hidden; white-space: nowrap; }
     .total-line { font-size: 140%; font-weight: bold; }
-    .watermark-box { border: 1px dashed #000; padding: 2px; margin: 4px 0; font-weight: bold; text-align: center; }
+    .watermark-box { font-size: 75%; text-align: center; margin: 2px 0; opacity: 0.6; }
     .cut { text-align: center; margin: 8px auto; width: {{ $width }}mm; color: #000; font-size: {{ $fontSize }}; }
 
     table { width: 100%; border-collapse: collapse; }
@@ -160,10 +160,6 @@
             </table>
         @endif
 
-        @if ($watermark)
-            <div class="watermark-box upper">** {{ $watermark }} **</div>
-        @endif
-
         {{-- QR d'authenticité --}}
         <div class="qr center">
             <img src="{{ $qrDataUri }}" alt="QR d'authenticité">
@@ -181,6 +177,9 @@
             @endif
             <div class="small">— Propulsé par IBIG FactPro —</div>
         </div>
+        @if ($watermark)
+            <div class="watermark-box">[ {{ $watermark }} ]</div>
+        @endif
     </div>
 @endfor
 
