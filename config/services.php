@@ -74,4 +74,8 @@ return [
         'zones'   => env('COD_ZONES', 'Abidjan,Dakar'),
     ],
 
+    'groq' => [
+        'api_key' => env('GROQ_API_KEY'),
+    ],
+
 ];
