@@ -83,9 +83,9 @@ const finalize = () => {
 };
 
 const showStatusModal = ref(false);
-const statusForm = useForm({ status: props.document.status });
+const selectedStatus = ref(props.document.status);
 const changeStatus = () => {
-    statusForm.post(route('documents.status', props.document.id), {
+    router.post(route('documents.status', props.document.id), { status: selectedStatus.value }, {
         preserveScroll: true,
         onSuccess: () => { showStatusModal.value = false; },
     });
@@ -864,7 +864,7 @@ const planProgress = computed(() => {
                 <h2 class="text-lg font-semibold text-gray-900 mb-4">Changer le statut</h2>
                 <div class="mb-4">
                     <InputLabel value="Nouveau statut" />
-                    <select v-model="statusForm.status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm">
+                    <select v-model="selectedStatus" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm">
                         <option value="draft">Brouillon</option>
                         <option value="sent">Envoyé</option>
                         <option value="viewed">Vu</option>
@@ -878,7 +878,7 @@ const planProgress = computed(() => {
                 </div>
                 <div class="flex justify-end gap-3">
                     <SecondaryButton @click="showStatusModal = false">Annuler</SecondaryButton>
-                    <PrimaryButton @click="changeStatus" :disabled="statusForm.processing">Confirmer</PrimaryButton>
+                    <PrimaryButton @click="changeStatus">Confirmer</PrimaryButton>
                 </div>
             </div>
         </Modal>
