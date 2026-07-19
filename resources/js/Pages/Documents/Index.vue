@@ -77,13 +77,21 @@ const statusDot = {
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 const typeConfig = {
-    invoice:       { label: 'Facture',         bg: 'bg-blue-600',    text: 'text-blue-600',    icon: '🧾' },
-    quote:         { label: 'Devis',           bg: 'bg-amber-500',   text: 'text-amber-600',   icon: '📋' },
-    proforma:      { label: 'Proforma',        bg: 'bg-violet-500',  text: 'text-violet-600',  icon: '📄' },
-    delivery_note: { label: 'Bon de livraison',bg: 'bg-teal-500',    text: 'text-teal-600',    icon: '📦' },
-    credit_note:   { label: 'Avoir',           bg: 'bg-rose-500',    text: 'text-rose-600',    icon: '↩️' },
-    purchase_order:{ label: 'Bon de commande', bg: 'bg-indigo-500',  text: 'text-indigo-600',  icon: '🛒' },
-    receipt:       { label: 'Reçu',            bg: 'bg-emerald-500', text: 'text-emerald-600', icon: '🧾' },
+    invoice:         { label: 'Facture',              bg: 'bg-blue-600',    text: 'text-blue-600'    },
+    quote:           { label: 'Devis',                bg: 'bg-amber-500',   text: 'text-amber-600'   },
+    proforma:        { label: 'Facture Proforma',     bg: 'bg-violet-500',  text: 'text-violet-600'  },
+    sales_order:     { label: 'Bon de Commande',      bg: 'bg-sky-500',     text: 'text-sky-600'     },
+    purchase_order:  { label: 'Commande Fournisseur', bg: 'bg-indigo-500',  text: 'text-indigo-600'  },
+    delivery_note:   { label: 'Bon de Livraison',     bg: 'bg-teal-500',    text: 'text-teal-600'    },
+    credit_note:     { label: 'Avoir',                bg: 'bg-rose-500',    text: 'text-rose-600'    },
+    payment_receipt: { label: 'Reçu de Paiement',     bg: 'bg-emerald-500', text: 'text-emerald-600' },
+    deposit_invoice: { label: "Facture d'Acompte",    bg: 'bg-cyan-500',    text: 'text-cyan-600'    },
+    balance_invoice: { label: 'Facture de Solde',     bg: 'bg-blue-700',    text: 'text-blue-700'    },
+    work_order:      { label: 'Bon de Travaux',       bg: 'bg-orange-500',  text: 'text-orange-600'  },
+    pos_ticket:      { label: 'Ticket de Caisse',     bg: 'bg-gray-500',    text: 'text-gray-600'    },
+    quittance:       { label: 'Quittance',            bg: 'bg-lime-500',    text: 'text-lime-600'    },
+    rma:             { label: 'Bon de Retour RMA',    bg: 'bg-pink-500',    text: 'text-pink-600'    },
+    remittance:      { label: 'Bordereau de Remise',  bg: 'bg-purple-500',  text: 'text-purple-600'  },
 };
 const getTypeConf = (t) => typeConfig[t] ?? { label: t, bg: 'bg-gray-400', text: 'text-gray-600', icon: '📄' };
 
