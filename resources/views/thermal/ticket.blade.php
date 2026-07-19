@@ -78,9 +78,13 @@
 
     @media print {
         .no-print { display: none !important; }
-        html, body { background: #fff; margin: 0; padding: 0; }
-        .ticket { margin: 0; box-shadow: none; width: {{ $width }}mm; }
-        .cut { margin: 2mm auto; }
+        html, body {
+            background: #fff;
+            margin: 0; padding: 0;
+            width: {{ $width }}mm;   /* force la largeur thermique — le contenu sera à gauche */
+        }
+        .ticket { margin: 0; box-shadow: none; page-break-inside: avoid; }
+        .cut { margin: 1mm 0; page-break-before: always; }
     }
 </style>
 <style>
@@ -106,6 +110,7 @@
         </select>
     </label>
     <a href="#" onclick="history.back(); return false;">← Retour</a>
+    <span style="font-size:12px;color:#fcd34d;">⚠ Dans la boîte d'impression : sélectionnez votre imprimante thermique {{ $width }}mm</span>
 </div>
 
 @for ($copy = 1; $copy <= $copies; $copy++)

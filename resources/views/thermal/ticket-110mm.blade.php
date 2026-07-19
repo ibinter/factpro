@@ -103,9 +103,13 @@
 
     @media print {
         .no-print { display: none !important; }
-        html, body { background: #fff; margin: 0; padding: 0; }
-        .ticket { margin: 0; box-shadow: none; }
-        .cut { margin: 2mm auto; }
+        html, body {
+            background: #fff;
+            margin: 0; padding: 0;
+            width: 104mm;
+        }
+        .ticket { margin: 0; box-shadow: none; page-break-inside: avoid; }
+        .cut { margin: 1mm 0; page-break-before: always; }
     }
 </style>
 <style>
