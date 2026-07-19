@@ -82,6 +82,15 @@ const finalize = () => {
     router.post(route('documents.finalize', props.document.id), {}, { preserveScroll: true });
 };
 
+const showStatusModal = ref(false);
+const statusForm = useForm({ status: props.document.status });
+const changeStatus = () => {
+    statusForm.post(route('documents.status', props.document.id), {
+        preserveScroll: true,
+        onSuccess: () => { showStatusModal.value = false; },
+    });
+};
+
 const openThermal = () => {
     window.open(route('documents.thermal', props.document.id) + '?width=80', '_blank');
 };
@@ -253,6 +262,13 @@ const planProgress = computed(() => {
                         class="rounded-md bg-brand-900 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-800"
                     >
                         ✉ Envoyer
+                    </button>
+                    <button
+                        v-if="document.finalized_at"
+                        @click="showStatusModal = true"
+                        class="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                    >
+                        ⚡ Statut
                     </button>
                     <button
                         v-if="!document.finalized_at"
@@ -838,6 +854,31 @@ const planProgress = computed(() => {
                         @click="submitPlan">
                         Créer le plan
                     </PrimaryButton>
+                </div>
+            </div>
+        </Modal>
+
+        <!-- Modal changement statut -->
+        <Modal :show="showStatusModal" @close="showStatusModal = false">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Changer le statut</h2>
+                <div class="mb-4">
+                    <InputLabel value="Nouveau statut" />
+                    <select v-model="statusForm.status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm">
+                        <option value="draft">Brouillon</option>
+                        <option value="sent">Envoyé</option>
+                        <option value="viewed">Vu</option>
+                        <option value="accepted">Accepté</option>
+                        <option value="rejected">Refusé</option>
+                        <option value="partial">Partiellement payé</option>
+                        <option value="paid">Payé</option>
+                        <option value="overdue">En retard</option>
+                        <option value="cancelled">Annulé</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3">
+                    <SecondaryButton @click="showStatusModal = false">Annuler</SecondaryButton>
+                    <PrimaryButton @click="changeStatus" :disabled="statusForm.processing">Confirmer</PrimaryButton>
                 </div>
             </div>
         </Modal>

@@ -304,6 +304,7 @@ class DocumentController extends Controller
         $this->authorizeDocument($request, $document);
 
         $this->documents->finalize($document);
+        $document->refresh();
 
         DocumentAuditLog::record($document, 'finalized', $request->user());
 
@@ -328,6 +329,28 @@ class DocumentController extends Controller
         }
 
         return back()->with('success', 'Document finalisé et scellé (QR d\'authenticité actif).');
+    }
+
+    /** Change le statut manuellement (override ERP). */
+    public function changeStatus(Request $request, Document $document): RedirectResponse
+    {
+        $this->authorizeDocument($request, $document);
+
+        $request->validate(['status' => 'required|in:draft,sent,viewed,accepted,rejected,partial,paid,overdue,cancelled,converted']);
+
+        $old = $document->status;
+        $new = $request->status;
+
+        $document->update(['status' => $new]);
+
+        if (in_array($new, ['paid']) && !$document->finalized_at) {
+            $this->documents->finalize($document);
+        }
+
+        DocumentAuditLog::record($document, "status_changed:{$old}→{$new}", $request->user());
+        CacheService::forgetCompany($document->company_id);
+
+        return back()->with('success', 'Statut mis à jour.');
     }
 
     /** Conversion devis→facture, facture→avoir, etc. */
