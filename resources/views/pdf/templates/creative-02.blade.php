@@ -88,9 +88,9 @@
                 </table>
             </td>
             <td>
-                @if ($document->customer)
                     <div class="badge-box">
                         <div class="label">Facturé à</div>
+                    @if ($document->customer)
                         <div class="name">{{ $document->customer->name }}</div>
                         <div style="font-size:8.5px; color:#6B7280; line-height:1.5">
                             @if($document->customer->address){{ $document->customer->address }}<br>@endif
@@ -100,7 +100,10 @@
                             @if($document->customer->tax_id)<br>N° Fiscal : {{ $document->customer->tax_id }}@endif
                         </div>
                     </div>
-                @endif
+                    @else
+                        <div class="name" style="color:#aaa;font-style:italic;">&#8212; Non renseign&eacute; &#8212;</div>
+                    @endif
+                    </div>
             </td>
         </tr>
     </table>

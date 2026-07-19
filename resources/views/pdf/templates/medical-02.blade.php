@@ -90,6 +90,7 @@
             @if($document->customer)
             <div class="badge-box">
                 <div class="label">Patient / Client</div>
+                @if ($document->customer)
                 <div class="name">{{ $document->customer->name }}</div>
                 <div class="company-meta">
                     @if($document->customer->address){{ $document->customer->address }}<br>@endif
@@ -97,6 +98,9 @@
                     @if($document->customer->phone){{ $document->customer->phone }}@endif
                     @if($document->customer->email) · {{ $document->customer->email }}@endif
                 </div>
+                @else
+                    <div class="name" style="color:#aaa;font-style:italic;">&#8212; Non renseign&eacute; &#8212;</div>
+                @endif
             </div>
             @endif
         </td>
