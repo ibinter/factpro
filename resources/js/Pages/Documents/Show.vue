@@ -24,10 +24,16 @@ const props = defineProps({
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
 
 const submittingApproval = ref(false);
+const approvalError = ref('');
 const submitForApproval = () => {
     if (submittingApproval.value) return;
     submittingApproval.value = true;
+    approvalError.value = '';
     router.post(route('approval.submit', props.document.id), {}, {
+        onError: (errors) => {
+            approvalError.value = errors.workflow ?? errors.message ?? 'Une erreur est survenue. Vérifiez qu\'un circuit de validation est configuré.';
+        },
+        onSuccess: () => { approvalError.value = ''; },
         onFinish: () => { submittingApproval.value = false; },
     });
 };
@@ -662,6 +668,9 @@ const planProgress = computed(() => {
                             🔒 Plan requis
                         </span>
                     </div>
+                    <p v-if="approvalError" class="mt-3 rounded-lg bg-red-50 px-4 py-2 text-sm text-red-700 ring-1 ring-red-200">
+                        ⚠️ {{ approvalError }}
+                    </p>
                 </div>
 
                 <!-- Documents liés -->
