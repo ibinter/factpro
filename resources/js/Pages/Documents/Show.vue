@@ -22,6 +22,15 @@ const props = defineProps({
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
 
+const submittingApproval = ref(false);
+const submitForApproval = () => {
+    if (submittingApproval.value) return;
+    submittingApproval.value = true;
+    router.post(route('approval.submit', props.document.id), {}, {
+        onFinish: () => { submittingApproval.value = false; },
+    });
+};
+
 const statusLabels = {
     draft: 'Brouillon', sent: 'Envoyé', viewed: 'Vu', accepted: 'Accepté',
     rejected: 'Refusé', partial: 'Partiellement payé', paid: 'Payé', overdue: 'En retard',
@@ -633,10 +642,11 @@ const planProgress = computed(() => {
                             <p class="mt-1 text-sm text-gray-500">Ce document n'est pas encore soumis à validation.</p>
                         </div>
                         <button
-                            class="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
-                            @click="() => {}"
+                            class="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50"
+                            :disabled="submittingApproval"
+                            @click="submitForApproval"
                         >
-                            Soumettre à validation
+                            {{ submittingApproval ? 'Envoi…' : 'Soumettre à validation' }}
                         </button>
                     </div>
                 </div>
