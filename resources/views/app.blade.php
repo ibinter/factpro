@@ -21,6 +21,7 @@
 
         <!-- Scripts -->
         @routes
+        <script>window.Ziggy = Ziggy;</script>
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
     </head>
