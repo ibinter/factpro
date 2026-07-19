@@ -6,7 +6,7 @@ import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted, watch } from 'vue';
 import { useAiAssist } from '@/Composables/useAiAssist';
 import axios from 'axios';
 
@@ -24,7 +24,28 @@ const props = defineProps({
 const isEdit = computed(() => !!props.document);
 const typeLabel = computed(() => props.types.find((t) => t.value === (props.document?.type ?? props.documentType))?.label ?? 'Document');
 
-// ── Customers list (local copy so new quick-adds appear immediately) ──────────
+// ── Schéma par type ───────────────────────────────────────────────────────────
+const TYPE_SCHEMAS = {
+    invoice:         { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: true,  clientLabel: 'Client',                  extraSection: null },
+    quote:           { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: false, clientLabel: 'Prospect / Client',        extraSection: 'quote' },
+    proforma:        { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: true,  clientLabel: 'Client',                  extraSection: null },
+    sales_order:     { showLines: true,  showPrices: true,  showTax: true,  showDiscount: true,  showDueDate: false, clientLabel: 'Client',                  extraSection: 'sales_order' },
+    purchase_order:  { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Fournisseur',             extraSection: 'purchase_order' },
+    delivery_note:   { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client destinataire',     extraSection: 'delivery_note' },
+    credit_note:     { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client',                  extraSection: 'credit_note' },
+    payment_receipt: { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Reçu de',                 extraSection: 'payment_receipt' },
+    deposit_invoice: { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Client',                  extraSection: 'deposit_invoice' },
+    balance_invoice: { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Client',                  extraSection: 'balance_invoice' },
+    work_order:      { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client',                  extraSection: 'work_order' },
+    pos_ticket:      { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: 'Client (optionnel)',       extraSection: 'pos_ticket' },
+    quittance:       { showLines: false, showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Locataire',               extraSection: 'quittance' },
+    rma:             { showLines: true,  showPrices: false, showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Client',                  extraSection: 'rma' },
+    remittance:      { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Bénéficiaire',            extraSection: 'remittance' },
+};
+
+const schema = computed(() => TYPE_SCHEMAS[form.type] ?? TYPE_SCHEMAS.invoice);
+
+// ── Customers list ────────────────────────────────────────────────────────────
 const customersList = ref([...(props.customers ?? [])]);
 
 // ── Lines ─────────────────────────────────────────────────────────────────────
@@ -36,87 +57,90 @@ const emptyLine = () => ({
     unit_price: 0,
     line_discount_type: 'percent',
     discount_percent: 0,
-    tax_rate: props.defaults.tax_rate,
+    tax_rate: props.defaults?.tax_rate ?? 18,
 });
 
+// ── Form ──────────────────────────────────────────────────────────────────────
 const form = useForm({
-    type: props.document?.type ?? props.documentType,
-    customer_id: props.document?.customer_id ?? null,
-    reference: props.document?.reference ?? '',
-    issue_date: props.document?.issue_date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
-    due_date: props.document?.due_date?.slice(0, 10) ?? null,
-    currency: props.document?.currency ?? props.defaults.currency,
-    template_key: props.document?.template_key ?? props.defaultTemplate ?? null,
-    discount_type: props.document?.discount_type ?? null,
+    type:           props.document?.type ?? props.documentType,
+    customer_id:    props.document?.customer_id ?? null,
+    reference:      props.document?.reference ?? '',
+    issue_date:     props.document?.issue_date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
+    due_date:       props.document?.due_date?.slice(0, 10) ?? null,
+    currency:       props.document?.currency ?? props.defaults?.currency ?? 'XOF',
+    template_key:   props.document?.template_key ?? props.defaultTemplate ?? null,
+    discount_type:  props.document?.discount_type ?? null,
     discount_value: Number(props.document?.discount_value ?? 0),
-    notes: props.document?.notes ?? '',
-    terms: props.document?.terms ?? '',
+    notes:          props.document?.notes ?? '',
+    terms:          props.document?.terms ?? '',
+    meta:           props.document?.meta ?? {},
     lines: props.document?.lines?.map((l) => ({
-        product_id: l.product_id,
-        description: l.description,
-        quantity: Number(l.quantity),
-        unit: l.unit,
-        unit_price: Number(l.unit_price),
+        product_id:        l.product_id,
+        description:       l.description,
+        quantity:          Number(l.quantity),
+        unit:              l.unit,
+        unit_price:        Number(l.unit_price),
         line_discount_type: l.line_discount_type ?? 'percent',
-        discount_percent: Number(l.discount_percent),
-        tax_rate: Number(l.tax_rate),
+        discount_percent:  Number(l.discount_percent),
+        tax_rate:          Number(l.tax_rate),
     })) ?? [emptyLine()],
 });
 
-const addLine = () => form.lines.push(emptyLine());
-const removeLine = (index) => form.lines.splice(index, 1);
+const addLine    = () => form.lines.push(emptyLine());
+const removeLine = (i) => form.lines.splice(i, 1);
 
 const onProductSelect = (line) => {
-    const product = props.products.find((p) => p.id === line.product_id);
-    if (product) {
-        line.description = product.name + (product.description ? ' — ' + product.description : '');
-        line.unit_price = Number(product.price);
-        line.tax_rate = Number(product.tax_rate);
-        line.unit = product.unit;
+    const p = props.products.find((p) => p.id === line.product_id);
+    if (p) {
+        line.description = p.name + (p.description ? ' — ' + p.description : '');
+        line.unit_price  = Number(p.price);
+        line.tax_rate    = Number(p.tax_rate);
+        line.unit        = p.unit;
     }
 };
 
-// ── Calcul des totaux ─────────────────────────────────────────────────────────
+// ── Calculs ───────────────────────────────────────────────────────────────────
 const lineTotal = (line) => {
     const base = line.quantity * line.unit_price;
-    if (line.line_discount_type === 'fixed') {
+    if (line.line_discount_type === 'fixed')
         return Math.max(0, Math.round((base - (line.discount_percent || 0)) * 100) / 100);
-    }
     return Math.round(base * (1 - (line.discount_percent || 0) / 100) * 100) / 100;
 };
 
-const subtotal = computed(() => form.lines.reduce((sum, l) => sum + lineTotal(l), 0));
+const subtotal = computed(() => {
+    if (!schema.value.showLines) {
+        // Pour quittance / reçu : calculer depuis meta
+        if (form.type === 'quittance') return (Number(form.meta.rent_amount) || 0) + (Number(form.meta.charges_amount) || 0);
+        if (form.type === 'payment_receipt') return Number(form.meta.amount_received) || 0;
+    }
+    return form.lines.reduce((s, l) => s + lineTotal(l), 0);
+});
 
 const discountAmount = computed(() => {
     if (form.discount_type === 'percent') return (subtotal.value * (form.discount_value || 0)) / 100;
-    if (form.discount_type === 'fixed') return Math.min(form.discount_value || 0, subtotal.value);
+    if (form.discount_type === 'fixed')   return Math.min(form.discount_value || 0, subtotal.value);
     return 0;
 });
 
 const taxAmount = computed(() => {
+    if (!schema.value.showTax) return 0;
     const base = subtotal.value - discountAmount.value;
     if (subtotal.value <= 0) return 0;
-    return form.lines.reduce((sum, l) => {
+    return form.lines.reduce((s, l) => {
         const share = lineTotal(l) / subtotal.value;
-        return sum + base * share * ((l.tax_rate || 0) / 100);
+        return s + base * share * ((l.tax_rate || 0) / 100);
     }, 0);
 });
 
 const total = computed(() => subtotal.value - discountAmount.value + taxAmount.value);
-
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
 
 // ── IA ────────────────────────────────────────────────────────────────────────
 const { loading: aiLoading, suggestDescription, suggestPrice } = useAiAssist();
 const aiAvailable = ref(false);
-
 onMounted(async () => {
-    try {
-        const { data } = await axios.get('/ai/status');
-        aiAvailable.value = data.available && data.plan_ok;
-    } catch { /* IA non disponible */ }
+    try { const { data } = await axios.get('/ai/status'); aiAvailable.value = data.available && data.plan_ok; } catch {}
 });
-
 const fillDescription = async (line) => {
     if (!aiAvailable.value) return;
     const name = props.products.find(p => p.id === line.product_id)?.name || line.description;
@@ -124,7 +148,6 @@ const fillDescription = async (line) => {
     const desc = await suggestDescription(name);
     if (desc && !line.description) line.description = desc;
 };
-
 const fillPrice = async (line) => {
     if (!aiAvailable.value) return;
     const name = props.products.find(p => p.id === line.product_id)?.name || line.description;
@@ -133,19 +156,13 @@ const fillPrice = async (line) => {
     if (price !== null && price > 0) line.unit_price = price;
 };
 
-// ── Modal création rapide client ─────────────────────────────────────────────
+// ── Modal création rapide client ──────────────────────────────────────────────
 const showQuickModal = ref(false);
-const quickSaving = ref(false);
-const quickError = ref('');
-const quickForm = ref({ type: 'company', name: '', email: '', phone: '', address: '' });
-
-const openQuickModal = () => {
-    quickForm.value = { type: 'company', name: '', email: '', phone: '', address: '' };
-    quickError.value = '';
-    showQuickModal.value = true;
-};
+const quickSaving   = ref(false);
+const quickError    = ref('');
+const quickForm     = ref({ type: 'company', name: '', email: '', phone: '', address: '' });
+const openQuickModal  = () => { quickForm.value = { type: 'company', name: '', email: '', phone: '', address: '' }; quickError.value = ''; showQuickModal.value = true; };
 const closeQuickModal = () => { showQuickModal.value = false; };
-
 const saveQuickCustomer = async () => {
     quickError.value = '';
     if (!quickForm.value.name.trim()) { quickError.value = 'Le nom est requis.'; return; }
@@ -157,36 +174,26 @@ const saveQuickCustomer = async () => {
         closeQuickModal();
     } catch (e) {
         quickError.value = e.response?.data?.message || e.response?.data?.error || 'Erreur lors de la création.';
-    } finally {
-        quickSaving.value = false;
-    }
+    } finally { quickSaving.value = false; }
 };
 
-// ── Sélecteur de templates par famille ───────────────────────────────────────
-const templateFamilies = computed(() => {
-    const groups = {};
-    for (const t of props.templates) {
-        (groups[t.family] ??= []).push(t);
-    }
-    return groups;
-});
-const activeFamily = ref(null);
-
-const filteredTemplates = computed(() => {
-    if (!activeFamily.value) return props.templates;
-    return props.templates.filter(t => t.family === activeFamily.value);
-});
-
-const families = computed(() => [...new Set(props.templates.map(t => t.family))]);
+// ── Templates ─────────────────────────────────────────────────────────────────
+const activeFamily      = ref(null);
+const families          = computed(() => [...new Set(props.templates.map(t => t.family))]);
+const filteredTemplates = computed(() => activeFamily.value ? props.templates.filter(t => t.family === activeFamily.value) : props.templates);
 
 // ── Submit ────────────────────────────────────────────────────────────────────
 const submit = () => {
-    if (isEdit.value) {
-        form.put(route('documents.update', props.document.id));
-    } else {
-        form.post(route('documents.store'));
-    }
+    if (isEdit.value) form.put(route('documents.update', props.document.id));
+    else              form.post(route('documents.store'));
 };
+
+// ── Mois disponibles pour quittance ──────────────────────────────────────────
+const MOIS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 5 }, (_, i) => currentYear - 2 + i);
+
+const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (Wave)','Mobile Money (Orange Money)','Carte bancaire','Autre'];
 </script>
 
 <template>
@@ -205,9 +212,7 @@ const submit = () => {
 
         <!-- Modal création rapide client -->
         <Teleport to="body">
-            <div v-if="showQuickModal"
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4"
-                @click.self="closeQuickModal">
+            <div v-if="showQuickModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4" @click.self="closeQuickModal">
                 <div class="w-full max-w-md rounded-2xl bg-white shadow-2xl">
                     <div class="flex items-center justify-between border-b px-6 py-4">
                         <h3 class="text-base font-bold text-gray-900">Nouveau client rapide</h3>
@@ -217,40 +222,34 @@ const submit = () => {
                     </div>
                     <div class="space-y-4 px-6 py-5">
                         <p v-if="quickError" class="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-700">{{ quickError }}</p>
-
                         <div>
                             <label class="block text-xs font-medium text-gray-700 mb-1">Type *</label>
-                            <select v-model="quickForm.type" class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                            <select v-model="quickForm.type" class="block w-full rounded-lg border-gray-300 text-sm shadow-sm">
                                 <option value="company">Société / Entreprise</option>
                                 <option value="individual">Particulier</option>
                             </select>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-700 mb-1">Nom *</label>
-                            <input v-model="quickForm.name" type="text" placeholder="Nom de l'entreprise ou du client"
-                                class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500"
-                                @keyup.enter="saveQuickCustomer" />
+                            <input v-model="quickForm.name" type="text" placeholder="Nom du client" class="block w-full rounded-lg border-gray-300 text-sm shadow-sm" @keyup.enter="saveQuickCustomer" />
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 mb-1">Email</label>
-                                <input v-model="quickForm.email" type="email" placeholder="contact@..." class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                <input v-model="quickForm.email" type="email" class="block w-full rounded-lg border-gray-300 text-sm shadow-sm" />
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-gray-700 mb-1">Téléphone</label>
-                                <input v-model="quickForm.phone" type="tel" placeholder="+225..." class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                <input v-model="quickForm.phone" type="tel" class="block w-full rounded-lg border-gray-300 text-sm shadow-sm" />
                             </div>
                         </div>
                         <div>
                             <label class="block text-xs font-medium text-gray-700 mb-1">Adresse</label>
-                            <input v-model="quickForm.address" type="text" class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                            <input v-model="quickForm.address" type="text" class="block w-full rounded-lg border-gray-300 text-sm shadow-sm" />
                         </div>
                     </div>
                     <div class="flex justify-end gap-3 border-t px-6 py-4">
-                        <button type="button" @click="closeQuickModal"
-                            class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">
-                            Annuler
-                        </button>
+                        <button type="button" @click="closeQuickModal" class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">Annuler</button>
                         <button type="button" @click="saveQuickCustomer" :disabled="quickSaving"
                             class="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-60 flex items-center gap-2">
                             <span v-if="quickSaving" class="h-3.5 w-3.5 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
@@ -264,61 +263,66 @@ const submit = () => {
         <div class="py-8">
             <form @submit.prevent="submit" class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
 
-                <!-- En-tête du document -->
-                <div class="grid gap-4 rounded-xl bg-white p-6 shadow-sm border border-gray-100 sm:grid-cols-2 lg:grid-cols-4">
-                    <div v-if="!isEdit">
-                        <InputLabel value="Type de document" />
-                        <select v-model="form.type" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
-                            <option v-for="t in types" :key="t.value" :value="t.value">{{ t.label }}</option>
-                        </select>
-                    </div>
-
-                    <!-- Sélecteur client avec bouton création rapide -->
-                    <div>
-                        <InputLabel value="Client" />
-                        <div class="mt-1 flex items-center gap-1.5">
-                            <select v-model="form.customer_id" class="block min-w-0 flex-1 rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
-                                <option :value="null">— Aucun —</option>
-                                <option v-for="c in customersList" :key="c.id" :value="c.id">{{ c.name }}</option>
+                <!-- ── En-tête commun ────────────────────────────────────── -->
+                <div class="rounded-xl bg-white p-6 shadow-sm border border-gray-100 space-y-4">
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <!-- Type -->
+                        <div v-if="!isEdit">
+                            <InputLabel value="Type de document" />
+                            <select v-model="form.type" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option v-for="t in types" :key="t.value" :value="t.value">{{ t.label }}</option>
                             </select>
-                            <button type="button" @click="openQuickModal"
-                                class="flex-shrink-0 rounded-lg border border-brand-300 bg-brand-50 p-2 text-brand-700 hover:bg-brand-100 transition-colors"
-                                title="Ajouter un nouveau client">
-                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-                                </svg>
-                            </button>
                         </div>
-                        <InputError :message="form.errors.customer_id" class="mt-1" />
+
+                        <!-- Client -->
+                        <div>
+                            <InputLabel :value="schema.clientLabel" />
+                            <div class="mt-1 flex items-center gap-1.5">
+                                <select v-model="form.customer_id" class="block min-w-0 flex-1 rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                    <option :value="null">— Aucun —</option>
+                                    <option v-for="c in customersList" :key="c.id" :value="c.id">{{ c.name }}</option>
+                                </select>
+                                <button type="button" @click="openQuickModal"
+                                    class="flex-shrink-0 rounded-lg border border-brand-300 bg-brand-50 p-2 text-brand-700 hover:bg-brand-100 transition-colors" title="Ajouter">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                                </button>
+                            </div>
+                            <InputError :message="form.errors.customer_id" class="mt-1" />
+                        </div>
+
+                        <!-- Date émission -->
+                        <div>
+                            <InputLabel value="Date d'émission *" />
+                            <TextInput v-model="form.issue_date" type="date" class="mt-1 block w-full" required />
+                            <InputError :message="form.errors.issue_date" class="mt-1" />
+                        </div>
+
+                        <!-- Échéance (conditionnelle) -->
+                        <div v-if="schema.showDueDate">
+                            <InputLabel value="Échéance" />
+                            <TextInput v-model="form.due_date" type="date" class="mt-1 block w-full" />
+                            <InputError :message="form.errors.due_date" class="mt-1" />
+                        </div>
+
+                        <!-- Référence client (pas pour ticket/quittance) -->
+                        <div v-if="!['pos_ticket','quittance'].includes(form.type)">
+                            <InputLabel value="Référence client" />
+                            <TextInput v-model="form.reference" class="mt-1 block w-full" />
+                        </div>
+
+                        <!-- Devise (pas pour quittance/reçu simple) -->
+                        <div v-if="!['quittance'].includes(form.type)">
+                            <InputLabel value="Devise" />
+                            <TextInput v-model="form.currency" maxlength="3" class="mt-1 block w-full uppercase" />
+                        </div>
                     </div>
 
-                    <div>
-                        <InputLabel value="Date d'émission *" />
-                        <TextInput v-model="form.issue_date" type="date" class="mt-1 block w-full" required />
-                        <InputError :message="form.errors.issue_date" class="mt-1" />
-                    </div>
-                    <div>
-                        <InputLabel value="Échéance" />
-                        <TextInput v-model="form.due_date" type="date" class="mt-1 block w-full" />
-                        <InputError :message="form.errors.due_date" class="mt-1" />
-                    </div>
-                    <div>
-                        <InputLabel value="Référence client" />
-                        <TextInput v-model="form.reference" class="mt-1 block w-full" />
-                    </div>
-                    <div>
-                        <InputLabel value="Devise" />
-                        <TextInput v-model="form.currency" maxlength="3" class="mt-1 block w-full uppercase" />
-                    </div>
-
-                    <!-- Sélecteur de modèle PDF avec filtre par famille -->
-                    <div v-if="templates.length" class="sm:col-span-2 lg:col-span-4">
+                    <!-- Sélecteur de modèle PDF -->
+                    <div v-if="templates.length" class="pt-2 border-t border-gray-50">
                         <div class="flex items-center justify-between mb-2">
                             <InputLabel value="Modèle visuel du PDF" class="!mb-0" />
                             <span class="text-xs text-gray-400">{{ templates.length }} modèles disponibles</span>
                         </div>
-
-                        <!-- Filtres familles -->
                         <div class="mb-2 flex flex-wrap gap-1.5">
                             <button type="button" @click="activeFamily = null"
                                 class="rounded-full px-3 py-1 text-xs font-medium transition-colors"
@@ -331,29 +335,18 @@ const submit = () => {
                                 {{ fam }}
                             </button>
                         </div>
-
-                        <div class="max-h-52 overflow-y-auto rounded-lg border border-gray-100 p-2">
+                        <div class="max-h-44 overflow-y-auto rounded-lg border border-gray-100 p-2">
                             <div class="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-5">
-                                <button
-                                    v-for="t in filteredTemplates"
-                                    :key="t.key"
-                                    type="button"
-                                    @click="form.template_key = t.key"
-                                    :title="t.description"
+                                <button v-for="t in filteredTemplates" :key="t.key" type="button" @click="form.template_key = t.key" :title="t.description"
                                     class="flex items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition-all"
-                                    :class="form.template_key === t.key
-                                        ? 'border-brand-600 bg-brand-50 ring-1 ring-brand-600'
-                                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'"
-                                >
+                                    :class="form.template_key === t.key ? 'border-brand-600 bg-brand-50 ring-1 ring-brand-600' : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'">
                                     <span class="flex shrink-0 items-center -space-x-1">
                                         <span class="h-4 w-4 rounded-full border-2 border-white shadow-sm" :style="{ backgroundColor: t.primary }"></span>
                                         <span class="h-4 w-4 rounded-full border-2 border-white shadow-sm" :style="{ backgroundColor: t.secondary }"></span>
                                         <span class="h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm" :style="{ backgroundColor: t.accent }"></span>
                                     </span>
                                     <span class="min-w-0">
-                                        <span class="block truncate text-[11px] font-semibold leading-tight" :class="form.template_key === t.key ? 'text-brand-700' : 'text-gray-700'">
-                                            {{ t.name }}
-                                        </span>
+                                        <span class="block truncate text-[11px] font-semibold leading-tight" :class="form.template_key === t.key ? 'text-brand-700' : 'text-gray-700'">{{ t.name }}</span>
                                         <span class="block truncate text-[9px] text-gray-400 capitalize">{{ t.family }}</span>
                                     </span>
                                     <span v-if="form.template_key === t.key" class="ml-auto flex-shrink-0 text-brand-600">
@@ -362,119 +355,467 @@ const submit = () => {
                                 </button>
                             </div>
                         </div>
-                        <InputError :message="form.errors.template_key" class="mt-1" />
                     </div>
                 </div>
 
-                <!-- Lignes du document -->
-                <div class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100">
-                    <!-- Hint mode libre -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : QUITTANCE ─────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'quittance'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-amber-100">
+                    <div class="flex items-center gap-2 mb-5">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-amber-600 text-lg">🏠</span>
+                        <h3 class="text-base font-bold text-gray-800">Détails de la quittance de loyer</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div class="lg:col-span-3">
+                            <InputLabel value="Adresse du bien immobilier *" />
+                            <TextInput v-model="form.meta.property_address" class="mt-1 block w-full" placeholder="Ex: Appartement N°12, Résidence Les Flamboyants, Cocody, Abidjan" />
+                        </div>
+                        <div>
+                            <InputLabel value="Mois concerné *" />
+                            <select v-model="form.meta.rental_month" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option v-for="m in MOIS" :key="m" :value="m">{{ m }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <InputLabel value="Année *" />
+                            <select v-model="form.meta.rental_year" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option v-for="y in years" :key="y" :value="y">{{ y }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <InputLabel value="Mode de paiement" />
+                            <select v-model="form.meta.payment_method" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option v-for="m in MODES_PAIEMENT" :key="m" :value="m">{{ m }}</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Montants -->
+                    <div class="mt-5 grid gap-4 sm:grid-cols-3">
+                        <div>
+                            <InputLabel value="Loyer de base (hors charges) *" />
+                            <div class="mt-1 flex items-center gap-2">
+                                <TextInput v-model.number="form.meta.rent_amount" type="number" min="0" class="block w-full" placeholder="0" />
+                                <span class="text-sm font-medium text-gray-500">{{ form.currency }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <InputLabel value="Charges locatives" />
+                            <div class="mt-1 flex items-center gap-2">
+                                <TextInput v-model.number="form.meta.charges_amount" type="number" min="0" class="block w-full" placeholder="0" />
+                                <span class="text-sm font-medium text-gray-500">{{ form.currency }}</span>
+                            </div>
+                        </div>
+                        <!-- Total calculé -->
+                        <div class="flex flex-col justify-end">
+                            <p class="text-xs font-medium text-gray-500 mb-1">TOTAL REÇU</p>
+                            <div class="rounded-xl bg-brand-900 px-4 py-3 text-center">
+                                <p class="text-xl font-bold text-white">{{ fmt(subtotal) }}</p>
+                                <p class="text-xs text-brand-200">{{ form.currency }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : REÇU DE PAIEMENT ──────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'payment_receipt'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-emerald-100">
+                    <div class="flex items-center gap-2 mb-5">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 text-lg">💳</span>
+                        <h3 class="text-base font-bold text-gray-800">Détails du reçu de paiement</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Montant reçu *" />
+                            <div class="mt-1 flex items-center gap-2">
+                                <TextInput v-model.number="form.meta.amount_received" type="number" min="0" class="block w-full" placeholder="0" />
+                                <span class="text-sm font-medium text-gray-500">{{ form.currency }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <InputLabel value="Mode de paiement *" />
+                            <select v-model="form.meta.payment_method" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option v-for="m in MODES_PAIEMENT" :key="m" :value="m">{{ m }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <InputLabel value="Référence facture / document payé" />
+                            <TextInput v-model="form.meta.document_reference" class="mt-1 block w-full" placeholder="Ex: FAC-2026-0012" />
+                        </div>
+                        <div>
+                            <InputLabel value="Objet / motif du paiement *" />
+                            <TextInput v-model="form.meta.payment_purpose" class="mt-1 block w-full" placeholder="Ex: Règlement facture Juillet 2026" />
+                        </div>
+                    </div>
+                    <div class="mt-4 flex items-center justify-end">
+                        <div class="rounded-xl bg-brand-900 px-8 py-3 text-center">
+                            <p class="text-xs font-medium text-brand-200 mb-1">MONTANT REÇU</p>
+                            <p class="text-2xl font-bold text-white">{{ fmt(subtotal) }} {{ form.currency }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : BON DE LIVRAISON ──────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'delivery_note'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-teal-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-teal-100 text-teal-600 text-lg">📦</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations de livraison</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Adresse de livraison" />
+                            <TextInput v-model="form.meta.delivery_address" class="mt-1 block w-full" placeholder="Adresse complète de destination" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date de livraison prévue" />
+                            <TextInput v-model="form.meta.delivery_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Transporteur / Livreur" />
+                            <TextInput v-model="form.meta.carrier" class="mt-1 block w-full" placeholder="Ex: DHL, livreur interne…" />
+                        </div>
+                        <div>
+                            <InputLabel value="N° de suivi / référence expédition" />
+                            <TextInput v-model="form.meta.tracking_number" class="mt-1 block w-full" placeholder="Ex: TRK-2026-..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : BON DE COMMANDE (VENTE) ───────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'sales_order'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-sky-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-sky-100 text-sky-600 text-lg">🛒</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations de commande</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div>
+                            <InputLabel value="Date de livraison souhaitée" />
+                            <TextInput v-model="form.meta.delivery_date_expected" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Conditions de livraison" />
+                            <select v-model="form.meta.shipping_terms" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option value="">— Choisir —</option>
+                                <option>Franco domicile (frais inclus)</option>
+                                <option>Départ entrepôt (frais à la charge de l'acheteur)</option>
+                                <option>Point de retrait</option>
+                                <option>À convenir</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Adresse de livraison" />
+                            <TextInput v-model="form.meta.delivery_address" class="mt-1 block w-full" placeholder="Si différente de l'adresse du client" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : COMMANDE FOURNISSEUR ──────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'purchase_order'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-indigo-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600 text-lg">📋</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations de la commande fournisseur</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Date de livraison attendue" />
+                            <TextInput v-model="form.meta.delivery_date_expected" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Contact chez le fournisseur" />
+                            <TextInput v-model="form.meta.supplier_contact" class="mt-1 block w-full" placeholder="Nom, email ou tél." />
+                        </div>
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Adresse de livraison (réception)" />
+                            <TextInput v-model="form.meta.delivery_address" class="mt-1 block w-full" placeholder="Adresse de votre entrepôt / siège" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : BON DE TRAVAUX ────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'work_order'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-orange-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-orange-100 text-orange-600 text-lg">🔧</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations d'intervention</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        <div class="sm:col-span-2">
+                            <InputLabel value="Lieu d'intervention *" />
+                            <TextInput v-model="form.meta.intervention_location" class="mt-1 block w-full" placeholder="Adresse ou description du lieu" />
+                        </div>
+                        <div>
+                            <InputLabel value="Technicien responsable" />
+                            <TextInput v-model="form.meta.technician" class="mt-1 block w-full" placeholder="Nom du technicien" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date d'intervention" />
+                            <TextInput v-model="form.meta.intervention_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Date de fin prévue" />
+                            <TextInput v-model="form.meta.intervention_end_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : TICKET DE CAISSE ─────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'pos_ticket'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100 text-gray-600 text-lg">🧾</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations caisse</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Mode de paiement" />
+                            <select v-model="form.meta.payment_method" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                <option v-for="m in MODES_PAIEMENT" :key="m" :value="m">{{ m }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <InputLabel value="Caissier" />
+                            <TextInput v-model="form.meta.cashier_name" class="mt-1 block w-full" placeholder="Nom du caissier" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : AVOIR ─────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'credit_note'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-rose-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-rose-100 text-rose-600 text-lg">↩️</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations de l'avoir</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Référence facture d'origine" />
+                            <TextInput v-model="form.meta.original_document_ref" class="mt-1 block w-full" placeholder="Ex: FAC-2026-0012" />
+                        </div>
+                        <div>
+                            <InputLabel value="Motif de l'avoir" />
+                            <TextInput v-model="form.meta.credit_reason" class="mt-1 block w-full" placeholder="Ex: Retour marchandise, erreur de facturation…" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : DEVIS ─────────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'quote'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-amber-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-amber-600 text-lg">⏳</span>
+                        <h3 class="text-base font-bold text-gray-800">Validité du devis</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Valable jusqu'au" />
+                            <TextInput v-model="form.meta.validity_date" type="date" class="mt-1 block w-full" />
+                        </div>
+                        <div>
+                            <InputLabel value="Conditions d'acceptation" />
+                            <TextInput v-model="form.meta.acceptance_conditions" class="mt-1 block w-full" placeholder="Ex: Sous réserve de disponibilité" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : RETOUR RMA ────────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'rma'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-pink-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-pink-100 text-pink-600 text-lg">🔄</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations de retour</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Référence commande / facture d'origine" />
+                            <TextInput v-model="form.meta.original_document_ref" class="mt-1 block w-full" placeholder="Ex: BC-2026-0003" />
+                        </div>
+                        <div>
+                            <InputLabel value="Motif du retour" />
+                            <TextInput v-model="form.meta.return_reason" class="mt-1 block w-full" placeholder="Ex: Produit défectueux, non conforme…" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : FACTURE D'ACOMPTE ─────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'deposit_invoice'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-cyan-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-100 text-cyan-600 text-lg">💰</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations de l'acompte</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Pourcentage d'acompte (%)" />
+                            <div class="mt-1 flex items-center gap-2">
+                                <TextInput v-model.number="form.meta.deposit_percent" type="number" min="1" max="100" class="block w-full" placeholder="Ex: 30" />
+                                <span class="text-sm font-medium text-gray-500">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <InputLabel value="Réf. devis / bon de commande associé" />
+                            <TextInput v-model="form.meta.deposit_reference" class="mt-1 block w-full" placeholder="Ex: DEV-2026-0001" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : FACTURE DE SOLDE ──────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'balance_invoice'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-blue-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-blue-600 text-lg">✅</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations de la facture de solde</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Référence facture d'acompte" />
+                            <TextInput v-model="form.meta.deposit_reference" class="mt-1 block w-full" placeholder="Ex: FA-2026-0001" />
+                        </div>
+                        <div>
+                            <InputLabel value="Montant déjà versé (acompte)" />
+                            <div class="mt-1 flex items-center gap-2">
+                                <TextInput v-model.number="form.meta.amount_already_paid" type="number" min="0" class="block w-full" placeholder="0" />
+                                <span class="text-sm font-medium text-gray-500">{{ form.currency }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION SPÉCIFIQUE : BORDEREAU DE REMISE ───────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'remittance'"
+                    class="rounded-xl bg-white p-6 shadow-sm border border-purple-100">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="flex h-8 w-8 items-center justify-center rounded-full bg-purple-100 text-purple-600 text-lg">🏦</span>
+                        <h3 class="text-base font-bold text-gray-800">Informations bancaires</h3>
+                    </div>
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Banque" />
+                            <TextInput v-model="form.meta.bank_name" class="mt-1 block w-full" placeholder="Ex: Ecobank, SGBCI…" />
+                        </div>
+                        <div>
+                            <InputLabel value="Numéro de compte" />
+                            <TextInput v-model="form.meta.account_number" class="mt-1 block w-full" placeholder="Ex: CI123..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── TABLE DES LIGNES (si applicable) ───────────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.showLines" class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100">
                     <div class="flex items-start gap-2 border-b border-blue-100 bg-blue-50 px-4 py-2.5 text-xs text-blue-700">
                         <svg class="mt-0.5 h-4 w-4 shrink-0 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <span><strong>Saisie libre :</strong> Tapez directement votre description (formation, prestation, service…) sans sélectionner de produit catalogue. La colonne "Produit" est optionnelle.</span>
+                        <span>
+                            <template v-if="schema.extraSection === 'delivery_note'">
+                                <strong>Bon de livraison :</strong> Indiquez les articles livrés avec les quantités. Les prix ne sont pas affichés sur ce document.
+                            </template>
+                            <template v-else-if="schema.extraSection === 'rma'">
+                                <strong>Articles retournés :</strong> Listez les produits retournés avec les quantités concernées.
+                            </template>
+                            <template v-else>
+                                <strong>Saisie libre :</strong> Tapez directement votre description sans sélectionner de produit catalogue. La colonne "Produit" est optionnelle.
+                            </template>
+                        </span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead class="bg-brand-900 text-left text-xs uppercase tracking-wide text-white">
                                 <tr>
-                                    <th class="px-3 py-3" style="width: 17%">Produit <span class="font-normal opacity-60">(optionnel)</span></th>
-                                    <th class="px-3 py-3" style="width: 27%">Description *</th>
-                                    <th class="px-3 py-3 text-right" style="width: 7%">Qté</th>
-                                    <th class="px-3 py-3 text-right" style="width: 11%">P.U. HT</th>
-                                    <th class="px-3 py-3" style="width: 14%">
-                                        <div class="flex items-center justify-end gap-1">
-                                            Remise
-                                            <span class="font-normal opacity-60 text-[10px]">(%/fixe)</span>
-                                        </div>
-                                    </th>
-                                    <th class="px-3 py-3 text-right" style="width: 7%">TVA %</th>
-                                    <th class="px-3 py-3 text-right" style="width: 13%">Total HT</th>
-                                    <th class="px-2 py-3" style="width: 4%"></th>
+                                    <th class="px-3 py-3" style="width:17%">Produit <span class="font-normal opacity-60">(optionnel)</span></th>
+                                    <th class="px-3 py-3" style="width:30%">Description *</th>
+                                    <th class="px-3 py-3 text-right" style="width:8%">Qté</th>
+                                    <th class="px-3 py-3 text-right" style="width:8%">Unité</th>
+                                    <th v-if="schema.showPrices" class="px-3 py-3 text-right" style="width:12%">P.U. HT</th>
+                                    <th v-if="schema.showPrices && schema.showDiscount" class="px-3 py-3 text-right" style="width:11%">Remise</th>
+                                    <th v-if="schema.showTax" class="px-3 py-3 text-right" style="width:7%">TVA %</th>
+                                    <th v-if="schema.showPrices" class="px-3 py-3 text-right" style="width:11%">Total HT</th>
+                                    <th class="px-2 py-3" style="width:4%"></th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-50">
                                 <tr v-for="(line, index) in form.lines" :key="index" class="align-top hover:bg-gray-50/50 transition-colors">
                                     <td class="px-3 py-2">
-                                        <select
-                                            v-model="line.product_id"
-                                            @change="onProductSelect(line)"
-                                            class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500"
-                                        >
+                                        <select v-model="line.product_id" @change="onProductSelect(line)"
+                                            class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
                                             <option :value="null">✏ Saisie libre</option>
                                             <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option>
                                         </select>
                                     </td>
                                     <td class="px-3 py-2">
-                                        <textarea
-                                            v-model="line.description"
-                                            rows="1"
-                                            required
-                                            class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500"
-                                        ></textarea>
-                                        <button
-                                            v-if="aiAvailable && !line.description"
-                                            type="button"
-                                            @click="fillDescription(line)"
-                                            :disabled="aiLoading"
-                                            class="mt-1 flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 disabled:opacity-50"
-                                        >
+                                        <textarea v-model="line.description" rows="1" required
+                                            class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500"></textarea>
+                                        <button v-if="aiAvailable && !line.description" type="button" @click="fillDescription(line)" :disabled="aiLoading"
+                                            class="mt-1 flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 disabled:opacity-50">
                                             <span v-if="aiLoading" class="inline-block h-3 w-3 animate-spin rounded-full border border-purple-600 border-t-transparent"></span>
-                                            <span v-else>✨</span>
-                                            Suggestion IA
+                                            <span v-else>✨</span> Suggestion IA
                                         </button>
                                     </td>
                                     <td class="px-3 py-2">
-                                        <input v-model.number="line.quantity" type="number" step="0.01" min="0.01"
+                                        <input v-model.number="line.quantity" type="number" step="0.01" min="0"
                                             class="block w-full rounded-lg border-gray-300 text-right text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
                                     </td>
                                     <td class="px-3 py-2">
+                                        <input v-model="line.unit" type="text" maxlength="15"
+                                            class="block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                    </td>
+                                    <td v-if="schema.showPrices" class="px-3 py-2">
                                         <input v-model.number="line.unit_price" type="number" step="0.01" min="0"
                                             class="block w-full rounded-lg border-gray-300 text-right text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
-                                        <button
-                                            v-if="aiAvailable && !line.unit_price"
-                                            type="button"
-                                            @click="fillPrice(line)"
-                                            :disabled="aiLoading"
-                                            class="mt-1 flex items-center gap-1 text-xs text-green-600 hover:text-green-800 disabled:opacity-50"
-                                        >
+                                        <button v-if="aiAvailable && !line.unit_price" type="button" @click="fillPrice(line)" :disabled="aiLoading"
+                                            class="mt-1 flex items-center gap-1 text-xs text-green-600 hover:text-green-800 disabled:opacity-50">
                                             <span v-if="aiLoading" class="inline-block h-3 w-3 animate-spin rounded-full border border-green-600 border-t-transparent"></span>
                                             <span v-else>💰</span> Prix IA
                                         </button>
                                     </td>
-                                    <!-- Remise : type + valeur -->
-                                    <td class="px-3 py-2">
+                                    <td v-if="schema.showPrices && schema.showDiscount" class="px-3 py-2">
                                         <div class="flex items-center gap-1">
-                                            <!-- Toggle %/fixe -->
                                             <button type="button"
                                                 @click="line.line_discount_type = line.line_discount_type === 'percent' ? 'fixed' : 'percent'; line.discount_percent = 0"
                                                 class="flex-shrink-0 rounded-md border px-1.5 py-1 text-[10px] font-bold transition-colors"
-                                                :class="line.line_discount_type === 'fixed'
-                                                    ? 'border-amber-300 bg-amber-50 text-amber-700'
-                                                    : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'"
-                                                :title="line.line_discount_type === 'fixed' ? 'Remise en montant fixe — cliquer pour passer en %' : 'Remise en % — cliquer pour passer en montant fixe'">
+                                                :class="line.line_discount_type === 'fixed' ? 'border-amber-300 bg-amber-50 text-amber-700' : 'border-gray-200 bg-gray-50 text-gray-600 hover:bg-gray-100'">
                                                 {{ line.line_discount_type === 'fixed' ? '€' : '%' }}
                                             </button>
                                             <input v-model.number="line.discount_percent" type="number" step="0.01" min="0"
-                                                :max="line.line_discount_type === 'percent' ? 100 : undefined"
-                                                class="block w-full rounded-lg border-gray-300 text-right text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500"
-                                                :placeholder="line.line_discount_type === 'fixed' ? '0' : '0'" />
-                                        </div>
-                                        <div v-if="line.discount_percent > 0" class="mt-0.5 text-right text-[10px] text-red-500">
-                                            − {{ fmt(line.line_discount_type === 'fixed' ? line.discount_percent : line.quantity * line.unit_price * line.discount_percent / 100) }}
+                                                class="block w-full rounded-lg border-gray-300 text-right text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
                                         </div>
                                     </td>
-                                    <td class="px-3 py-2">
+                                    <td v-if="schema.showTax" class="px-3 py-2">
                                         <input v-model.number="line.tax_rate" type="number" step="0.1" min="0" max="100"
                                             class="block w-full rounded-lg border-gray-300 text-right text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
                                     </td>
-                                    <td class="px-3 py-2 text-right font-semibold text-gray-800">{{ fmt(lineTotal(line)) }}</td>
+                                    <td v-if="schema.showPrices" class="px-3 py-2 text-right font-semibold text-gray-800">{{ fmt(lineTotal(line)) }}</td>
                                     <td class="px-2 py-2 text-center">
-                                        <button
-                                            type="button"
-                                            @click="removeLine(index)"
-                                            :disabled="form.lines.length === 1"
-                                            class="rounded-full p-1 text-red-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 transition-colors"
-                                            title="Supprimer">
+                                        <button type="button" @click="removeLine(index)" :disabled="form.lines.length === 1"
+                                            class="rounded-full p-1 text-red-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30 transition-colors">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
                                         </button>
                                     </td>
@@ -483,24 +824,22 @@ const submit = () => {
                         </table>
                     </div>
                     <div class="flex items-center justify-between border-t px-4 py-3">
-                        <button type="button" @click="addLine"
-                            class="flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700">
+                        <button type="button" @click="addLine" class="flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700">
                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                             Ajouter une ligne
                         </button>
                         <span class="text-xs text-gray-400">{{ form.lines.length }} ligne{{ form.lines.length > 1 ? 's' : '' }}</span>
-                        <InputError :message="form.errors.lines" class="mt-1" />
                     </div>
                 </div>
 
+                <!-- ── Notes + Récapitulatif ───────────────────────────────── -->
                 <div class="grid gap-6 lg:grid-cols-2">
-                    <!-- Notes & conditions -->
                     <div class="space-y-4 rounded-xl bg-white p-6 shadow-sm border border-gray-100">
                         <div>
                             <InputLabel value="Notes (visibles sur le document)" />
                             <textarea v-model="form.notes" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm"></textarea>
                         </div>
-                        <div>
+                        <div v-if="!['quittance','payment_receipt','pos_ticket'].includes(form.type)">
                             <InputLabel value="Conditions de paiement" />
                             <textarea v-model="form.terms" rows="3" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm"></textarea>
                         </div>
@@ -510,8 +849,8 @@ const submit = () => {
                     <div class="rounded-xl bg-white p-6 shadow-sm border border-gray-100">
                         <h3 class="mb-4 text-sm font-semibold text-gray-700">Récapitulatif</h3>
 
-                        <!-- Remise globale -->
-                        <div class="mb-5 rounded-lg bg-gray-50 p-3">
+                        <!-- Remise globale (uniquement si le type la supporte) -->
+                        <div v-if="schema.showDiscount" class="mb-5 rounded-lg bg-gray-50 p-3">
                             <p class="mb-2 text-xs font-medium text-gray-600">Remise globale (sur sous-total)</p>
                             <div class="flex items-center gap-2">
                                 <select v-model="form.discount_type" class="rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
@@ -519,31 +858,21 @@ const submit = () => {
                                     <option value="percent">En pourcentage (%)</option>
                                     <option value="fixed">Montant fixe ({{ form.currency }})</option>
                                 </select>
-                                <input
-                                    v-if="form.discount_type"
-                                    v-model.number="form.discount_value"
-                                    type="number" step="0.01" min="0"
-                                    :placeholder="form.discount_type === 'percent' ? 'ex: 10' : 'ex: 5000'"
-                                    class="w-28 rounded-lg border-gray-300 text-right text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500"
-                                />
+                                <input v-if="form.discount_type" v-model.number="form.discount_value" type="number" step="0.01" min="0"
+                                    class="w-28 rounded-lg border-gray-300 text-right text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
                             </div>
                         </div>
 
                         <dl class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <dt class="text-gray-500">Sous-total HT</dt>
+                            <div v-if="schema.showPrices || !schema.showLines" class="flex justify-between">
+                                <dt class="text-gray-500">{{ schema.showLines ? 'Sous-total HT' : 'Montant' }}</dt>
                                 <dd class="font-semibold">{{ fmt(subtotal) }} {{ form.currency }}</dd>
                             </div>
                             <div v-if="discountAmount > 0" class="flex justify-between text-red-600">
-                                <dt>
-                                    Remise
-                                    <span class="text-xs text-red-400">
-                                        ({{ form.discount_type === 'percent' ? form.discount_value + '%' : 'montant fixe' }})
-                                    </span>
-                                </dt>
+                                <dt>Remise</dt>
                                 <dd>−{{ fmt(discountAmount) }} {{ form.currency }}</dd>
                             </div>
-                            <div class="flex justify-between">
+                            <div v-if="schema.showTax" class="flex justify-between">
                                 <dt class="text-gray-500">TVA</dt>
                                 <dd class="font-semibold">{{ fmt(taxAmount) }} {{ form.currency }}</dd>
                             </div>
@@ -555,6 +884,7 @@ const submit = () => {
                     </div>
                 </div>
 
+                <!-- ── Actions ────────────────────────────────────────────── -->
                 <div class="flex justify-end gap-3">
                     <Link :href="isEdit ? route('documents.show', document.id) : route('documents.index')">
                         <SecondaryButton type="button">Annuler</SecondaryButton>
@@ -564,6 +894,7 @@ const submit = () => {
                         {{ isEdit ? 'Enregistrer les modifications' : 'Créer le document' }}
                     </PrimaryButton>
                 </div>
+
             </form>
         </div>
     </AuthenticatedLayout>

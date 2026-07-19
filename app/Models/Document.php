@@ -49,6 +49,7 @@ class Document extends Model
         'tax_amount' => 'decimal:2',
         'total' => 'decimal:2',
         'amount_paid' => 'decimal:2',
+        'meta'        => 'array',
     ];
 
     protected static function booted(): void

@@ -520,24 +520,58 @@ class DocumentController extends Controller
             'discount_value' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
             'terms' => 'nullable|string',
-            'lines' => 'required|array|min:1',
+            'meta' => 'nullable|array',
+            'lines' => 'nullable|array',
             'lines.*.product_id' => [
                 'nullable',
                 \Illuminate\Validation\Rule::exists('products', 'id')->where('company_id', $companyId),
             ],
-            'lines.*.description' => 'required|string',
-            'lines.*.quantity' => 'required|numeric|min:0.01',
+            'lines.*.description' => 'nullable|string',
+            'lines.*.quantity' => 'nullable|numeric|min:0',
             'lines.*.unit' => 'nullable|string|max:20',
-            'lines.*.unit_price' => 'required|numeric|min:0',
-            'lines.*.discount_percent' => 'nullable|numeric|min:0|max:100',
+            'lines.*.unit_price' => 'nullable|numeric|min:0',
+            'lines.*.discount_percent' => 'nullable|numeric|min:0',
+            'lines.*.line_discount_type' => 'nullable|in:percent,fixed',
             'lines.*.tax_rate' => 'nullable|numeric|min:0|max:100',
         ], [
             'template_key.in' => 'Ce modèle visuel n\'est pas disponible dans votre forfait actuel.',
         ]);
 
+        // Types sans lignes : injecter une ligne synthétique depuis meta
+        $noLinesTypes = ['quittance', 'payment_receipt'];
+        if (in_array($data['type'] ?? '', $noLinesTypes) || empty($data['lines'])) {
+            $data['lines'] = $this->syntheticLines($data);
+        }
+
         $lines = $data['lines'];
         unset($data['lines']);
 
         return [$data, $lines];
+    }
+
+    private function syntheticLines(array $data): array
+    {
+        $meta = $data['meta'] ?? [];
+        $type = $data['type'] ?? '';
+
+        if ($type === 'quittance') {
+            $loyer   = (float) ($meta['rent_amount'] ?? 0);
+            $charges = (float) ($meta['charges_amount'] ?? 0);
+            $lines   = [];
+            if ($loyer > 0) {
+                $lines[] = ['description' => 'Loyer — ' . ($meta['rental_period'] ?? ''), 'quantity' => 1, 'unit_price' => $loyer, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent'];
+            }
+            if ($charges > 0) {
+                $lines[] = ['description' => 'Charges locatives', 'quantity' => 1, 'unit_price' => $charges, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent'];
+            }
+            return $lines ?: [['description' => 'Quittance', 'quantity' => 1, 'unit_price' => 0, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent']];
+        }
+
+        if ($type === 'payment_receipt') {
+            $amount = (float) ($meta['amount_received'] ?? 0);
+            return [['description' => ($meta['payment_purpose'] ?? 'Règlement') . ($meta['document_reference'] ? ' — Réf. ' . $meta['document_reference'] : ''), 'quantity' => 1, 'unit_price' => $amount, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent']];
+        }
+
+        return [['description' => 'Article', 'quantity' => 1, 'unit_price' => 0, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent']];
     }
 }
