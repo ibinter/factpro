@@ -146,6 +146,26 @@ const paymentPct = (doc) => {
     return Math.min(100, Math.round((doc.amount_paid / doc.total) * 100));
 };
 
+// ── Drawer types ─────────────────────────────────────────────────────────────
+const drawerOpen = ref(false);
+
+// Types groupés par catégorie pour le drawer
+const typesByCategory = computed(() => {
+    const groups = {};
+    (props.types ?? []).forEach(t => {
+        const cat = t.category ?? 'other';
+        if (!groups[cat]) groups[cat] = [];
+        groups[cat].push(t);
+    });
+    return groups;
+});
+
+const selectedTypeLabel = computed(() => {
+    if (!type.value) return 'Tous types';
+    const found = (props.types ?? []).find(t => t.value === type.value);
+    return found ? found.label : type.value;
+});
+
 // ── Actions rapides ───────────────────────────────────────────────────────────
 const quickActions = [
     { type: 'invoice',       label: 'Facture',     cls: 'bg-brand-600 text-white hover:bg-brand-700' },
@@ -283,8 +303,8 @@ const quickActions = [
                         </button>
                     </div>
 
-                    <!-- Catégorie pills -->
-                    <div class="mt-3 flex flex-wrap gap-1.5 border-b border-gray-50 pb-2.5">
+                    <!-- Catégorie pills + bouton drawer type -->
+                    <div class="mt-3 flex flex-wrap items-center gap-1.5">
                         <button type="button" @click="category = ''; type = ''"
                             class="rounded-full px-3 py-1 text-xs font-medium transition-colors"
                             :class="!category ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
@@ -295,22 +315,68 @@ const quickActions = [
                             :class="category === key ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
                             {{ label }}
                         </button>
-                    </div>
 
-                    <!-- Type pills (filtrés par catégorie) -->
-                    <div class="mt-2.5 flex flex-wrap gap-1.5">
-                        <button type="button" @click="type = ''"
-                            class="rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors"
-                            :class="!type ? 'bg-gray-800 text-white shadow-sm' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'">
-                            Tous types
-                        </button>
-                        <button v-for="t in filteredTypes" :key="t.value" type="button" @click="type = t.value"
-                            class="rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors"
-                            :class="type === t.value ? 'bg-gray-800 text-white shadow-sm' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'">
-                            {{ t.label }}
-                        </button>
+                        <div class="ml-auto flex-shrink-0">
+                            <button type="button" @click="drawerOpen = true"
+                                class="inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors"
+                                :class="type ? 'border-brand-300 bg-brand-50 text-brand-700' : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'">
+                                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/>
+                                </svg>
+                                {{ selectedTypeLabel }}
+                                <svg v-if="type" @click.stop="type = ''" class="h-3 w-3 text-brand-400 hover:text-brand-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                <!-- ── Drawer types ───────────────────────────────────────── -->
+                <Teleport to="body">
+                    <Transition name="drawer-backdrop">
+                        <div v-if="drawerOpen" class="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm" @click="drawerOpen = false" />
+                    </Transition>
+                    <Transition name="drawer-slide">
+                        <div v-if="drawerOpen" class="fixed right-0 top-0 z-50 flex h-full w-80 flex-col bg-white shadow-2xl">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between border-b border-gray-100 px-5 py-4">
+                                <h2 class="text-sm font-bold text-gray-900">Type de document</h2>
+                                <button @click="drawerOpen = false" class="rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- Tous types -->
+                            <div class="px-4 pt-3">
+                                <button type="button" @click="type = ''; drawerOpen = false"
+                                    class="w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors"
+                                    :class="!type ? 'bg-brand-600 text-white' : 'text-gray-600 hover:bg-gray-50'">
+                                    Tous les types
+                                </button>
+                            </div>
+                            <!-- Liste groupée -->
+                            <div class="flex-1 overflow-y-auto px-4 py-2 space-y-4">
+                                <template v-for="(types, cat) in typesByCategory" :key="cat">
+                                    <div>
+                                        <p class="mb-1.5 text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                                            {{ categories[cat] ?? cat }}
+                                        </p>
+                                        <div class="space-y-0.5">
+                                            <button v-for="t in types" :key="t.value" type="button"
+                                                @click="type = t.value; category = cat; drawerOpen = false"
+                                                class="w-full rounded-lg px-3 py-2 text-left text-sm transition-colors"
+                                                :class="type === t.value ? 'bg-brand-50 text-brand-700 font-semibold' : 'text-gray-700 hover:bg-gray-50'">
+                                                {{ t.label }}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </Transition>
+                </Teleport>
 
                 <!-- ── Table ───────────────────────────────────────────────── -->
                 <div class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100">
@@ -502,3 +568,11 @@ const quickActions = [
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style scoped>
+.drawer-backdrop-enter-active, .drawer-backdrop-leave-active { transition: opacity 0.25s ease; }
+.drawer-backdrop-enter-from, .drawer-backdrop-leave-to { opacity: 0; }
+
+.drawer-slide-enter-active, .drawer-slide-leave-active { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
+.drawer-slide-enter-from, .drawer-slide-leave-to { transform: translateX(100%); }
+</style>
