@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\DocumentFinalized;
 use App\Notifications\PaymentReceived;
 use App\Services\CacheService;
+use App\Services\DocumentEngine;
 use App\Services\DocumentService;
 use App\Services\LoyaltyService;
 use App\Services\LicenseService;
@@ -27,6 +28,7 @@ class DocumentController extends Controller
     public function __construct(
         private DocumentService $documents,
         private LicenseService $licenses,
+        private DocumentEngine $engine,
     ) {
     }
 
@@ -388,12 +390,27 @@ class DocumentController extends Controller
             $this->documents->finalize($document);
         }
 
-        $pdf = Pdf::loadView($this->resolveTemplateView($document), [
-            'document' => $document,
-            'company' => $document->company,
-            'qrDataUri' => $qr->forDocument($document),
-            'watermark' => $document->trial_watermark ? config('factpro.trial.watermark_text') : null,
-        ])->setPaper('a4');
+        $engineConfig = $this->engine->resolve($document);
+
+        // Pour les types "invoice", le template cosmétique personnalisé prime sur le moteur
+        // Pour tous les autres types, le moteur documentaire prime toujours
+        $isInvoiceFamily = in_array($document->type, [
+            'invoice', 'credit_note', 'proforma', 'advance_invoice', 'deposit_invoice',
+            'recurring_invoice', 'final_invoice', 'corrective_invoice', 'tax_invoice', 'commercial_invoice',
+        ]);
+        $cosmeticView = $this->resolveTemplateView($document);
+        $viewName = ($isInvoiceFamily && $cosmeticView !== 'pdf.document')
+            ? $cosmeticView
+            : $engineConfig['template'];
+
+        $pdf = Pdf::loadView($viewName, [
+            'document'        => $document,
+            'company'         => $document->company,
+            'qrDataUri'       => $qr->forDocument($document),
+            'watermark'       => $document->trial_watermark ? config('factpro.trial.watermark_text') : null,
+            'primaryColor'    => $engineConfig['primary_color'],
+            'signatureLabels' => $engineConfig['signature_labels'] ?? [],
+        ])->setPaper($engineConfig['format'], $engineConfig['orientation']);
 
         return $pdf->stream($document->number.'.pdf');
     }
