@@ -33,23 +33,50 @@ class DocumentController extends Controller
     public function index(Request $request): Response
     {
         $company = $request->user()->currentCompany;
+        $period  = $request->get('period', '30');
 
-        $documents = Document::where('company_id', $company->id)
+        $base = Document::where('company_id', $company->id);
+        $inv  = (clone $base)->where('type', 'invoice');
+
+        // Stats globales (indépendantes des filtres de recherche)
+        $since30   = now()->subDays(30);
+        $monthStart = now()->startOfMonth();
+
+        $stats = [
+            'ca_month'    => (float) (clone $inv)->where('issue_date', '>=', $monthStart)
+                ->whereNotIn('status', ['draft', 'cancelled'])->sum('total'),
+            'outstanding' => (float) (clone $inv)->whereIn('status', ['sent', 'viewed', 'partial', 'overdue'])
+                ->selectRaw('COALESCE(SUM(total - amount_paid), 0) as due')->value('due'),
+            'overdue'     => (clone $inv)->where('status', 'overdue')
+                ->orWhere(fn ($q) => $q->whereIn('status', ['sent','viewed','partial'])->where('due_date', '<', now()))
+                ->where('company_id', $company->id)->count(),
+            'drafts'      => (clone $base)->where('status', 'draft')->count(),
+            'total_30d'   => (clone $base)->where('issue_date', '>=', $since30)->count(),
+        ];
+
+        // Filtre période
+        $periodMap = ['30' => 30, '90' => 90, '180' => 180, '365' => 365];
+        $days = $periodMap[$period] ?? null;
+
+        $documents = (clone $base)
             ->when($request->type, fn ($q, $t) => $q->where('type', $t))
             ->when($request->status, fn ($q, $s) => $q->where('status', $s))
+            ->when($days, fn ($q) => $q->where('issue_date', '>=', now()->subDays($days)))
             ->when($request->search, fn ($q, $s) => $q->where(fn ($q) => $q
                 ->where('number', 'like', "%{$s}%")
                 ->orWhereHas('customer', fn ($q) => $q->where('name', 'like', "%{$s}%"))))
             ->with('customer:id,name')
+            ->select(['id','type','number','status','customer_id','issue_date','due_date','total','amount_paid','currency','finalized_at'])
             ->orderByDesc('issue_date')
             ->orderByDesc('id')
-            ->paginate(15)
+            ->paginate(20)
             ->withQueryString();
 
         return Inertia::render('Documents/Index', [
             'documents' => $documents,
-            'filters' => $request->only('type', 'status', 'search'),
-            'types' => collect(Document::TYPES)->map(fn ($t, $k) => ['value' => $k, 'label' => $t['label']])->values(),
+            'filters'   => $request->only('type', 'status', 'search', 'period'),
+            'types'     => collect(Document::TYPES)->map(fn ($t, $k) => ['value' => $k, 'label' => $t['label']])->values(),
+            'stats'     => $stats,
         ]);
     }
 
