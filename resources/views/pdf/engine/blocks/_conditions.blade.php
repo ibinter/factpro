@@ -1,3 +1,4 @@
+{{-- Bloc conditions générales / pied de page légal --}}
 @php
   $conditions = $document->terms ?? $company->default_terms ?? null;
 @endphp
