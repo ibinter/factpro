@@ -68,9 +68,9 @@ const switchCompany = (company) => {
                                 </Link>
                             </div>
 
-                            <div class="hidden space-x-6 sm:-my-px sm:ms-10 sm:flex">
+                            <div class="hidden space-x-1 sm:-my-px sm:ms-8 sm:flex">
                                 <NavLink :href="route('dashboard')" :active="route().current('dashboard')">
-                                    Tableau de bord
+                                    Accueil
                                 </NavLink>
                                 <NavLink :href="route('documents.index')" :active="route().current('documents.*')">
                                     Documents
@@ -79,25 +79,16 @@ const switchCompany = (company) => {
                                     Clients
                                 </NavLink>
                                 <NavLink :href="route('products.index')" :active="route().current('products.*')">
-                                    Produits
+                                    Catalogue
                                 </NavLink>
-                                <NavLink :href="route('pos.index')" :active="route().current('pos.*')">
-                                    Caisse
-                                </NavLink>
-                                <NavLink :href="route('stock.index')" :active="route().current('stock.*')">
-                                    Stocks
-                                </NavLink>
-                                <NavLink :href="route('reminders.index')" :active="route().current('reminders.*')">
-                                    Relances
-                                </NavLink>
-                                <!-- Menu Plus : modules avancés (Phase 4) -->
+                                <!-- Menu Plus : tous les modules avancés + opérations -->
                                 <div class="inline-flex items-center">
-                                    <Dropdown align="left" width="56">
+                                    <Dropdown align="left" width="64">
                                         <template #trigger>
                                             <button
                                                 type="button"
-                                                class="inline-flex h-full items-center border-b-2 px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none"
-                                                :class="route().current('projects.*') || route().current('expenses.*') || route().current('accounting.*') || route().current('recurring.*') || route().current('reports.*')
+                                                class="inline-flex h-full items-center border-b-2 px-3 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none"
+                                                :class="route().current('pos.*') || route().current('stock.*') || route().current('reminders.*') || route().current('projects.*') || route().current('expenses.*') || route().current('accounting.*') || route().current('recurring.*') || route().current('reports.*') || route().current('purchases.*') || route().current('commissions.*')
                                                     ? 'border-brand-500 text-gray-900'
                                                     : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'"
                                             >
@@ -108,19 +99,25 @@ const switchCompany = (company) => {
                                             </button>
                                         </template>
                                         <template #content>
+                                            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Opérations</div>
+                                            <DropdownLink :href="route('pos.index')">🏪 Caisse POS</DropdownLink>
+                                            <DropdownLink :href="route('stock.index')">📦 Stocks</DropdownLink>
+                                            <DropdownLink :href="route('reminders.index')">⏰ Relances clients</DropdownLink>
+                                            <DropdownLink :href="route('recurring.index')">🔁 Factures récurrentes</DropdownLink>
+                                            <div class="my-1 border-t border-gray-100"></div>
+                                            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Gestion</div>
                                             <DropdownLink :href="route('projects.index')">⏱ Projets & Temps</DropdownLink>
                                             <DropdownLink :href="route('expenses.index')">🧾 Notes de frais</DropdownLink>
-                                            <DropdownLink :href="route('recurring.index')">🔁 Factures récurrentes</DropdownLink>
                                             <DropdownLink :href="route('purchases.index')">🛒 Achats fournisseurs</DropdownLink>
                                             <DropdownLink :href="route('commissions.index')">🤝 Commissions vendeurs</DropdownLink>
+                                            <div class="my-1 border-t border-gray-100"></div>
+                                            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Analyse</div>
                                             <DropdownLink :href="route('accounting.index')">📚 Comptabilité</DropdownLink>
                                             <DropdownLink :href="route('reports.index')">📊 Rapports & Exports</DropdownLink>
+                                            <DropdownLink :href="route('billing.index')">💳 Abonnement</DropdownLink>
                                         </template>
                                     </Dropdown>
                                 </div>
-                                <NavLink :href="route('billing.index')" :active="route().current('billing.*')">
-                                    Abonnement
-                                </NavLink>
                                 <NavLink v-if="isSuperadmin" :href="route('admin.payments')" :active="route().current('admin.*')">
                                     <span class="text-gold-600 font-semibold">Admin</span>
                                 </NavLink>

@@ -86,20 +86,30 @@ const barPad = 6;
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-3">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Tableau de bord</h2>
-                <div class="flex gap-2">
-                    <Link
-                        :href="route('documents.create', { type: 'quote' })"
-                        class="rounded-md border border-brand-600 px-4 py-2 text-sm font-semibold text-brand-600 hover:bg-brand-50"
-                    >
-                        + Devis
+                <div class="flex flex-wrap gap-2">
+                    <Link :href="route('documents.create', { type: 'invoice' })"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                        Facture
                     </Link>
-                    <Link
-                        :href="route('documents.create', { type: 'invoice' })"
-                        class="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
-                    >
-                        + Facture
+                    <Link :href="route('documents.create', { type: 'quote' })"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-brand-600 px-4 py-2 text-sm font-semibold text-brand-600 hover:bg-brand-50 transition">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                        Devis
+                    </Link>
+                    <Link :href="route('documents.create', { type: 'proforma' })"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition">
+                        Proforma
+                    </Link>
+                    <Link :href="route('documents.create', { type: 'delivery_note' })"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition">
+                        Bon de livraison
+                    </Link>
+                    <Link :href="route('documents.create', { type: 'credit_note' })"
+                        class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition">
+                        Avoir
                     </Link>
                 </div>
             </div>

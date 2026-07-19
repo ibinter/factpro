@@ -218,10 +218,15 @@ const submit = () => {
 
                 <!-- Lignes -->
                 <div class="overflow-hidden rounded-lg bg-white shadow">
+                    <!-- Hint mode libre -->
+                    <div class="flex items-start gap-2 border-b border-blue-100 bg-blue-50 px-4 py-2.5 text-xs text-blue-700">
+                        <svg class="mt-0.5 h-4 w-4 shrink-0 text-blue-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span><strong>Saisie libre :</strong> Tapez directement votre description (formation, prestation, service…) sans sélectionner de produit catalogue. La colonne "Produit" est optionnelle.</span>
+                    </div>
                     <table class="w-full text-sm">
                         <thead class="bg-brand-900 text-left text-xs uppercase tracking-wide text-white">
                             <tr>
-                                <th class="px-4 py-3" style="width: 18%">Produit</th>
+                                <th class="px-4 py-3" style="width: 18%">Produit <span class="font-normal opacity-60">(optionnel)</span></th>
                                 <th class="px-4 py-3" style="width: 28%">Description *</th>
                                 <th class="px-4 py-3 text-right" style="width: 9%">Qté</th>
                                 <th class="px-4 py-3 text-right" style="width: 13%">P.U. HT</th>
@@ -239,7 +244,7 @@ const submit = () => {
                                         @change="onProductSelect(line)"
                                         class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500"
                                     >
-                                        <option :value="null">— Libre —</option>
+                                        <option :value="null">✏ Saisie libre</option>
                                         <option v-for="p in products" :key="p.id" :value="p.id">{{ p.name }}</option>
                                     </select>
                                 </td>
