@@ -26,7 +26,9 @@ const limitLabel = (v) => (v === 'unlimited' || v == null ? (lang.value === 'fr'
 onMounted(async () => {
     try {
         const { data } = await axios.get('/pricing-data');
-        plans.value = data;
+        const all = Array.isArray(data) ? data : (data.plans ?? []);
+        // Afficher max 4 plans sur le landing (les 4 premiers triés par sort_order)
+        plans.value = all.slice(0, 4);
     } catch {}
     loadingPlans.value = false;
 });
@@ -99,8 +101,8 @@ const FR = {
     start: 'Commencer',
     perMonth: 'FCFA / mois',
     compareFull: 'Comparer tous les forfaits en détail →',
-    partnersTitle: 'Ils font confiance à IBIG',
-    partnersSub: 'Partenaires institutionnels, cabinets certifiés et affiliés dans toute l\'Afrique.',
+    partnersTitle: 'Gagnez en vendant FactPro',
+    partnersSub: 'Rejoignez IBIG Partners, le programme d\'affiliation multi-niveaux du groupe IBIG SARL. Vendez, parrainez, touchez des commissions sur 3 niveaux.',
     faqTitle: 'Questions fréquentes',
     faqs: [
         { q: 'L\'essai est-il vraiment gratuit ?', a: 'Oui. 7 jours complets, sans carte bancaire. Aucun prélèvement automatique à la fin.' },
@@ -160,8 +162,8 @@ const EN = {
     start: 'Get started',
     perMonth: 'FCFA / month',
     compareFull: 'Compare all plans in detail →',
-    partnersTitle: 'They trust IBIG',
-    partnersSub: 'Institutional partners, certified firms and affiliates across Africa.',
+    partnersTitle: 'Earn by selling FactPro',
+    partnersSub: 'Join IBIG Partners, the multi-level affiliate program of IBIG SARL group. Sell, refer, earn commissions on 3 levels.',
     faqTitle: 'Frequently asked questions',
     faqs: [
         { q: 'Is the trial really free?', a: 'Yes. Full 7 days, no credit card. No automatic billing at the end.' },
@@ -177,26 +179,18 @@ const EN = {
     ctaBtn2: 'I already have an account',
 };
 
-const partners = {
-    institutional: [
-        { name: 'CGECI', country: 'Côte d\'Ivoire', logo: '🏛️' },
-        { name: 'CCI Abidjan', country: 'Côte d\'Ivoire', logo: '🏛️' },
-        { name: 'GIZ', country: 'International', logo: '🌍' },
-        { name: 'BRVM', country: 'UEMOA', logo: '📈' },
-    ],
-    gold: [
-        { name: 'Cabinet Expertise Plus', country: 'Abidjan', badge: 'GOLD' },
-        { name: 'Compta Vision', country: 'Dakar', badge: 'GOLD' },
-        { name: 'Afri-Conseil', country: 'Douala', badge: 'GOLD' },
-    ],
-    master: [
-        { name: 'BizTech Solutions', country: 'Abidjan', badge: 'MASTER' },
-        { name: 'DigiCompta', country: 'Lomé', badge: 'MASTER' },
-    ],
-    elite: [
-        { name: 'IBIG Réseau', country: 'Afrique de l\'Ouest', badge: 'ELITE' },
-    ],
-};
+const partnerStatuses = [
+    { label: 'STARTER', icon: '⭐', color: '#6b7280', bg: '#f9fafb', min: 0, desc_fr: 'Débutant actif', desc_en: 'Active beginner' },
+    { label: 'SILVER',  icon: '⭐⭐', color: '#64748b', bg: '#f1f5f9', min: 5,  desc_fr: '5+ ventes/mois', desc_en: '5+ sales/month' },
+    { label: 'GOLD',    icon: '⭐⭐⭐', color: '#b45309', bg: '#fefce8', min: 15, desc_fr: '15+ ventes/mois', desc_en: '15+ sales/month' },
+    { label: 'MASTER',  icon: '🏆', color: '#7c3aed', bg: '#faf5ff', min: 30, desc_fr: '30+ ventes/mois', desc_en: '30+ sales/month' },
+];
+
+const partnerCommissions = [
+    { level: 'N1', pct: '20%', label_fr: 'Vos ventes directes', label_en: 'Your direct sales' },
+    { level: 'N2', pct: '10%', label_fr: 'Ventes de vos filleuls', label_en: 'Your referrals\' sales' },
+    { level: 'N3', pct: '5%',  label_fr: 'Ventes de leurs filleuls', label_en: 'Their referrals\' sales' },
+];
 </script>
 
 <template>
@@ -453,53 +447,82 @@ const partners = {
                     <p class="mx-auto mt-3 max-w-2xl text-gray-500">{{ t.partnersSub }}</p>
                 </div>
 
-                <!-- Institutionnels -->
-                <div class="mt-14">
-                    <h3 class="mb-6 text-center text-xs font-bold uppercase tracking-widest text-gray-400">{{ lang === 'fr' ? 'Partenaires institutionnels' : 'Institutional partners' }}</h3>
-                    <div class="flex flex-wrap items-center justify-center gap-6">
-                        <div v-for="p in partners.institutional" :key="p.name"
-                             class="flex items-center gap-3 rounded-xl border border-gray-100 bg-white px-6 py-4 shadow-sm transition hover:shadow-md">
-                            <span class="text-2xl">{{ p.logo }}</span>
-                            <div>
-                                <div class="font-bold text-brand-900">{{ p.name }}</div>
-                                <div class="text-xs text-gray-400">{{ p.country }}</div>
-                            </div>
+                <!-- Commissions 3 niveaux -->
+                <div class="mt-14 grid gap-4 sm:grid-cols-3">
+                    <div v-for="c in partnerCommissions" :key="c.level"
+                         class="relative overflow-hidden rounded-2xl p-6 text-center"
+                         style="background:linear-gradient(135deg,#eff6ff,#fff);border:1px solid #dbeafe">
+                        <div class="text-4xl font-extrabold" style="color:#0062CC">{{ c.pct }}</div>
+                        <div class="mt-1 text-lg font-bold text-brand-900">{{ c.level }}</div>
+                        <div class="mt-1 text-sm text-gray-500">{{ lang === 'fr' ? c.label_fr : c.label_en }}</div>
+                        <div class="absolute right-3 top-3 rounded-full px-2 py-0.5 text-[10px] font-bold" style="background:#0062CC;color:white">{{ c.level }}</div>
+                    </div>
+                </div>
+
+                <!-- Statuts partenaires -->
+                <div class="mt-10">
+                    <h3 class="mb-6 text-center text-xs font-bold uppercase tracking-widest text-gray-400">
+                        {{ lang === 'fr' ? 'Votre statut évolue avec vos performances' : 'Your status grows with your performance' }}
+                    </h3>
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        <div v-for="s in partnerStatuses" :key="s.label"
+                             class="flex flex-col items-center rounded-2xl border p-5 text-center transition hover:-translate-y-1 hover:shadow-md"
+                             :style="`border-color:${s.color}40;background:${s.bg}`">
+                            <div class="text-3xl">{{ s.icon }}</div>
+                            <div class="mt-2 text-base font-extrabold" :style="`color:${s.color}`">{{ s.label }}</div>
+                            <div class="mt-1 text-xs text-gray-500">{{ lang === 'fr' ? s.desc_fr : s.desc_en }}</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Certifiés ELITE -->
-                <div class="mt-12">
-                    <h3 class="mb-6 text-center text-xs font-bold uppercase tracking-widest text-gray-400">{{ lang === 'fr' ? 'Partenaires certifiés' : 'Certified partners' }}</h3>
-                    <div class="grid gap-4 sm:grid-cols-3 lg:grid-cols-6">
-                        <div v-for="p in [...partners.elite, ...partners.master, ...partners.gold]" :key="p.name"
-                             class="flex flex-col items-center rounded-xl border p-4 text-center transition hover:-translate-y-1"
-                             :style="p.badge === 'ELITE' ? 'border-color:#7c3aed;background:#faf5ff'
-                                   : p.badge === 'MASTER' ? 'border-color:#0062CC;background:#eff6ff'
-                                   : 'border-color:#F0C040;background:#fefce8'">
-                            <span class="rounded-full px-2 py-0.5 text-[10px] font-extrabold"
-                                  :style="p.badge === 'ELITE' ? 'background:#7c3aed;color:white'
-                                        : p.badge === 'MASTER' ? 'background:#0062CC;color:white'
-                                        : 'background:#F0C040;color:#001d3d'">
-                                ★ {{ p.badge }}
-                            </span>
-                            <div class="mt-2 text-xs font-bold text-gray-800">{{ p.name }}</div>
-                            <div class="text-[10px] text-gray-400">{{ p.country }}</div>
-                        </div>
+                <!-- Stats clés -->
+                <div class="mt-10 grid grid-cols-2 gap-4 rounded-2xl p-6 sm:grid-cols-4" style="background:#f8faff">
+                    <div class="text-center">
+                        <div class="text-2xl font-extrabold" style="color:#0062CC">9</div>
+                        <div class="text-xs text-gray-500">{{ lang === 'fr' ? 'Branches du groupe' : 'Group branches' }}</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-extrabold" style="color:#0062CC">3</div>
+                        <div class="text-xs text-gray-500">{{ lang === 'fr' ? 'Niveaux de commission' : 'Commission levels' }}</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-extrabold" style="color:#0062CC">50%</div>
+                        <div class="text-xs text-gray-500">{{ lang === 'fr' ? 'Commission max N1' : 'Max N1 commission' }}</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-extrabold" style="color:#0062CC">7j</div>
+                        <div class="text-xs text-gray-500">{{ lang === 'fr' ? 'Délai de paiement' : 'Payment delay' }}</div>
                     </div>
                 </div>
 
                 <!-- CTA devenir partenaire -->
                 <div class="mt-12 rounded-2xl p-8 text-center" style="background:linear-gradient(135deg,#001d3d,#0062CC)">
-                    <h3 class="text-xl font-extrabold text-white">{{ lang === 'fr' ? 'Devenez partenaire IBIG' : 'Become an IBIG Partner' }}</h3>
+                    <div class="mb-3 inline-block rounded-full px-3 py-1 text-xs font-bold" style="background:rgba(240,192,64,.2);color:#F0C040;border:1px solid rgba(240,192,64,.3)">
+                        {{ lang === 'fr' ? '🔥 Programme tout juste lancé' : '🔥 Program just launched' }}
+                    </div>
+                    <h3 class="text-xl font-extrabold text-white">{{ lang === 'fr' ? "Devenez partenaire IBIG — c'est gratuit" : "Become an IBIG Partner — it's free" }}</h3>
                     <p class="mx-auto mt-2 max-w-lg text-sm text-white/70">
                         {{ lang === 'fr'
-                            ? 'Cabinets comptables, SSII, revendeurs : rejoignez notre réseau et bénéficiez de commissions, de formations et de support dédié.'
-                            : 'Accounting firms, IT companies, resellers: join our network and earn commissions, training and dedicated support.' }}
+                            ? "Vendez FactPro et gagnez jusqu'à 20% de commission. Parrainez des partenaires et touchez sur 3 niveaux. Inscription 100% gratuite, paiement Mobile Money en 7 jours."
+                            : "Sell FactPro and earn up to 20% commission. Refer partners and earn on 3 levels. 100% free to join, Mobile Money payment within 7 days." }}
                     </p>
-                    <a href="mailto:partenaires@ibigsoft.com" class="mt-5 inline-block rounded-xl px-8 py-3 text-sm font-bold transition hover:scale-105" style="background:#F0C040;color:#001d3d">
-                        {{ lang === 'fr' ? 'Devenir partenaire →' : 'Become a partner →' }}
-                    </a>
+                    <div class="mt-6 flex flex-wrap justify-center gap-4">
+                        <a href="https://www.ibigpartners.com/" target="_blank" rel="noopener"
+                           class="inline-block rounded-xl px-8 py-3 text-sm font-bold transition hover:scale-105"
+                           style="background:#F0C040;color:#001d3d">
+                            {{ lang === 'fr' ? 'Rejoindre IBIG Partners →' : 'Join IBIG Partners →' }}
+                        </a>
+                        <a href="https://www.ibigpartners.com/" target="_blank" rel="noopener"
+                           class="inline-block rounded-xl border px-8 py-3 text-sm font-semibold text-white transition hover:bg-white/10"
+                           style="border-color:rgba(255,255,255,.3)">
+                            {{ lang === 'fr' ? 'En savoir plus' : 'Learn more' }}
+                        </a>
+                    </div>
+                    <div class="mt-5 flex flex-wrap justify-center gap-4 text-xs text-white/50">
+                        <span>✓ {{ lang === 'fr' ? 'Inscription 100% gratuite' : '100% free to join' }}</span>
+                        <span>✓ {{ lang === 'fr' ? 'Mobile Money & banque' : 'Mobile Money & bank' }}</span>
+                        <span>✓ {{ lang === 'fr' ? 'Kit marketing offert' : 'Free marketing kit' }}</span>
+                    </div>
                 </div>
             </div>
         </section>
