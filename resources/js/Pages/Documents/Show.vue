@@ -218,6 +218,13 @@ const planProgress = computed(() => {
                     >
                         📄 PDF
                     </a>
+                    <a
+                        :href="route('documents.docx', document.id)"
+                        class="rounded-md border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100"
+                        title="Télécharger en Word (.docx)"
+                    >
+                        📝 Word
+                    </a>
                     <button
                         v-if="document.type !== 'purchase_order'"
                         @click="openThermal"

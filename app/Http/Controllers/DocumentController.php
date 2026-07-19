@@ -60,6 +60,10 @@ class DocumentController extends Controller
 
         $documents = (clone $base)
             ->when($request->type, fn ($q, $t) => $q->where('type', $t))
+            ->when($request->category, function ($q, $cat) {
+                $typesInCat = collect(Document::TYPES)->filter(fn ($t) => ($t['category'] ?? '') === $cat)->keys()->all();
+                $q->whereIn('type', $typesInCat);
+            })
             ->when($request->status, fn ($q, $s) => $q->where('status', $s))
             ->when($days, fn ($q) => $q->where('issue_date', '>=', now()->subDays($days)))
             ->when($request->search, fn ($q, $s) => $q->where(fn ($q) => $q
@@ -73,10 +77,11 @@ class DocumentController extends Controller
             ->withQueryString();
 
         return Inertia::render('Documents/Index', [
-            'documents' => $documents,
-            'filters'   => $request->only('type', 'status', 'search', 'period'),
-            'types'     => collect(Document::TYPES)->map(fn ($t, $k) => ['value' => $k, 'label' => $t['label']])->values(),
-            'stats'     => $stats,
+            'documents'  => $documents,
+            'filters'    => $request->only('type', 'category', 'status', 'search', 'period'),
+            'types'      => $this->typesForFront(),
+            'categories' => Document::CATEGORIES,
+            'stats'      => $stats,
         ]);
     }
 
@@ -85,16 +90,17 @@ class DocumentController extends Controller
         $company = $request->user()->currentCompany;
 
         return Inertia::render('Documents/Form', [
-            'documentType' => $request->query('type', 'invoice'),
-            'customers' => $company->customers()->orderBy('name')->get(['id', 'name', 'email', 'currency']),
-            'products' => $company->products()->where('is_active', true)->orderBy('name')
+            'documentType'    => $request->query('type', 'invoice'),
+            'customers'       => $company->customers()->orderBy('name')->get(['id', 'name', 'email', 'currency']),
+            'products'        => $company->products()->where('is_active', true)->orderBy('name')
                 ->get(['id', 'name', 'description', 'unit', 'price', 'tax_rate']),
-            'defaults' => [
+            'defaults'        => [
                 'currency' => $company->currency,
                 'tax_rate' => (float) $company->default_tax_rate,
             ],
-            'types' => collect(Document::TYPES)->map(fn ($t, $k) => ['value' => $k, 'label' => $t['label']])->values(),
-            'templates' => $this->templatesForFront($request->user()),
+            'types'           => $this->typesForFront(),
+            'categories'      => Document::CATEGORIES,
+            'templates'       => $this->templatesForFront($request->user()),
             'defaultTemplate' => $company->default_template,
         ]);
     }
@@ -235,17 +241,18 @@ class DocumentController extends Controller
         $document->load(['lines', 'customer']);
 
         return Inertia::render('Documents/Form', [
-            'document' => $document,
-            'documentType' => $document->type,
-            'customers' => $company->customers()->orderBy('name')->get(['id', 'name', 'email', 'currency']),
-            'products' => $company->products()->where('is_active', true)->orderBy('name')
+            'document'        => $document,
+            'documentType'    => $document->type,
+            'customers'       => $company->customers()->orderBy('name')->get(['id', 'name', 'email', 'currency']),
+            'products'        => $company->products()->where('is_active', true)->orderBy('name')
                 ->get(['id', 'name', 'description', 'unit', 'price', 'tax_rate']),
-            'defaults' => [
+            'defaults'        => [
                 'currency' => $company->currency,
                 'tax_rate' => (float) $company->default_tax_rate,
             ],
-            'types' => collect(Document::TYPES)->map(fn ($t, $k) => ['value' => $k, 'label' => $t['label']])->values(),
-            'templates' => $this->templatesForFront($request->user()),
+            'types'           => $this->typesForFront(),
+            'categories'      => Document::CATEGORIES,
+            'templates'       => $this->templatesForFront($request->user()),
             'defaultTemplate' => $company->default_template,
         ]);
     }
@@ -491,6 +498,169 @@ class DocumentController extends Controller
 
         return collect($map[$document->type] ?? [])
             ->map(fn ($t) => ['value' => $t, 'label' => Document::TYPES[$t]['label']])
+            ->values()
+            ->all();
+    }
+
+    /** Télécharge le document au format Word (.docx). */
+    public function docx(Request $request, Document $document)
+    {
+        $this->authorizeDocument($request, $document);
+        $document->load(['lines', 'customer', 'company']);
+
+        $phpWord = new \PhpOffice\PhpWord\PhpWord();
+        $phpWord->setDefaultFontName('Arial');
+        $phpWord->setDefaultFontSize(11);
+
+        $section = $phpWord->addSection(['marginTop' => 1200, 'marginBottom' => 1200, 'marginLeft' => 1200, 'marginRight' => 1200]);
+
+        // En-tête société
+        $section->addText($document->company->name ?? '', ['bold' => true, 'size' => 16], ['spaceAfter' => 120]);
+        if ($document->company->address) {
+            $section->addText($document->company->address, ['size' => 10, 'color' => '666666'], ['spaceAfter' => 60]);
+        }
+        $section->addTextBreak(1);
+
+        // Titre document
+        $section->addText(strtoupper($document->type_label.' N° '.$document->number), ['bold' => true, 'size' => 14], ['spaceAfter' => 240]);
+
+        // Infos principales
+        $infoStyle = ['size' => 10];
+        $section->addText('Date : '.$document->issue_date->format('d/m/Y'), $infoStyle);
+        if ($document->due_date) {
+            $section->addText('Échéance : '.$document->due_date->format('d/m/Y'), $infoStyle);
+        }
+        if ($document->customer) {
+            $section->addText('Client : '.$document->customer->name, ['size' => 10, 'bold' => true]);
+        }
+        $section->addTextBreak(1);
+
+        // Table des lignes
+        if ($document->lines->isNotEmpty()) {
+            $tableStyle = ['borderSize' => 6, 'borderColor' => 'cccccc', 'cellMargin' => 80];
+            $phpWord->addTableStyle('docTable', $tableStyle);
+            $table = $section->addTable('docTable');
+
+            // En-tête
+            $table->addRow(null, ['tblHeader' => true]);
+            $headerStyle = ['bold' => true, 'size' => 10, 'color' => 'ffffff'];
+            $cellBg = ['bgColor' => '1e3a5f'];
+            foreach (['Description', 'Qté', 'P.U. HT', 'Total HT'] as $col) {
+                $cell = $table->addCell(null, $cellBg);
+                $cell->addText($col, $headerStyle, ['alignment' => 'center']);
+            }
+
+            foreach ($document->lines as $line) {
+                $table->addRow();
+                $table->addCell(4000)->addText($line->description ?? '', ['size' => 10]);
+                $table->addCell(1000)->addText(number_format($line->quantity, 2, ',', ' '), ['size' => 10], ['alignment' => 'right']);
+                $table->addCell(1500)->addText(number_format($line->unit_price, 0, ',', ' '), ['size' => 10], ['alignment' => 'right']);
+                $lineTotal = $line->quantity * $line->unit_price * (1 - ($line->discount_percent ?? 0) / 100);
+                $table->addCell(1500)->addText(number_format($lineTotal, 0, ',', ' '), ['size' => 10], ['alignment' => 'right']);
+            }
+        }
+
+        $section->addTextBreak(1);
+
+        // Totaux
+        $fmt = fn ($n) => number_format((float) $n, 0, ',', ' ').' '.$document->currency;
+        $section->addText('Sous-total HT : '.$fmt($document->subtotal), ['size' => 11], ['alignment' => 'right']);
+        if ($document->discount_amount > 0) {
+            $section->addText('Remise : −'.$fmt($document->discount_amount), ['size' => 11, 'color' => 'cc0000'], ['alignment' => 'right']);
+        }
+        if ($document->tax_amount > 0) {
+            $section->addText('TVA : '.$fmt($document->tax_amount), ['size' => 11], ['alignment' => 'right']);
+        }
+        $section->addText('TOTAL TTC : '.$fmt($document->total), ['size' => 13, 'bold' => true], ['alignment' => 'right', 'spaceAfter' => 240]);
+
+        if ($document->notes) {
+            $section->addText('Notes :', ['bold' => true, 'size' => 10]);
+            $section->addText($document->notes, ['size' => 10, 'italic' => true]);
+        }
+
+        $filename = $document->number.'.docx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        header('Content-Disposition: attachment; filename="'.$filename.'"');
+        header('Cache-Control: max-age=0');
+
+        $writer = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
+        $writer->save('php://output');
+        exit;
+    }
+
+    /** Export Excel de la liste des documents (avec les filtres actifs). */
+    public function exportExcel(Request $request)
+    {
+        $company = $request->user()->currentCompany;
+        $base    = Document::where('company_id', $company->id);
+
+        $periodMap = ['30' => 30, '90' => 90, '180' => 180, '365' => 365];
+        $days = $periodMap[$request->get('period', '')] ?? null;
+
+        $documents = (clone $base)
+            ->when($request->type, fn ($q, $t) => $q->where('type', $t))
+            ->when($request->category, function ($q, $cat) {
+                $types = collect(Document::TYPES)->filter(fn ($t) => ($t['category'] ?? '') === $cat)->keys()->all();
+                $q->whereIn('type', $types);
+            })
+            ->when($request->status, fn ($q, $s) => $q->where('status', $s))
+            ->when($days, fn ($q) => $q->where('issue_date', '>=', now()->subDays($days)))
+            ->when($request->search, fn ($q, $s) => $q->where(fn ($q) => $q
+                ->where('number', 'like', "%{$s}%")
+                ->orWhereHas('customer', fn ($q) => $q->where('name', 'like', "%{$s}%"))))
+            ->with('customer:id,name')
+            ->orderByDesc('issue_date')
+            ->get(['id','type','number','status','customer_id','issue_date','due_date','total','amount_paid','currency']);
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet       = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Documents');
+
+        $headers = ['Type','Numéro','Client','Date émission','Échéance','Total TTC','Payé','Solde','Devise','Statut'];
+        $sheet->fromArray($headers, null, 'A1');
+
+        // Style en-tête
+        $headerStyle = [
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'fill' => ['fillType' => 'solid', 'startColor' => ['rgb' => '1e3a5f']],
+        ];
+        $sheet->getStyle('A1:J1')->applyFromArray($headerStyle);
+
+        $row = 2;
+        foreach ($documents as $doc) {
+            $sheet->fromArray([
+                Document::TYPES[$doc->type]['label'] ?? $doc->type,
+                $doc->number,
+                $doc->customer?->name ?? '—',
+                $doc->issue_date ? $doc->issue_date->format('d/m/Y') : '',
+                $doc->due_date ? $doc->due_date->format('d/m/Y') : '',
+                (float) $doc->total,
+                (float) $doc->amount_paid,
+                round((float) $doc->total - (float) $doc->amount_paid, 2),
+                $doc->currency,
+                $doc->status,
+            ], null, 'A'.$row);
+            $row++;
+        }
+
+        foreach (range('A', 'J') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="documents-'.date('Y-m-d').'.xlsx"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
+
+    /** Liste enrichie des types pour le front (avec category). */
+    private function typesForFront(): array
+    {
+        return collect(Document::TYPES)
+            ->map(fn ($t, $k) => ['value' => $k, 'label' => $t['label'], 'category' => $t['category']])
             ->values()
             ->all();
     }

@@ -17,12 +17,24 @@ const props = defineProps({
     products: Array,
     defaults: Object,
     types: Array,
+    categories: { type: Object, default: () => ({}) },
     templates: { type: Array, default: () => [] },
     defaultTemplate: { type: String, default: null },
 });
 
 const isEdit = computed(() => !!props.document);
 const typeLabel = computed(() => props.types.find((t) => t.value === (props.document?.type ?? props.documentType))?.label ?? 'Document');
+
+// Types groupés par catégorie pour le sélecteur
+const groupedTypes = computed(() => {
+    const groups = {};
+    props.types.forEach(t => {
+        const cat = t.category ?? 'vente';
+        if (!groups[cat]) groups[cat] = { label: props.categories[cat] ?? cat, types: [] };
+        groups[cat].types.push(t);
+    });
+    return groups;
+});
 
 // ── Schéma par type ───────────────────────────────────────────────────────────
 const TYPE_SCHEMAS = {
@@ -43,7 +55,9 @@ const TYPE_SCHEMAS = {
     remittance:      { showLines: true,  showPrices: true,  showTax: false, showDiscount: false, showDueDate: false, clientLabel: 'Bénéficiaire',            extraSection: 'remittance' },
 };
 
-const schema = computed(() => TYPE_SCHEMAS[form.type] ?? TYPE_SCHEMAS.invoice);
+// Schéma générique pour les types non mappés explicitement
+const defaultSchema = { showLines: true, showPrices: true, showTax: true, showDiscount: false, showDueDate: false, clientLabel: 'Client / Tiers', extraSection: 'generic' };
+const schema = computed(() => TYPE_SCHEMAS[form.type] ?? defaultSchema);
 
 // ── Customers list ────────────────────────────────────────────────────────────
 const customersList = ref([...(props.customers ?? [])]);
@@ -270,7 +284,9 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
                         <div v-if="!isEdit">
                             <InputLabel value="Type de document" />
                             <select v-model="form.type" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
-                                <option v-for="t in types" :key="t.value" :value="t.value">{{ t.label }}</option>
+                                <optgroup v-for="(group, catKey) in groupedTypes" :key="catKey" :label="group.label">
+                                    <option v-for="t in group.types" :key="t.value" :value="t.value">{{ t.label }}</option>
+                                </optgroup>
                             </select>
                         </div>
 
@@ -724,6 +740,27 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
                         <div>
                             <InputLabel value="Numéro de compte" />
                             <TextInput v-model="form.meta.account_number" class="mt-1 block w-full" placeholder="Ex: CI123..." />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <!-- ── SECTION GÉNÉRIQUE (types non mappés) ───────────────── -->
+                <!-- ══════════════════════════════════════════════════════════ -->
+                <div v-if="schema.extraSection === 'generic'"
+                    class="rounded-xl bg-white p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="flex h-7 w-7 items-center justify-center rounded-full bg-brand-50 text-brand-600 text-base">📄</span>
+                        <h3 class="text-sm font-bold text-gray-700">{{ typeLabel }}</h3>
+                    </div>
+                    <div class="grid gap-3 sm:grid-cols-2">
+                        <div>
+                            <InputLabel value="Référence interne" />
+                            <TextInput v-model="form.meta.internal_ref" class="mt-1 block w-full" placeholder="Numéro ou référence interne" />
+                        </div>
+                        <div>
+                            <InputLabel value="Objet / Motif" />
+                            <TextInput v-model="form.meta.purpose" class="mt-1 block w-full" placeholder="Objet ou motif du document" />
                         </div>
                     </div>
                 </div>

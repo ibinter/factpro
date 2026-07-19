@@ -7,24 +7,27 @@ const props = defineProps({
     documents: Object,
     filters: Object,
     types: Array,
+    categories: { type: Object, default: () => ({}) },
     stats: Object,
 });
 
 // ── Filtres ───────────────────────────────────────────────────────────────────
-const search = ref(props.filters.search ?? '');
-const type   = ref(props.filters.type   ?? '');
-const status = ref(props.filters.status ?? '');
-const period = ref(props.filters.period ?? '');
+const search   = ref(props.filters.search   ?? '');
+const type     = ref(props.filters.type     ?? '');
+const category = ref(props.filters.category ?? '');
+const status   = ref(props.filters.status   ?? '');
+const period   = ref(props.filters.period   ?? '');
 
 let timeout = null;
 const applyFilters = () => {
     router.get(
         route('documents.index'),
         {
-            search: search.value || undefined,
-            type:   type.value  || undefined,
-            status: status.value || undefined,
-            period: period.value || undefined,
+            search:   search.value   || undefined,
+            type:     type.value     || undefined,
+            category: category.value || undefined,
+            status:   status.value   || undefined,
+            period:   period.value   || undefined,
         },
         { preserveState: true, replace: true },
     );
@@ -34,18 +37,44 @@ watch(search, () => {
     clearTimeout(timeout);
     timeout = setTimeout(applyFilters, 350);
 });
-watch([type, status, period], applyFilters);
+watch([type, category, status, period], applyFilters);
+
+// Quand on change de catégorie, réinitialiser le type si incompatible
+watch(category, (newCat) => {
+    if (newCat && type.value) {
+        const found = props.types.find(t => t.value === type.value && t.category === newCat);
+        if (!found) type.value = '';
+    }
+});
 
 const clearFilters = () => {
-    search.value = '';
-    type.value   = '';
-    status.value = '';
-    period.value = '';
+    search.value   = '';
+    type.value     = '';
+    category.value = '';
+    status.value   = '';
+    period.value   = '';
 };
 
 const hasFilters = computed(() =>
-    search.value || type.value || status.value || period.value
+    search.value || type.value || category.value || status.value || period.value
 );
+
+// Types filtrés par catégorie sélectionnée (pour les pills)
+const filteredTypes = computed(() =>
+    category.value ? props.types.filter(t => t.category === category.value) : props.types
+);
+
+// URL export Excel avec les filtres actifs
+const excelExportUrl = computed(() => {
+    const params = new URLSearchParams();
+    if (search.value)   params.set('search',   search.value);
+    if (type.value)     params.set('type',     type.value);
+    if (category.value) params.set('category', category.value);
+    if (status.value)   params.set('status',   status.value);
+    if (period.value)   params.set('period',   period.value);
+    const qs = params.toString();
+    return route('documents.export.excel') + (qs ? '?' + qs : '');
+});
 
 // ── Formatters ────────────────────────────────────────────────────────────────
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
@@ -198,7 +227,7 @@ const quickActions = [
                 <div class="rounded-xl bg-white p-4 shadow-sm border border-gray-100">
                     <div class="flex flex-wrap items-center gap-3">
                         <!-- Recherche -->
-                        <div class="relative min-w-[220px] flex-1">
+                        <div class="relative min-w-[200px] flex-1">
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                             </svg>
@@ -210,10 +239,16 @@ const quickActions = [
                             />
                         </div>
 
-                        <!-- Type -->
+                        <!-- Catégorie -->
+                        <select v-model="category" class="rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                            <option value="">Toutes catégories</option>
+                            <option v-for="(label, key) in categories" :key="key" :value="key">{{ label }}</option>
+                        </select>
+
+                        <!-- Type (filtré par catégorie) -->
                         <select v-model="type" class="rounded-lg border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500">
                             <option value="">Tous les types</option>
-                            <option v-for="t in types" :key="t.value" :value="t.value">{{ t.label }}</option>
+                            <option v-for="t in filteredTypes" :key="t.value" :value="t.value">{{ t.label }}</option>
                         </select>
 
                         <!-- Statut -->
@@ -231,6 +266,15 @@ const quickActions = [
                             <option value="365">12 derniers mois</option>
                         </select>
 
+                        <!-- Export Excel -->
+                        <a :href="excelExportUrl" title="Exporter en Excel"
+                            class="flex items-center gap-1.5 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-semibold text-emerald-700 hover:bg-emerald-100 transition-colors">
+                            <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            Excel
+                        </a>
+
                         <!-- Clear -->
                         <button v-if="hasFilters" type="button" @click="clearFilters"
                             class="flex items-center gap-1 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-500 hover:bg-gray-50 transition-colors">
@@ -239,16 +283,30 @@ const quickActions = [
                         </button>
                     </div>
 
-                    <!-- Filtres type pills (cliquables) -->
-                    <div class="mt-3 flex flex-wrap gap-1.5">
-                        <button type="button" @click="type = ''"
+                    <!-- Catégorie pills -->
+                    <div class="mt-3 flex flex-wrap gap-1.5 border-b border-gray-50 pb-2.5">
+                        <button type="button" @click="category = ''; type = ''"
                             class="rounded-full px-3 py-1 text-xs font-medium transition-colors"
-                            :class="!type ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
-                            Tous
+                            :class="!category ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                            Tout
                         </button>
-                        <button v-for="t in types" :key="t.value" type="button" @click="type = t.value"
+                        <button v-for="(label, key) in categories" :key="key" type="button" @click="category = key; type = ''"
                             class="rounded-full px-3 py-1 text-xs font-medium transition-colors"
-                            :class="type === t.value ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                            :class="category === key ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                            {{ label }}
+                        </button>
+                    </div>
+
+                    <!-- Type pills (filtrés par catégorie) -->
+                    <div class="mt-2.5 flex flex-wrap gap-1.5">
+                        <button type="button" @click="type = ''"
+                            class="rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors"
+                            :class="!type ? 'bg-gray-800 text-white shadow-sm' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'">
+                            Tous types
+                        </button>
+                        <button v-for="t in filteredTypes" :key="t.value" type="button" @click="type = t.value"
+                            class="rounded-full px-2.5 py-0.5 text-[11px] font-medium transition-colors"
+                            :class="type === t.value ? 'bg-gray-800 text-white shadow-sm' : 'bg-gray-50 text-gray-500 hover:bg-gray-100'">
                             {{ t.label }}
                         </button>
                     </div>
