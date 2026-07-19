@@ -81,9 +81,9 @@ const switchCompany = (company) => {
                                 <NavLink :href="route('products.index')" :active="route().current('products.*')">
                                     Catalogue
                                 </NavLink>
-                                <!-- Menu Plus : tous les modules avancés + opérations -->
+                                <!-- Menu Plus : mega-menu 2 colonnes -->
                                 <div class="inline-flex items-center">
-                                    <Dropdown align="left" width="64">
+                                    <Dropdown align="left" width="mega" content-classes="py-0 bg-white">
                                         <template #trigger>
                                             <button
                                                 type="button"
@@ -99,22 +99,53 @@ const switchCompany = (company) => {
                                             </button>
                                         </template>
                                         <template #content>
-                                            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Opérations</div>
-                                            <DropdownLink :href="route('pos.index')">🏪 Caisse POS</DropdownLink>
-                                            <DropdownLink :href="route('stock.index')">📦 Stocks</DropdownLink>
-                                            <DropdownLink :href="route('reminders.index')">⏰ Relances clients</DropdownLink>
-                                            <DropdownLink :href="route('recurring.index')">🔁 Factures récurrentes</DropdownLink>
-                                            <div class="my-1 border-t border-gray-100"></div>
-                                            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Gestion</div>
-                                            <DropdownLink :href="route('projects.index')">⏱ Projets & Temps</DropdownLink>
-                                            <DropdownLink :href="route('expenses.index')">🧾 Notes de frais</DropdownLink>
-                                            <DropdownLink :href="route('purchases.index')">🛒 Achats fournisseurs</DropdownLink>
-                                            <DropdownLink :href="route('commissions.index')">🤝 Commissions vendeurs</DropdownLink>
-                                            <div class="my-1 border-t border-gray-100"></div>
-                                            <div class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Analyse</div>
-                                            <DropdownLink :href="route('accounting.index')">📚 Comptabilité</DropdownLink>
-                                            <DropdownLink :href="route('reports.index')">📊 Rapports & Exports</DropdownLink>
-                                            <DropdownLink :href="route('billing.index')">💳 Abonnement</DropdownLink>
+                                            <div style="width:480px" class="p-4">
+                                                <div class="grid grid-cols-2 gap-x-4">
+                                                    <!-- Colonne gauche -->
+                                                    <div>
+                                                        <p class="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Opérations</p>
+                                                        <a :href="route('pos.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🏪</span><span>Caisse POS</span>
+                                                        </a>
+                                                        <a :href="route('stock.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>📦</span><span>Stocks</span>
+                                                        </a>
+                                                        <a :href="route('reminders.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>⏰</span><span>Relances clients</span>
+                                                        </a>
+                                                        <a :href="route('recurring.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🔁</span><span>Factures récurrentes</span>
+                                                        </a>
+                                                        <a :href="route('purchases.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🛒</span><span>Achats fournisseurs</span>
+                                                        </a>
+                                                    </div>
+                                                    <!-- Colonne droite -->
+                                                    <div>
+                                                        <p class="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Gestion & Analyse</p>
+                                                        <a :href="route('projects.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>⏱</span><span>Projets & Temps</span>
+                                                        </a>
+                                                        <a :href="route('expenses.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🧾</span><span>Notes de frais</span>
+                                                        </a>
+                                                        <a :href="route('commissions.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🤝</span><span>Commissions vendeurs</span>
+                                                        </a>
+                                                        <a :href="route('accounting.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>📚</span><span>Comptabilité</span>
+                                                        </a>
+                                                        <a :href="route('reports.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>📊</span><span>Rapports & Exports</span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="mt-3 border-t border-gray-100 pt-2">
+                                                    <a :href="route('billing.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-50 transition-colors">
+                                                        <span>💳</span><span>Abonnement & Facturation</span>
+                                                    </a>
+                                                </div>
+                                            </div>
                                         </template>
                                     </Dropdown>
                                 </div>
