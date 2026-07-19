@@ -398,9 +398,9 @@ const quickActions = [
                                                     class="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">
                                                     Effacer les filtres
                                                 </button>
-                                                <Link :href="route('documents.create', { type: 'invoice' })"
+                                                <Link :href="route('documents.create', { type: type || 'invoice' })"
                                                     class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700">
-                                                    + Nouvelle facture
+                                                    + {{ type ? getTypeConf(type).label : 'Nouvelle facture' }}
                                                 </Link>
                                             </div>
                                         </div>
