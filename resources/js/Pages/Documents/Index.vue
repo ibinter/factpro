@@ -166,13 +166,35 @@ const selectedTypeLabel = computed(() => {
     return found ? found.label : type.value;
 });
 
-// ── Actions rapides ───────────────────────────────────────────────────────────
-const quickActions = [
-    { type: 'invoice',       label: 'Facture',     cls: 'bg-brand-600 text-white hover:bg-brand-700' },
-    { type: 'quote',         label: 'Devis',       cls: 'border border-amber-400 text-amber-700 hover:bg-amber-50' },
-    { type: 'proforma',      label: 'Proforma',    cls: 'border border-violet-300 text-violet-700 hover:bg-violet-50' },
-    { type: 'delivery_note', label: 'Bon de livr.', cls: 'border border-teal-300 text-teal-700 hover:bg-teal-50' },
-    { type: 'credit_note',   label: 'Avoir',       cls: 'border border-rose-300 text-rose-700 hover:bg-rose-50' },
+// ── Menu nouveau document ─────────────────────────────────────────────────────
+const newDocMenu = ref(false);
+
+const newDocGroups = [
+    {
+        label: 'Vente & Facturation',
+        items: [
+            { type: 'invoice',       icon: '🧾', label: 'Facture',              desc: 'Facture client définitive',        color: 'bg-blue-50 text-blue-700 border-blue-200' },
+            { type: 'quote',         icon: '📋', label: 'Devis',                desc: 'Proposition commerciale',          color: 'bg-amber-50 text-amber-700 border-amber-200' },
+            { type: 'proforma',      icon: '📄', label: 'Facture Proforma',     desc: 'Facture provisoire avant paiement', color: 'bg-violet-50 text-violet-700 border-violet-200' },
+            { type: 'deposit_invoice', icon: '💳', label: "Facture d'acompte",  desc: 'Acompte sur commande',             color: 'bg-cyan-50 text-cyan-700 border-cyan-200' },
+            { type: 'credit_note',   icon: '↩️', label: 'Avoir / Remboursement', desc: 'Annulation ou remboursement',    color: 'bg-rose-50 text-rose-700 border-rose-200' },
+        ],
+    },
+    {
+        label: 'Livraison & Commandes',
+        items: [
+            { type: 'delivery_note', icon: '🚚', label: 'Bon de livraison',     desc: 'Accompagne la marchandise',        color: 'bg-teal-50 text-teal-700 border-teal-200' },
+            { type: 'sales_order',   icon: '📦', label: 'Bon de commande client', desc: 'Commande reçue d\'un client',    color: 'bg-sky-50 text-sky-700 border-sky-200' },
+            { type: 'purchase_order', icon: '🛒', label: 'Commande fournisseur', desc: 'Commande passée à un fournisseur', color: 'bg-indigo-50 text-indigo-700 border-indigo-200' },
+        ],
+    },
+    {
+        label: 'Paiement & Trésorerie',
+        items: [
+            { type: 'payment_receipt', icon: '✅', label: 'Reçu de paiement',   desc: 'Confirmation d\'encaissement',     color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+            { type: 'pos_ticket',    icon: '🖨️', label: 'Ticket de caisse',     desc: 'Vente au comptoir / POS',          color: 'bg-gray-50 text-gray-700 border-gray-200' },
+        ],
+    },
 ];
 </script>
 
@@ -189,14 +211,47 @@ const quickActions = [
                         <h1 class="text-xl font-bold text-gray-900">Documents commerciaux</h1>
                         <p class="text-xs text-gray-400 mt-0.5">{{ documents.total }} document{{ documents.total > 1 ? 's' : '' }} au total</p>
                     </div>
-                    <!-- Quick create buttons -->
-                    <div class="flex flex-wrap gap-2">
-                        <Link v-for="a in quickActions" :key="a.type"
-                            :href="route('documents.create', { type: a.type })"
-                            class="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors"
-                            :class="a.cls">
-                            + {{ a.label }}
-                        </Link>
+                    <!-- Bouton nouveau document -->
+                    <div class="relative">
+                        <button type="button" @click="newDocMenu = !newDocMenu"
+                            class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition-colors">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Nouveau document
+                            <svg class="h-3.5 w-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <Transition name="menu-drop">
+                            <div v-if="newDocMenu" class="absolute right-0 top-full z-30 mt-2 w-80 rounded-xl bg-white shadow-xl ring-1 ring-black/5 overflow-hidden">
+                                <div v-for="group in newDocGroups" :key="group.label">
+                                    <p class="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">{{ group.label }}</p>
+                                    <Link v-for="item in group.items" :key="item.type"
+                                        :href="route('documents.create', { type: item.type })"
+                                        @click="newDocMenu = false"
+                                        class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors">
+                                        <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border text-base"
+                                            :class="item.color">{{ item.icon }}</span>
+                                        <div>
+                                            <p class="text-sm font-semibold text-gray-800">{{ item.label }}</p>
+                                            <p class="text-xs text-gray-400">{{ item.desc }}</p>
+                                        </div>
+                                    </Link>
+                                </div>
+                                <div class="border-t border-gray-50 px-4 py-2">
+                                    <button @click="drawerOpen = true; newDocMenu = false"
+                                        class="text-xs text-gray-400 hover:text-brand-600 transition-colors">
+                                        Voir tous les types de documents →
+                                    </button>
+                                </div>
+                            </div>
+                        </Transition>
+
+                        <!-- Fermer au clic extérieur -->
+                        <div v-if="newDocMenu" class="fixed inset-0 z-20" @click="newDocMenu = false" />
                     </div>
                 </div>
             </div>
@@ -575,4 +630,7 @@ const quickActions = [
 
 .drawer-slide-enter-active, .drawer-slide-leave-active { transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
 .drawer-slide-enter-from, .drawer-slide-leave-to { transform: translateX(100%); }
+
+.menu-drop-enter-active, .menu-drop-leave-active { transition: opacity 0.15s ease, transform 0.15s ease; }
+.menu-drop-enter-from, .menu-drop-leave-to { opacity: 0; transform: translateY(-4px); }
 </style>
