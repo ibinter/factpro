@@ -151,7 +151,7 @@
 <hr class="section-sep">
 
 {{-- Conditions --}}
-@include('pdf.engine.blocks._conditions', ['company' => $company, 'document' => $document])
+@include('pdf.engine.blocks._legal', ['company' => $company, 'document' => $document])
 
 {{-- Signatures --}}
 <div style="margin-top:24px;">

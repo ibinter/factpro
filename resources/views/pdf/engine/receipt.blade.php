@@ -130,7 +130,7 @@
 </div>
 
 {{-- Conditions --}}
-@include('pdf.engine.blocks._conditions', ['company' => $company, 'document' => $document])
+@include('pdf.engine.blocks._legal', ['company' => $company, 'document' => $document])
 
 </body>
 </html>
