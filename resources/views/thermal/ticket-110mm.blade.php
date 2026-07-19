@@ -22,6 +22,20 @@
         $taxGroups[$rate]['base'] += $base;
         $taxGroups[$rate]['tax']  += (float) $line->line_total - $base;
     }
+
+    // Calcul de la hauteur côté PHP (Chrome ignore @page auto et les mises à jour JS)
+    $lh110 = 4.5; // ligne en mm sur 110mm
+    $oneTicket110 = 12
+        + 5 * $lh110  // en-tête société
+        + 3 * $lh110  // n° doc + date + client
+        + ($document->lines->count() * 2 * $lh110)
+        + (count($taxGroups) + 3) * $lh110  // TVA détail + totaux
+        + ($document->payments->count() * $lh110)
+        + 32  // QR
+        + 15  // pied
+        + ($watermark ? $lh110 : 0);
+    $ticketH110 = (int) ceil($oneTicket110 * $copies + ($copies - 1) * 10 + 8);
+    $ticketH110 = max(150, $ticketH110);
 @endphp
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -94,8 +108,8 @@
         .cut { margin: 2mm auto; }
     }
 </style>
-<style id="page-size-style">
-    @page { size: 104mm 2000mm; margin: 0; }
+<style>
+    @page { size: 104mm {{ $ticketH110 }}mm; margin: 0; }
 </style>
 </head>
 <body>
@@ -236,20 +250,6 @@
     </div>
 @endfor
 
-<script>
-    window.addEventListener('load', function() {
-        const tickets = document.querySelectorAll('.ticket');
-        let totalHeightMm = 10;
-        tickets.forEach(t => {
-            const px = t.getBoundingClientRect().height;
-            totalHeightMm += Math.ceil(px * 0.2646) + 8;
-        });
-        const style = document.getElementById('page-size-style');
-        if (style) {
-            style.textContent = '@page { size: 104mm ' + totalHeightMm + 'mm; margin: 0; }';
-        }
-    });
-</script>
 @if ($autoprint)
 <script>window.addEventListener('load', () => setTimeout(() => window.print(), 600));</script>
 @endif

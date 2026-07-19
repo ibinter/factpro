@@ -517,9 +517,13 @@ class DocumentController extends Controller
         $phpWord->setDefaultFontSize(10);
 
         // Désactiver le suivi des modifications (évite le texte barré)
+        $trackChangesView = new \PhpOffice\PhpWord\ComplexType\TrackChangesView();
+        $trackChangesView->setMarkup(false);
+        $trackChangesView->setInsDel(false);
+        $trackChangesView->setFormatting(false);
         $settings = $phpWord->getSettings();
-        $settings->setRevisionView(['markup' => false]);
-        $settings->setTrackChanges(false);
+        $settings->setRevisionView($trackChangesView);
+        $settings->setTrackRevisions(false);
 
         $section = $phpWord->addSection([
             'marginTop'    => 1200,

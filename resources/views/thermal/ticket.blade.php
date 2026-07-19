@@ -13,6 +13,21 @@
     ];
     $balance = round((float) $document->total - (float) $document->amount_paid, 2);
     $sep = str_repeat('-', $width <= 58 ? 32 : ($width <= 80 ? 42 : 58));
+
+    // Calcul de la hauteur du ticket côté PHP (Chrome ignore @page auto et les mises à jour JS)
+    $lh = $width <= 58 ? 3.8 : 4.2; // hauteur d'une ligne en mm selon largeur
+    $oneTicket = 12 // padding haut/bas
+        + 5 * $lh  // en-tête société : nom + adresse + ville + tél + fiscal
+        + 3 * $lh  // n° doc + date + client
+        + ($document->lines->count() * 2 * $lh) // 2 lignes par article
+        + 4 * $lh  // totaux (subtotal, remise, TVA, total)
+        + ($document->payments->count() * $lh) // paiements
+        + ($document->notes ? 2 * $lh : 0)
+        + 32       // QR code + URL
+        + 12       // pied de page
+        + ($watermark ? $lh : 0);
+    $ticketH = (int) ceil($oneTicket * $copies + ($copies - 1) * 10 + 8);
+    $ticketH = max(150, $ticketH);
 @endphp
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -61,13 +76,15 @@
     .toolbar button.print { background: #059669; color: #fff; border-color: #059669; font-weight: bold; }
     .toolbar label { font-size: 13px; color: #d1d5db; }
 
-    @page { size: {{ $width }}mm auto; margin: 0; }
     @media print {
         .no-print { display: none !important; }
         html, body { background: #fff; margin: 0; padding: 0; }
         .ticket { margin: 0; box-shadow: none; width: {{ $width }}mm; }
         .cut { margin: 2mm auto; }
     }
+</style>
+<style>
+    @page { size: {{ $width }}mm {{ $ticketH }}mm; margin: 0; }
 </style>
 </head>
 <body>
@@ -192,7 +209,7 @@
     }
 </script>
 @if ($autoprint)
-<script>window.addEventListener('load', () => setTimeout(() => window.print(), 300));</script>
+<script>window.addEventListener('load', () => setTimeout(() => window.print(), 600));</script>
 @endif
 </body>
 </html>
