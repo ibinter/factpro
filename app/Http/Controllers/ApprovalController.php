@@ -15,7 +15,7 @@ use Inertia\Response;
 
 class ApprovalController extends Controller
 {
-    private const ALLOWED_PLANS = ['business', 'enterprise'];
+    private const ALLOWED_PLANS = ['starter', 'pro', 'business', 'enterprise'];
 
     public function __construct(
         private ApprovalService $approvalService,
@@ -60,7 +60,7 @@ class ApprovalController extends Controller
     public function storeWorkflow(Request $request): RedirectResponse
     {
         if (! $this->hasAccess($request)) {
-            abort(403, 'Plan BUSINESS+ requis.');
+            abort(403, 'Circuit de validation non disponible sur votre plan.');
         }
 
         $data = $request->validate([
@@ -91,18 +91,29 @@ class ApprovalController extends Controller
     public function submit(Document $document, Request $request): RedirectResponse
     {
         if (! $this->hasAccess($request)) {
-            abort(403, 'Plan BUSINESS+ requis.');
+            abort(403, 'Circuit de validation non disponible sur votre plan.');
         }
 
+        $company = $request->user()->currentCompany;
+
         $data = $request->validate([
-            'workflow_id' => ['required', 'integer', 'exists:approval_workflows,id'],
+            'workflow_id' => ['nullable', 'integer', 'exists:approval_workflows,id'],
         ]);
 
-        $workflow = ApprovalWorkflow::findOrFail($data['workflow_id']);
+        // Si un workflow est précisé, on l'utilise ; sinon on prend le premier de la société
+        if (!empty($data['workflow_id'])) {
+            $workflow = ApprovalWorkflow::findOrFail($data['workflow_id']);
+            abort_unless($workflow->company_id === $company->id, 403);
+        } else {
+            $workflow = ApprovalWorkflow::where('company_id', $company->id)
+                ->where('is_active', true)
+                ->orderBy('id')
+                ->first();
+        }
 
-        // Ensure workflow belongs to same company
-        $company = $request->user()->currentCompany;
-        abort_unless($workflow->company_id === $company->id, 403);
+        if (! $workflow) {
+            return back()->withErrors(['workflow' => 'Aucun circuit de validation configuré. Créez-en un dans Validation > Circuits.']);
+        }
 
         $this->approvalService->submitForApproval($document, $workflow, $request->user());
 
@@ -112,7 +123,7 @@ class ApprovalController extends Controller
     public function approve(ApprovalStep $step, Request $request): RedirectResponse
     {
         if (! $this->hasAccess($request)) {
-            abort(403, 'Plan BUSINESS+ requis.');
+            abort(403, 'Circuit de validation non disponible sur votre plan.');
         }
 
         $data = $request->validate([
@@ -127,7 +138,7 @@ class ApprovalController extends Controller
     public function reject(ApprovalStep $step, Request $request): RedirectResponse
     {
         if (! $this->hasAccess($request)) {
-            abort(403, 'Plan BUSINESS+ requis.');
+            abort(403, 'Circuit de validation non disponible sur votre plan.');
         }
 
         $data = $request->validate([
@@ -142,7 +153,7 @@ class ApprovalController extends Controller
     public function delegate(ApprovalStep $step, Request $request): RedirectResponse
     {
         if (! $this->hasAccess($request)) {
-            abort(403, 'Plan BUSINESS+ requis.');
+            abort(403, 'Circuit de validation non disponible sur votre plan.');
         }
 
         $data = $request->validate([
