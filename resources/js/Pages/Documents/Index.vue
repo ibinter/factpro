@@ -358,7 +358,7 @@ const quickActions = [
 
                                     <!-- Actions -->
                                     <td class="px-4 py-3.5" @click.stop>
-                                        <div class="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <div class="flex items-center justify-center gap-1">
                                             <Link :href="route('documents.show', doc.id)"
                                                 class="rounded-lg p-1.5 text-gray-400 hover:bg-white hover:text-brand-600 hover:shadow-sm transition-all"
                                                 title="Voir">
