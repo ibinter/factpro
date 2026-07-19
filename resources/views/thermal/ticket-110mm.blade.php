@@ -87,13 +87,15 @@
     }
     .toolbar button.print { background: #059669; color: #fff; border-color: #059669; font-weight: bold; }
 
-    @page { size: 104mm auto; margin: 0; }
     @media print {
         .no-print { display: none !important; }
         html, body { background: #fff; margin: 0; padding: 0; }
         .ticket { margin: 0; box-shadow: none; }
         .cut { margin: 2mm auto; }
     }
+</style>
+<style id="page-size-style">
+    @page { size: 104mm 2000mm; margin: 0; }
 </style>
 </head>
 <body>
@@ -234,8 +236,22 @@
     </div>
 @endfor
 
+<script>
+    window.addEventListener('load', function() {
+        const tickets = document.querySelectorAll('.ticket');
+        let totalHeightMm = 10;
+        tickets.forEach(t => {
+            const px = t.getBoundingClientRect().height;
+            totalHeightMm += Math.ceil(px * 0.2646) + 8;
+        });
+        const style = document.getElementById('page-size-style');
+        if (style) {
+            style.textContent = '@page { size: 104mm ' + totalHeightMm + 'mm; margin: 0; }';
+        }
+    });
+</script>
 @if ($autoprint)
-<script>window.addEventListener('load', () => setTimeout(() => window.print(), 300));</script>
+<script>window.addEventListener('load', () => setTimeout(() => window.print(), 600));</script>
 @endif
 </body>
 </html>

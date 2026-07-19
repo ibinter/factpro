@@ -514,82 +514,166 @@ class DocumentController extends Controller
 
         $phpWord = new \PhpOffice\PhpWord\PhpWord();
         $phpWord->setDefaultFontName('Arial');
-        $phpWord->setDefaultFontSize(11);
+        $phpWord->setDefaultFontSize(10);
 
-        $section = $phpWord->addSection(['marginTop' => 1200, 'marginBottom' => 1200, 'marginLeft' => 1200, 'marginRight' => 1200]);
+        // Désactiver le suivi des modifications (évite le texte barré)
+        $settings = $phpWord->getSettings();
+        $settings->setRevisionView(['markup' => false]);
+        $settings->setTrackChanges(false);
 
-        // En-tête société
-        $section->addText($document->company->name ?? '', ['bold' => true, 'size' => 16], ['spaceAfter' => 120]);
+        $section = $phpWord->addSection([
+            'marginTop'    => 1200,
+            'marginBottom' => 1200,
+            'marginLeft'   => 1200,
+            'marginRight'  => 1200,
+        ]);
+
+        $fmt = fn ($n) => number_format((float) $n, 0, ',', ' ').' '.$document->currency;
+        $blue = '1e3a5f';
+        $lightGray = 'f3f4f6';
+
+        // ── En-tête deux colonnes : société (gauche) | infos document (droite) ──
+        $phpWord->addTableStyle('headerTable', [
+            'borderSize' => 0, 'cellMargin' => 100,
+        ]);
+        $hdr = $section->addTable('headerTable');
+        $hdr->addRow(400);
+        $leftCell  = $hdr->addCell(5000);
+        $rightCell = $hdr->addCell(3500, ['bgColor' => $lightGray]);
+
+        // Colonne gauche — société
+        $leftCell->addText($document->company->name ?? '', ['bold' => true, 'size' => 14, 'color' => $blue]);
         if ($document->company->address) {
-            $section->addText($document->company->address, ['size' => 10, 'color' => '666666'], ['spaceAfter' => 60]);
+            $leftCell->addText($document->company->address, ['size' => 9, 'color' => '555555']);
         }
-        $section->addTextBreak(1);
+        if ($document->company->city) {
+            $leftCell->addText($document->company->city, ['size' => 9, 'color' => '555555']);
+        }
+        if ($document->company->phone) {
+            $leftCell->addText('Tél : '.$document->company->phone, ['size' => 9]);
+        }
+        if ($document->company->email) {
+            $leftCell->addText('E-mail : '.$document->company->email, ['size' => 9]);
+        }
+        if ($document->company->tax_id) {
+            $leftCell->addText('N° Fiscal : '.$document->company->tax_id, ['size' => 9]);
+        }
 
-        // Titre document
-        $section->addText(strtoupper($document->type_label.' N° '.$document->number), ['bold' => true, 'size' => 14], ['spaceAfter' => 240]);
-
-        // Infos principales
-        $infoStyle = ['size' => 10];
-        $section->addText('Date : '.$document->issue_date->format('d/m/Y'), $infoStyle);
+        // Colonne droite — document
+        $rightCell->addText(strtoupper($document->type_label), ['bold' => true, 'size' => 13, 'color' => $blue], ['alignment' => 'right']);
+        $rightCell->addText('N° '.$document->number, ['bold' => true, 'size' => 11], ['alignment' => 'right']);
+        $rightCell->addText('Date : '.$document->issue_date?->format('d/m/Y'), ['size' => 9], ['alignment' => 'right']);
         if ($document->due_date) {
-            $section->addText('Échéance : '.$document->due_date->format('d/m/Y'), $infoStyle);
+            $rightCell->addText('Échéance : '.$document->due_date->format('d/m/Y'), ['size' => 9], ['alignment' => 'right']);
         }
-        if ($document->customer) {
-            $section->addText('Client : '.$document->customer->name, ['size' => 10, 'bold' => true]);
-        }
+
         $section->addTextBreak(1);
 
-        // Table des lignes
+        // ── Bloc client ──────────────────────────────────────────────────────────
+        if ($document->customer) {
+            $phpWord->addTableStyle('clientTable', ['borderSize' => 6, 'borderColor' => 'cccccc', 'cellMargin' => 80]);
+            $clt = $section->addTable('clientTable');
+            $clt->addRow(200);
+            $cltCell = $clt->addCell(4000, ['bgColor' => $blue]);
+            $cltCell->addText('FACTURER À', ['bold' => true, 'size' => 9, 'color' => 'ffffff']);
+            $clt->addCell(4500);
+
+            $clt->addRow();
+            $infoCell = $clt->addCell(4000);
+            $infoCell->addText($document->customer->name, ['bold' => true, 'size' => 10]);
+            if ($document->customer->address) {
+                $infoCell->addText($document->customer->address, ['size' => 9]);
+            }
+            if ($document->customer->city) {
+                $infoCell->addText($document->customer->city, ['size' => 9]);
+            }
+            if ($document->customer->phone) {
+                $infoCell->addText('Tél : '.$document->customer->phone, ['size' => 9]);
+            }
+            if ($document->customer->email) {
+                $infoCell->addText('E-mail : '.$document->customer->email, ['size' => 9]);
+            }
+            $clt->addCell(4500);
+            $section->addTextBreak(1);
+        }
+
+        // ── Tableau des lignes ───────────────────────────────────────────────────
         if ($document->lines->isNotEmpty()) {
-            $tableStyle = ['borderSize' => 6, 'borderColor' => 'cccccc', 'cellMargin' => 80];
-            $phpWord->addTableStyle('docTable', $tableStyle);
-            $table = $section->addTable('docTable');
+            $phpWord->addTableStyle('linesTable', [
+                'borderSize' => 6, 'borderColor' => 'cccccc', 'cellMargin' => 80,
+            ]);
+            $table = $section->addTable('linesTable');
 
             // En-tête
-            $table->addRow(null, ['tblHeader' => true]);
-            $headerStyle = ['bold' => true, 'size' => 10, 'color' => 'ffffff'];
-            $cellBg = ['bgColor' => '1e3a5f'];
-            foreach (['Description', 'Qté', 'P.U. HT', 'Total HT'] as $col) {
-                $cell = $table->addCell(null, $cellBg);
-                $cell->addText($col, $headerStyle, ['alignment' => 'center']);
-            }
+            $table->addRow(300, ['tblHeader' => true]);
+            $hStyle = ['bold' => true, 'size' => 9, 'color' => 'ffffff'];
+            $hCell  = ['bgColor' => $blue];
+            $table->addCell(4800, $hCell)->addText('Description', $hStyle);
+            $table->addCell(800,  $hCell)->addText('Qté', $hStyle, ['alignment' => 'center']);
+            $table->addCell(1200, $hCell)->addText('P.U. HT', $hStyle, ['alignment' => 'right']);
+            $table->addCell(800,  $hCell)->addText('Rem.%', $hStyle, ['alignment' => 'center']);
+            $table->addCell(1400, $hCell)->addText('Total HT', $hStyle, ['alignment' => 'right']);
 
+            $odd = false;
             foreach ($document->lines as $line) {
+                $rowBg = $odd ? [] : ['bgColor' => 'f9fafb'];
+                $odd   = !$odd;
+                $lineTotal = (float) $line->line_total;
                 $table->addRow();
-                $table->addCell(4000)->addText($line->description ?? '', ['size' => 10]);
-                $table->addCell(1000)->addText(number_format($line->quantity, 2, ',', ' '), ['size' => 10], ['alignment' => 'right']);
-                $table->addCell(1500)->addText(number_format($line->unit_price, 0, ',', ' '), ['size' => 10], ['alignment' => 'right']);
-                $lineTotal = $line->quantity * $line->unit_price * (1 - ($line->discount_percent ?? 0) / 100);
-                $table->addCell(1500)->addText(number_format($lineTotal, 0, ',', ' '), ['size' => 10], ['alignment' => 'right']);
+                $table->addCell(4800, $rowBg)->addText($line->description ?? '', ['size' => 9]);
+                $table->addCell(800,  $rowBg)->addText(number_format((float) $line->quantity, 2, ',', ' '), ['size' => 9], ['alignment' => 'center']);
+                $table->addCell(1200, $rowBg)->addText(number_format((float) $line->unit_price, 0, ',', ' '), ['size' => 9], ['alignment' => 'right']);
+                $table->addCell(800,  $rowBg)->addText($line->discount_percent ? number_format((float) $line->discount_percent, 0).'%' : '—', ['size' => 9], ['alignment' => 'center']);
+                $table->addCell(1400, $rowBg)->addText(number_format($lineTotal, 0, ',', ' '), ['size' => 9], ['alignment' => 'right']);
             }
         }
 
         $section->addTextBreak(1);
 
-        // Totaux
-        $fmt = fn ($n) => number_format((float) $n, 0, ',', ' ').' '.$document->currency;
-        $section->addText('Sous-total HT : '.$fmt($document->subtotal), ['size' => 11], ['alignment' => 'right']);
-        if ($document->discount_amount > 0) {
-            $section->addText('Remise : −'.$fmt($document->discount_amount), ['size' => 11, 'color' => 'cc0000'], ['alignment' => 'right']);
-        }
-        if ($document->tax_amount > 0) {
-            $section->addText('TVA : '.$fmt($document->tax_amount), ['size' => 11], ['alignment' => 'right']);
-        }
-        $section->addText('TOTAL TTC : '.$fmt($document->total), ['size' => 13, 'bold' => true], ['alignment' => 'right', 'spaceAfter' => 240]);
+        // ── Bloc totaux (aligné à droite via table) ──────────────────────────────
+        $phpWord->addTableStyle('totalsTable', ['borderSize' => 0, 'cellMargin' => 80]);
+        $tot = $section->addTable('totalsTable');
+        $addTotalRow = function (string $label, string $value, bool $bold = false, string $bg = 'ffffff') use ($tot) {
+            $tot->addRow(240);
+            $tot->addCell(5500);
+            $tot->addCell(1500, $bold ? ['bgColor' => '1e3a5f'] : ['bgColor' => $bg])
+                ->addText($label, ['size' => 9, 'bold' => $bold, 'color' => $bold ? 'ffffff' : '333333'], ['alignment' => 'right']);
+            $tot->addCell(1500, $bold ? ['bgColor' => '1e3a5f'] : ['bgColor' => $bg])
+                ->addText($value, ['size' => 9, 'bold' => $bold, 'color' => $bold ? 'ffffff' : '111111'], ['alignment' => 'right']);
+        };
 
-        if ($document->notes) {
-            $section->addText('Notes :', ['bold' => true, 'size' => 10]);
-            $section->addText($document->notes, ['size' => 10, 'italic' => true]);
+        $addTotalRow('Sous-total HT', number_format((float) $document->subtotal, 0, ',', ' ').' '.$document->currency);
+        if ((float) $document->discount_amount > 0) {
+            $addTotalRow('Remise', '−'.number_format((float) $document->discount_amount, 0, ',', ' ').' '.$document->currency);
         }
+        if ((float) $document->tax_amount > 0) {
+            $addTotalRow('TVA', number_format((float) $document->tax_amount, 0, ',', ' ').' '.$document->currency);
+        }
+        $addTotalRow('TOTAL TTC', number_format((float) $document->total, 0, ',', ' ').' '.$document->currency, true);
+
+        // ── Notes ────────────────────────────────────────────────────────────────
+        if ($document->notes) {
+            $section->addTextBreak(1);
+            $section->addText('Notes', ['bold' => true, 'size' => 9, 'color' => $blue]);
+            $section->addText($document->notes, ['size' => 9, 'italic' => true], ['spaceAfter' => 120]);
+        }
+
+        // ── Pied de page légal ───────────────────────────────────────────────────
+        $footer = $section->addFooter();
+        $footer->addText(
+            ($document->company->invoice_footer ?? 'Document généré par IBIG FactPro'),
+            ['size' => 8, 'color' => '888888'],
+            ['alignment' => 'center'],
+        );
 
         $filename = $document->number.'.docx';
-        header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        header('Content-Disposition: attachment; filename="'.$filename.'"');
-        header('Cache-Control: max-age=0');
+        $writer   = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
 
-        $writer = \PhpOffice\PhpWord\IOFactory::createWriter($phpWord, 'Word2007');
-        $writer->save('php://output');
-        exit;
+        return response()->streamDownload(function () use ($writer) {
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        ]);
     }
 
     /** Export Excel de la liste des documents (avec les filtres actifs). */
