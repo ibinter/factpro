@@ -573,19 +573,17 @@ class DocumentController extends Controller
 
         $section->addTextBreak(1);
 
-        // ── Bloc client ──────────────────────────────────────────────────────────
+        // ── Bloc destinataire (toujours présent) ─────────────────────────────────
+        $phpWord->addTableStyle('clientTable', ['borderSize' => 6, 'borderColor' => 'cccccc', 'cellMargin' => 80]);
+        $clt = $section->addTable('clientTable');
+
+        $clt->addRow(240);
+        $clt->addCell(8500, ['bgColor' => $blue])
+            ->addText('DESTINATAIRE', ['bold' => true, 'size' => 9, 'color' => 'ffffff']);
+
+        $clt->addRow();
+        $infoCell = $clt->addCell(8500, ['bgColor' => 'f3f4f6']);
         if ($document->customer) {
-            $phpWord->addTableStyle('clientTable', ['borderSize' => 6, 'borderColor' => 'cccccc', 'cellMargin' => 80]);
-            $clt = $section->addTable('clientTable');
-
-            // Ligne titre (pleine largeur, fond bleu)
-            $clt->addRow(240);
-            $titleCell = $clt->addCell(8500, ['bgColor' => $blue]);
-            $titleCell->addText('FACTURER À', ['bold' => true, 'size' => 9, 'color' => 'ffffff']);
-
-            // Infos client
-            $clt->addRow();
-            $infoCell = $clt->addCell(8500, ['bgColor' => 'f3f4f6']);
             $infoCell->addText($document->customer->name, ['bold' => true, 'size' => 10]);
             if ($document->customer->address) {
                 $infoCell->addText($document->customer->address, ['size' => 9]);
@@ -599,8 +597,10 @@ class DocumentController extends Controller
             if ($document->customer->email) {
                 $infoCell->addText('E-mail : '.$document->customer->email, ['size' => 9]);
             }
-            $section->addTextBreak(1);
+        } else {
+            $infoCell->addText('— Non renseigné —', ['size' => 9, 'italic' => true, 'color' => '888888']);
         }
+        $section->addTextBreak(1);
 
         // ── Tableau des lignes ───────────────────────────────────────────────────
         if ($document->lines->isNotEmpty()) {
