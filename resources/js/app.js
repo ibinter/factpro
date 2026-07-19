@@ -23,21 +23,24 @@ window.addEventListener('unhandledrejection', (event) => {
 
 // ── Track current navigation target for fallback ─────────────────────────────
 let _pendingHref = null;
+let _pendingMethod = 'get';
 router.on('start', (event) => {
-    _pendingHref = event.detail?.visit?.url?.href ?? null;
+    _pendingHref   = event.detail?.visit?.url?.href ?? null;
+    _pendingMethod = event.detail?.visit?.method   ?? 'get';
 });
 router.on('finish', () => {
-    _pendingHref = null;
+    _pendingHref   = null;
+    _pendingMethod = 'get';
 });
 
 // ── Catch Inertia navigation exceptions → fall back to full-page reload ──────
-// Without this handler, Inertia calls Promise.reject(error) → unhandled rejection
-// → navigation silently fails (user stays on same page).
+// Only redirect on GET navigations — POST/PUT/PATCH/DELETE must NOT be replayed
+// as a GET (would cause 405 Method Not Allowed).
 router.on('exception', (event) => {
     const err = event.detail?.exception;
     console.error('[FactPro] Inertia exception during navigation:', err);
     event.preventDefault(); // prevent unhandled-rejection
-    if (_pendingHref) {
+    if (_pendingHref && _pendingMethod === 'get') {
         console.warn('[FactPro] Falling back to full-page load:', _pendingHref);
         window.location.href = _pendingHref;
     }
