@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "13fa90c4bb1554b304b55b720f7e4841",
+    "content-hash": "774cdbb79ab03a511ea6788e478ec03f",
     "packages": [
         {
             "name": "barryvdh/laravel-dompdf",
@@ -1534,7 +1534,7 @@
         },
         {
             "name": "ibigsoft/factpro-sdk",
-            "version": "dev-main",
+            "version": "dev-master",
             "dist": {
                 "type": "path",
                 "url": "packages/ibigsoft/factpro-sdk",
@@ -11796,7 +11796,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2"
+        "php": "^8.2|^8.5"
     },
     "platform-dev": {},
     "plugin-api-version": "2.9.0"
