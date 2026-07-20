@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>{{ $document->number }}</title>
 <style>
-    @page { margin: 100px 45px 90px 45px; }
+    @@page { margin: 100px 45px 90px 45px; }
     * { box-sizing: border-box; }
     body { font-family: DejaVu Sans Mono, Courier New, monospace; font-size: 10px; color: #00FF41; background: #0A0A0A; margin: 0; }
     .watermark { position: fixed; top: 40%; left: 5%; width: 90%; text-align: center;

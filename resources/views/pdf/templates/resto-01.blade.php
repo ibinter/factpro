@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>{{ $document->number }}</title>
 <style>
-    @page { margin: 112px 50px 90px 50px; }
+    @@page { margin: 112px 50px 90px 50px; }
 
     * { box-sizing: border-box; }
     body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #1A1A1A; margin: 0; }

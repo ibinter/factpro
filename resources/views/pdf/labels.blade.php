@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Étiquettes produits</title>
     <style>
-        @page { margin: 0; }
+        @@page { margin: 0; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: DejaVu Sans, sans-serif; color: #111; }
 
