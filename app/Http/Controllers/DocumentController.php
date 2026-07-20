@@ -232,7 +232,7 @@ class DocumentController extends Controller
             return back()->with('error', $e->getMessage());
         }
 
-        return back()->with('success', 'Plan de paiement créé.');
+        return redirect()->route('documents.show', $document)->with('success', 'Plan de paiement créé.');
     }
 
     public function edit(Request $request, Document $document): Response
@@ -328,7 +328,8 @@ class DocumentController extends Controller
             // L'échec de l'archivage ne bloque pas la finalisation
         }
 
-        return back()->with('success', 'Document finalisé et scellé (QR d\'authenticité actif).');
+        return redirect()->route('documents.show', $document)
+            ->with('success', 'Document finalisé et scellé (QR d\'authenticité actif).');
     }
 
     /** Change le statut manuellement (override ERP). */
@@ -398,7 +399,7 @@ class DocumentController extends Controller
 
         app(LoyaltyService::class)->awardPoints($document, (float) $data['amount']);
 
-        return back()->with('success', 'Paiement enregistré.');
+        return redirect()->route('documents.show', $document)->with('success', 'Paiement enregistré.');
     }
 
     /** Télécharge le PDF (avec QR anti-falsification + filigrane essai le cas échéant). */

@@ -32,8 +32,9 @@ const submitForApproval = () => {
     router.post(route('approval.submit', props.document.id), {}, {
         onError: (errors) => {
             approvalError.value = errors.workflow ?? errors.message ?? 'Une erreur est survenue. Vérifiez qu\'un circuit de validation est configuré.';
+            submittingApproval.value = false;
         },
-        onSuccess: () => { approvalError.value = ''; },
+        onSuccess: () => { window.location.reload(); },
         onFinish: () => { submittingApproval.value = false; },
     });
 };
@@ -67,28 +68,31 @@ const paymentForm = useForm({
 
 const submitPayment = () => {
     paymentForm.post(route('documents.payments', props.document.id), {
-        preserveScroll: true,
-        onSuccess: () => { showPaymentModal.value = false; },
+        onSuccess: () => { window.location.reload(); },
     });
 };
 
 const showConvertModal = ref(false);
 const convertForm = useForm({ target_type: props.convertTargets[0]?.value ?? null });
 const submitConvert = () => {
-    convertForm.post(route('documents.convert', props.document.id));
+    convertForm.post(route('documents.convert', props.document.id), {
+        onSuccess: () => { window.location.href = route('documents.index'); },
+    });
 };
 
 const finalize = () => {
-    router.post(route('documents.finalize', props.document.id), {}, { preserveScroll: true });
+    router.post(route('documents.finalize', props.document.id), {}, {
+        onSuccess: () => { window.location.reload(); },
+        onError:   () => { window.location.reload(); },
+    });
 };
 
 const showStatusModal = ref(false);
 const selectedStatus = ref(props.document.status);
 const changeStatus = () => {
     router.post(`/documents/${props.document.id}/status`, { status: selectedStatus.value }, {
-        preserveScroll: true,
-        onSuccess: () => { showStatusModal.value = false; },
-        onError: (e) => { console.error('changeStatus error', e); },
+        onSuccess: () => { window.location.reload(); },
+        onError:   (e) => { console.error('changeStatus error', e); window.location.reload(); },
     });
 };
 
@@ -104,11 +108,7 @@ const sendForm = useForm({
 });
 const submitSend = () => {
     sendForm.post(route('documents.send', props.document.id), {
-        preserveScroll: true,
-        onSuccess: () => {
-            showSendModal.value = false;
-            sendForm.reset('message');
-        },
+        onSuccess: () => { window.location.reload(); },
     });
 };
 

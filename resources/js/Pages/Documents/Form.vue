@@ -302,8 +302,11 @@ const filteredTemplates = computed(() => activeFamily.value ? props.templates.fi
 
 // ── Submit ────────────────────────────────────────────────────────────────────
 const submit = () => {
-    if (isEdit.value) form.put(route('documents.update', props.document.id));
-    else              form.post(route('documents.store'));
+    const opts = {
+        onSuccess: () => { window.location.href = route('documents.index'); },
+    };
+    if (isEdit.value) form.put(route('documents.update', props.document?.id), opts);
+    else              form.post(route('documents.store'), opts);
 };
 
 // ── Mois disponibles pour quittance ──────────────────────────────────────────
