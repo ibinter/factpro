@@ -135,7 +135,7 @@ class HrController extends Controller
             'is_active'    => true,
         ]);
 
-        return back()->with('success', 'Employé créé avec succès.');
+        return redirect()->route('hr.index')->with('success', 'Employé créé avec succès.');
     }
 
     public function updateEmployee(Employee $employee, Request $request): RedirectResponse
@@ -157,7 +157,7 @@ class HrController extends Controller
 
         $employee->update($validated);
 
-        return back()->with('success', 'Employé mis à jour.');
+        return redirect()->route('hr.index')->with('success', 'Employé mis à jour.');
     }
 
     public function generatePayroll(Request $request): RedirectResponse
@@ -177,7 +177,7 @@ class HrController extends Controller
             (int) $validated['year']
         );
 
-        return back()->with('success', "{$result['created']} bulletin(s) généré(s), {$result['skipped']} ignoré(s).");
+        return redirect()->route('hr.index')->with('success', "{$result['created']} bulletin(s) généré(s), {$result['skipped']} ignoré(s).");
     }
 
     public function payslips(Request $request): Response
@@ -247,7 +247,7 @@ class HrController extends Controller
 
         $payslip->update(['status' => 'validated']);
 
-        return back()->with('success', 'Bulletin validé.');
+        return redirect()->route('hr.index')->with('success', 'Bulletin validé.');
     }
 
     public function massAction(Request $request): RedirectResponse
@@ -272,6 +272,6 @@ class HrController extends Controller
                 ]);
         }
 
-        return back()->with('success', 'Action effectuée.');
+        return redirect()->route('hr.index')->with('success', 'Action effectuée.');
     }
 }

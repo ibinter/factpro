@@ -54,7 +54,7 @@ class NotificationChannelController extends Controller
             'is_active' => true,
         ]);
 
-        return back()->with('success', 'Canal de notification créé.');
+        return redirect()->route('notification-channels.index')->with('success', 'Canal de notification créé.');
     }
 
     public function update(Request $request, NotificationChannel $channel): RedirectResponse
@@ -72,7 +72,7 @@ class NotificationChannelController extends Controller
 
         $channel->update($data);
 
-        return back()->with('success', 'Canal mis à jour.');
+        return redirect()->route('notification-channels.index')->with('success', 'Canal mis à jour.');
     }
 
     public function destroy(Request $request, NotificationChannel $channel): RedirectResponse
@@ -81,7 +81,7 @@ class NotificationChannelController extends Controller
 
         $channel->delete();
 
-        return back()->with('success', 'Canal supprimé.');
+        return redirect()->route('notification-channels.index')->with('success', 'Canal supprimé.');
     }
 
     public function test(Request $request, NotificationChannel $channel): RedirectResponse

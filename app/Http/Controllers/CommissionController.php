@@ -186,7 +186,7 @@ class CommissionController extends Controller
             ...$this->validateAgent($request),
         ]);
 
-        return back()->with('success', 'Vendeur ajouté.');
+        return redirect()->route('commissions.index')->with('success', 'Vendeur ajouté.');
     }
 
     /** Met à jour un vendeur. */
@@ -197,7 +197,7 @@ class CommissionController extends Controller
 
         $agent->update($this->validateAgent($request));
 
-        return back()->with('success', 'Vendeur mis à jour.');
+        return redirect()->route('commissions.index')->with('success', 'Vendeur mis à jour.');
     }
 
     /** Supprime (soft delete) un vendeur ; ses clients sont détachés. */
@@ -213,7 +213,7 @@ class CommissionController extends Controller
 
         $agent->delete();
 
-        return back()->with('success', 'Vendeur supprimé.');
+        return redirect()->route('commissions.index')->with('success', 'Vendeur supprimé.');
     }
 
     /** Affecte une liste de clients (de la société) à un vendeur. */
@@ -234,7 +234,7 @@ class CommissionController extends Controller
             ->whereIn('id', $data['customer_ids'])
             ->update(['sales_agent_id' => $agent->id]);
 
-        return back()->with('success', 'Clients affectés au vendeur.');
+        return redirect()->route('commissions.index')->with('success', 'Clients affectés au vendeur.');
     }
 
     /** Génère un décompte de commission pour un vendeur sur une période. */
@@ -260,7 +260,7 @@ class CommissionController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', 'Décompte de commission généré.');
+        return redirect()->route('commissions.index')->with('success', 'Décompte de commission généré.');
     }
 
     /** Marque un décompte comme payé. */
@@ -271,7 +271,7 @@ class CommissionController extends Controller
 
         $this->commissions->markPaid($payout);
 
-        return back()->with('success', 'Commission marquée comme payée.');
+        return redirect()->route('commissions.index')->with('success', 'Commission marquée comme payée.');
     }
 
     /* --------------------------------------------------------------------- */

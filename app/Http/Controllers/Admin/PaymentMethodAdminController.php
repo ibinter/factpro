@@ -69,7 +69,7 @@ class PaymentMethodAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', "Moyen de paiement « {$method->label} » ajouté.");
+        return redirect()->route('admin.payment-methods.index')->with('success', "Moyen de paiement « {$method->label} » ajouté.");
     }
 
     public function update(Request $request, PaymentMethodConfig $method): RedirectResponse
@@ -89,7 +89,7 @@ class PaymentMethodAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', "Moyen de paiement « {$method->label} » mis à jour.");
+        return redirect()->route('admin.payment-methods.index')->with('success', "Moyen de paiement « {$method->label} » mis à jour.");
     }
 
     public function destroy(Request $request, PaymentMethodConfig $method): RedirectResponse
@@ -109,7 +109,7 @@ class PaymentMethodAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', "Moyen de paiement « {$label} » supprimé.");
+        return redirect()->route('admin.payment-methods.index')->with('success', "Moyen de paiement « {$label} » supprimé.");
     }
 
     public function toggle(Request $request, PaymentMethodConfig $method): RedirectResponse
@@ -127,7 +127,7 @@ class PaymentMethodAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', $method->is_active
+        return redirect()->route('admin.payment-methods.index')->with('success', $method->is_active
             ? "« {$method->label} » activé."
             : "« {$method->label} » désactivé.");
     }

@@ -65,7 +65,7 @@ class ApiTokenController extends Controller
     {
         $request->user()->tokens()->where('id', $tokenId)->delete();
 
-        return back()->with('success', 'Clé API révoquée. Elle est immédiatement inutilisable.');
+        return redirect()->route('profile.index')->with('success', 'Clé API révoquée. Elle est immédiatement inutilisable.');
     }
 
     private function hasApiAccess(Request $request): bool

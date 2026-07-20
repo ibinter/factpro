@@ -35,7 +35,7 @@ class PosTableController extends Controller
             'seats' => $data['seats'] ?? 4,
         ]);
 
-        return back()->with('success', 'Table créée.');
+        return redirect()->route('pos.tables.index')->with('success', 'Table créée.');
     }
 
     public function update(Request $request, PosTable $table): RedirectResponse

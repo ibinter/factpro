@@ -76,6 +76,6 @@ class GatewayConfigController extends Controller
             'config'    => array_merge($gateway->config ?? [], $request->input('config', [])),
         ]);
 
-        return back()->with('success', 'Passerelle « '.$gateway->gateway.' » mise à jour.');
+        return redirect()->route('gateway-config.index')->with('success', 'Passerelle « '.$gateway->gateway.' » mise à jour.');
     }
 }

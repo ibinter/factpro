@@ -32,10 +32,11 @@ const submitForApproval = () => {
     router.post(route('approval.submit', props.document.id), {}, {
         onError: (errors) => {
             approvalError.value = errors.workflow ?? errors.message ?? 'Une erreur est survenue. Vérifiez qu\'un circuit de validation est configuré.';
-            submittingApproval.value = false;
         },
-        onSuccess: () => { window.location.reload(); },
-        onFinish: () => { submittingApproval.value = false; },
+        onFinish: () => {
+            submittingApproval.value = false;
+            if (!approvalError.value) window.location.reload();
+        },
     });
 };
 
@@ -68,7 +69,7 @@ const paymentForm = useForm({
 
 const submitPayment = () => {
     paymentForm.post(route('documents.payments', props.document.id), {
-        onSuccess: () => { window.location.reload(); },
+        onFinish: () => { if (!paymentForm.hasErrors) window.location.reload(); },
     });
 };
 
@@ -76,14 +77,13 @@ const showConvertModal = ref(false);
 const convertForm = useForm({ target_type: props.convertTargets[0]?.value ?? null });
 const submitConvert = () => {
     convertForm.post(route('documents.convert', props.document.id), {
-        onSuccess: () => { window.location.href = route('documents.index'); },
+        onFinish: () => { if (!convertForm.hasErrors) window.location.href = route('documents.index'); },
     });
 };
 
 const finalize = () => {
     router.post(route('documents.finalize', props.document.id), {}, {
-        onSuccess: () => { window.location.reload(); },
-        onError:   () => { window.location.reload(); },
+        onFinish: () => { window.location.reload(); },
     });
 };
 
@@ -91,8 +91,7 @@ const showStatusModal = ref(false);
 const selectedStatus = ref(props.document.status);
 const changeStatus = () => {
     router.post(`/documents/${props.document.id}/status`, { status: selectedStatus.value }, {
-        onSuccess: () => { window.location.reload(); },
-        onError:   (e) => { console.error('changeStatus error', e); window.location.reload(); },
+        onFinish: () => { window.location.reload(); },
     });
 };
 
@@ -108,7 +107,7 @@ const sendForm = useForm({
 });
 const submitSend = () => {
     sendForm.post(route('documents.send', props.document.id), {
-        onSuccess: () => { window.location.reload(); },
+        onFinish: () => { if (!sendForm.hasErrors) window.location.reload(); },
     });
 };
 

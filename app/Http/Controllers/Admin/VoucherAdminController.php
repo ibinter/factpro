@@ -114,6 +114,6 @@ class VoucherAdminController extends Controller
             return back()->withErrors(['voucher' => $e->getMessage()]);
         }
 
-        return back()->with('success', "Code {$voucher->code} annulé.");
+        return redirect()->route('admin.vouchers.index')->with('success', "Code {$voucher->code} annulé.");
     }
 }

@@ -104,7 +104,7 @@ class LicenseAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', "Licence prolongée de {$data['months']} mois (fin : {$license->fresh()->ends_at->format('d/m/Y')}).");
+        return redirect()->route('admin.licenses.index')->with('success', "Licence prolongée de {$data['months']} mois (fin : {$license->fresh()->ends_at->format('d/m/Y')}).");
     }
 
     /** Suspend une licence (motif obligatoire). */
@@ -129,7 +129,7 @@ class LicenseAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', 'Licence suspendue.');
+        return redirect()->route('admin.licenses.index')->with('success', 'Licence suspendue.');
     }
 
     /** Réactive une licence suspendue dont la période est encore valide. */
@@ -160,7 +160,7 @@ class LicenseAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', 'Licence réactivée.');
+        return redirect()->route('admin.licenses.index')->with('success', 'Licence réactivée.');
     }
 
     /** Révoque définitivement une licence (irréversible). */
@@ -186,7 +186,7 @@ class LicenseAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', 'Licence révoquée définitivement.');
+        return redirect()->route('admin.licenses.index')->with('success', 'Licence révoquée définitivement.');
     }
 
     /**
@@ -298,7 +298,7 @@ class LicenseAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', 'Licence provisoire convertie en licence active.');
+        return redirect()->route('admin.licenses.index')->with('success', 'Licence provisoire convertie en licence active.');
     }
 
     /** Une licence révoquée ne peut plus être modifiée (jamais supprimée). */

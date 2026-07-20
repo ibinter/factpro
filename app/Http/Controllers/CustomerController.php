@@ -43,7 +43,7 @@ class CustomerController extends Controller
         $data = $this->validateData($request);
         Customer::create([...$data, 'company_id' => $company->id]);
 
-        return back()->with('success', 'Client créé avec succès.');
+        return redirect()->route('customers.index')->with('success', 'Client créé avec succès.');
     }
 
     /** Création rapide depuis un formulaire document (retourne JSON, sans rechargement). */
@@ -74,7 +74,7 @@ class CustomerController extends Controller
 
         $customer->update($this->validateData($request));
 
-        return back()->with('success', 'Client mis à jour.');
+        return redirect()->route('customers.index')->with('success', 'Client mis à jour.');
     }
 
     public function destroy(Request $request, Customer $customer): RedirectResponse
@@ -83,7 +83,7 @@ class CustomerController extends Controller
 
         $customer->delete();
 
-        return back()->with('success', 'Client supprimé.');
+        return redirect()->route('customers.index')->with('success', 'Client supprimé.');
     }
 
     private function validateData(Request $request): array

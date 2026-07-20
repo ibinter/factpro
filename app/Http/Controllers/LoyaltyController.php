@@ -88,7 +88,7 @@ class LoyaltyController extends Controller
             array_filter($data, fn ($v) => $v !== null) + ['company_id' => $company->id]
         );
 
-        return back()->with('success', 'Programme de fidélité configuré.');
+        return redirect()->route('loyalty.index')->with('success', 'Programme de fidélité configuré.');
     }
 
     public function customerPoints(Request $request, Customer $customer): JsonResponse
@@ -134,7 +134,7 @@ class LoyaltyController extends Controller
             return back()->with('error', $e->getMessage());
         }
 
-        return back()->with('success', "Récompense échangée ! Code coupon : {$code}");
+        return redirect()->route('loyalty.index')->with('success', "Récompense échangée ! Code coupon : {$code}");
     }
 
     public function storeReward(Request $request): RedirectResponse
@@ -153,7 +153,7 @@ class LoyaltyController extends Controller
 
         LoyaltyReward::create($data + ['company_id' => $company->id]);
 
-        return back()->with('success', 'Récompense créée.');
+        return redirect()->route('loyalty.index')->with('success', 'Récompense créée.');
     }
 
     public function cardPdf(Request $request, Customer $customer)

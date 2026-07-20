@@ -41,7 +41,7 @@ class ProductController extends Controller
         $data = $this->validateData($request);
         Product::create([...$data, 'company_id' => $company->id]);
 
-        return back()->with('success', 'Produit créé avec succès.');
+        return redirect()->route('products.index')->with('success', 'Produit créé avec succès.');
     }
 
     public function update(Request $request, Product $product): RedirectResponse

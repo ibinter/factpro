@@ -79,7 +79,7 @@ class AutoReorderController extends Controller
             'company_id' => $company->id,
         ]);
 
-        return back()->with('success', 'Règle de réapprovisionnement créée.');
+        return redirect()->route('stock.auto-reorder.index')->with('success', 'Règle de réapprovisionnement créée.');
     }
 
     /** PUT /stock/auto-reorder/{rule} */
@@ -101,7 +101,7 @@ class AutoReorderController extends Controller
 
         $rule->update($data);
 
-        return back()->with('success', 'Règle mise à jour.');
+        return redirect()->route('stock.auto-reorder.index')->with('success', 'Règle mise à jour.');
     }
 
     /** DELETE /stock/auto-reorder/{rule} */
@@ -110,7 +110,7 @@ class AutoReorderController extends Controller
         abort_if($rule->company_id !== $request->user()->currentCompany->id, 403);
         $rule->delete();
 
-        return back()->with('success', 'Règle supprimée.');
+        return redirect()->route('stock.auto-reorder.index')->with('success', 'Règle supprimée.');
     }
 
     /** POST /stock/auto-reorder/{rule}/trigger — déclenchement manuel */
@@ -120,7 +120,7 @@ class AutoReorderController extends Controller
 
         $document = $this->service->createPurchaseOrder($rule);
 
-        return back()->with('success', 'Bon de commande '.$document->number.' créé.');
+        return redirect()->route('stock.auto-reorder.index')->with('success', 'Bon de commande '.$document->number.' créé.');
     }
 
     /** GET /stock/auto-reorder/simulate */

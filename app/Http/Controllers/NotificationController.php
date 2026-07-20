@@ -48,7 +48,7 @@ class NotificationController extends Controller
             return response()->json(['success' => true]);
         }
 
-        return back()->with('success', 'Notification marquée comme lue.');
+        return redirect()->route('notifications.index')->with('success', 'Notification marquée comme lue.');
     }
 
     public function markAllRead(Request $request): JsonResponse|RedirectResponse
@@ -59,7 +59,7 @@ class NotificationController extends Controller
             return response()->json(['success' => true]);
         }
 
-        return back()->with('success', 'Toutes les notifications ont été marquées comme lues.');
+        return redirect()->route('notifications.index')->with('success', 'Toutes les notifications ont été marquées comme lues.');
     }
 
     public function destroy(Request $request, string $id): JsonResponse|RedirectResponse
@@ -71,7 +71,7 @@ class NotificationController extends Controller
             return response()->json(['success' => true]);
         }
 
-        return back()->with('success', 'Notification supprimée.');
+        return redirect()->route('notifications.index')->with('success', 'Notification supprimée.');
     }
 
     public function clearAll(Request $request): JsonResponse|RedirectResponse
@@ -82,6 +82,6 @@ class NotificationController extends Controller
             return response()->json(['success' => true]);
         }
 
-        return back()->with('success', 'Notifications lues effacées.');
+        return redirect()->route('notifications.index')->with('success', 'Notifications lues effacées.');
     }
 }

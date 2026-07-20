@@ -34,7 +34,7 @@ class DeliveryAgentController extends Controller
 
         DeliveryAgent::create($data);
 
-        return back()->with('success', 'Agent créé.');
+        return redirect()->route('admin.delivery-agents.index')->with('success', 'Agent créé.');
     }
 
     public function update(Request $request, DeliveryAgent $deliveryAgent): RedirectResponse
@@ -52,13 +52,13 @@ class DeliveryAgentController extends Controller
 
         $deliveryAgent->update($data);
 
-        return back()->with('success', 'Agent mis à jour.');
+        return redirect()->route('admin.delivery-agents.index')->with('success', 'Agent mis à jour.');
     }
 
     public function destroy(DeliveryAgent $deliveryAgent): RedirectResponse
     {
         $deliveryAgent->delete();
 
-        return back()->with('success', 'Agent désactivé.');
+        return redirect()->route('admin.delivery-agents.index')->with('success', 'Agent désactivé.');
     }
 }

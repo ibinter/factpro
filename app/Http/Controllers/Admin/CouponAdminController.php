@@ -42,7 +42,7 @@ class CouponAdminController extends Controller
 
         Coupon::create($data);
 
-        return back()->with('success', "Coupon « {$data['code']} » créé.");
+        return redirect()->route('admin.coupons.index')->with('success', "Coupon « {$data['code']} » créé.");
     }
 
     public function update(Request $request, Coupon $coupon): RedirectResponse
@@ -51,21 +51,21 @@ class CouponAdminController extends Controller
 
         $coupon->update($data);
 
-        return back()->with('success', "Coupon « {$coupon->code} » mis à jour.");
+        return redirect()->route('admin.coupons.index')->with('success', "Coupon « {$coupon->code} » mis à jour.");
     }
 
     public function destroy(Coupon $coupon): RedirectResponse
     {
         $coupon->delete();
 
-        return back()->with('success', 'Coupon supprimé.');
+        return redirect()->route('admin.coupons.index')->with('success', 'Coupon supprimé.');
     }
 
     public function toggle(Coupon $coupon): RedirectResponse
     {
         $coupon->update(['is_active' => ! $coupon->is_active]);
 
-        return back()->with('success', $coupon->is_active ? 'Coupon activé.' : 'Coupon désactivé.');
+        return redirect()->route('admin.coupons.index')->with('success', $coupon->is_active ? 'Coupon activé.' : 'Coupon désactivé.');
     }
 
     /** Valide et normalise les données d'un coupon (création ou édition). */

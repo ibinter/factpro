@@ -34,7 +34,7 @@ class WhiteLabelController extends Controller
             $config->update(['logo_url' => $path]);
         }
 
-        return back()->with('success', "Config white-label « {$config->app_name} » créée.");
+        return redirect()->route('admin.white-label.index')->with('success', "Config white-label « {$config->app_name} » créée.");
     }
 
     public function update(WhiteLabelConfig $config, Request $request): RedirectResponse
@@ -48,7 +48,7 @@ class WhiteLabelController extends Controller
             $config->update(['logo_url' => $path]);
         }
 
-        return back()->with('success', "Config « {$config->app_name} » mise à jour.");
+        return redirect()->route('admin.white-label.index')->with('success', "Config « {$config->app_name} » mise à jour.");
     }
 
     public function destroy(WhiteLabelConfig $config): RedirectResponse
@@ -56,7 +56,7 @@ class WhiteLabelController extends Controller
         $name = $config->app_name;
         $config->delete();
 
-        return back()->with('success', "Config « {$name} » supprimée.");
+        return redirect()->route('admin.white-label.index')->with('success', "Config « {$name} » supprimée.");
     }
 
     public function uploadLogo(Request $request, WhiteLabelConfig $config): RedirectResponse
@@ -68,7 +68,7 @@ class WhiteLabelController extends Controller
         $path = $request->file('logo')->store('white-label-logos', 'private');
         $config->update(['logo_url' => $path]);
 
-        return back()->with('success', 'Logo mis à jour.');
+        return redirect()->route('admin.white-label.index')->with('success', 'Logo mis à jour.');
     }
 
     private function validated(Request $request, ?WhiteLabelConfig $config = null): array

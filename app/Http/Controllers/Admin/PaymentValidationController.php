@@ -94,7 +94,7 @@ class PaymentValidationController extends Controller
             $data['note'] ?? null,
         );
 
-        return back()->with('success', 'Paiement validé — licence activée pour '.$transaction->user?->name.'.');
+        return redirect()->route('admin.payments.index')->with('success', 'Paiement validé — licence activée pour '.$transaction->user?->name.'.');
     }
 
     public function reject(Request $request, PaymentTransaction $transaction): RedirectResponse
@@ -105,7 +105,7 @@ class PaymentValidationController extends Controller
 
         $this->payments->rejectManualPayment($transaction, $request->user(), $data['reason']);
 
-        return back()->with('success', 'Paiement rejeté.');
+        return redirect()->route('admin.payments.index')->with('success', 'Paiement rejeté.');
     }
 
     /**
@@ -231,7 +231,7 @@ class PaymentValidationController extends Controller
             );
         }
 
-        return back()->with('success', 'Demande de complément envoyée au client.');
+        return redirect()->route('admin.payments.index')->with('success', 'Demande de complément envoyée au client.');
     }
 
     /** Active une licence à titre provisoire en attendant confirmation du paiement. */
@@ -252,7 +252,7 @@ class PaymentValidationController extends Controller
             (int) $data['days'],
         );
 
-        return back()->with('success', "Licence provisoire activée pour {$order->user?->name} ({$data['days']} jours).");
+        return redirect()->route('admin.payments.index')->with('success', "Licence provisoire activée pour {$order->user?->name} ({$data['days']} jours).");
     }
 
     /** Marque une transaction comme suspecte pour investigation. */
@@ -274,7 +274,7 @@ class PaymentValidationController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', 'Transaction marquée suspecte.');
+        return redirect()->route('admin.payments.index')->with('success', 'Transaction marquée suspecte.');
     }
 
     /** Consultation sécurisée d'une preuve (stockage privé — script §8). */

@@ -100,7 +100,7 @@ class StockController extends Controller
             $this->stock->record($product, $data['type'], (float) $data['quantity'], $attrs);
         }
 
-        return back()->with('success', 'Mouvement de stock enregistré.');
+        return redirect()->route('stock.index')->with('success', 'Mouvement de stock enregistré.');
     }
 
     /** Écran de saisie de l'inventaire physique. */

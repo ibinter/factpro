@@ -36,7 +36,7 @@ class CryptoWalletAdminController extends Controller
 
         CryptoWallet::create($data);
 
-        return back()->with('success', 'Wallet crypto ajouté.');
+        return redirect()->route('admin.crypto-wallets.index')->with('success', 'Wallet crypto ajouté.');
     }
 
     public function update(Request $request, CryptoWallet $cryptoWallet): RedirectResponse
@@ -55,13 +55,13 @@ class CryptoWalletAdminController extends Controller
 
         $cryptoWallet->update($data);
 
-        return back()->with('success', 'Wallet crypto mis à jour.');
+        return redirect()->route('admin.crypto-wallets.index')->with('success', 'Wallet crypto mis à jour.');
     }
 
     public function destroy(CryptoWallet $cryptoWallet): RedirectResponse
     {
         $cryptoWallet->delete();
 
-        return back()->with('success', 'Wallet crypto supprimé.');
+        return redirect()->route('admin.crypto-wallets.index')->with('success', 'Wallet crypto supprimé.');
     }
 }

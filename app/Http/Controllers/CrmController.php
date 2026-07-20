@@ -149,7 +149,7 @@ class CrmController extends Controller
 
         $deal->update($data);
 
-        return back()->with('success', 'Deal mis à jour.');
+        return redirect()->route('crm.index')->with('success', 'Deal mis à jour.');
     }
 
     public function moveStage(Deal $deal, Request $request): RedirectResponse
@@ -171,7 +171,7 @@ class CrmController extends Controller
             ['from' => $from, 'to' => $to]
         );
 
-        return back()->with('success', 'Étape mise à jour.');
+        return redirect()->route('crm.index')->with('success', 'Étape mise à jour.');
     }
 
     public function markWon(Deal $deal, Request $request): RedirectResponse
@@ -190,7 +190,7 @@ class CrmController extends Controller
 
         DealActivity::record($deal, $request->user(), 'note', 'Deal marqué comme Gagné.');
 
-        return back()->with('success', 'Deal gagné ! Client créé si prospect.');
+        return redirect()->route('crm.index')->with('success', 'Deal gagné ! Client créé si prospect.');
     }
 
     public function markLost(Deal $deal, Request $request): RedirectResponse
@@ -212,7 +212,7 @@ class CrmController extends Controller
             'Deal marqué comme Perdu. Raison : '.($data['lost_reason'] ?? 'non précisée')
         );
 
-        return back()->with('success', 'Deal marqué comme perdu.');
+        return redirect()->route('crm.index')->with('success', 'Deal marqué comme perdu.');
     }
 
     public function addActivity(Deal $deal, Request $request): RedirectResponse
@@ -227,7 +227,7 @@ class CrmController extends Controller
 
         DealActivity::record($deal, $request->user(), $data['type'], $data['content']);
 
-        return back()->with('success', 'Activité enregistrée.');
+        return redirect()->route('crm.index')->with('success', 'Activité enregistrée.');
     }
 
     public function stats(Request $request): JsonResponse

@@ -178,7 +178,7 @@ class ExpenseController extends Controller
             ...$receipt,
         ]);
 
-        return back()->with('success', 'Note de frais soumise pour validation.');
+        return redirect()->route('expenses.index')->with('success', 'Note de frais soumise pour validation.');
     }
 
     /** Met à jour une dépense (uniquement la sienne, tant qu'elle n'est pas approuvée/remboursée). */
@@ -226,7 +226,7 @@ class ExpenseController extends Controller
             ...$receipt,
         ]);
 
-        return back()->with('success', 'Note de frais mise à jour et resoumise pour validation.');
+        return redirect()->route('expenses.index')->with('success', 'Note de frais mise à jour et resoumise pour validation.');
     }
 
     /** Supprime (soft delete) une dépense — mêmes règles que la modification. */
@@ -252,7 +252,7 @@ class ExpenseController extends Controller
 
         $expense->delete();
 
-        return back()->with('success', 'Note de frais supprimée.');
+        return redirect()->route('expenses.index')->with('success', 'Note de frais supprimée.');
     }
 
     /** Consultation sécurisée du justificatif (stockage privé, streamé inline). */
@@ -366,7 +366,7 @@ class ExpenseController extends Controller
             'reimbursed_at' => today(),
         ]);
 
-        return back()->with('success', 'Note de frais marquée comme remboursée.');
+        return redirect()->route('expenses.index')->with('success', 'Note de frais marquée comme remboursée.');
     }
 
     /** Règles de validation communes création/mise à jour. */

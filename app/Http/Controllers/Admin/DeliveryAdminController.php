@@ -55,7 +55,7 @@ class DeliveryAdminController extends Controller
             'assigned_at'       => now(),
         ]);
 
-        return back()->with('success', 'Agent assigné avec succès.');
+        return redirect()->route('admin.deliveries.index')->with('success', 'Agent assigné avec succès.');
     }
 
     /** Confirme la réception du paiement (admin ou agent). */
@@ -78,6 +78,6 @@ class DeliveryAdminController extends Controller
             $data['agent_notes'] ?? '',
         );
 
-        return back()->with('success', 'Paiement confirmé. La licence a été activée.');
+        return redirect()->route('admin.deliveries.index')->with('success', 'Paiement confirmé. La licence a été activée.');
     }
 }

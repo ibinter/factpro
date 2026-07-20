@@ -71,6 +71,6 @@ class PlanAdminController extends Controller
             $request->user()->id,
         );
 
-        return back()->with('success', "Forfait « {$plan->name} » mis à jour.");
+        return redirect()->route('admin.plans.index')->with('success', "Forfait « {$plan->name} » mis à jour.");
     }
 }
