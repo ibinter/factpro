@@ -99,7 +99,7 @@ class TemplateMarketplaceController extends Controller
             'is_approved' => false,
         ]);
 
-        return back()->with('success', 'Template soumis. Il sera visible après modération.');
+        return redirect()->route('marketplace.index')->with('success', 'Template soumis. Il sera visible après modération.');
     }
 
     public function update(TemplateMarketplace $template, Request $request): RedirectResponse
@@ -128,7 +128,7 @@ class TemplateMarketplaceController extends Controller
 
         $template->update($data);
 
-        return back()->with('success', 'Template mis à jour.');
+        return redirect()->route('marketplace.index')->with('success', 'Template mis à jour.');
     }
 
     public function destroy(TemplateMarketplace $template, Request $request): RedirectResponse
@@ -144,7 +144,7 @@ class TemplateMarketplaceController extends Controller
 
         $template->delete();
 
-        return back()->with('success', 'Template supprimé.');
+        return redirect()->route('marketplace.index')->with('success', 'Template supprimé.');
     }
 
     public function download(TemplateMarketplace $template, Request $request)
@@ -166,7 +166,7 @@ class TemplateMarketplaceController extends Controller
         $template->increment('rating_sum', $data['rating']);
         $template->increment('rating_count');
 
-        return back()->with('success', 'Note enregistrée.');
+        return redirect()->route('marketplace.index')->with('success', 'Note enregistrée.');
     }
 
     public function approve(TemplateMarketplace $template, Request $request): RedirectResponse
@@ -177,7 +177,7 @@ class TemplateMarketplaceController extends Controller
 
         $template->update(['is_approved' => true]);
 
-        return back()->with('success', 'Template approuvé.');
+        return redirect()->route('marketplace.index')->with('success', 'Template approuvé.');
     }
 
     private function formatTemplate(TemplateMarketplace $t): array

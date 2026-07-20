@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -33,7 +33,7 @@ class PosZReportController extends Controller
             ->exists();
 
         if ($exists) {
-            return back()->with('error', 'Une session de caisse est déjà ouverte.');
+            return back()->with('error', 'Une session de caisse est dÃ©jÃ  ouverte.');
         }
 
         $session = PosSession::create([
@@ -49,11 +49,11 @@ class PosZReportController extends Controller
             return response()->json(['session' => $session->only(['id', 'opening_float', 'opened_at'])]);
         }
 
-        return back()->with('success', 'Caisse ouverte.');
+        return redirect()->route('pos.index')->with('success', 'Caisse ouverte.');
     }
 
     /**
-     * Rapport X : données intermédiaires sans clôture.
+     * Rapport X : donnÃ©es intermÃ©diaires sans clÃ´ture.
      */
     public function xReport(Request $request, PosSession $session): JsonResponse
     {
@@ -63,7 +63,7 @@ class PosZReportController extends Controller
     }
 
     /**
-     * Génère le rapport Z (clôture irréversible).
+     * GÃ©nÃ¨re le rapport Z (clÃ´ture irrÃ©versible).
      */
     public function generateZ(Request $request, PosSession $session): JsonResponse|\Illuminate\Http\RedirectResponse
     {
@@ -92,7 +92,7 @@ class PosZReportController extends Controller
         }
 
         return redirect()->route('pos.z-report.pdf', $session)
-            ->with('success', 'Rapport Z généré — '.$report['z_number']);
+            ->with('success', 'Rapport Z gÃ©nÃ©rÃ© â€” '.$report['z_number']);
     }
 
     /**
@@ -147,3 +147,4 @@ class PosZReportController extends Controller
         ]);
     }
 }
+

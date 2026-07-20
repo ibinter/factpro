@@ -50,7 +50,7 @@ class PosTableController extends Controller
 
         $table->update($data);
 
-        return back()->with('success', 'Table mise à jour.');
+        return redirect()->route('pos.tables.index')->with('success', 'Table mise à jour.');
     }
 
     public function destroy(Request $request, PosTable $table): RedirectResponse
@@ -63,7 +63,7 @@ class PosTableController extends Controller
 
         $table->delete();
 
-        return back()->with('success', 'Table supprimée.');
+        return redirect()->route('pos.tables.index')->with('success', 'Table supprimée.');
     }
 
     public function assignOrder(Request $request, PosTable $table): JsonResponse

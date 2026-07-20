@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -85,7 +85,7 @@ class ApprovalController extends Controller
             'is_active' => $data['is_active'] ?? true,
         ]);
 
-        return back()->with('success', 'Workflow créé avec succès.');
+        return back()->with('success', 'Workflow crÃ©Ã© avec succÃ¨s.');
     }
 
     public function submit(Document $document, Request $request): RedirectResponse
@@ -100,7 +100,7 @@ class ApprovalController extends Controller
             'workflow_id' => ['nullable', 'integer', 'exists:approval_workflows,id'],
         ]);
 
-        // Si un workflow est précisé, on l'utilise ; sinon on prend le premier de la société
+        // Si un workflow est prÃ©cisÃ©, on l'utilise ; sinon on prend le premier de la sociÃ©tÃ©
         if (!empty($data['workflow_id'])) {
             $workflow = ApprovalWorkflow::findOrFail($data['workflow_id']);
             abort_unless($workflow->company_id === $company->id, 403);
@@ -112,7 +112,7 @@ class ApprovalController extends Controller
         }
 
         if (! $workflow) {
-            return back()->withErrors(['workflow' => 'Aucun circuit de validation configuré. Créez-en un dans Validation > Circuits.']);
+            return back()->withErrors(['workflow' => 'Aucun circuit de validation configurÃ©. CrÃ©ez-en un dans Validation > Circuits.']);
         }
 
         $this->approvalService->submitForApproval($document, $workflow, $request->user());
@@ -132,7 +132,7 @@ class ApprovalController extends Controller
 
         $this->approvalService->approve($step, $request->user(), $data['comment'] ?? '');
 
-        return back()->with('success', 'Étape approuvée.');
+        return back()->with('success', 'Ã‰tape approuvÃ©e.');
     }
 
     public function reject(ApprovalStep $step, Request $request): RedirectResponse
@@ -147,7 +147,7 @@ class ApprovalController extends Controller
 
         $this->approvalService->reject($step, $request->user(), $data['comment']);
 
-        return back()->with('success', 'Étape rejetée.');
+        return back()->with('success', 'Ã‰tape rejetÃ©e.');
     }
 
     public function delegate(ApprovalStep $step, Request $request): RedirectResponse
@@ -164,7 +164,7 @@ class ApprovalController extends Controller
 
         $this->approvalService->delegate($step, $request->user(), $to);
 
-        return back()->with('success', 'Étape déléguée.');
+        return back()->with('success', 'Ã‰tape dÃ©lÃ©guÃ©e.');
     }
 
     public function history(Document $document): JsonResponse
@@ -181,3 +181,4 @@ class ApprovalController extends Controller
         ]);
     }
 }
+

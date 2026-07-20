@@ -50,7 +50,7 @@ class ProductController extends Controller
 
         $product->update($this->validateData($request));
 
-        return back()->with('success', 'Produit mis à jour.');
+        return redirect()->route('products.index')->with('success', 'Produit mis à jour.');
     }
 
     public function destroy(Request $request, Product $product): RedirectResponse
@@ -59,7 +59,7 @@ class ProductController extends Controller
 
         $product->delete();
 
-        return back()->with('success', 'Produit supprimé.');
+        return redirect()->route('products.index')->with('success', 'Produit supprimé.');
     }
 
     private function validateData(Request $request): array

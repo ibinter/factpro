@@ -108,7 +108,7 @@ class ReminderController extends Controller
             return back()->with('error', 'Relance impossible : vérifiez que le client a un email et que la facture n\'est pas soldée.');
         }
 
-        return back()->with('success', "Relance niveau {$level} envoyée à {$log->sent_to} pour la facture {$document->number}.");
+        return redirect()->route('reminders.index')->with('success', "Relance niveau {$level} envoyée à {$log->sent_to} pour la facture {$document->number}.");
     }
 
     /** Paramétrage : activation + seuils (jours) des 3 niveaux. */
@@ -141,6 +141,6 @@ class ReminderController extends Controller
         ];
         $company->update(['settings' => $settings]);
 
-        return back()->with('success', 'Paramètres de relance enregistrés.');
+        return redirect()->route('reminders.index')->with('success', 'Paramètres de relance enregistrés.');
     }
 }

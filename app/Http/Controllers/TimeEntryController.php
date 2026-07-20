@@ -55,7 +55,7 @@ class TimeEntryController extends Controller
             'is_billable' => $data['is_billable'] ?? true,
         ]);
 
-        return back()->with('success', 'Temps enregistré.');
+        return redirect()->route('time-entries.index')->with('success', 'Temps enregistré.');
     }
 
     public function update(Request $request, TimeEntry $entry): RedirectResponse
@@ -81,7 +81,7 @@ class TimeEntryController extends Controller
             'is_billable' => $data['is_billable'] ?? $entry->is_billable,
         ]);
 
-        return back()->with('success', 'Entrée mise à jour.');
+        return redirect()->route('time-entries.index')->with('success', 'Entrée mise à jour.');
     }
 
     public function destroy(Request $request, TimeEntry $entry): RedirectResponse
@@ -97,7 +97,7 @@ class TimeEntryController extends Controller
 
         $entry->delete();
 
-        return back()->with('success', 'Entrée supprimée.');
+        return redirect()->route('time-entries.index')->with('success', 'Entrée supprimée.');
     }
 
     /**

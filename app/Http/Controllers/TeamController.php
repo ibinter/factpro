@@ -119,7 +119,7 @@ class TeamController extends Controller
 
         Mail::to($email)->send(new TeamInvitationMail($invitation));
 
-        return back()->with('success', 'Invitation envoyée à '.$email.'.');
+        return redirect()->route('team.index')->with('success', 'Invitation envoyée à '.$email.'.');
     }
 
     /** Annule une invitation en attente de la société courante. */
@@ -133,7 +133,7 @@ class TeamController extends Controller
 
         $invitation->delete();
 
-        return back()->with('success', 'Invitation annulée.');
+        return redirect()->route('team.index')->with('success', 'Invitation annulée.');
     }
 
     /** Change le rôle d'un membre (jamais le propriétaire). */
@@ -154,7 +154,7 @@ class TeamController extends Controller
 
         $company->users()->updateExistingPivot($user->id, ['role' => $data['role']]);
 
-        return back()->with('success', 'Rôle mis à jour.');
+        return redirect()->route('team.index')->with('success', 'Rôle mis à jour.');
     }
 
     /** Retire un membre de la société courante (jamais le propriétaire). */
@@ -178,7 +178,7 @@ class TeamController extends Controller
             $user->forceFill(['current_company_id' => $fallback?->id])->save();
         }
 
-        return back()->with('success', 'Membre retiré de l\'équipe.');
+        return redirect()->route('team.index')->with('success', 'Membre retiré de l\'équipe.');
     }
 
     /** Le propriétaire (owner_id) ou un rôle pivot owner/admin peut gérer l'équipe. */

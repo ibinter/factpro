@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -66,7 +66,7 @@ class PublicProductController extends Controller
         ]);
     }
 
-    /** API JSON produit pour intégration externe. */
+    /** API JSON produit pour intÃ©gration externe. */
     public function api(string $companySlug, string $productSlug): JsonResponse
     {
         $company = Company::where('slug', $companySlug)->firstOrFail();
@@ -127,20 +127,20 @@ class PublicProductController extends Controller
             'minimum_order_qty' => $data['minimum_order_qty'] ?? $product->minimum_order_qty,
         ]);
 
-        return back()->with('success', 'Page publique activée.');
+        return back()->with('success', 'Page publique activÃ©e.');
     }
 
-    /** Désactive la page publique pour un produit. */
+    /** DÃ©sactive la page publique pour un produit. */
     public function disablePublic(Request $request, Product $product): \Illuminate\Http\RedirectResponse
     {
         abort_unless($product->company_id === $request->user()->current_company_id, 403);
 
         $product->update(['public_page_enabled' => false]);
 
-        return back()->with('success', 'Page publique désactivée.');
+        return back()->with('success', 'Page publique dÃ©sactivÃ©e.');
     }
 
-    /** Génère/met à jour le slug automatiquement depuis le nom. */
+    /** GÃ©nÃ¨re/met Ã  jour le slug automatiquement depuis le nom. */
     private function generateSlug(Product $product): string
     {
         // Include company_id scope for uniqueness per company
@@ -161,3 +161,4 @@ class PublicProductController extends Controller
         return $slug;
     }
 }
+

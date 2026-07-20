@@ -182,7 +182,7 @@ class PurchaseController extends Controller
             ...$data,
         ]);
 
-        return back()->with('success', 'Fournisseur ajouté.');
+        return redirect()->route('purchases.index')->with('success', 'Fournisseur ajouté.');
     }
 
     /** Met à jour un fournisseur. */
@@ -193,7 +193,7 @@ class PurchaseController extends Controller
 
         $supplier->update($this->validateSupplier($request));
 
-        return back()->with('success', 'Fournisseur mis à jour.');
+        return redirect()->route('purchases.index')->with('success', 'Fournisseur mis à jour.');
     }
 
     /** Supprime (soft delete) un fournisseur. */
@@ -204,7 +204,7 @@ class PurchaseController extends Controller
 
         $supplier->delete();
 
-        return back()->with('success', 'Fournisseur supprimé.');
+        return redirect()->route('purchases.index')->with('success', 'Fournisseur supprimé.');
     }
 
     /** Enregistre une facture d'achat (justificatif privé optionnel). */
@@ -232,7 +232,7 @@ class PurchaseController extends Controller
             ...$receipt,
         ]);
 
-        return back()->with('success', 'Facture d\'achat enregistrée.');
+        return redirect()->route('purchases.index')->with('success', 'Facture d\'achat enregistrée.');
     }
 
     /** Met à jour une facture d'achat. */
@@ -262,7 +262,7 @@ class PurchaseController extends Controller
         // Le statut de paiement se recalcule si le TTC a changé.
         $this->recomputePaymentStatus($invoice->fresh());
 
-        return back()->with('success', 'Facture d\'achat mise à jour.');
+        return redirect()->route('purchases.index')->with('success', 'Facture d\'achat mise à jour.');
     }
 
     /** Supprime (soft delete) une facture d'achat. */
@@ -273,7 +273,7 @@ class PurchaseController extends Controller
 
         $invoice->delete();
 
-        return back()->with('success', 'Facture d\'achat supprimée.');
+        return redirect()->route('purchases.index')->with('success', 'Facture d\'achat supprimée.');
     }
 
     /** Enregistre un règlement (partiel ou solde) sur une facture d'achat. */
@@ -301,7 +301,7 @@ class PurchaseController extends Controller
             'paid_at' => $settled ? ($data['paid_at'] ?? now()->toDateString()) : $invoice->paid_at,
         ]);
 
-        return back()->with('success', $settled ? 'Facture soldée.' : 'Règlement partiel enregistré.');
+        return redirect()->route('purchases.index')->with('success', $settled ? 'Facture soldée.' : 'Règlement partiel enregistré.');
     }
 
     /** Consultation sécurisée du justificatif (stockage privé, streamé inline). */

@@ -136,7 +136,7 @@ class ProjectController extends Controller
             'currency' => $data['currency'] ?? $company->currency ?? 'XOF',
         ]);
 
-        return back()->with('success', 'Projet créé.');
+        return redirect()->route('projects.index')->with('success', 'Projet créé.');
     }
 
     /** Détail d'un projet : entrées de temps, totaux et avancement budget. */
@@ -220,7 +220,7 @@ class ProjectController extends Controller
         $data = $this->validateData($request);
         $project->update($data);
 
-        return back()->with('success', 'Projet mis à jour.');
+        return redirect()->route('projects.index')->with('success', 'Projet mis à jour.');
     }
 
     public function destroy(Request $request, Project $project): RedirectResponse

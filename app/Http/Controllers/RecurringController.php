@@ -128,7 +128,7 @@ class RecurringController extends Controller
             'created_by' => $request->user()->id,
         ]);
 
-        return back()->with('success', 'Gabarit de facture récurrente créé.');
+        return redirect()->route('recurring.index')->with('success', 'Gabarit de facture récurrente créé.');
     }
 
     /** Met à jour un gabarit. */
@@ -141,7 +141,7 @@ class RecurringController extends Controller
 
         $template->update($data);
 
-        return back()->with('success', 'Gabarit mis à jour.');
+        return redirect()->route('recurring.index')->with('success', 'Gabarit mis à jour.');
     }
 
     /** Supprime (soft delete) un gabarit — l'historique des factures est conservé. */
@@ -152,7 +152,7 @@ class RecurringController extends Controller
 
         $template->delete();
 
-        return back()->with('success', 'Gabarit supprimé. Les factures déjà générées sont conservées.');
+        return redirect()->route('recurring.index')->with('success', 'Gabarit supprimé. Les factures déjà générées sont conservées.');
     }
 
     /** Pause / reprise du gabarit. */
@@ -163,7 +163,7 @@ class RecurringController extends Controller
 
         $template->update(['is_active' => ! $template->is_active]);
 
-        return back()->with('success', $template->is_active
+        return redirect()->route('recurring.index')->with('success', $template->is_active
             ? 'Gabarit réactivé : les émissions reprennent.'
             : 'Gabarit mis en pause.');
     }
