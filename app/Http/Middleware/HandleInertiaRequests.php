@@ -22,7 +22,8 @@ class HandleInertiaRequests extends Middleware
      */
     public function version(Request $request): ?string
     {
-        return null;
+        $manifest = public_path('build/manifest.json');
+        return file_exists($manifest) ? md5_file($manifest) : null;
     }
 
     /**

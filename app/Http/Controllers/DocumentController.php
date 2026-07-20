@@ -133,8 +133,8 @@ class DocumentController extends Controller
             'number' => $document->number,
         ]);
 
-        return redirect()->route('documents.show', $document)
-            ->with('success', $document->type_label.' '.$document->number.' créé.');
+        return redirect()->route('documents.index')
+            ->with('success', $document->type_label.' '.$document->number.' créé avec succès.');
     }
 
     public function show(Request $request, Document $document): Response

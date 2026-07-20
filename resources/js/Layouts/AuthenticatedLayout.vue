@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import NavLink from '@/Components/NavLink.vue';
@@ -27,6 +27,19 @@ const switchCompany = (company) => {
         router.post(route('companies.switch', company.id));
     }
 };
+
+// Toast flash — auto-dismiss après 5 s
+const toastSuccess = ref('');
+const toastError   = ref('');
+let toastTimer = null;
+const showToast = (msg, type) => {
+    if (toastTimer) clearTimeout(toastTimer);
+    if (type === 'success') { toastSuccess.value = msg; toastError.value = ''; }
+    else                    { toastError.value = msg;   toastSuccess.value = ''; }
+    toastTimer = setTimeout(() => { toastSuccess.value = ''; toastError.value = ''; }, 5000);
+};
+watch(() => flash.value.success, (v) => { if (v) showToast(v, 'success'); });
+watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
 </script>
 
 <template>
@@ -347,17 +360,21 @@ const switchCompany = (company) => {
                 </div>
             </nav>
 
-            <!-- Flash messages -->
-            <div v-if="flash.success" class="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
-                    ✓ {{ flash.success }}
+            <!-- Toast notifications (fixed top-right, auto-dismiss 5s) -->
+            <Transition name="toast">
+                <div v-if="toastSuccess" class="fixed top-4 right-4 z-50 flex items-center gap-3 rounded-lg border border-green-300 bg-green-50 px-5 py-4 text-sm font-medium text-green-800 shadow-lg" style="max-width:420px">
+                    <span class="text-xl">✅</span>
+                    <span>{{ toastSuccess }}</span>
+                    <button @click="toastSuccess=''" class="ml-auto text-green-600 hover:text-green-900 text-lg font-bold leading-none">×</button>
                 </div>
-            </div>
-            <div v-if="flash.error" class="mx-auto mt-4 max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-                    ✗ {{ flash.error }}
+            </Transition>
+            <Transition name="toast">
+                <div v-if="toastError" class="fixed top-4 right-4 z-50 flex items-center gap-3 rounded-lg border border-red-300 bg-red-50 px-5 py-4 text-sm font-medium text-red-800 shadow-lg" style="max-width:420px">
+                    <span class="text-xl">❌</span>
+                    <span>{{ toastError }}</span>
+                    <button @click="toastError=''" class="ml-auto text-red-600 hover:text-red-900 text-lg font-bold leading-none">×</button>
                 </div>
-            </div>
+            </Transition>
 
             <header class="bg-white shadow" v-if="$slots.header">
                 <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
@@ -371,3 +388,10 @@ const switchCompany = (company) => {
         </div>
     </div>
 </template>
+
+<style scoped>
+.toast-enter-active  { transition: all .3s ease; }
+.toast-leave-active  { transition: all .3s ease; }
+.toast-enter-from    { opacity: 0; transform: translateX(60px); }
+.toast-leave-to      { opacity: 0; transform: translateX(60px); }
+</style>
