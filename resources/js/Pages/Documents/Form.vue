@@ -303,7 +303,9 @@ const filteredTemplates = computed(() => activeFamily.value ? props.templates.fi
 // ── Submit ────────────────────────────────────────────────────────────────────
 const submit = () => {
     const opts = {
-        onSuccess: () => { window.location.href = route('documents.index'); },
+        onFinish: () => {
+            if (!form.hasErrors) window.location.href = '/documents';
+        },
     };
     if (isEdit.value) form.put(route('documents.update', props.document?.id), opts);
     else              form.post(route('documents.store'), opts);
