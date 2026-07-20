@@ -85,9 +85,10 @@ const finalize = () => {
 const showStatusModal = ref(false);
 const selectedStatus = ref(props.document.status);
 const changeStatus = () => {
-    router.post(route('documents.status', props.document.id), { status: selectedStatus.value }, {
+    router.post(`/documents/${props.document.id}/status`, { status: selectedStatus.value }, {
         preserveScroll: true,
         onSuccess: () => { showStatusModal.value = false; },
+        onError: (e) => { console.error('changeStatus error', e); },
     });
 };
 
