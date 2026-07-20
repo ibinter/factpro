@@ -32,10 +32,15 @@ const fetchLinks = async () => {
     try {
         const res = await fetch(`/documents/${props.document.id}/quote-links`, {
             headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            credentials: 'same-origin',
         });
+        if (!res.ok) {
+            error.value = `Erreur serveur (${res.status}) — vérifiez que les migrations ont été exécutées.`;
+            return;
+        }
         links.value = await res.json();
     } catch {
-        error.value = 'Impossible de charger les liens.';
+        error.value = 'Impossible de charger les liens (erreur réseau).';
     } finally {
         loading.value = false;
     }
