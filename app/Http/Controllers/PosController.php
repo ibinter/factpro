@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -19,13 +19,13 @@ class PosController extends Controller
     {
     }
 
-    /** Interface de caisse tactile (cahier des charges Â§7). */
+    /** Interface de caisse tactile (cahier des charges Ã‚Â§7). */
     public function index(Request $request): Response
     {
         $company = $request->user()->currentCompany;
         $session = $this->openSessionFor($request);
 
-        // Dernier ticket encaissÃ© (passÃ© en query aprÃ¨s un checkout rÃ©ussi)
+        // Dernier ticket encaissÃƒÂ© (passÃƒÂ© en query aprÃƒÂ¨s un checkout rÃƒÂ©ussi)
         $lastTicket = null;
         if ($request->query('ticket')) {
             $doc = Document::where('company_id', $company->id)
@@ -62,7 +62,7 @@ class PosController extends Controller
         ]);
 
         if ($this->openSessionFor($request)) {
-            return back()->with('error', 'Une session de caisse est dÃ©jÃ  ouverte.');
+            return redirect()->route('pos.index')->with('error', 'Une session de caisse est déjà ouverte.');
         }
 
         PosSession::create([
@@ -78,7 +78,7 @@ class PosController extends Controller
         return redirect()->route('pos.index')->with('success', 'Caisse ouverte. Bonne vente !');
     }
 
-    /** Encaisse une vente : ticket pos_ticket finalisÃ© + paiements multi-moyens. */
+    /** Encaisse une vente : ticket pos_ticket finalisÃƒÂ© + paiements multi-moyens. */
     public function checkout(Request $request): RedirectResponse
     {
         $user = $request->user();
@@ -126,7 +126,7 @@ class PosController extends Controller
             $paid = round(collect($data['payments'])->sum(fn ($p) => (float) $p['amount']), 2);
             if ($paid < (float) $document->total) {
                 throw ValidationException::withMessages([
-                    'payments' => 'Le montant encaissÃ© ('.$paid.') ne couvre pas le total du ticket ('.$document->total.').',
+                    'payments' => 'Le montant encaissÃƒÂ© ('.$paid.') ne couvre pas le total du ticket ('.$document->total.').',
                 ]);
             }
 
@@ -142,7 +142,7 @@ class PosController extends Controller
                 ], $user);
             }
 
-            // Mise Ã  jour des compteurs de la session
+            // Mise ÃƒÂ  jour des compteurs de la session
             $totals = $session->totals_by_method ?? [];
             foreach ($data['payments'] as $payment) {
                 $method = $payment['method'];
@@ -160,10 +160,10 @@ class PosController extends Controller
 
         return redirect()
             ->route('pos.index', ['ticket' => $document->id])
-            ->with('success', 'Ticket '.$document->number.' encaissÃ©.');
+            ->with('success', 'Ticket '.$document->number.' encaissÃƒÂ©.');
     }
 
-    /** ClÃ´ture la session : comptage des espÃ¨ces + calcul de l'Ã©cart. */
+    /** ClÃƒÂ´ture la session : comptage des espÃƒÂ¨ces + calcul de l'ÃƒÂ©cart. */
     public function closeSession(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -192,7 +192,7 @@ class PosController extends Controller
 
         return redirect()
             ->route('pos.report', $session)
-            ->with('success', 'Caisse clÃ´turÃ©e â€” rapport Z gÃ©nÃ©rÃ©.');
+            ->with('success', 'Caisse clÃƒÂ´turÃƒÂ©e Ã¢â‚¬â€ rapport Z gÃƒÂ©nÃƒÂ©rÃƒÂ©.');
     }
 
     /** Rapport Z d'une session de caisse. */
@@ -208,7 +208,7 @@ class PosController extends Controller
         ]);
     }
 
-    /** Rapport X : statistiques intraday sans clÃ´ture de session. */
+    /** Rapport X : statistiques intraday sans clÃƒÂ´ture de session. */
     public function reportX(Request $request, PosSession $session): \Illuminate\Http\JsonResponse|\Inertia\Response
     {
         abort_unless($session->company_id === $request->user()->current_company_id, 403);
@@ -237,7 +237,7 @@ class PosController extends Controller
         ]);
     }
 
-    /** Session ouverte du caissier courant (scopÃ©e sociÃ©tÃ©). */
+    /** Session ouverte du caissier courant (scopÃƒÂ©e sociÃƒÂ©tÃƒÂ©). */
     private function openSessionFor(Request $request): ?PosSession
     {
         return PosSession::open()
@@ -247,4 +247,5 @@ class PosController extends Controller
             ->first();
     }
 }
+
 

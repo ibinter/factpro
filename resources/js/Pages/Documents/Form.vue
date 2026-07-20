@@ -25,6 +25,35 @@ const props = defineProps({
 const isEdit = computed(() => !!props.document);
 const typeLabel = computed(() => props.types.find((t) => t.value === (props.document?.type ?? props.documentType))?.label ?? 'Document');
 
+// Préfixe "Nouveau/Nouvelle/Nouvel" selon le genre grammatical du type de document
+const NOUVEAU_PREFIX = {
+    invoice:              'Nouvelle',
+    simple_invoice:       'Nouvelle',
+    export_invoice:       'Nouvelle',
+    tax_exempt_invoice:   'Nouvelle',
+    rectification_invoice:'Nouvelle',
+    supplier_invoice:     'Nouvelle',
+    medical_invoice:      'Nouvelle',
+    deposit_invoice:      'Nouvelle',
+    balance_invoice:      'Nouvelle',
+    credit_note:          'Nouvel',
+    supplier_credit_note: 'Nouvel',
+    debit_note:           'Nouvelle',
+    delivery_note:        null,       // pas de préfixe
+    dispatch_order:       null,
+    picking_order:        null,
+};
+const createPrefix = computed(() => {
+    const t = props.document?.type ?? props.documentType;
+    if (t in NOUVEAU_PREFIX) return NOUVEAU_PREFIX[t];
+    return 'Nouveau';
+});
+const pageTitle = computed(() => {
+    if (isEdit.value) return 'Modifier — ' + typeLabel.value;
+    if (createPrefix.value === null) return typeLabel.value;
+    return createPrefix.value + ' ' + typeLabel.value;
+});
+
 // Types groupés par catégorie pour le sélecteur
 const groupedTypes = computed(() => {
     const groups = {};
@@ -320,13 +349,13 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
 </script>
 
 <template>
-    <Head :title="(isEdit ? 'Modifier ' : 'Nouveau ') + typeLabel" />
+    <Head :title="pageTitle" />
 
     <AuthenticatedLayout>
         <template #header>
             <div class="flex items-center justify-between">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">
-                    {{ isEdit ? 'Modifier' : 'Nouveau' }} — {{ typeLabel }}
+                    {{ pageTitle }}
                     <span v-if="isEdit" class="ml-2 text-sm font-normal text-gray-400">{{ document.number }}</span>
                 </h2>
                 <Link :href="route('documents.index')" class="text-sm font-semibold text-gray-500 hover:underline">← Retour</Link>
@@ -1251,9 +1280,9 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
                                 <tr>
                                     <th class="px-3 py-3" style="width:17%">Produit <span class="font-normal opacity-60">(optionnel)</span></th>
                                     <th class="px-3 py-3" style="width:30%">Description *</th>
-                                    <th class="px-3 py-3 text-right" style="width:8%">Qté</th>
+                                    <th class="px-3 py-3 text-right" style="width:8%">Qté <span class="text-red-400">*</span></th>
                                     <th class="px-3 py-3 text-right" style="width:8%">Unité</th>
-                                    <th v-if="schema.showPrices" class="px-3 py-3 text-right" style="width:12%">P.U. HT</th>
+                                    <th v-if="schema.showPrices" class="px-3 py-3 text-right" style="width:12%">P.U. HT <span class="text-red-400">*</span></th>
                                     <th v-if="schema.showPrices && schema.showDiscount" class="px-3 py-3 text-right" style="width:11%">Remise</th>
                                     <th v-if="schema.showTax" class="px-3 py-3 text-right" style="width:7%">TVA %</th>
                                     <th v-if="schema.showPrices" class="px-3 py-3 text-right" style="width:11%">Total HT</th>

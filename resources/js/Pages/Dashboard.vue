@@ -71,8 +71,8 @@ const areaPath  = computed(() => {
 const hoveredPoint = ref(null);
 
 // ── Donut chart ─────────────────────────────────────────────────────────────
-const statusColors  = { paid: '#10b981', sent: '#3b82f6', draft: '#94a3b8', overdue: '#ef4444', partial: '#f59e0b', cancelled: '#6b7280', viewed: '#8b5cf6', converted: '#06b6d4' };
-const statusLabels  = { paid: 'Payée', sent: 'Envoyée', draft: 'Brouillon', overdue: 'En retard', partial: 'Partielle', cancelled: 'Annulée', viewed: 'Vue', converted: 'Convertie' };
+const statusColors  = { paid: '#10b981', sent: '#3b82f6', draft: '#94a3b8', overdue: '#ef4444', partial: '#f59e0b', cancelled: '#6b7280', viewed: '#8b5cf6', converted: '#06b6d4', accepted: '#10b981', rejected: '#ef4444' };
+const statusLabels  = { paid: 'Payée', sent: 'Envoyée', draft: 'Brouillon', overdue: 'En retard', partial: 'Partielle', cancelled: 'Annulée', viewed: 'Vue', converted: 'Convertie', accepted: 'Accepté', rejected: 'Refusé' };
 
 const donutTotal = computed(() => Object.values(props.statusBreakdown ?? {}).reduce((a, b) => a + b, 0));
 
@@ -103,8 +103,9 @@ const topProductMax  = computed(() => Math.max(...(props.topProducts  ?? []).map
 // ── Doc table helpers ────────────────────────────────────────────────────────
 const typeLabel = { invoice: 'Facture', quote: 'Devis', proforma: 'Proforma', delivery_note: 'Bon de livraison', credit_note: 'Avoir', purchase_order: 'Commande', receipt: 'Reçu' };
 const typeColor  = { invoice: 'bg-blue-100 text-blue-700', quote: 'bg-amber-100 text-amber-700', proforma: 'bg-purple-100 text-purple-700', delivery_note: 'bg-green-100 text-green-700', credit_note: 'bg-red-100 text-red-700', purchase_order: 'bg-indigo-100 text-indigo-700', receipt: 'bg-teal-100 text-teal-700' };
-const statusColor = { paid: 'bg-emerald-100 text-emerald-700', sent: 'bg-blue-100 text-blue-700', draft: 'bg-gray-100 text-gray-600', overdue: 'bg-red-100 text-red-700', partial: 'bg-amber-100 text-amber-700', cancelled: 'bg-gray-100 text-gray-400', viewed: 'bg-violet-100 text-violet-700', converted: 'bg-cyan-100 text-cyan-700' };
-const statusLbl   = { paid: 'Payée', sent: 'Envoyée', draft: 'Brouillon', overdue: 'En retard', partial: 'Partielle', cancelled: 'Annulée', viewed: 'Vue', converted: 'Convertie' };
+const statusColor = { paid: 'bg-emerald-100 text-emerald-700', sent: 'bg-blue-100 text-blue-700', draft: 'bg-gray-100 text-gray-600', overdue: 'bg-red-100 text-red-700', partial: 'bg-amber-100 text-amber-700', cancelled: 'bg-gray-100 text-gray-400', viewed: 'bg-violet-100 text-violet-700', converted: 'bg-cyan-100 text-cyan-700', accepted: 'bg-emerald-100 text-emerald-700', rejected: 'bg-red-100 text-red-700' };
+const statusLbl   = { paid: 'Payée', sent: 'Envoyée', draft: 'Brouillon', overdue: 'En retard', partial: 'Partielle', cancelled: 'Annulée', viewed: 'Vue', converted: 'Convertie', accepted: 'Accepté', rejected: 'Refusé' };
+const formatDate  = (d) => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
 
 // ── Alerts ───────────────────────────────────────────────────────────────────
 const alertsOpen = ref(true);
@@ -444,7 +445,7 @@ const alertIcon  = { danger: '🔴', warning: '⚠️', info: 'ℹ️' };
                                     <td class="px-4 py-3 text-gray-600 hidden sm:table-cell max-w-[160px] truncate">
                                         {{ doc.customer?.name ?? '—' }}
                                     </td>
-                                    <td class="px-4 py-3 text-gray-400 hidden md:table-cell">{{ doc.issue_date }}</td>
+                                    <td class="px-4 py-3 text-gray-400 hidden md:table-cell">{{ formatDate(doc.issue_date) }}</td>
                                     <td class="px-4 py-3 text-right font-semibold text-gray-800">{{ fmt(doc.total) }}</td>
                                     <td class="px-4 py-3 text-center">
                                         <span class="rounded-full px-2 py-0.5 text-[10px] font-semibold"

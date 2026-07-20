@@ -31,7 +31,7 @@ const fetchLinks = async () => {
     error.value = '';
     try {
         const res = await fetch(`/documents/${props.document.id}/quote-links`, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin',
         });
         if (!res.ok) {
