@@ -350,7 +350,7 @@ class DocumentController extends Controller
         DocumentAuditLog::record($document, "status_changed:{$old}→{$new}", $request->user());
         CacheService::forgetCompany($document->company_id);
 
-        return back()->with('success', 'Statut mis à jour.');
+        return redirect()->route('documents.show', $document)->with('success', 'Statut mis à jour.');
     }
 
     /** Conversion devis→facture, facture→avoir, etc. */
