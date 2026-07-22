@@ -39,73 +39,138 @@ onMounted(async () => {
 const openFaq = ref(null);
 const toggleFaq = (i) => (openFaq.value = openFaq.value === i ? null : i);
 
-/* ── Document carousel ── */
-const docIndex = ref(0);
-const docPaused = ref(false);
-const DOCS = [
+/* ── Hero slides ── */
+const slideIndex = ref(0);
+const slidePaused = ref(false);
+const SLIDES = [
     {
-        type: 'Facture', num: 'FAC-2024-0842', status: 'Payée', statusColor: '#dcfce7', statusText: '#166534',
-        accent: '#0062CC', client: 'KONE & Associates SARL', country: '🇨🇮',
-        lines: [
-            { label: 'Consulting IT × 3 mois', amount: '450 000' },
-            { label: 'Maintenance annuelle', amount: '180 000' },
-            { label: 'Formation équipe (5 pers.)', amount: '120 000' },
-        ],
-        total: '885 000 FCFA', totalEur: '≈ 1 350 €', pay: '📱 Wave CI', badge: '✓ QR infalsifiable',
-        bg: 'linear-gradient(145deg,#ffffff,#f0f7ff)',
+        bg: 'linear-gradient(135deg,#001120 0%,#001d3d 50%,#003580 100%)',
+        accent: '#0062CC',
+        accentLight: '#3b89ff',
+        tag: 'Facturation professionnelle',
+        h1: 'Vos factures, prêtes\nen 30 secondes',
+        sub: 'Générez des factures conformes OHADA avec QR code anti-falsification. Envoyez par email ou WhatsApp. Encaissez via Mobile Money en un clic.',
+        cta1: 'Créer ma première facture →',
+        cta2: 'Voir la démo',
+        doc: {
+            type: 'FACTURE', num: 'FAC-2024-0842',
+            emetteur: 'KOFFI & ASSOCIÉS SARL',
+            emetteurSub: 'RC CI-ABJ-2019-B-15234 · RCCM 06-B-15234',
+            client: 'ORANGE CÔTE D\'IVOIRE S.A.',
+            clientSub: 'Direction Achats · Abidjan-Plateau, CI',
+            date: '22 juillet 2024', echeance: '21 août 2024',
+            statusLabel: '✓ PAYÉE', statusBg: '#d1fae5', statusFg: '#065f46',
+            headerBg: '#001d3d',
+            rows: [
+                { desc: 'Audit infrastructure réseau & sécurité', qty: '1', pu: '350 000', total: '350 000' },
+                { desc: 'Déploiement VLAN multi-sites (×3 sites)', qty: '3', pu: '85 000', total: '255 000' },
+                { desc: 'Formation équipe IT (5 techniciens × 3j)', qty: '15j', pu: '18 000', total: '270 000' },
+                { desc: 'Support prioritaire 12 mois', qty: '1', pu: '180 000', total: '180 000' },
+            ],
+            ht: '1 055 000', tva: '190 000', ttc: '1 245 000', devise: 'FCFA',
+            equiv: '≈ 1 898 € · 2 068 $',
+            payMode: 'Wave CI — +225 07 08 09 10',
+            qrNote: 'Vérifiez sur factpro.ibigsoft.com',
+        },
     },
     {
-        type: 'Devis', num: 'DEV-2024-0317', status: 'Accepté', statusColor: '#fef9c3', statusText: '#854d0e',
-        accent: '#f59e0b', client: 'SOGEMI Construction', country: '🇸🇳',
-        lines: [
-            { label: 'Étude & conception BTP', amount: '620 000' },
-            { label: 'Matériaux fournis', amount: '380 000' },
-            { label: 'Main d\'œuvre qualifiée', amount: '250 000' },
-        ],
-        total: '1 250 000 FCFA', totalEur: '≈ 1 905 €', pay: '🏦 Virement bancaire', badge: '✍️ Signé électroniquement',
-        bg: 'linear-gradient(145deg,#fffbeb,#fff)',
+        bg: 'linear-gradient(135deg,#0d1117 0%,#1a1000 50%,#3d2200 100%)',
+        accent: '#d97706',
+        accentLight: '#fbbf24',
+        tag: 'Devis interactif & signature',
+        h1: 'Vos devis acceptés\nsans rendez-vous',
+        sub: 'Envoyez un lien de devis signable en ligne. Le client accepte et signe directement depuis son téléphone. Convertissez en facture en un clic.',
+        cta1: 'Créer mon premier devis →',
+        cta2: 'Voir la démo',
+        doc: {
+            type: 'DEVIS', num: 'DEV-2024-0317',
+            emetteur: 'SOGEMI BTP CONSTRUCTION',
+            emetteurSub: 'RCCM SN-DKR-2021-B-8811 · NINEA 00789241',
+            client: 'RÉPUBLIQUE DU SÉNÉGAL — DGPU',
+            clientSub: 'Direction Générale des Projets Urbains · Dakar',
+            date: '18 juillet 2024', echeance: 'Valide 30 jours',
+            statusLabel: '✍ ACCEPTÉ', statusBg: '#fef3c7', statusFg: '#92400e',
+            headerBg: '#3d2200',
+            rows: [
+                { desc: 'Étude géotechnique & plan masse', qty: '1', pu: '620 000', total: '620 000' },
+                { desc: 'Fourniture & pose béton armé (m³)', qty: '120m³', pu: '15 000', total: '1 800 000' },
+                { desc: 'Main d\'œuvre qualifiée (ouvriers spécialisés)', qty: '45j', pu: '22 000', total: '990 000' },
+                { desc: 'Location grue & équipements lourds', qty: '10j', pu: '85 000', total: '850 000' },
+            ],
+            ht: '4 260 000', tva: '766 800', ttc: '5 026 800', devise: 'FCFA',
+            equiv: '≈ 7 661 € · 8 350 $',
+            payMode: 'Virement SGBS — RIB joint',
+            qrNote: 'Signé électroniquement',
+        },
     },
     {
-        type: 'Bon de livraison', num: 'BL-2024-1124', status: 'Livré', statusColor: '#d1fae5', statusText: '#065f46',
-        accent: '#10b981', client: 'Supermarché PROMO', country: '🇨🇲',
-        lines: [
-            { label: 'Huile palme 5L × 120', amount: '360 000' },
-            { label: 'Riz parfumé 25kg × 40', amount: '280 000' },
-            { label: 'Farine blé 50kg × 30', amount: '195 000' },
-        ],
-        total: '835 000 FCFA', totalEur: '≈ 1 272 €', pay: '💵 MTN MoMo', badge: '📦 Livraison confirmée',
-        bg: 'linear-gradient(145deg,#f0fdf4,#fff)',
+        bg: 'linear-gradient(135deg,#001a0d 0%,#003320 50%,#00552e 100%)',
+        accent: '#059669',
+        accentLight: '#34d399',
+        tag: 'Caisse POS & commerce',
+        h1: 'Votre caisse tactile,\npartout en Afrique',
+        sub: 'Point de vente complet : scan code-barres, impression tickets 58/80mm, gestion stocks, clôture de caisse. Fonctionne hors-ligne.',
+        cta1: 'Ouvrir ma caisse →',
+        cta2: 'Voir la démo',
+        doc: {
+            type: 'BON DE LIVRAISON', num: 'BL-2024-1124',
+            emetteur: 'PROMO DISTRIBUTION SARL',
+            emetteurSub: 'RC CM-YAO-2020-B-3344 · NIU P012345678M',
+            client: 'HYPERMARCHÉ CENTRAL YAOUNDÉ',
+            clientSub: 'Service Approvisionnement · Yaoundé, CM',
+            date: '22 juillet 2024', echeance: 'Livré le 22/07/2024',
+            statusLabel: '✓ LIVRÉ', statusBg: '#d1fae5', statusFg: '#065f46',
+            headerBg: '#003a1a',
+            rows: [
+                { desc: 'Huile de palme raffinée 5L (cartons)', qty: '120 crt', pu: '3 000', total: '360 000' },
+                { desc: 'Riz parfumé longue grain 25kg', qty: '40 sacs', pu: '7 000', total: '280 000' },
+                { desc: 'Farine de blé type 45 — 50kg', qty: '30 sacs', pu: '6 500', total: '195 000' },
+                { desc: 'Sucre cristallisé 50kg', qty: '25 sacs', pu: '8 500', total: '212 500' },
+            ],
+            ht: '1 047 500', tva: '0 (exonéré)', ttc: '1 047 500', devise: 'FCFA',
+            equiv: '≈ 1 596 € · 1 739 $',
+            payMode: 'MTN MoMo — +237 67 00 00 00',
+            qrNote: 'Livraison confirmée par GPS',
+        },
     },
     {
-        type: 'Reçu de paiement', num: 'REC-2024-0589', status: 'Encaissé', statusColor: '#ede9fe', statusText: '#6d28d9',
-        accent: '#7c3aed', client: 'Cabinet Dr. TRAORE', country: '🇧🇫',
-        lines: [
-            { label: 'Consultation médicale × 12', amount: '180 000' },
-            { label: 'Actes paramédicaux', amount: '95 000' },
-            { label: 'Médicaments délivrés', amount: '47 500' },
-        ],
-        total: '322 500 FCFA', totalEur: '≈ 491 €', pay: '💳 Orange Money', badge: '🔐 OHADA conforme',
-        bg: 'linear-gradient(145deg,#faf5ff,#fff)',
-    },
-    {
-        type: 'Bulletin de paie', num: 'BP-2024-11/KONAN', status: 'Émis', statusColor: '#fee2e2', statusText: '#991b1b',
-        accent: '#ef4444', client: 'Employé : KONAN Marc', country: '🇨🇮',
-        lines: [
-            { label: 'Salaire brut', amount: '350 000' },
-            { label: 'Cotisations sociales', amount: '-42 000' },
-            { label: 'Prime performance', amount: '+25 000' },
-        ],
-        total: '333 000 FCFA net', totalEur: '≈ 507 €', pay: '🏦 Virement CNPS', badge: '📋 RH automatisé',
-        bg: 'linear-gradient(145deg,#fff5f5,#fff)',
+        bg: 'linear-gradient(135deg,#0d0020 0%,#1a0040 50%,#2d0070 100%)',
+        accent: '#7c3aed',
+        accentLight: '#a78bfa',
+        tag: 'Tableau de bord & KPIs',
+        h1: 'Pilotez votre activité\nen temps réel',
+        sub: 'Dashboard complet : chiffre d\'affaires, taux de recouvrement, documents en attente, top clients. Toutes vos données business en un coup d\'œil.',
+        cta1: 'Accéder au dashboard →',
+        cta2: 'Voir la démo',
+        doc: {
+            type: 'RELEVÉ DE COMPTE CLIENT', num: 'REL-2024-Q3',
+            emetteur: 'CABINET COMPTABLE DIALLO & FILS',
+            emetteurSub: 'Expert-comptable agréé ONECCA-BF · Ouagadougou',
+            client: 'SOCIÉTÉ MINE OR BURKINA SA',
+            clientSub: 'Direction Financière · Ouagadougou, BF',
+            date: '01 juil. – 30 sept. 2024', echeance: 'Trimestre Q3 2024',
+            statusLabel: '◉ SOLDE DÛ', statusBg: '#ede9fe', statusFg: '#5b21b6',
+            headerBg: '#2d0070',
+            rows: [
+                { desc: 'Facture FAC-2024-0701 — Audit fiscal annuel', qty: '1', pu: '850 000', total: '850 000' },
+                { desc: 'Facture FAC-2024-0745 — Liasse fiscale BF', qty: '1', pu: '420 000', total: '420 000' },
+                { desc: 'Facture FAC-2024-0803 — Conseil juridique', qty: '4h', pu: '75 000', total: '300 000' },
+                { desc: 'Facture FAC-2024-0841 — Formation SYSCOHADA', qty: '2j', pu: '180 000', total: '360 000' },
+            ],
+            ht: '1 930 000', tva: '347 400', ttc: '2 277 400', devise: 'FCFA',
+            equiv: '≈ 3 471 € · 3 782 $',
+            payMode: 'Orange Money BF — +226 70 00 00 00',
+            qrNote: 'Conforme SYSCOHADA révisé',
+        },
     },
 ];
-let docTimer = null;
+let slideTimer = null;
 onMounted(() => {
-    docTimer = setInterval(() => {
-        if (!docPaused.value) docIndex.value = (docIndex.value + 1) % DOCS.length;
-    }, 3200);
+    slideTimer = setInterval(() => {
+        if (!slidePaused.value) slideIndex.value = (slideIndex.value + 1) % SLIDES.length;
+    }, 5500);
 });
-const currentDoc = computed(() => DOCS[docIndex.value]);
+const slide = computed(() => SLIDES[slideIndex.value]);
 
 /* ── Compteur animé ── */
 const counters = ref({ clients: 0, docs: 0, pays: 0, uptime: 0 });
@@ -297,176 +362,221 @@ const partnerCommissions = [
             </div>
         </nav>
 
-        <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
-        <section class="relative overflow-hidden" style="background:linear-gradient(135deg,#001120 0%,#001d3d 40%,#0047a3 100%);min-height:92vh">
-            <!-- Mesh background -->
-            <div class="pointer-events-none absolute inset-0">
-                <div style="position:absolute;top:-10%;right:-5%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,98,204,.5),transparent 70%);animation:float1 9s ease-in-out infinite"></div>
-                <div style="position:absolute;bottom:-15%;left:-5%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(240,192,64,.12),transparent 70%);animation:float2 12s ease-in-out infinite"></div>
-                <div style="position:absolute;top:30%;left:38%;width:2px;height:2px;border-radius:50%;background:#fff;box-shadow:0 0 80px 80px rgba(255,255,255,.02)"></div>
-                <!-- Grid lines -->
-                <svg class="absolute inset-0 w-full h-full opacity-5" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>
-            </div>
+        <!-- ═══════════════════════════════ HERO SLIDER ═══════════════════════════════ -->
+        <section class="relative overflow-hidden" style="min-height:94vh"
+                 @mouseenter="slidePaused=true" @mouseleave="slidePaused=false">
 
-            <div class="relative mx-auto grid max-w-7xl items-center gap-10 px-6 py-20 lg:grid-cols-2 lg:py-28" style="min-height:88vh">
+            <!-- Fond animé qui change avec le slide -->
+            <Transition name="bg-fade" mode="out-in">
+                <div :key="slideIndex" class="absolute inset-0 transition-all duration-700" :style="`background:${slide.bg}`">
+                    <svg class="absolute inset-0 w-full h-full opacity-4" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="g" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0L0 0 0 60" fill="none" stroke="white" stroke-width="0.4" opacity="0.4"/></pattern></defs><rect width="100%" height="100%" fill="url(#g)"/></svg>
+                    <div class="absolute" style="top:-10%;right:-5%;width:55vw;height:55vw;border-radius:50%;animation:float1 10s ease-in-out infinite" :style="`background:radial-gradient(circle,${slide.accent}44,transparent 70%)`"></div>
+                    <div class="absolute" style="bottom:-15%;left:-5%;width:40vw;height:40vw;border-radius:50%;animation:float2 14s ease-in-out infinite" :style="`background:radial-gradient(circle,rgba(240,192,64,.08),transparent 70%)`"></div>
+                </div>
+            </Transition>
 
-                <!-- ── COPY ── -->
-                <div class="z-10">
-                    <!-- Top badge -->
-                    <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold mb-6" style="background:rgba(240,192,64,.15);color:#F0C040;border:1px solid rgba(240,192,64,.35)">
-                        <span class="inline-block h-1.5 w-1.5 rounded-full animate-pulse" style="background:#F0C040"></span>
-                        {{ t.hero.badge }}
-                    </div>
+            <!-- Contenu du slide -->
+            <Transition name="slide-content" mode="out-in">
+                <div :key="slideIndex" class="relative mx-auto grid max-w-7xl items-center gap-8 px-6 py-16 lg:grid-cols-2 lg:gap-16 lg:py-24" style="min-height:90vh">
 
-                    <h1 class="text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl xl:text-6xl">
-                        {{ t.hero.h1a }}<br/>
-                        <span class="relative inline-block mt-1">
-                            <span style="color:#F0C040">{{ t.hero.h1b }}</span>
-                            <svg class="absolute -bottom-1 left-0 w-full" height="6" viewBox="0 0 300 6" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0 5 Q75 0 150 4 Q225 8 300 3" stroke="#F0C040" stroke-width="2.5" fill="none" opacity="0.6"/></svg>
-                        </span>
-                    </h1>
-
-                    <p class="mt-6 max-w-lg text-lg leading-relaxed" style="color:rgba(255,255,255,.75)">{{ t.hero.sub }}</p>
-
-                    <!-- Social proof mini -->
-                    <div class="mt-6 flex items-center gap-3">
-                        <div class="flex -space-x-2">
-                            <div v-for="(c,i) in ['#0062CC','#10b981','#f59e0b','#ef4444','#7c3aed']" :key="i" class="h-8 w-8 rounded-full border-2 border-white/20 flex items-center justify-center text-xs font-bold text-white" :style="`background:${c}`">{{ ['K','A','S','M','T'][i] }}</div>
+                    <!-- ── COPY gauche ── -->
+                    <div class="z-10 flex flex-col justify-center">
+                        <!-- Tag de slide -->
+                        <div class="inline-flex w-fit items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold mb-5" :style="`background:${slide.accent}22;color:${slide.accentLight};border:1px solid ${slide.accent}44`">
+                            <span class="inline-block h-1.5 w-1.5 rounded-full animate-pulse" :style="`background:${slide.accentLight}`"></span>
+                            {{ slide.tag }}
                         </div>
-                        <div>
-                            <div class="text-sm font-bold text-white">2 400+ entrepreneurs</div>
-                            <div class="flex items-center gap-1 text-xs" style="color:#F0C040">
-                                <span>★★★★★</span><span style="color:rgba(255,255,255,.5)"> 4.9/5</span>
+
+                        <h1 class="text-4xl font-black leading-[1.1] tracking-tight text-white sm:text-5xl xl:text-[3.4rem]" style="white-space:pre-line">{{ slide.h1 }}</h1>
+
+                        <p class="mt-5 max-w-md text-base leading-relaxed" style="color:rgba(255,255,255,.72)">{{ slide.sub }}</p>
+
+                        <!-- Proof -->
+                        <div class="mt-6 flex items-center gap-3">
+                            <div class="flex -space-x-2">
+                                <div v-for="(c,i) in ['#0062CC','#10b981','#d97706','#ef4444','#7c3aed']" :key="i"
+                                     class="h-8 w-8 rounded-full border-2 flex items-center justify-center text-xs font-extrabold text-white"
+                                     style="border-color:rgba(255,255,255,.2)" :style="`background:${c}`">{{ 'KASMT'[i] }}</div>
+                            </div>
+                            <div class="text-sm">
+                                <span class="font-bold text-white">2 400+ entrepreneurs</span>
+                                <span class="ml-2" style="color:#F0C040">★★★★★ 4.9</span>
                             </div>
                         </div>
+
+                        <!-- CTAs -->
+                        <div class="mt-8 flex flex-wrap gap-3">
+                            <a v-if="props.canRegister" href="/register"
+                               class="group inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-sm font-extrabold shadow-2xl transition-all hover:scale-105 active:scale-95"
+                               style="background:linear-gradient(135deg,#F0C040,#e8a800);color:#001d3d;box-shadow:0 8px 30px rgba(240,192,64,.38)">
+                                {{ slide.cta1 }}
+                                <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                            </a>
+                            <a href="/demo-login"
+                               class="inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                               style="border-color:rgba(255,255,255,.25)">
+                                <span class="flex h-5 w-5 items-center justify-center rounded-full text-xs" style="background:rgba(255,255,255,.15)">▶</span>
+                                {{ slide.cta2 }}
+                            </a>
+                        </div>
+                        <p class="mt-3 text-xs" style="color:rgba(255,255,255,.38)">{{ t.hero.note }}</p>
+
+                        <!-- Trust pills -->
+                        <div class="mt-7 flex flex-wrap gap-2">
+                            <span v-for="b in t.trustBadges" :key="b"
+                                  class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
+                                  style="background:rgba(255,255,255,.07);color:rgba(255,255,255,.65);border:1px solid rgba(255,255,255,.11)">
+                                <span :style="`color:${slide.accentLight}`">✓</span> {{ b }}
+                            </span>
+                        </div>
                     </div>
 
-                    <!-- CTAs -->
-                    <div class="mt-8 flex flex-wrap gap-3">
-                        <a v-if="props.canRegister" href="/register"
-                           class="group inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-extrabold shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95"
-                           style="background:linear-gradient(135deg,#F0C040,#e8a800);color:#001d3d;box-shadow:0 8px 32px rgba(240,192,64,.4)">
-                            {{ t.hero.cta1 }}
-                            <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
-                        </a>
-                        <a href="/demo-login"
-                           class="group inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-base font-semibold text-white transition hover:bg-white/10"
-                           style="border-color:rgba(255,255,255,.25)">
-                            <span class="flex h-6 w-6 items-center justify-center rounded-full" style="background:rgba(255,255,255,.15)">▶</span>
-                            {{ t.hero.cta2 }}
-                        </a>
-                    </div>
-                    <p class="mt-3 text-xs" style="color:rgba(255,255,255,.4)">{{ t.hero.note }}</p>
+                    <!-- ── DOCUMENT PDF MOCKUP droite ── -->
+                    <div class="z-10 flex justify-center lg:justify-end">
+                        <div class="relative" style="perspective:1200px">
+                            <!-- Ombre portée -->
+                            <div class="absolute inset-x-4 bottom-0 h-8 rounded-b-2xl blur-2xl opacity-40" :style="`background:${slide.accent}`"></div>
 
-                    <!-- Trust badges inline -->
-                    <div class="mt-8 flex flex-wrap gap-3">
-                        <span v-for="b in t.trustBadges" :key="b" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12)">
-                            <span style="color:#F0C040">✓</span> {{ b }}
-                        </span>
-                    </div>
-                </div>
+                            <!-- Document A4 simulé -->
+                            <div class="relative w-full max-w-sm rounded-xl overflow-hidden shadow-2xl bg-white"
+                                 style="font-size:10px;line-height:1.4;transform:rotateY(-2deg) rotateX(1deg);box-shadow:0 32px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08)">
 
-                <!-- ── DOCUMENT CAROUSEL ── -->
-                <div class="relative flex justify-center lg:justify-end z-10"
-                     @mouseenter="docPaused = true" @mouseleave="docPaused = false">
-
-                    <!-- Cards stack (fake depth) -->
-                    <div class="absolute top-4 right-4 w-72 h-80 rounded-2xl opacity-20 rotate-6" style="background:rgba(255,255,255,.15);backdrop-filter:blur(4px)"></div>
-                    <div class="absolute top-2 right-2 w-72 h-80 rounded-2xl opacity-30 rotate-3" style="background:rgba(255,255,255,.2);backdrop-filter:blur(4px)"></div>
-
-                    <!-- Main document card -->
-                    <Transition name="doc-flip" mode="out-in">
-                        <div :key="docIndex"
-                             class="relative w-80 rounded-2xl shadow-2xl overflow-hidden"
-                             :style="`background:${currentDoc.bg};border:1px solid rgba(0,0,0,.06)`">
-
-                            <!-- Document header -->
-                            <div class="px-6 pt-5 pb-4" :style="`background:${currentDoc.accent};`">
-                                <div class="flex items-center justify-between">
+                                <!-- ═ EN-TÊTE DOCUMENT ═ -->
+                                <div class="flex items-start justify-between px-5 py-4" :style="`background:${slide.doc.headerBg}`">
                                     <div>
-                                        <div class="text-xs font-bold uppercase tracking-widest text-white/60">IBIG FactPro</div>
-                                        <div class="text-sm font-extrabold text-white mt-0.5">{{ currentDoc.num }}</div>
+                                        <!-- Logo zone -->
+                                        <div class="flex items-center gap-2 mb-2">
+                                            <div class="h-7 w-7 rounded flex items-center justify-center font-black text-sm" :style="`background:${slide.accent};color:white`">FP</div>
+                                            <div>
+                                                <div class="text-white font-extrabold text-xs">{{ slide.doc.emetteur }}</div>
+                                                <div class="text-xs" style="color:rgba(255,255,255,.5)">{{ slide.doc.emetteurSub }}</div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="rounded-lg px-2.5 py-1 text-xs font-bold" :style="`background:${currentDoc.statusColor};color:${currentDoc.statusText}`">
-                                        {{ currentDoc.status }}
+                                    <div class="text-right">
+                                        <div class="text-lg font-black uppercase tracking-wider" :style="`color:${slide.accentLight}`">{{ slide.doc.type }}</div>
+                                        <div class="text-xs text-white font-bold mt-0.5">{{ slide.doc.num }}</div>
+                                        <div class="mt-1.5 rounded px-2 py-0.5 text-xs font-bold inline-block" :style="`background:${slide.doc.statusBg};color:${slide.doc.statusFg}`">{{ slide.doc.statusLabel }}</div>
                                     </div>
                                 </div>
-                                <div class="mt-3 text-xs font-semibold text-white/80">
-                                    {{ currentDoc.country }} {{ currentDoc.client }}
+
+                                <!-- ═ INFOS CLIENT / DATE ═ -->
+                                <div class="grid grid-cols-2 gap-0 border-b" style="border-color:#e5e7eb">
+                                    <div class="px-5 py-3 border-r" style="border-color:#e5e7eb">
+                                        <div class="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Facturé à</div>
+                                        <div class="font-extrabold text-gray-800 text-xs">{{ slide.doc.client }}</div>
+                                        <div class="text-gray-400 text-xs mt-0.5">{{ slide.doc.clientSub }}</div>
+                                    </div>
+                                    <div class="px-5 py-3">
+                                        <div class="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Dates</div>
+                                        <div class="text-gray-700 text-xs"><span class="text-gray-400">Émis :</span> {{ slide.doc.date }}</div>
+                                        <div class="text-gray-700 text-xs mt-0.5"><span class="text-gray-400">Échéance :</span> {{ slide.doc.echeance }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- ═ TABLEAU DES LIGNES ═ -->
+                                <div class="px-5 pt-3">
+                                    <!-- En-tête tableau -->
+                                    <div class="grid text-xs font-black uppercase tracking-widest text-gray-400 pb-1.5 border-b" style="grid-template-columns:1fr 3rem 4.5rem 4.5rem;border-color:#e5e7eb">
+                                        <span>Description</span>
+                                        <span class="text-center">Qté</span>
+                                        <span class="text-right">P.U.</span>
+                                        <span class="text-right">Total</span>
+                                    </div>
+                                    <!-- Lignes -->
+                                    <div v-for="(row, i) in slide.doc.rows" :key="i"
+                                         class="grid py-2 border-b"
+                                         :style="`grid-template-columns:1fr 3rem 4.5rem 4.5rem;border-color:${i%2===0?'#f3f4f6':'#e5e7eb'};background:${i%2===0?'white':'#fafafa'}`">
+                                        <span class="text-gray-700 pr-2" style="line-height:1.3">{{ row.desc }}</span>
+                                        <span class="text-center text-gray-500">{{ row.qty }}</span>
+                                        <span class="text-right text-gray-600">{{ row.pu }}</span>
+                                        <span class="text-right font-bold text-gray-800">{{ row.total }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- ═ TOTAUX + QR ═ -->
+                                <div class="flex items-end gap-4 px-5 py-3">
+                                    <!-- QR code zone -->
+                                    <div class="flex-shrink-0">
+                                        <div class="h-16 w-16 rounded-lg flex items-center justify-center" :style="`background:${slide.doc.headerBg}`">
+                                            <svg viewBox="0 0 44 44" fill="none" class="h-12 w-12">
+                                                <rect x="1" y="1" width="5" height="5" fill="white"/><rect x="2" y="2" width="3" height="3" :fill="slide.accent"/>
+                                                <rect x="8" y="1" width="2" height="5" fill="white"/>
+                                                <rect x="12" y="1" width="5" height="5" fill="white"/><rect x="13" y="2" width="3" height="3" :fill="slide.accent"/>
+                                                <rect x="1" y="8" width="5" height="2" fill="white"/><rect x="12" y="8" width="5" height="2" fill="white"/>
+                                                <rect x="1" y="12" width="5" height="5" fill="white"/><rect x="2" y="13" width="3" height="3" :fill="slide.accent"/>
+                                                <rect x="8" y="12" width="2" height="2" fill="white"/>
+                                                <rect x="12" y="12" width="5" height="5" fill="white"/><rect x="13" y="13" width="3" height="3" :fill="slide.accent"/>
+                                                <rect x="19" y="1" width="3" height="3" fill="white"/><rect x="23" y="2" width="5" height="2" fill="white"/>
+                                                <rect x="19" y="6" width="5" height="2" fill="white"/><rect x="25" y="5" width="3" height="3" fill="white"/>
+                                                <rect x="19" y="10" width="3" height="7" fill="white"/><rect x="23" y="8" width="5" height="5" fill="white"/>
+                                                <rect x="1" y="19" width="8" height="2" fill="white"/><rect x="11" y="19" width="6" height="2" fill="white"/>
+                                                <rect x="1" y="23" width="4" height="4" fill="white"/><rect x="6" y="23" width="3" height="3" fill="white"/>
+                                                <rect x="12" y="22" width="3" height="5" fill="white"/>
+                                                <rect x="17" y="19" width="3" height="8" fill="white"/>
+                                                <rect x="21" y="21" width="4" height="3" fill="white"/>
+                                                <rect x="21" y="25" width="3" height="3" fill="white"/>
+                                            </svg>
+                                        </div>
+                                        <div class="text-center text-xs mt-1 text-gray-400">{{ slide.doc.qrNote }}</div>
+                                    </div>
+
+                                    <!-- Blocs totaux -->
+                                    <div class="flex-1 space-y-1.5">
+                                        <div class="flex justify-between text-gray-500">
+                                            <span>Sous-total HT</span>
+                                            <span class="font-semibold text-gray-700">{{ slide.doc.ht }} {{ slide.doc.devise }}</span>
+                                        </div>
+                                        <div class="flex justify-between text-gray-500">
+                                            <span>TVA</span>
+                                            <span class="font-semibold text-gray-700">{{ slide.doc.tva }} {{ slide.doc.devise }}</span>
+                                        </div>
+                                        <div class="flex justify-between rounded-lg px-3 py-2 mt-1" :style="`background:${slide.accent};color:white`">
+                                            <span class="font-black uppercase text-xs tracking-widest">Total TTC</span>
+                                            <div class="text-right">
+                                                <div class="font-black text-sm">{{ slide.doc.ttc }} {{ slide.doc.devise }}</div>
+                                                <div class="text-xs opacity-70">{{ slide.doc.equiv }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ═ FOOTER DOCUMENT ═ -->
+                                <div class="px-5 py-2.5 flex items-center justify-between" :style="`background:${slide.doc.headerBg}22;border-top:1px solid ${slide.doc.headerBg}33`">
+                                    <span class="text-gray-500">Mode de paiement : <strong class="text-gray-700">{{ slide.doc.payMode }}</strong></span>
+                                    <span class="rounded px-2 py-0.5 text-xs font-bold" :style="`background:${slide.accentLight}22;color:${slide.accent}`">IBIG FactPro</span>
                                 </div>
                             </div>
-
-                            <!-- Document type badge -->
-                            <div class="px-6 py-2 flex items-center gap-2" :style="`background:${currentDoc.accent}22`">
-                                <span class="text-xs font-black uppercase tracking-widest" :style="`color:${currentDoc.accent}`">{{ currentDoc.type }}</span>
-                            </div>
-
-                            <!-- Line items -->
-                            <div class="px-6 py-4 space-y-3">
-                                <div v-for="(line, i) in currentDoc.lines" :key="i" class="flex items-start justify-between gap-2">
-                                    <span class="text-xs text-gray-500 leading-relaxed flex-1">{{ line.label }}</span>
-                                    <span class="text-xs font-bold text-gray-800 whitespace-nowrap">{{ line.amount }}</span>
-                                </div>
-                            </div>
-
-                            <!-- Total -->
-                            <div class="mx-6 mb-2 rounded-xl p-3 flex items-center justify-between" :style="`background:${currentDoc.accent}12;border:1px solid ${currentDoc.accent}30`">
-                                <div>
-                                    <div class="text-xs text-gray-400 uppercase tracking-wider">Total TTC</div>
-                                    <div class="text-xl font-black mt-0.5" :style="`color:${currentDoc.accent}`">{{ currentDoc.total }}</div>
-                                    <div class="text-xs text-gray-400 mt-0.5">{{ currentDoc.totalEur }}</div>
-                                </div>
-                                <!-- Mini QR -->
-                                <div class="h-12 w-12 rounded-lg grid place-items-center" :style="`background:${currentDoc.accent}`">
-                                    <svg viewBox="0 0 32 32" class="h-9 w-9" fill="none">
-                                        <rect x="0" y="0" width="3" height="3" fill="white"/><rect x="4" y="0" width="2" height="3" fill="white"/><rect x="8" y="0" width="3" height="3" fill="white"/>
-                                        <rect x="0" y="4" width="3" height="2" fill="white"/><rect x="8" y="4" width="3" height="2" fill="white"/>
-                                        <rect x="0" y="8" width="3" height="3" fill="white"/><rect x="4" y="8" width="2" height="2" fill="white"/><rect x="8" y="8" width="3" height="3" fill="white"/>
-                                        <rect x="13" y="0" width="2" height="2" fill="white"/><rect x="16" y="0" width="3" height="2" fill="white"/>
-                                        <rect x="13" y="3" width="3" height="2" fill="white"/><rect x="17" y="3" width="2" height="2" fill="white"/>
-                                        <rect x="13" y="7" width="2" height="4" fill="white"/><rect x="16" y="5" width="3" height="3" fill="white"/>
-                                        <rect x="0" y="13" width="6" height="2" fill="white"/><rect x="8" y="13" width="4" height="2" fill="white"/>
-                                        <rect x="0" y="17" width="3" height="3" fill="white"/><rect x="5" y="17" width="3" height="2" fill="white"/>
-                                        <rect x="10" y="16" width="2" height="4" fill="white"/><rect x="14" y="13" width="2" height="6" fill="white"/>
-                                        <rect x="17" y="14" width="3" height="2" fill="white"/><rect x="17" y="18" width="2" height="2" fill="white"/>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            <!-- Footer -->
-                            <div class="mx-6 mb-5 flex items-center justify-between">
-                                <span class="rounded-full px-2.5 py-1 text-xs font-bold" :style="`background:${currentDoc.statusColor};color:${currentDoc.statusText}`">{{ currentDoc.badge }}</span>
-                                <span class="text-xs text-gray-400">{{ currentDoc.pay }}</span>
-                            </div>
-                        </div>
-                    </Transition>
-
-                    <!-- Dots navigation -->
-                    <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
-                        <button v-for="(doc, i) in DOCS" :key="i"
-                                @click="docIndex = i"
-                                class="transition-all duration-300 rounded-full"
-                                :class="i === docIndex ? 'w-6 h-2' : 'w-2 h-2'"
-                                :style="i === docIndex ? `background:${DOCS[i].accent}` : 'background:rgba(255,255,255,.3)'">
-                        </button>
-                    </div>
-
-                    <!-- Doc type labels (floating) -->
-                    <div class="absolute -left-2 top-4 flex flex-col gap-2">
-                        <div v-for="(doc, i) in DOCS" :key="i"
-                             class="cursor-pointer rounded-lg px-2.5 py-1 text-xs font-bold transition-all duration-300"
-                             :class="i === docIndex ? 'opacity-100 scale-100' : 'opacity-30 scale-90 hover:opacity-60'"
-                             :style="`background:${doc.accent};color:white`"
-                             @click="docIndex = i">
-                            {{ ['📄','📝','📦','🧾','👤'][i] }}
                         </div>
                     </div>
                 </div>
+            </Transition>
+
+            <!-- ── Slide controls ── -->
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
+                <button v-for="(s, i) in SLIDES" :key="i"
+                        @click="slideIndex=i"
+                        class="transition-all duration-400 rounded-full"
+                        :class="i===slideIndex ? 'h-2.5 w-8' : 'h-2.5 w-2.5 hover:w-4'"
+                        :style="i===slideIndex ? `background:${SLIDES[i].accentLight}` : 'background:rgba(255,255,255,.25)'">
+                </button>
             </div>
 
-            <!-- Bottom wave -->
-            <div class="absolute bottom-0 left-0 right-0">
-                <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full"><path d="M0 60 L0 30 Q360 0 720 25 Q1080 50 1440 20 L1440 60 Z" fill="white"/></svg>
+            <!-- Slide labels (desktop) -->
+            <div class="absolute right-6 top-1/2 -translate-y-1/2 z-20 hidden xl:flex flex-col gap-3">
+                <button v-for="(s, i) in SLIDES" :key="i"
+                        @click="slideIndex=i"
+                        class="flex items-center gap-2 rounded-full py-1 pl-1 pr-3 text-xs font-bold transition-all duration-300"
+                        :class="i===slideIndex ? 'opacity-100' : 'opacity-30 hover:opacity-60'"
+                        :style="i===slideIndex ? `background:${s.accent}55;color:white;border:1px solid ${s.accent}` : 'background:rgba(255,255,255,.08);color:white;border:1px solid rgba(255,255,255,.1)'">
+                    <span class="h-5 w-5 rounded-full flex items-center justify-center text-xs" :style="`background:${s.accent}`">{{ i+1 }}</span>
+                    {{ s.doc.type }}
+                </button>
+            </div>
+
+            <!-- Wave bottom -->
+            <div class="absolute bottom-0 left-0 right-0 z-10 pointer-events-none">
+                <svg viewBox="0 0 1440 56" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full block"><path d="M0 56V28Q360 0 720 22Q1080 44 1440 18V56Z" fill="white"/></svg>
             </div>
         </section>
 
@@ -908,14 +1018,26 @@ const partnerCommissions = [
 </template>
 
 <style scoped>
-@keyframes float1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-20px,30px) scale(1.1)} }
+@keyframes float1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-20px,30px) scale(1.08)} }
 @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-20px)} }
+
+/* FAQ accordion */
 .faq-slide-enter-active,.faq-slide-leave-active{transition:all .25s ease}
 .faq-slide-enter-from,.faq-slide-leave-to{opacity:0;transform:translateY(-8px)}
 
-/* Document carousel flip */
-.doc-flip-enter-active { animation: docIn .5s cubic-bezier(0.34,1.56,0.64,1); }
-.doc-flip-leave-active { animation: docOut .35s ease-in forwards; }
-@keyframes docIn  { from { opacity:0; transform: translateY(24px) scale(.94) rotateX(8deg); } to { opacity:1; transform:translateY(0) scale(1) rotateX(0); } }
-@keyframes docOut { from { opacity:1; transform:translateY(0) scale(1); } to { opacity:0; transform:translateY(-16px) scale(.96); } }
+/* Hero background crossfade */
+.bg-fade-enter-active,.bg-fade-leave-active{transition:opacity .8s ease}
+.bg-fade-enter-from,.bg-fade-leave-to{opacity:0}
+
+/* Hero content slide */
+.slide-content-enter-active{animation:slideIn .55s cubic-bezier(.34,1.26,.64,1)}
+.slide-content-leave-active{animation:slideOut .35s ease-in forwards}
+@keyframes slideIn {
+    from { opacity:0; transform:translateX(28px) scale(.97); }
+    to   { opacity:1; transform:translateX(0) scale(1); }
+}
+@keyframes slideOut {
+    from { opacity:1; transform:translateX(0); }
+    to   { opacity:0; transform:translateX(-20px); }
+}
 </style>
