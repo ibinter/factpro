@@ -2,44 +2,105 @@
 import LegalLayout from './Layout.vue';
 defineProps({ canLogin: Boolean, canRegister: Boolean });
 </script>
+
 <template>
-  <LegalLayout title="Conditions générales d'utilisation" :can-login="canLogin" :can-register="canRegister">
+  <LegalLayout title="Conditions Générales d'Utilisation" :can-login="canLogin" :can-register="canRegister">
+
     <h2>1. Objet</h2>
-    <p>Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation du logiciel SaaS IBIG FactPro, édité par IBIG SARL. En vous inscrivant ou en utilisant le service, vous acceptez sans réserve les présentes CGU.</p>
+    <p>
+      Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation
+      du logiciel SaaS <strong>IBIG FactPro</strong>, édité par IBIG SARL – Intermark Business
+      International Group. En créant un compte, l'utilisateur accepte sans réserve les présentes CGU.
+    </p>
 
     <h2>2. Description du service</h2>
-    <p>IBIG FactPro est une solution SaaS de facturation professionnelle accessible via navigateur web et installable en tant qu'application progressive (PWA). Le service comprend notamment : gestion des devis et factures, caisse POS, gestion des stocks, comptabilité, CRM, module RH, API REST, et portail client.</p>
+    <p>
+      IBIG FactPro est un logiciel de facturation professionnelle en ligne (SaaS) permettant :
+    </p>
+    <ul>
+      <li>La création et gestion de devis, factures, bons de commande, reçus et bulletins de paie.</li>
+      <li>La gestion des clients, produits, stocks et trésorerie.</li>
+      <li>L'encaissement via Mobile Money (Wave, Orange Money, MTN, Moov, CinetPay, Flutterwave).</li>
+      <li>L'export des documents en PDF, Excel et CSV.</li>
+      <li>La caisse tactile POS avec impression thermique 58/80 mm.</li>
+    </ul>
 
     <h2>3. Accès au service</h2>
-    <p>L'accès au service est conditionné à la création d'un compte et à l'acceptation des présentes CGU. Un essai gratuit de 7 jours est proposé sans carte bancaire. Au-delà, l'accès est soumis à la souscription d'un abonnement payant.</p>
+    <p>
+      L'accès est conditionné à la création d'un compte avec une adresse email valide.
+      Un <strong>essai gratuit de 7 jours</strong> est offert sans carte bancaire.
+      À l'issue de l'essai, un abonnement payant est requis pour continuer.
+    </p>
 
     <h2>4. Compte utilisateur</h2>
-    <p>Vous êtes responsable de la confidentialité de vos identifiants et de toutes les actions effectuées depuis votre compte. Vous devez informer IBIG Soft immédiatement en cas d'utilisation non autorisée. IBIG Soft se réserve le droit de suspendre tout compte en cas d'utilisation abusive.</p>
+    <ul>
+      <li>L'utilisateur est responsable de la confidentialité de ses identifiants.</li>
+      <li>Toute utilisation du compte est réputée effectuée par son titulaire.</li>
+      <li>Tout accès non autorisé doit être signalé immédiatement à IBIG SARL.</li>
+      <li>Un compte ne peut être partagé entre plusieurs personnes sans abonnement adapté.</li>
+    </ul>
 
     <h2>5. Abonnements et paiements</h2>
-    <p>Les abonnements sont sans engagement et facturés à la période choisie (mensuelle ou annuelle). Les tarifs sont indiqués en FCFA (XOF) hors taxes. IBIG Soft se réserve le droit de modifier ses tarifs avec un préavis de 30 jours.</p>
+    <p>
+      Les abonnements sont mensuels ou annuels, renouvelés automatiquement.
+      Les tarifs sont consultables sur la <a href="/pricing">page des tarifs</a>.
+    </p>
+    <ul>
+      <li>Les prix sont exprimés en FCFA, EUR et USD selon le pays.</li>
+      <li>Toute période commencée est due dans son intégralité.</li>
+      <li>Les tarifs peuvent être révisés avec un préavis de 30 jours par email.</li>
+      <li>Aucun remboursement au prorata sauf dysfonctionnement grave imputable à IBIG SARL.</li>
+    </ul>
 
-    <h2>6. Données et confidentialité</h2>
-    <p>Vos données sont traitées conformément à notre <a href="/legal/confidentialite">Politique de confidentialité</a>. Vous restez propriétaire de vos données. IBIG Soft s'engage à ne pas les vendre à des tiers.</p>
+    <h2>6. Propriété des données</h2>
+    <p>
+      L'utilisateur conserve la <strong>pleine propriété</strong> de toutes les données qu'il saisit
+      (clients, factures, produits, etc.). IBIG SARL traite ces données uniquement pour fournir
+      le service, conformément à la <a href="/legal/confidentialite">Politique de confidentialité</a>.
+    </p>
 
-    <h2>7. Utilisation acceptable</h2>
-    <p>Il est interdit d'utiliser IBIG FactPro pour : des activités illégales, la génération de faux documents, des activités frauduleuses, l'envoi de spams, ou toute utilisation portant atteinte aux droits de tiers.</p>
+    <h2>7. Usages acceptables</h2>
+    <p>L'utilisateur s'engage à ne pas utiliser IBIG FactPro pour :</p>
+    <ul>
+      <li>Émettre des documents frauduleux, falsifiés ou trompeurs.</li>
+      <li>Toute activité illégale ou contraire aux lois ivoiriennes et OHADA.</li>
+      <li>Tenter de contourner les mesures de sécurité du logiciel.</li>
+      <li>Revendre ou sous-licencier l'accès sans autorisation écrite de IBIG SARL.</li>
+    </ul>
 
     <h2>8. Disponibilité du service</h2>
-    <p>IBIG Soft s'efforce de maintenir le service disponible 24h/24 et 7j/7. Des interruptions temporaires peuvent survenir pour maintenance. IBIG Soft ne garantit pas une disponibilité de 100 % sauf dans le cadre d'un forfait Enterprise avec SLA spécifique.</p>
+    <p>
+      IBIG SARL s'engage à maintenir une disponibilité de <strong>99 %</strong> mensuelle.
+      Des interruptions planifiées pour maintenance peuvent survenir avec préavis
+      par email ou notification dans l'application.
+    </p>
 
     <h2>9. Résiliation</h2>
-    <p>Vous pouvez résilier votre abonnement à tout moment depuis votre espace. L'accès reste actif jusqu'à la fin de la période payée. Voir notre <a href="/legal/resiliation">Politique de résiliation</a> pour plus de détails.</p>
+    <p>
+      L'utilisateur peut résilier son abonnement à tout moment depuis son espace compte.
+      Les modalités complètes sont décrites dans la
+      <a href="/legal/resiliation">Politique de résiliation</a>.
+    </p>
 
     <h2>10. Limitation de responsabilité</h2>
-    <p>IBIG SARL ne saurait être tenu responsable des pertes de données imputables à l'utilisateur, des dommages indirects ou immatériels, ni de l'utilisation faite par l'utilisateur des documents générés. La responsabilité de IBIG SARL est limitée au montant des sommes versées au cours des 3 derniers mois.</p>
+    <p>
+      La responsabilité de IBIG SARL est limitée au montant des abonnements payés
+      au cours des 3 derniers mois précédant le sinistre. IBIG SARL n'est pas
+      responsable des dommages indirects, perte de revenus ou perte de données.
+    </p>
 
-    <h2>11. Modification des CGU</h2>
-    <p>IBIG Soft peut modifier les présentes CGU. Les utilisateurs seront informés par email avec un préavis de 15 jours. La poursuite de l'utilisation du service après ce délai vaut acceptation des nouvelles CGU.</p>
+    <h2>11. Modifications des CGU</h2>
+    <p>
+      IBIG SARL peut modifier les présentes CGU à tout moment.
+      L'utilisateur sera notifié par email <strong>30 jours avant</strong> toute modification
+      substantielle. La poursuite de l'utilisation vaut acceptation des nouvelles CGU.
+    </p>
 
-    <h2>12. Droit applicable et litiges</h2>
-    <p>Les présentes CGU sont soumises au droit ivoirien. Tout litige sera soumis à une tentative de résolution amiable, puis aux juridictions compétentes d'Abidjan, Côte d'Ivoire.</p>
+    <h2>12. Droit applicable</h2>
+    <p>
+      Les présentes CGU sont soumises au droit ivoirien et aux textes OHADA applicables.
+      Tout litige sera porté devant les tribunaux compétents d'Abidjan, Côte d'Ivoire.
+    </p>
 
-    <p class="mt-8 text-gray-400 text-xs">Pour toute question : <a href="mailto:factpro@ibigsoft.com">factpro@ibigsoft.com</a></p>
   </LegalLayout>
 </template>
