@@ -39,6 +39,74 @@ onMounted(async () => {
 const openFaq = ref(null);
 const toggleFaq = (i) => (openFaq.value = openFaq.value === i ? null : i);
 
+/* ── Document carousel ── */
+const docIndex = ref(0);
+const docPaused = ref(false);
+const DOCS = [
+    {
+        type: 'Facture', num: 'FAC-2024-0842', status: 'Payée', statusColor: '#dcfce7', statusText: '#166534',
+        accent: '#0062CC', client: 'KONE & Associates SARL', country: '🇨🇮',
+        lines: [
+            { label: 'Consulting IT × 3 mois', amount: '450 000' },
+            { label: 'Maintenance annuelle', amount: '180 000' },
+            { label: 'Formation équipe (5 pers.)', amount: '120 000' },
+        ],
+        total: '885 000 FCFA', totalEur: '≈ 1 350 €', pay: '📱 Wave CI', badge: '✓ QR infalsifiable',
+        bg: 'linear-gradient(145deg,#ffffff,#f0f7ff)',
+    },
+    {
+        type: 'Devis', num: 'DEV-2024-0317', status: 'Accepté', statusColor: '#fef9c3', statusText: '#854d0e',
+        accent: '#f59e0b', client: 'SOGEMI Construction', country: '🇸🇳',
+        lines: [
+            { label: 'Étude & conception BTP', amount: '620 000' },
+            { label: 'Matériaux fournis', amount: '380 000' },
+            { label: 'Main d\'œuvre qualifiée', amount: '250 000' },
+        ],
+        total: '1 250 000 FCFA', totalEur: '≈ 1 905 €', pay: '🏦 Virement bancaire', badge: '✍️ Signé électroniquement',
+        bg: 'linear-gradient(145deg,#fffbeb,#fff)',
+    },
+    {
+        type: 'Bon de livraison', num: 'BL-2024-1124', status: 'Livré', statusColor: '#d1fae5', statusText: '#065f46',
+        accent: '#10b981', client: 'Supermarché PROMO', country: '🇨🇲',
+        lines: [
+            { label: 'Huile palme 5L × 120', amount: '360 000' },
+            { label: 'Riz parfumé 25kg × 40', amount: '280 000' },
+            { label: 'Farine blé 50kg × 30', amount: '195 000' },
+        ],
+        total: '835 000 FCFA', totalEur: '≈ 1 272 €', pay: '💵 MTN MoMo', badge: '📦 Livraison confirmée',
+        bg: 'linear-gradient(145deg,#f0fdf4,#fff)',
+    },
+    {
+        type: 'Reçu de paiement', num: 'REC-2024-0589', status: 'Encaissé', statusColor: '#ede9fe', statusText: '#6d28d9',
+        accent: '#7c3aed', client: 'Cabinet Dr. TRAORE', country: '🇧🇫',
+        lines: [
+            { label: 'Consultation médicale × 12', amount: '180 000' },
+            { label: 'Actes paramédicaux', amount: '95 000' },
+            { label: 'Médicaments délivrés', amount: '47 500' },
+        ],
+        total: '322 500 FCFA', totalEur: '≈ 491 €', pay: '💳 Orange Money', badge: '🔐 OHADA conforme',
+        bg: 'linear-gradient(145deg,#faf5ff,#fff)',
+    },
+    {
+        type: 'Bulletin de paie', num: 'BP-2024-11/KONAN', status: 'Émis', statusColor: '#fee2e2', statusText: '#991b1b',
+        accent: '#ef4444', client: 'Employé : KONAN Marc', country: '🇨🇮',
+        lines: [
+            { label: 'Salaire brut', amount: '350 000' },
+            { label: 'Cotisations sociales', amount: '-42 000' },
+            { label: 'Prime performance', amount: '+25 000' },
+        ],
+        total: '333 000 FCFA net', totalEur: '≈ 507 €', pay: '🏦 Virement CNPS', badge: '📋 RH automatisé',
+        bg: 'linear-gradient(145deg,#fff5f5,#fff)',
+    },
+];
+let docTimer = null;
+onMounted(() => {
+    docTimer = setInterval(() => {
+        if (!docPaused.value) docIndex.value = (docIndex.value + 1) % DOCS.length;
+    }, 3200);
+});
+const currentDoc = computed(() => DOCS[docIndex.value]);
+
 /* ── Compteur animé ── */
 const counters = ref({ clients: 0, docs: 0, pays: 0, uptime: 0 });
 const targets  = { clients: 2400, docs: 185000, pays: 12, uptime: 99 };
@@ -230,111 +298,191 @@ const partnerCommissions = [
         </nav>
 
         <!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
-        <section class="relative overflow-hidden" style="background:linear-gradient(135deg,#001d3d 0%,#0062CC 60%,#0099ff 100%)">
-            <!-- Animated blobs -->
-            <div class="pointer-events-none absolute inset-0 overflow-hidden">
-                <div class="absolute -right-32 -top-32 h-96 w-96 rounded-full opacity-20" style="background:radial-gradient(circle,#F0C040,transparent);animation:float1 8s ease-in-out infinite"></div>
-                <div class="absolute -bottom-24 -left-24 h-80 w-80 rounded-full opacity-10" style="background:radial-gradient(circle,#ffffff,transparent);animation:float2 10s ease-in-out infinite"></div>
+        <section class="relative overflow-hidden" style="background:linear-gradient(135deg,#001120 0%,#001d3d 40%,#0047a3 100%);min-height:92vh">
+            <!-- Mesh background -->
+            <div class="pointer-events-none absolute inset-0">
+                <div style="position:absolute;top:-10%;right:-5%;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(0,98,204,.5),transparent 70%);animation:float1 9s ease-in-out infinite"></div>
+                <div style="position:absolute;bottom:-15%;left:-5%;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(240,192,64,.12),transparent 70%);animation:float2 12s ease-in-out infinite"></div>
+                <div style="position:absolute;top:30%;left:38%;width:2px;height:2px;border-radius:50%;background:#fff;box-shadow:0 0 80px 80px rgba(255,255,255,.02)"></div>
+                <!-- Grid lines -->
+                <svg class="absolute inset-0 w-full h-full opacity-5" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" stroke-width="0.5"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>
             </div>
 
-            <div class="relative mx-auto grid max-w-7xl items-center gap-12 px-6 py-24 lg:grid-cols-2 lg:py-32">
-                <div>
-                    <span class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold" style="background:rgba(255,255,255,.15);color:#F0C040;border:1px solid rgba(240,192,64,.3)">
-                        ✨ {{ t.hero.badge }}
-                    </span>
-                    <h1 class="mt-6 text-4xl font-extrabold leading-tight text-white sm:text-5xl lg:text-6xl">
-                        {{ t.hero.h1a }}<br />
-                        <span style="color:#F0C040">{{ t.hero.h1b }}</span>
+            <div class="relative mx-auto grid max-w-7xl items-center gap-10 px-6 py-20 lg:grid-cols-2 lg:py-28" style="min-height:88vh">
+
+                <!-- ── COPY ── -->
+                <div class="z-10">
+                    <!-- Top badge -->
+                    <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold mb-6" style="background:rgba(240,192,64,.15);color:#F0C040;border:1px solid rgba(240,192,64,.35)">
+                        <span class="inline-block h-1.5 w-1.5 rounded-full animate-pulse" style="background:#F0C040"></span>
+                        {{ t.hero.badge }}
+                    </div>
+
+                    <h1 class="text-4xl font-black leading-[1.08] tracking-tight text-white sm:text-5xl xl:text-6xl">
+                        {{ t.hero.h1a }}<br/>
+                        <span class="relative inline-block mt-1">
+                            <span style="color:#F0C040">{{ t.hero.h1b }}</span>
+                            <svg class="absolute -bottom-1 left-0 w-full" height="6" viewBox="0 0 300 6" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none"><path d="M0 5 Q75 0 150 4 Q225 8 300 3" stroke="#F0C040" stroke-width="2.5" fill="none" opacity="0.6"/></svg>
+                        </span>
                     </h1>
-                    <p class="mt-6 max-w-xl text-lg text-white/80 leading-relaxed">
-                        {{ t.hero.sub }}
-                    </p>
-                    <div class="mt-8 flex flex-wrap gap-4">
+
+                    <p class="mt-6 max-w-lg text-lg leading-relaxed" style="color:rgba(255,255,255,.75)">{{ t.hero.sub }}</p>
+
+                    <!-- Social proof mini -->
+                    <div class="mt-6 flex items-center gap-3">
+                        <div class="flex -space-x-2">
+                            <div v-for="(c,i) in ['#0062CC','#10b981','#f59e0b','#ef4444','#7c3aed']" :key="i" class="h-8 w-8 rounded-full border-2 border-white/20 flex items-center justify-center text-xs font-bold text-white" :style="`background:${c}`">{{ ['K','A','S','M','T'][i] }}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm font-bold text-white">2 400+ entrepreneurs</div>
+                            <div class="flex items-center gap-1 text-xs" style="color:#F0C040">
+                                <span>★★★★★</span><span style="color:rgba(255,255,255,.5)"> 4.9/5</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTAs -->
+                    <div class="mt-8 flex flex-wrap gap-3">
                         <a v-if="props.canRegister" href="/register"
-                           class="inline-flex items-center rounded-xl px-8 py-3.5 text-base font-bold shadow-xl transition hover:scale-105 active:scale-95"
-                           style="background:#F0C040;color:#001d3d">
+                           class="group inline-flex items-center gap-2 rounded-xl px-7 py-3.5 text-base font-extrabold shadow-2xl transition-all duration-200 hover:scale-105 active:scale-95"
+                           style="background:linear-gradient(135deg,#F0C040,#e8a800);color:#001d3d;box-shadow:0 8px 32px rgba(240,192,64,.4)">
                             {{ t.hero.cta1 }}
+                            <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
                         </a>
                         <a href="/demo-login"
-                           class="inline-flex items-center gap-2 rounded-xl border px-8 py-3.5 text-base font-semibold text-white transition hover:bg-white/10"
-                           style="border-color:rgba(255,255,255,.3)">
-                            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                           class="group inline-flex items-center gap-2 rounded-xl border px-7 py-3.5 text-base font-semibold text-white transition hover:bg-white/10"
+                           style="border-color:rgba(255,255,255,.25)">
+                            <span class="flex h-6 w-6 items-center justify-center rounded-full" style="background:rgba(255,255,255,.15)">▶</span>
                             {{ t.hero.cta2 }}
                         </a>
-                        <a href="/pricing"
-                           class="inline-flex items-center rounded-xl border px-8 py-3.5 text-base font-semibold text-white/70 transition hover:bg-white/10 hover:text-white"
-                           style="border-color:rgba(255,255,255,.15)">
-                            {{ t.hero.cta3 }}
-                        </a>
                     </div>
-                    <p class="mt-4 text-xs text-white/50">{{ t.hero.note }}</p>
+                    <p class="mt-3 text-xs" style="color:rgba(255,255,255,.4)">{{ t.hero.note }}</p>
+
+                    <!-- Trust badges inline -->
+                    <div class="mt-8 flex flex-wrap gap-3">
+                        <span v-for="b in t.trustBadges" :key="b" class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12)">
+                            <span style="color:#F0C040">✓</span> {{ b }}
+                        </span>
+                    </div>
                 </div>
 
-                <!-- Mockup facture -->
-                <div class="relative hidden lg:block">
-                    <div class="rotate-1 rounded-2xl bg-white p-6 shadow-2xl">
-                        <div class="flex items-center justify-between border-b border-gray-100 pb-4">
-                            <div>
-                                <div class="text-xs font-bold uppercase tracking-widest text-gray-400">IBIG FactPro</div>
-                                <div class="text-lg font-extrabold text-brand-900">Facture #2024-0842</div>
+                <!-- ── DOCUMENT CAROUSEL ── -->
+                <div class="relative flex justify-center lg:justify-end z-10"
+                     @mouseenter="docPaused = true" @mouseleave="docPaused = false">
+
+                    <!-- Cards stack (fake depth) -->
+                    <div class="absolute top-4 right-4 w-72 h-80 rounded-2xl opacity-20 rotate-6" style="background:rgba(255,255,255,.15);backdrop-filter:blur(4px)"></div>
+                    <div class="absolute top-2 right-2 w-72 h-80 rounded-2xl opacity-30 rotate-3" style="background:rgba(255,255,255,.2);backdrop-filter:blur(4px)"></div>
+
+                    <!-- Main document card -->
+                    <Transition name="doc-flip" mode="out-in">
+                        <div :key="docIndex"
+                             class="relative w-80 rounded-2xl shadow-2xl overflow-hidden"
+                             :style="`background:${currentDoc.bg};border:1px solid rgba(0,0,0,.06)`">
+
+                            <!-- Document header -->
+                            <div class="px-6 pt-5 pb-4" :style="`background:${currentDoc.accent};`">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <div class="text-xs font-bold uppercase tracking-widest text-white/60">IBIG FactPro</div>
+                                        <div class="text-sm font-extrabold text-white mt-0.5">{{ currentDoc.num }}</div>
+                                    </div>
+                                    <div class="rounded-lg px-2.5 py-1 text-xs font-bold" :style="`background:${currentDoc.statusColor};color:${currentDoc.statusText}`">
+                                        {{ currentDoc.status }}
+                                    </div>
+                                </div>
+                                <div class="mt-3 text-xs font-semibold text-white/80">
+                                    {{ currentDoc.country }} {{ currentDoc.client }}
+                                </div>
                             </div>
-                            <div class="rounded-lg px-3 py-1.5 text-xs font-bold" style="background:#dcfce7;color:#166534">✓ Payée</div>
-                        </div>
-                        <div class="py-4 space-y-2">
-                            <div class="flex justify-between text-sm"><span class="text-gray-500">Consulting IT × 3</span><span class="font-semibold">450 000 FCFA</span></div>
-                            <div class="flex justify-between text-sm"><span class="text-gray-500">Maintenance annuelle</span><span class="font-semibold">180 000 FCFA</span></div>
-                            <div class="flex justify-between text-sm"><span class="text-gray-500">Formation équipe</span><span class="font-semibold">120 000 FCFA</span></div>
-                        </div>
-                        <div class="flex items-end justify-between border-t border-gray-100 pt-4">
-                            <div class="grid h-14 w-14 place-items-center rounded-lg text-[9px] font-bold text-white" style="background:#001d3d">
-                                <svg viewBox="0 0 40 40" class="h-10 w-10" fill="none">
-                                    <rect x="0" y="0" width="4" height="4" fill="white"/><rect x="6" y="0" width="2" height="4" fill="white"/><rect x="10" y="0" width="4" height="4" fill="white"/>
-                                    <rect x="0" y="6" width="4" height="2" fill="white"/><rect x="10" y="6" width="4" height="2" fill="white"/>
-                                    <rect x="0" y="10" width="4" height="4" fill="white"/><rect x="6" y="10" width="2" height="2" fill="white"/><rect x="10" y="10" width="4" height="4" fill="white"/>
-                                    <rect x="16" y="0" width="2" height="2" fill="white"/><rect x="20" y="0" width="4" height="2" fill="white"/>
-                                    <rect x="16" y="4" width="4" height="2" fill="white"/><rect x="22" y="4" width="2" height="2" fill="white"/>
-                                    <rect x="16" y="8" width="2" height="6" fill="white"/><rect x="20" y="6" width="4" height="4" fill="white"/>
-                                </svg>
+
+                            <!-- Document type badge -->
+                            <div class="px-6 py-2 flex items-center gap-2" :style="`background:${currentDoc.accent}22`">
+                                <span class="text-xs font-black uppercase tracking-widest" :style="`color:${currentDoc.accent}`">{{ currentDoc.type }}</span>
                             </div>
-                            <div class="text-right">
-                                <div class="text-xs text-gray-400">Total TTC</div>
-                                <div class="text-2xl font-extrabold text-brand-900">885 000 FCFA</div>
-                                <div class="text-xs text-gray-400">≈ 1 350 € · 1 490 $</div>
+
+                            <!-- Line items -->
+                            <div class="px-6 py-4 space-y-3">
+                                <div v-for="(line, i) in currentDoc.lines" :key="i" class="flex items-start justify-between gap-2">
+                                    <span class="text-xs text-gray-500 leading-relaxed flex-1">{{ line.label }}</span>
+                                    <span class="text-xs font-bold text-gray-800 whitespace-nowrap">{{ line.amount }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Total -->
+                            <div class="mx-6 mb-2 rounded-xl p-3 flex items-center justify-between" :style="`background:${currentDoc.accent}12;border:1px solid ${currentDoc.accent}30`">
+                                <div>
+                                    <div class="text-xs text-gray-400 uppercase tracking-wider">Total TTC</div>
+                                    <div class="text-xl font-black mt-0.5" :style="`color:${currentDoc.accent}`">{{ currentDoc.total }}</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">{{ currentDoc.totalEur }}</div>
+                                </div>
+                                <!-- Mini QR -->
+                                <div class="h-12 w-12 rounded-lg grid place-items-center" :style="`background:${currentDoc.accent}`">
+                                    <svg viewBox="0 0 32 32" class="h-9 w-9" fill="none">
+                                        <rect x="0" y="0" width="3" height="3" fill="white"/><rect x="4" y="0" width="2" height="3" fill="white"/><rect x="8" y="0" width="3" height="3" fill="white"/>
+                                        <rect x="0" y="4" width="3" height="2" fill="white"/><rect x="8" y="4" width="3" height="2" fill="white"/>
+                                        <rect x="0" y="8" width="3" height="3" fill="white"/><rect x="4" y="8" width="2" height="2" fill="white"/><rect x="8" y="8" width="3" height="3" fill="white"/>
+                                        <rect x="13" y="0" width="2" height="2" fill="white"/><rect x="16" y="0" width="3" height="2" fill="white"/>
+                                        <rect x="13" y="3" width="3" height="2" fill="white"/><rect x="17" y="3" width="2" height="2" fill="white"/>
+                                        <rect x="13" y="7" width="2" height="4" fill="white"/><rect x="16" y="5" width="3" height="3" fill="white"/>
+                                        <rect x="0" y="13" width="6" height="2" fill="white"/><rect x="8" y="13" width="4" height="2" fill="white"/>
+                                        <rect x="0" y="17" width="3" height="3" fill="white"/><rect x="5" y="17" width="3" height="2" fill="white"/>
+                                        <rect x="10" y="16" width="2" height="4" fill="white"/><rect x="14" y="13" width="2" height="6" fill="white"/>
+                                        <rect x="17" y="14" width="3" height="2" fill="white"/><rect x="17" y="18" width="2" height="2" fill="white"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="mx-6 mb-5 flex items-center justify-between">
+                                <span class="rounded-full px-2.5 py-1 text-xs font-bold" :style="`background:${currentDoc.statusColor};color:${currentDoc.statusText}`">{{ currentDoc.badge }}</span>
+                                <span class="text-xs text-gray-400">{{ currentDoc.pay }}</span>
                             </div>
                         </div>
+                    </Transition>
+
+                    <!-- Dots navigation -->
+                    <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                        <button v-for="(doc, i) in DOCS" :key="i"
+                                @click="docIndex = i"
+                                class="transition-all duration-300 rounded-full"
+                                :class="i === docIndex ? 'w-6 h-2' : 'w-2 h-2'"
+                                :style="i === docIndex ? `background:${DOCS[i].accent}` : 'background:rgba(255,255,255,.3)'">
+                        </button>
                     </div>
-                    <!-- Badge QR -->
-                    <div class="absolute -bottom-4 -left-4 -rotate-2 rounded-xl px-4 py-2.5 text-sm font-bold shadow-xl" style="background:#F0C040;color:#001d3d">
-                        ✓ QR authentifié · infalsifiable
-                    </div>
-                    <!-- Badge Mobile Money -->
-                    <div class="absolute -right-4 top-8 rotate-2 rounded-xl px-3 py-2 text-xs font-bold shadow-lg" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0">
-                        📱 Payé via Wave
+
+                    <!-- Doc type labels (floating) -->
+                    <div class="absolute -left-2 top-4 flex flex-col gap-2">
+                        <div v-for="(doc, i) in DOCS" :key="i"
+                             class="cursor-pointer rounded-lg px-2.5 py-1 text-xs font-bold transition-all duration-300"
+                             :class="i === docIndex ? 'opacity-100 scale-100' : 'opacity-30 scale-90 hover:opacity-60'"
+                             :style="`background:${doc.accent};color:white`"
+                             @click="docIndex = i">
+                            {{ ['📄','📝','📦','🧾','👤'][i] }}
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Trust strip -->
-            <div class="border-t" style="border-color:rgba(255,255,255,.1);background:rgba(0,0,0,.2)">
-                <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-2 px-6 py-4">
-                    <span v-for="badge in t.trustBadges" :key="badge" class="flex items-center gap-2 text-sm font-semibold" style="color:rgba(255,255,255,.7)">
-                        <span style="color:#F0C040">◆</span> {{ badge }}
-                    </span>
-                </div>
+            <!-- Bottom wave -->
+            <div class="absolute bottom-0 left-0 right-0">
+                <svg viewBox="0 0 1440 60" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" class="w-full"><path d="M0 60 L0 30 Q360 0 720 25 Q1080 50 1440 20 L1440 60 Z" fill="white"/></svg>
             </div>
         </section>
 
         <!-- ═══════════════════════════════ STATS ═══════════════════════════════ -->
-        <section class="border-b border-gray-100 bg-white px-6 py-14">
-            <div class="mx-auto grid max-w-5xl grid-cols-2 gap-8 lg:grid-cols-4">
-                <div v-for="stat in t.stats" :key="stat.label" class="text-center">
-                    <div class="text-4xl font-extrabold" style="color:#0062CC">
+        <section class="bg-white px-6 pt-16 pb-10">
+            <div class="mx-auto max-w-5xl grid grid-cols-2 gap-6 lg:grid-cols-4">
+                <div v-for="stat in t.stats" :key="stat.label"
+                     class="relative overflow-hidden rounded-2xl p-5 text-center shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-1 hover:shadow-md">
+                    <div class="absolute top-0 left-0 right-0 h-1 rounded-t-2xl" style="background:linear-gradient(90deg,#0062CC,#0099ff)"></div>
+                    <div class="text-4xl font-black" style="color:#0062CC">
                         {{ stat.value === 'clients' ? counters.clients.toLocaleString('fr-FR')
                          : stat.value === 'docs'    ? counters.docs.toLocaleString('fr-FR')
                          : stat.value === 'pays'    ? counters.pays
                          :                            counters.uptime }}{{ stat.suffix }}
                     </div>
-                    <div class="mt-1 text-sm font-medium text-gray-500">{{ stat.label }}</div>
+                    <div class="mt-1.5 text-sm font-semibold text-gray-500">{{ stat.label }}</div>
                 </div>
             </div>
         </section>
@@ -764,4 +912,10 @@ const partnerCommissions = [
 @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(30px,-20px)} }
 .faq-slide-enter-active,.faq-slide-leave-active{transition:all .25s ease}
 .faq-slide-enter-from,.faq-slide-leave-to{opacity:0;transform:translateY(-8px)}
+
+/* Document carousel flip */
+.doc-flip-enter-active { animation: docIn .5s cubic-bezier(0.34,1.56,0.64,1); }
+.doc-flip-leave-active { animation: docOut .35s ease-in forwards; }
+@keyframes docIn  { from { opacity:0; transform: translateY(24px) scale(.94) rotateX(8deg); } to { opacity:1; transform:translateY(0) scale(1) rotateX(0); } }
+@keyframes docOut { from { opacity:1; transform:translateY(0) scale(1); } to { opacity:0; transform:translateY(-16px) scale(.96); } }
 </style>
