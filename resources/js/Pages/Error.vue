@@ -6,14 +6,15 @@ const props = defineProps({
     status: { type: Number, required: true },
 });
 
-const info = computed(() => ({
+const ERRORS = {
     503: { icon: '🔧', title: 'Service indisponible', desc: 'Le service est temporairement indisponible pour maintenance. Veuillez réessayer dans quelques minutes.' },
-    500: { icon: '💥', title: 'Erreur serveur', desc: 'Une erreur inattendue s\'est produite. Notre équipe en a été notifiée. Veuillez réessayer ou contacter le support.' },
-    404: { icon: '🔍', title: 'Page introuvable', desc: 'La page que vous recherchez n\'existe pas ou a été déplacée.' },
-    403: { icon: '🔒', title: 'Accès refusé', desc: 'Vous n\'êtes pas autorisé à accéder à cette ressource.' },
+    500: { icon: '💥', title: 'Erreur serveur', desc: "Une erreur inattendue s'est produite. Notre équipe en a été notifiée. Veuillez réessayer ou contacter le support." },
+    404: { icon: '🔍', title: 'Page introuvable', desc: "La page que vous recherchez n'existe pas ou a été déplacée." },
+    403: { icon: '🔒', title: 'Accès refusé', desc: "Vous n'êtes pas autorisé à accéder à cette ressource." },
     419: { icon: '⏱️', title: 'Session expirée', desc: 'Votre session a expiré. Veuillez recharger la page et réessayer.' },
     429: { icon: '🚦', title: 'Trop de requêtes', desc: 'Vous avez effectué trop de requêtes en peu de temps. Veuillez patienter quelques instants.' },
-}[props.status] ?? { icon: '❓', title: 'Erreur', desc: 'Une erreur s\'est produite.' });
+};
+const info = computed(() => ERRORS[props.status] || { icon: '❓', title: 'Erreur', desc: "Une erreur s'est produite." });
 </script>
 
 <template>
