@@ -155,6 +155,7 @@ class DocumentController extends Controller
 
         $license = $this->licenses->currentFor($request->user());
         $planCode = $license?->plan?->code;
+        $company = $request->user()->currentCompany;
 
         return Inertia::render('Documents/Show', [
             'document' => $document,
@@ -167,6 +168,9 @@ class DocumentController extends Controller
                 && in_array($document->type, ['invoice', 'credit_note'], true)
                 && $planCode === 'enterprise',
             'hasApprovalAccess' => $license !== null && $license->isUsable(),
+            'hasWorkflows' => \App\Models\ApprovalWorkflow::where('company_id', $company->id)
+                ->where('is_active', true)
+                ->exists(),
         ]);
     }
 

@@ -19,6 +19,7 @@ const props = defineProps({
     canCreatePlan: { type: Boolean, default: false },
     canFacturX: { type: Boolean, default: false },
     hasApprovalAccess: { type: Boolean, default: true },
+    hasWorkflows: { type: Boolean, default: false },
 });
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
@@ -657,8 +658,8 @@ const planProgress = computed(() => {
                     </div>
                 </div>
 
-                <!-- Soumettre à validation (si status = none et document draft) -->
-                <div v-else-if="document.approval_status === 'none' && document.status === 'draft'" class="rounded-lg border border-dashed bg-gray-50 p-6"
+                <!-- Soumettre à validation (si status = none et document draft et workflows configurés) -->
+                <div v-else-if="hasWorkflows && document.approval_status === 'none' && document.status === 'draft'" class="rounded-lg border border-dashed bg-gray-50 p-6"
                     :class="hasApprovalAccess ? 'border-gray-300' : 'border-amber-200 bg-amber-50'">
                     <div class="flex items-center justify-between gap-4">
                         <div>
