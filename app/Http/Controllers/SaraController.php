@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Http;
 
 class SaraController extends Controller
 {
-    private string $model   = 'claude-haiku-4-5-20251001';
-    private string $baseUrl = 'https://api.anthropic.com/v1/messages';
+    private string $model   = 'llama-3.1-8b-instant';
+    private string $baseUrl = 'https://api.groq.com/openai/v1/chat/completions';
 
     private function apiKey(): string
     {
-        return config('services.anthropic.api_key', env('ANTHROPIC_API_KEY', ''));
+        return config('services.groq.api_key', env('GROQ_API_KEY', ''));
     }
 
     private function systemPrompt(): string
@@ -72,16 +72,19 @@ PROMPT;
             ]);
         }
 
-        $response = Http::withHeaders([
-            'x-api-key'         => $key,
-            'anthropic-version' => '2023-06-01',
-            'content-type'      => 'application/json',
-        ])->timeout(30)->post($this->baseUrl, [
-            'model'      => $this->model,
-            'max_tokens' => 500,
-            'system'     => $this->systemPrompt(),
-            'messages'   => $request->input('messages'),
-        ]);
+        $messages = array_merge(
+            [['role' => 'system', 'content' => $this->systemPrompt()]],
+            $request->input('messages')
+        );
+
+        $response = Http::withToken($key)
+            ->timeout(30)
+            ->post($this->baseUrl, [
+                'model'       => $this->model,
+                'messages'    => $messages,
+                'max_tokens'  => 500,
+                'temperature' => 0.7,
+            ]);
 
         if ($response->failed()) {
             return response()->json([
@@ -89,7 +92,7 @@ PROMPT;
             ]);
         }
 
-        $content = $response->json('content.0.text', '');
+        $content = $response->json('choices.0.message.content', '');
 
         return response()->json(['reply' => $content]);
     }
