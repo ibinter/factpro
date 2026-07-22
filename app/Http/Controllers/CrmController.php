@@ -40,6 +40,7 @@ class CrmController extends Controller
                 'hasAccess' => false,
                 'stages'    => [],
                 'stats'     => null,
+                'customers' => [],
             ]);
         }
 

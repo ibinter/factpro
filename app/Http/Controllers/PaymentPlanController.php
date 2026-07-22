@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -12,8 +12,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Acomptes & plans de paiement Ã©chelonnÃ©s (cahier IBIG Â§12).
- * RÃ©servÃ© aux forfaits PRO et plus (Â§22.1) â€” 403 sinon.
+ * Acomptes & plans de paiement �chelonn�s (cahier IBIG �12).
+ * R�serv� aux forfaits PRO et plus (�22.1) � 403 sinon.
  */
 class PaymentPlanController extends Controller
 {
@@ -23,7 +23,7 @@ class PaymentPlanController extends Controller
     ) {
     }
 
-    /** Le forfait courant donne-t-il accÃ¨s aux plans de paiement ? (PRO et plus) */
+    /** Le forfait courant donne-t-il acc�s aux plans de paiement ? (PRO et plus) */
     private function hasAccess(Request $request): bool
     {
         $license = $this->licenses->currentFor($request->user());
@@ -38,7 +38,7 @@ class PaymentPlanController extends Controller
         abort_unless(
             $this->hasAccess($request),
             403,
-            'Les plans de paiement (acomptes) sont disponibles dÃ¨s le forfait PRO.'
+            'Les plans de paiement (acomptes) sont disponibles d�s le forfait PRO.'
         );
     }
 
@@ -47,7 +47,7 @@ class PaymentPlanController extends Controller
         abort_unless($plan->company_id === $request->user()->current_company_id, 403);
     }
 
-    /** Liste des plans de la sociÃ©tÃ© + statistiques. */
+    /** Liste des plans de la soci�t� + statistiques. */
     public function index(Request $request): Response
     {
         $this->authorizeAccess($request);
@@ -81,7 +81,7 @@ class PaymentPlanController extends Controller
         ]);
     }
 
-    /** DÃ©tail d'un plan + Ã©chÃ©ancier complet. */
+    /** D�tail d'un plan + �ch�ancier complet. */
     public function show(Request $request, PaymentPlan $plan): Response
     {
         $this->authorizeAccess($request);
@@ -98,7 +98,7 @@ class PaymentPlanController extends Controller
         ]);
     }
 
-    /** GÃ©nÃ¨re la facture d'acompte / de solde d'une Ã©chÃ©ance. */
+    /** G�n�re la facture d'acompte / de solde d'une �ch�ance. */
     public function invoiceInstallment(Request $request, PaymentPlanInstallment $installment): RedirectResponse
     {
         $this->authorizeAccess($request);
@@ -106,35 +106,35 @@ class PaymentPlanController extends Controller
         $this->authorizePlan($request, $plan);
 
         if ($plan->status === 'cancelled') {
-            return back()->with('error', 'Ce plan est annulÃ©.');
+            return back()->with('error', 'Ce plan est annul�.');
         }
 
         if ($installment->document_id !== null) {
-            return back()->with('error', 'Une facture a dÃ©jÃ  Ã©tÃ© gÃ©nÃ©rÃ©e pour cette Ã©chÃ©ance.');
+            return back()->with('error', 'Une facture a d�j� �t� g�n�r�e pour cette �ch�ance.');
         }
 
         $document = $this->plans->generateInstallmentInvoice($installment, $request->user());
 
         return redirect()->route('documents.show', $document)
-            ->with('success', $document->type_label.' '.$document->number.' gÃ©nÃ©rÃ©e pour l\'Ã©chÃ©ance Â« '.$installment->label.' Â».');
+            ->with('success', $document->type_label.' '.$document->number.' g�n�r�e pour l\'�ch�ance � '.$installment->label.' �.');
     }
 
-    /** Annule un plan tant qu'aucune Ã©chÃ©ance n'est payÃ©e. */
+    /** Annule un plan tant qu'aucune �ch�ance n'est pay�e. */
     public function cancel(Request $request, PaymentPlan $plan): RedirectResponse
     {
         $this->authorizeAccess($request);
         $this->authorizePlan($request, $plan);
 
         if ($plan->installments()->where('status', 'paid')->exists()) {
-            return back()->with('error', 'Impossible d\'annuler : une Ã©chÃ©ance est dÃ©jÃ  payÃ©e.');
+            return back()->with('error', 'Impossible d\'annuler : une �ch�ance est d�j� pay�e.');
         }
 
         $plan->update(['status' => 'cancelled']);
 
-        return back()->with('success', 'Plan de paiement annulÃ©.');
+        return back()->with('success', 'Plan de paiement annul�.');
     }
 
-    /** Formate un plan pour le front (avec progression et Ã©chÃ©ances). */
+    /** Formate un plan pour le front (avec progression et �ch�ances). */
     private function presentPlan(PaymentPlan $plan, bool $detailed = false): array
     {
         $installments = $plan->installments->map(fn (PaymentPlanInstallment $i) => [
