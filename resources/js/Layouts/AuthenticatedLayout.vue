@@ -64,7 +64,7 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                 </Link>
             </div>
             <div
-                v-else-if="license && !license.is_usable"
+                v-else-if="license && ['expired','suspended','revoked','terminated'].includes(license.status)"
                 class="bg-red-600 px-4 py-2 text-center text-sm text-white"
             >
                 Votre licence a expiré — vos données sont conservées.
