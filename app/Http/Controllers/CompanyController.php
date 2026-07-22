@@ -145,7 +145,7 @@ class CompanyController extends Controller
             'currency' => strtoupper($data['currency']),
         ]);
 
-        return redirect()->route('companies.index')->with('success', 'Paramètres de la société enregistrés.');
+        return redirect()->route('companies.settings')->with('success', 'Paramètres de la société enregistrés.');
     }
 
     /** Upload du logo de la société courante (disk public, dossier companies/). */
@@ -167,7 +167,7 @@ class CompanyController extends Controller
         $path = $request->file('logo')->store('companies', 'public');
         $company->update(['logo_path' => $path]);
 
-        return redirect()->route('companies.index')->with('success', 'Logo de la société mis à jour.');
+        return redirect()->route('companies.settings')->with('success', 'Logo de la société mis à jour.');
     }
 
     /** Upload de la signature numérique de l'entreprise (image PNG/JPG). */
@@ -189,7 +189,7 @@ class CompanyController extends Controller
         $path = $request->file('signature')->store('companies/signatures', 'public');
         $company->update(['signature_path' => $path]);
 
-        return redirect()->route('companies.index')->with('success', 'Signature mise à jour.');
+        return redirect()->route('companies.settings')->with('success', 'Signature mise à jour.');
     }
 
     /** Upload du cachet/tampon de l'entreprise (image PNG/JPG transparente recommandée). */
@@ -211,7 +211,7 @@ class CompanyController extends Controller
         $path = $request->file('stamp')->store('companies/stamps', 'public');
         $company->update(['stamp_path' => $path]);
 
-        return redirect()->route('companies.index')->with('success', 'Cachet mis à jour.');
+        return redirect()->route('companies.settings')->with('success', 'Cachet mis à jour.');
     }
 
     /** Active/désactive signature et cachet, met à jour le libellé signataire. */
@@ -230,7 +230,7 @@ class CompanyController extends Controller
 
         $company->update($data);
 
-        return redirect()->route('companies.index')->with('success', 'Paramètres de signature enregistrés.');
+        return redirect()->route('companies.settings')->with('success', 'Paramètres de signature enregistrés.');
     }
 
     /**
