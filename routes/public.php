@@ -2,6 +2,7 @@
 
 // Pages de vente publiques (cahier §1/§22) — possédé par l'agent Landing.
 use App\Http\Controllers\DemoController;
+use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PublicVerifyController;
 use Illuminate\Support\Facades\Route;
@@ -29,4 +30,14 @@ Route::get('/public/verify/{uuid}', [PublicVerifyController::class, 'show'])
 Route::get('/api/public/verify/{uuid}', [PublicVerifyController::class, 'api'])
     ->middleware('throttle:120,1')
     ->name('public.verify.api');
+
+// ── Pages légales ──────────────────────────────────────────────────────────
+Route::prefix('legal')->name('legal.')->group(function () {
+    Route::get('/mentions',        [LegalController::class, 'mentions'])->name('mentions');
+    Route::get('/cgu',             [LegalController::class, 'cgu'])->name('cgu');
+    Route::get('/confidentialite', [LegalController::class, 'confidentialite'])->name('confidentialite');
+    Route::get('/cookies',         [LegalController::class, 'cookies'])->name('cookies');
+    Route::get('/pi',              [LegalController::class, 'pi'])->name('pi');
+    Route::get('/resiliation',     [LegalController::class, 'resiliation'])->name('resiliation');
+});
 

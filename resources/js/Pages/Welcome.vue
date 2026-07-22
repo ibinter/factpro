@@ -5,6 +5,8 @@ import axios from 'axios';
 import PublicNav from '@/Pages/Public/Partials/PublicNav.vue';
 import PublicFooter from '@/Pages/Public/Partials/PublicFooter.vue';
 import Sara from '@/Components/Sara.vue';
+import CookieBanner from '@/Components/CookieBanner.vue';
+import WhatsAppButton from '@/Components/WhatsAppButton.vue';
 
 const props = defineProps({
     canLogin:    { type: Boolean, default: true },
@@ -558,6 +560,163 @@ const partnerCommissions = [
             </div>
         </section>
 
+        <!-- ═══════════════════════════════ COMMENT ÇA MARCHE ═══════════════════════════════ -->
+        <section class="px-6 py-24 bg-white">
+            <div class="mx-auto max-w-5xl">
+                <div class="mb-14 text-center">
+                    <span class="rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#e8f0fe;color:#0062CC">Démarrage rapide</span>
+                    <h2 class="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">{{ lang === 'fr' ? 'Opérationnel en 4 étapes' : 'Up and running in 4 steps' }}</h2>
+                </div>
+                <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                    <div v-for="(step, i) in [
+                        { num:'01', icon:'📝', title: lang==='fr' ? 'Créez votre compte' : 'Create your account', desc: lang==='fr' ? 'Inscription gratuite en 60 secondes, sans carte bancaire.' : 'Free sign-up in 60 seconds, no card required.' },
+                        { num:'02', icon:'🏢', title: lang==='fr' ? 'Configurez votre société' : 'Set up your company', desc: lang==='fr' ? 'Renseignez vos informations, logo et paramètres fiscaux.' : 'Add your info, logo and tax settings.' },
+                        { num:'03', icon:'📄', title: lang==='fr' ? 'Créez vos documents' : 'Create your documents', desc: lang==='fr' ? 'Devis, factures, avoirs en quelques clics avec vos clients et produits.' : 'Quotes, invoices, credits in a few clicks.' },
+                        { num:'04', icon:'💰', title: lang==='fr' ? 'Encaissez & suivez' : 'Collect & track', desc: lang==='fr' ? 'Recevez les paiements par Mobile Money ou carte et suivez vos KPIs.' : 'Receive payments via Mobile Money or card.' },
+                    ]" :key="i" class="relative rounded-2xl border border-gray-100 p-6 shadow-sm">
+                        <div class="mb-3 flex items-center gap-3">
+                            <span class="text-2xl">{{ step.icon }}</span>
+                            <span class="text-4xl font-black" style="color:#e8f0fe">{{ step.num }}</span>
+                        </div>
+                        <h3 class="mb-2 font-bold text-gray-900">{{ step.title }}</h3>
+                        <p class="text-sm text-gray-500 leading-relaxed">{{ step.desc }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ PUBLICS CONCERNÉS ═══════════════════════════════ -->
+        <section class="px-6 py-20" style="background:#f8faff">
+            <div class="mx-auto max-w-6xl">
+                <h2 class="mb-12 text-center text-3xl font-extrabold text-gray-900">{{ lang === 'fr' ? 'Fait pour vous, quel que soit votre secteur' : 'Built for you, whatever your sector' }}</h2>
+                <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                    <div v-for="p in [
+                        { icon:'🛍️', label: lang==='fr' ? 'Commerce' : 'Retail' },
+                        { icon:'🍽️', label: lang==='fr' ? 'Restauration' : 'Food' },
+                        { icon:'💻', label: lang==='fr' ? 'IT & Tech' : 'IT & Tech' },
+                        { icon:'⚕️', label: lang==='fr' ? 'Santé' : 'Health' },
+                        { icon:'🏗️', label: lang==='fr' ? 'BTP' : 'Construction' },
+                        { icon:'✂️', label: lang==='fr' ? 'Beauté' : 'Beauty' },
+                        { icon:'📚', label: lang==='fr' ? 'Formation' : 'Education' },
+                        { icon:'🚚', label: lang==='fr' ? 'Transport' : 'Transport' },
+                        { icon:'⚖️', label: lang==='fr' ? 'Conseil / Avocat' : 'Consulting' },
+                        { icon:'🏠', label: lang==='fr' ? 'Immobilier' : 'Real Estate' },
+                        { icon:'🎨', label: lang==='fr' ? 'Créatif' : 'Creative' },
+                        { icon:'🌾', label: lang==='fr' ? 'Agriculture' : 'Agriculture' },
+                    ]" :key="p.label" class="flex flex-col items-center gap-2 rounded-xl bg-white p-4 text-center shadow-sm">
+                        <span class="text-3xl">{{ p.icon }}</span>
+                        <span class="text-xs font-semibold text-gray-700">{{ p.label }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ PWA + MOBILE ═══════════════════════════════ -->
+        <section class="px-6 py-24 bg-white">
+            <div class="mx-auto max-w-5xl flex flex-col items-center gap-12 lg:flex-row">
+                <div class="flex-1">
+                    <span class="rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#e8f0fe;color:#0062CC">PWA</span>
+                    <h2 class="mt-4 text-3xl font-extrabold text-gray-900">{{ lang === 'fr' ? 'Votre bureau de gestion dans votre poche' : 'Your management desk in your pocket' }}</h2>
+                    <p class="mt-4 text-gray-500 leading-relaxed">{{ lang === 'fr' ? 'IBIG FactPro s\'installe comme une app native sur votre smartphone — sans passer par l\'App Store. Fonctionne même sans connexion internet grâce à la synchronisation différée.' : 'IBIG FactPro installs like a native app on your phone — no App Store needed. Works offline with deferred sync.' }}</p>
+                    <ul class="mt-6 space-y-2">
+                        <li v-for="f in (lang==='fr' ? ['📲 Installation one-tap sur Android & iPhone','🔔 Notifications push en temps réel','📴 Mode hors-ligne avec synchro auto','🚀 Chargement instantané (cache PWA)'] : ['📲 One-tap install on Android & iPhone','🔔 Real-time push notifications','📴 Offline mode with auto-sync','🚀 Instant load (PWA cache)'])" :key="f" class="flex items-center gap-2 text-sm text-gray-700">
+                            <span>{{ f }}</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="flex-1 flex justify-center">
+                    <div class="relative rounded-3xl shadow-2xl overflow-hidden" style="width:200px;height:380px;background:linear-gradient(135deg,#001d3d,#0062CC)">
+                        <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 text-white p-4">
+                            <div class="text-5xl">📱</div>
+                            <div class="text-center">
+                                <div class="font-bold text-sm">IBIG FactPro</div>
+                                <div class="text-xs text-white/60 mt-1">PWA installable</div>
+                            </div>
+                            <div class="mt-4 rounded-xl px-4 py-2 text-xs font-bold" style="background:#F0C040;color:#001d3d">+ Installer l'app</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ SÉCURITÉ ═══════════════════════════════ -->
+        <section class="px-6 py-20" style="background:#001d3d">
+            <div class="mx-auto max-w-5xl text-center">
+                <span class="rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:rgba(240,192,64,.15);color:#F0C040">Sécurité & Conformité</span>
+                <h2 class="mt-4 text-3xl font-extrabold text-white">{{ lang === 'fr' ? 'Vos données protégées, vos documents certifiés' : 'Your data protected, your documents certified' }}</h2>
+                <div class="mt-12 grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
+                    <div v-for="s in [
+                        { icon:'🔐', label:'Chiffrement SSL/TLS' },
+                        { icon:'📋', label:'Conforme OHADA' },
+                        { icon:'🛡️', label:'2FA disponible' },
+                        { icon:'🔍', label:'QR anti-falsification' },
+                        { icon:'💾', label:'Sauvegardes quotidiennes' },
+                        { icon:'📜', label:'Journal d\'audit complet' },
+                    ]" :key="s.label" class="flex flex-col items-center gap-2 rounded-xl p-4" style="background:rgba(255,255,255,.06)">
+                        <span class="text-3xl">{{ s.icon }}</span>
+                        <span class="text-xs text-white/70 text-center">{{ s.label }}</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ INTÉGRATIONS ═══════════════════════════════ -->
+        <section class="px-6 py-20 bg-white">
+            <div class="mx-auto max-w-5xl text-center">
+                <h2 class="text-3xl font-extrabold text-gray-900 mb-4">{{ lang === 'fr' ? 'Connecté à votre écosystème' : 'Connected to your ecosystem' }}</h2>
+                <p class="text-gray-500 mb-12">{{ lang === 'fr' ? 'Zapier, Make, webhooks entrants/sortants, API REST, WhatsApp et Mobile Money.' : 'Zapier, Make, webhooks, REST API, WhatsApp and Mobile Money.' }}</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <div v-for="integ in ['CinetPay','FedaPay','Flutterwave','Orange Money','MTN MoMo','Zapier','Make','WhatsApp','Stripe','API REST']" :key="integ"
+                         class="rounded-xl border border-gray-100 px-5 py-3 text-sm font-semibold text-gray-700 shadow-sm hover:shadow-md transition">
+                        {{ integ }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ DEMANDE DE DÉMO ═══════════════════════════════ -->
+        <section id="demo" class="px-6 py-24" style="background:#f1f5f9">
+            <div class="mx-auto max-w-2xl text-center">
+                <span class="rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#e8f0fe;color:#0062CC">Démonstration</span>
+                <h2 class="mt-4 text-3xl font-extrabold text-gray-900">{{ lang === 'fr' ? 'Voir IBIG FactPro en action' : 'See IBIG FactPro in action' }}</h2>
+                <p class="mt-3 text-gray-500">{{ lang === 'fr' ? 'Un expert vous présente le logiciel en direct, adapté à votre secteur d\'activité.' : 'An expert shows you the software live, tailored to your industry.' }}</p>
+                <form class="mt-10 rounded-2xl bg-white p-8 shadow-xl text-left space-y-4" @submit.prevent>
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ lang === 'fr' ? 'Prénom & Nom' : 'Full name' }}</label>
+                            <input type="text" :placeholder="lang==='fr' ? 'Jean Dupont' : 'John Doe'" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ lang === 'fr' ? 'Email professionnel' : 'Business email' }}</label>
+                            <input type="email" :placeholder="lang==='fr' ? 'vous@societe.com' : 'you@company.com'" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ lang === 'fr' ? 'Téléphone (WhatsApp)' : 'Phone (WhatsApp)' }}</label>
+                            <input type="tel" placeholder="+225 07 00 00 00 00" class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm focus:border-blue-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-600 mb-1">{{ lang === 'fr' ? 'Secteur d\'activité' : 'Industry' }}</label>
+                            <select class="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm text-gray-600 focus:border-blue-500 focus:outline-none">
+                                <option value="">{{ lang === 'fr' ? '-- Choisir --' : '-- Select --' }}</option>
+                                <option>Commerce</option>
+                                <option>{{ lang === 'fr' ? 'Restauration' : 'Food & Restaurant' }}</option>
+                                <option>IT & Tech</option>
+                                <option>{{ lang === 'fr' ? 'Santé' : 'Health' }}</option>
+                                <option>BTP</option>
+                                <option>{{ lang === 'fr' ? 'Autre' : 'Other' }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <a href="https://wa.me/2250555059901?text=Bonjour%2C%20je%20souhaite%20une%20d%C3%A9monstration%20d%27IBIG%20FactPro." target="_blank" rel="noopener"
+                       class="block w-full rounded-xl py-3.5 text-center text-sm font-bold shadow-lg transition hover:scale-105 hover:shadow-xl"
+                       style="background:linear-gradient(90deg,#001d3d,#0062CC);color:#fff">
+                        {{ lang === 'fr' ? '📅 Demander une démo gratuite via WhatsApp' : '📅 Request a free demo via WhatsApp' }}
+                    </a>
+                    <p class="text-center text-xs text-gray-400">{{ lang === 'fr' ? 'Réponse sous 24h · Démo personnalisée · Gratuit et sans engagement' : 'Reply within 24h · Personalised demo · Free & no commitment' }}</p>
+                </form>
+            </div>
+        </section>
+
         <!-- ═══════════════════════════════ CTA FINAL ═══════════════════════════════ -->
         <section class="relative overflow-hidden px-6 py-24 text-center" style="background:linear-gradient(135deg,#001d3d,#0062CC)">
             <div class="pointer-events-none absolute inset-0 overflow-hidden">
@@ -592,6 +751,12 @@ const partnerCommissions = [
 
     <!-- SARA chatbot -->
     <Sara />
+
+    <!-- Cookie consent (§8 cahier) -->
+    <CookieBanner />
+
+    <!-- WhatsApp flottant (§8 cahier) -->
+    <WhatsAppButton />
 </template>
 
 <style scoped>
