@@ -419,8 +419,9 @@ class DocumentController extends Controller
         // Pour les types "invoice", le template cosmétique personnalisé prime sur le moteur
         // Pour tous les autres types, le moteur documentaire prime toujours
         $isInvoiceFamily = in_array($document->type, [
-            'invoice', 'credit_note', 'proforma', 'advance_invoice', 'deposit_invoice',
-            'recurring_invoice', 'final_invoice', 'corrective_invoice', 'tax_invoice', 'commercial_invoice',
+            'invoice', 'credit_note', 'proforma', 'deposit_invoice',
+            'simple_invoice', 'export_invoice', 'tax_exempt_invoice',
+            'rectification_invoice', 'balance_invoice',
         ]);
         $cosmeticView = $this->resolveTemplateView($document);
         $viewName = ($isInvoiceFamily && $cosmeticView !== 'pdf.document')
@@ -516,6 +517,7 @@ class DocumentController extends Controller
             'unit' => $l->unit,
             'unit_price' => $l->unit_price,
             'discount_percent' => $l->discount_percent,
+            'line_discount_type' => $l->line_discount_type ?? 'percent',
             'tax_rate' => $l->tax_rate,
         ])->all();
 
@@ -873,7 +875,7 @@ class DocumentController extends Controller
 
         if ($type === 'payment_receipt') {
             $amount = (float) ($meta['amount_received'] ?? 0);
-            return [['description' => ($meta['payment_purpose'] ?? 'Règlement') . ($meta['document_reference'] ? ' — Réf. ' . $meta['document_reference'] : ''), 'quantity' => 1, 'unit_price' => $amount, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent']];
+            return [['description' => ($meta['payment_purpose'] ?? 'Règlement') . (($meta['document_reference'] ?? null) ? ' — Réf. ' . $meta['document_reference'] : ''), 'quantity' => 1, 'unit_price' => $amount, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent']];
         }
 
         return [['description' => 'Article', 'quantity' => 1, 'unit_price' => 0, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent']];

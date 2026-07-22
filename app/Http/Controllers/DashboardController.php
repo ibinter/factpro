@@ -141,7 +141,10 @@ class DashboardController extends Controller
             ->whereNotIn('documents.status', ['cancelled', 'draft'])
             ->where('documents.issue_date', '>=', $since)
             ->whereNotNull('documents.customer_id')
-            ->join('customers', 'customers.id', '=', 'documents.customer_id')
+            ->join('customers', function ($join) {
+                $join->on('customers.id', '=', 'documents.customer_id')
+                     ->whereNull('customers.deleted_at');
+            })
             ->selectRaw('customers.name, SUM(documents.total) as total, COUNT(documents.id) as invoices_count')
             ->groupBy('customers.id', 'customers.name')
             ->orderByDesc('total')

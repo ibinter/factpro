@@ -20,7 +20,13 @@ class ApprovalService
             'approval_workflow_id' => $workflow->id,
         ]);
 
-        $approvers = $workflow->approvers ?? [];
+        $approvers = array_filter($workflow->approvers ?? []);
+
+        if (empty($approvers)) {
+            $document->update(['approval_status' => 'approved']);
+            return;
+        }
+
         foreach ($approvers as $index => $approverId) {
             ApprovalStep::create([
                 'document_id' => $document->id,

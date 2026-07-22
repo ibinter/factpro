@@ -57,7 +57,7 @@
                 <div v-if="payslip.contract">
                   Type : <strong>{{ payslip.contract.type?.toUpperCase() }}</strong>
                 </div>
-                <div>Régime : <strong>{{ payslip.employee?.regime || 'cnss_ci' }}</strong></div>
+                <div>Régime : <strong>{{ payslip.employee?.social_security_regime || 'cnss_ci' }}</strong></div>
               </div>
             </div>
           </div>
