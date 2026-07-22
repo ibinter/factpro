@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('company_id')->nullable()->constrained()->nullOnDelete();
-            $table->text('endpoint');
+            $table->string('endpoint', 500);
             $table->string('public_key', 255);
             $table->string('auth_token', 255);
             $table->text('user_agent')->nullable();
