@@ -47,11 +47,8 @@ const SLIDES = [
         bg: 'linear-gradient(135deg,#001120 0%,#001d3d 50%,#003580 100%)',
         accent: '#0062CC',
         accentLight: '#3b89ff',
-        tag: 'Facturation professionnelle',
-        h1: 'Vos factures, prêtes\nen 30 secondes',
-        sub: 'Générez des factures conformes OHADA avec QR code anti-falsification. Envoyez par email ou WhatsApp. Encaissez via Mobile Money en un clic.',
-        cta1: 'Créer ma première facture →',
-        cta2: 'Voir la démo',
+        fr: { tag: 'Facturation professionnelle', h1: 'Vos factures, prêtes\nen 30 secondes', sub: 'Générez des factures conformes OHADA avec QR code anti-falsification. Envoyez par email ou WhatsApp. Encaissez via Mobile Money en un clic.', cta1: 'Créer ma première facture →', cta2: 'Voir la démo' },
+        en: { tag: 'Professional invoicing', h1: 'Your invoices, ready\nin 30 seconds', sub: 'Generate OHADA-compliant invoices with anti-fraud QR codes. Send by email or WhatsApp. Get paid via Mobile Money in one click.', cta1: 'Create my first invoice →', cta2: 'Watch demo' },
         doc: {
             type: 'FACTURE', num: 'FAC-2024-0842',
             emetteur: 'KOFFI & ASSOCIÉS SARL',
@@ -77,11 +74,8 @@ const SLIDES = [
         bg: 'linear-gradient(135deg,#0d1117 0%,#1a1000 50%,#3d2200 100%)',
         accent: '#d97706',
         accentLight: '#fbbf24',
-        tag: 'Devis interactif & signature',
-        h1: 'Vos devis acceptés\nsans rendez-vous',
-        sub: 'Envoyez un lien de devis signable en ligne. Le client accepte et signe directement depuis son téléphone. Convertissez en facture en un clic.',
-        cta1: 'Créer mon premier devis →',
-        cta2: 'Voir la démo',
+        fr: { tag: 'Devis interactif & signature', h1: 'Vos devis acceptés\nsans rendez-vous', sub: 'Envoyez un lien de devis signable en ligne. Le client accepte et signe directement depuis son téléphone. Convertissez en facture en un clic.', cta1: 'Créer mon premier devis →', cta2: 'Voir la démo' },
+        en: { tag: 'Interactive quotes & e-signature', h1: 'Quotes accepted\nwithout meetings', sub: 'Send a signable quote link online. The client accepts and signs directly from their phone. Convert to invoice in one click.', cta1: 'Create my first quote →', cta2: 'Watch demo' },
         doc: {
             type: 'DEVIS', num: 'DEV-2024-0317',
             emetteur: 'SOGEMI BTP CONSTRUCTION',
@@ -107,11 +101,8 @@ const SLIDES = [
         bg: 'linear-gradient(135deg,#001a0d 0%,#003320 50%,#00552e 100%)',
         accent: '#059669',
         accentLight: '#34d399',
-        tag: 'Caisse POS & commerce',
-        h1: 'Votre caisse tactile,\npartout en Afrique',
-        sub: 'Point de vente complet : scan code-barres, impression tickets 58/80mm, gestion stocks, clôture de caisse. Fonctionne hors-ligne.',
-        cta1: 'Ouvrir ma caisse →',
-        cta2: 'Voir la démo',
+        fr: { tag: 'Caisse POS & commerce', h1: 'Votre caisse tactile,\npartout en Afrique', sub: 'Point de vente complet : scan code-barres, impression tickets 58/80mm, gestion stocks, clôture de caisse. Fonctionne hors-ligne.', cta1: 'Ouvrir ma caisse →', cta2: 'Voir la démo' },
+        en: { tag: 'POS & retail', h1: 'Your touchscreen POS,\nanywhere in Africa', sub: 'Complete point of sale: barcode scan, 58/80mm thermal printing, stock management, end-of-day reports. Works offline.', cta1: 'Open my cash register →', cta2: 'Watch demo' },
         doc: {
             type: 'BON DE LIVRAISON', num: 'BL-2024-1124',
             emetteur: 'PROMO DISTRIBUTION SARL',
@@ -137,11 +128,8 @@ const SLIDES = [
         bg: 'linear-gradient(135deg,#0d0020 0%,#1a0040 50%,#2d0070 100%)',
         accent: '#7c3aed',
         accentLight: '#a78bfa',
-        tag: 'Tableau de bord & KPIs',
-        h1: 'Pilotez votre activité\nen temps réel',
-        sub: 'Dashboard complet : chiffre d\'affaires, taux de recouvrement, documents en attente, top clients. Toutes vos données business en un coup d\'œil.',
-        cta1: 'Accéder au dashboard →',
-        cta2: 'Voir la démo',
+        fr: { tag: 'Tableau de bord & KPIs', h1: 'Pilotez votre activité\nen temps réel', sub: 'Dashboard complet : chiffre d\'affaires, taux de recouvrement, documents en attente, top clients. Toutes vos données business en un coup d\'œil.', cta1: 'Accéder au dashboard →', cta2: 'Voir la démo' },
+        en: { tag: 'Dashboard & KPIs', h1: 'Run your business\nin real time', sub: 'Full dashboard: revenue, collection rate, pending documents, top clients. All your business data at a glance.', cta1: 'Go to dashboard →', cta2: 'Watch demo' },
         doc: {
             type: 'RELEVÉ DE COMPTE CLIENT', num: 'REL-2024-Q3',
             emetteur: 'CABINET COMPTABLE DIALLO & FILS',
@@ -170,11 +158,12 @@ onMounted(() => {
         if (!slidePaused.value) slideIndex.value = (slideIndex.value + 1) % SLIDES.length;
     }, 5500);
 });
-const slide = computed(() => SLIDES[slideIndex.value]);
+const slideBase = computed(() => SLIDES[slideIndex.value]);
+const slide = computed(() => ({ ...slideBase.value, ...slideBase.value[lang.value] }));
 
 /* ── Compteur animé ── */
 const counters = ref({ clients: 0, docs: 0, pays: 0, uptime: 0 });
-const targets  = { clients: 2400, docs: 185000, pays: 12, uptime: 99 };
+const targets  = { clients: 120, docs: 4800, pays: 5, uptime: 99 };
 onMounted(() => {
     const duration = 2000;
     const step = 16;
@@ -204,7 +193,7 @@ const FR = {
         note: 'Sans carte bancaire · Résiliable à tout moment',
     },
     stats: [
-        { value: 'clients', suffix: '+', label: 'Entrepreneurs actifs' },
+        { value: 'clients', suffix: '+', label: 'Clients actifs' },
         { value: 'docs',    suffix: '+', label: 'Documents générés' },
         { value: 'pays',    suffix: '',  label: 'Pays couverts' },
         { value: 'uptime',  suffix: '%', label: 'Disponibilité' },
@@ -266,7 +255,7 @@ const EN = {
         note: 'No credit card · Cancel anytime',
     },
     stats: [
-        { value: 'clients', suffix: '+', label: 'Active entrepreneurs' },
+        { value: 'clients', suffix: '+', label: 'Active clients' },
         { value: 'docs',    suffix: '+', label: 'Documents generated' },
         { value: 'pays',    suffix: '',  label: 'Countries covered' },
         { value: 'uptime',  suffix: '%', label: 'Uptime' },
@@ -399,7 +388,7 @@ const partnerCommissions = [
                                      style="border-color:rgba(255,255,255,.2)" :style="`background:${c}`">{{ 'KASMT'[i] }}</div>
                             </div>
                             <div class="text-sm">
-                                <span class="font-bold text-white">2 400+ entrepreneurs</span>
+                                <span class="font-bold text-white">{{ lang === 'fr' ? '120+ clients actifs' : '120+ active clients' }}</span>
                                 <span class="ml-2" style="color:#F0C040">★★★★★ 4.9</span>
                             </div>
                         </div>
