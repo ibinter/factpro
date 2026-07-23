@@ -28,7 +28,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('contracts', function (Blueprint $table) {
+        Schema::create('employee_contracts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
@@ -66,7 +66,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('payslips');
-        Schema::dropIfExists('contracts');
+        Schema::dropIfExists('employee_contracts');
         Schema::dropIfExists('employees');
     }
 };

@@ -177,6 +177,9 @@ require __DIR__.'/crm.php';
 require __DIR__.'/offline-sync.php';
 require __DIR__.'/vouchers.php';
 
+// Phase 15C — Analytics & BI
+require __DIR__.'/analytics.php';
+
 require __DIR__.'/auth.php';
 require __DIR__.'/language.php';
 require __DIR__.'/notifications-center.php';
@@ -252,6 +255,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
 use App\Http\Controllers\AssetController;
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('assets', AssetController::class);
+});
+
+// Phase 15B — Contrats commerciaux
+use App\Http\Controllers\ContractController;
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('contracts', ContractController::class)->except(['create', 'edit']);
+    Route::post('/contracts/{contract}/upload-version', [ContractController::class, 'uploadVersion'])->name('contracts.upload-version');
+});
+
+// Phase 15B — GED (Gestion Électronique de Documents)
+use App\Http\Controllers\GedController;
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/ged', [GedController::class, 'index'])->name('ged.index');
+    Route::post('/ged/documents', [GedController::class, 'store'])->name('ged.store');
+    Route::put('/ged/documents/{gedDocument}', [GedController::class, 'update'])->name('ged.update');
+    Route::delete('/ged/documents/{gedDocument}', [GedController::class, 'destroy'])->name('ged.destroy');
+    Route::get('/ged/documents/{gedDocument}/download', [GedController::class, 'download'])->name('ged.download');
+    Route::post('/ged/folders', [GedController::class, 'createFolder'])->name('ged.folders.store');
+    Route::delete('/ged/folders/{gedFolder}', [GedController::class, 'deleteFolder'])->name('ged.folders.destroy');
 });
 
 // Phase 14 — Portail Fournisseur (pages publiques)

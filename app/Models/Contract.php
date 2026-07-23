@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Contract extends Model
 {
+    protected $table = 'employee_contracts';
+
     protected $guarded = [];
 
     protected $casts = [
