@@ -36,14 +36,13 @@
 
         {{-- IBIG SOFT — Script universel : section "Nos solutions" + footer sur les pages publiques --}}
         @php
-            $publicRoutes = ['welcome','pricing','about','contact','demo','blog','blog.show','testimonials','roadmap','security','partners'];
+            $publicRoutes = ['home','public.pricing','about','contact','contact.store','demo','demo.store','blog.index','blog.show','testimonials','roadmap','roadmap.vote','security','partners'];
             $ibigRender = request()->routeIs(...$publicRoutes) ? 'all' : 'none';
         @endphp
         <script src="/assets/js/ibigsoft-universal.js"
                 data-solution="factpro"
                 data-accent="#0284C7"
                 data-render="{{ $ibigRender }}"
-                data-masquer-courante="true"
-                defer></script>
+                data-masquer-courante="true"></script>
     </body>
 </html>
