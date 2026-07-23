@@ -4,6 +4,7 @@ import { Link } from '@inertiajs/vue3';
 const tabs = [
     { label: '📊 Tableau de bord', route: 'admin.dashboard' },
     { label: '📈 Finances', route: 'admin.financial-dashboard' },
+    { label: '💰 Revenus', route: 'admin.revenue' },
     { label: '💳 Paiements', route: 'admin.payments' },
     { label: '📋 File de validation', route: 'admin.payment-queue' },
     { label: '🔑 Licences', route: 'admin.licenses' },

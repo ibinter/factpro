@@ -72,6 +72,49 @@ const faqs = [
 ];
 const openFaq = ref(null);
 const toggleFaq = (i) => (openFaq.value = openFaq.value === i ? null : i);
+
+/* ── ROI Calculator ── */
+const roiFactures   = ref(20);
+const roiMinutes    = ref(30);
+const roiHoraire    = ref(5000);
+const STARTER_PRICE = 4900;
+
+const roiHeures   = computed(() => Math.round((roiFactures.value * roiMinutes.value) / 60 * 10) / 10);
+const roiCout     = computed(() => Math.round(roiHeures.value * roiHoraire.value));
+const roiEconomie = computed(() => Math.round(roiCout.value * 0.75));
+const roiPct      = computed(() => Math.round((roiEconomie.value / STARTER_PRICE) * 100));
+
+/* ── FAQ enrichie ── */
+const enrichedFaqs = [
+    { q: 'Puis-je changer de plan à tout moment ?',
+      a: 'Oui, la mise à niveau est instantanée. Le crédit de votre plan actuel est proratisé et déduit du nouveau forfait.' },
+    { q: 'Y a-t-il des frais cachés ?',
+      a: 'Non. Le prix affiché inclut tout — hébergement, sauvegardes automatiques, mises à jour et support standard.' },
+    { q: "Que se passe-t-il à la fin de l'essai gratuit ?",
+      a: 'Votre compte passe automatiquement en mode lecture seule. Vos données sont conservées pendant 90 jours, le temps de choisir un forfait.' },
+    { q: 'Quels moyens de paiement acceptez-vous ?',
+      a: 'Wave, Orange Money, MTN MoMo, Moov, CinetPay, Stripe (carte internationale), virement bancaire, et plus encore.' },
+    { q: 'Proposez-vous des remises annuelles ?',
+      a: 'Oui ! Payez annuellement et économisez 2 mois (≈ 17 % de réduction). Contactez-nous pour les tarifs entreprise sur mesure.' },
+];
+const openEnrichedFaq = ref(null);
+const toggleEnrichedFaq = (i) => (openEnrichedFaq.value = openEnrichedFaq.value === i ? null : i);
+
+/* ── Données statiques comparateur enrichi ── */
+const staticPlans = ['Gratuit', 'Starter', 'Pro', 'Business'];
+const staticRows = [
+    { label: 'Factures / mois',    values: ['5', 'Illimité', 'Illimité', 'Illimité'] },
+    { label: 'Clients',            values: ['10', '200', 'Illimité', 'Illimité'] },
+    { label: 'Utilisateurs',       values: ['1', '2', '5', '20'] },
+    { label: 'Templates PDF',      values: ['3', '10', '30', '100+'] },
+    { label: 'Devis / Proforma',   values: ['✅', '✅', '✅', '✅'] },
+    { label: 'Module stocks',      values: ['❌', '✅', '✅', '✅'] },
+    { label: 'Multi-sociétés',     values: ['❌', '❌', '✅', '✅'] },
+    { label: 'API REST',           values: ['❌', '❌', '✅', '✅'] },
+    { label: 'White label',        values: ['❌', '❌', '❌', '✅'] },
+    { label: 'Support prioritaire',values: ['❌', 'Email', 'Chat', 'Dédié'] },
+    { label: 'SARA IA',            values: ['Limité', '✅', '✅', '✅'] },
+];
 </script>
 
 <template>
@@ -313,6 +356,168 @@ const toggleFaq = (i) => (openFaq.value = openFaq.value === i ? null : i);
                         <Transition name="faq-slide">
                             <div v-if="openFaq === i" class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">{{ faq.a }}</div>
                         </Transition>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══ CALCULATEUR ROI ══ -->
+        <section class="px-6 py-20" style="background:#002D5B">
+            <div class="mx-auto max-w-5xl">
+                <div class="text-center mb-12">
+                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest mb-3" style="background:rgba(240,192,64,.2);color:#F0C040;border:1px solid rgba(240,192,64,.3)">
+                        ROI Calculator
+                    </span>
+                    <h2 class="text-3xl font-extrabold text-white">Calculez votre retour sur investissement</h2>
+                    <p class="mt-3 text-white/60 max-w-xl mx-auto text-sm">Ajustez les curseurs selon votre activité pour voir ce que FactPro vous fait réellement gagner.</p>
+                </div>
+
+                <div class="grid gap-10 lg:grid-cols-2 items-start">
+                    <!-- Sliders -->
+                    <div class="space-y-8 bg-white/5 rounded-2xl p-8 border border-white/10">
+                        <!-- Factures -->
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-semibold text-white/80">Factures émises par mois</label>
+                                <span class="text-sm font-bold" style="color:#F0C040">{{ roiFactures }}</span>
+                            </div>
+                            <input type="range" min="1" max="500" v-model.number="roiFactures"
+                                   class="w-full h-2 rounded-full appearance-none cursor-pointer"
+                                   style="accent-color:#F0C040;background:rgba(255,255,255,.15)" />
+                            <div class="flex justify-between text-xs text-white/30 mt-1"><span>1</span><span>500</span></div>
+                        </div>
+                        <!-- Minutes -->
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-semibold text-white/80">Temps moyen par facture (sans logiciel)</label>
+                                <span class="text-sm font-bold" style="color:#F0C040">{{ roiMinutes }} min</span>
+                            </div>
+                            <input type="range" min="5" max="60" v-model.number="roiMinutes"
+                                   class="w-full h-2 rounded-full appearance-none cursor-pointer"
+                                   style="accent-color:#F0C040;background:rgba(255,255,255,.15)" />
+                            <div class="flex justify-between text-xs text-white/30 mt-1"><span>5 min</span><span>60 min</span></div>
+                        </div>
+                        <!-- Valeur horaire -->
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <label class="text-sm font-semibold text-white/80">Valeur horaire de votre temps (FCFA)</label>
+                                <span class="text-sm font-bold" style="color:#F0C040">{{ new Intl.NumberFormat('fr-FR').format(roiHoraire) }} FCFA</span>
+                            </div>
+                            <input type="range" min="1000" max="50000" step="500" v-model.number="roiHoraire"
+                                   class="w-full h-2 rounded-full appearance-none cursor-pointer"
+                                   style="accent-color:#F0C040;background:rgba(255,255,255,.15)" />
+                            <div class="flex justify-between text-xs text-white/30 mt-1"><span>1 000</span><span>50 000</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Résultats -->
+                    <div class="space-y-5">
+                        <div class="rounded-2xl bg-white/5 border border-white/10 p-6 flex flex-col gap-1">
+                            <p class="text-xs text-white/50 uppercase tracking-widest font-semibold">Temps perdu / mois</p>
+                            <p class="text-4xl font-extrabold" style="color:#F0C040">{{ roiHeures }} h</p>
+                            <p class="text-xs text-white/40">à traiter manuellement vos factures</p>
+                        </div>
+                        <div class="rounded-2xl bg-white/5 border border-white/10 p-6 flex flex-col gap-1">
+                            <p class="text-xs text-white/50 uppercase tracking-widest font-semibold">Heures économisées / mois</p>
+                            <p class="text-4xl font-extrabold" style="color:#F0C040">{{ Math.round(roiHeures * 0.75 * 10) / 10 }} h</p>
+                            <p class="text-xs text-white/40">grâce aux 75 % de gain de temps FactPro</p>
+                        </div>
+                        <div class="rounded-2xl bg-white/5 border border-white/10 p-6 flex flex-col gap-1">
+                            <p class="text-xs text-white/50 uppercase tracking-widest font-semibold">Économie / mois</p>
+                            <p class="text-4xl font-extrabold" style="color:#F0C040">{{ new Intl.NumberFormat('fr-FR').format(roiEconomie) }} FCFA</p>
+                            <p class="text-xs text-white/40">valeur du temps récupéré</p>
+                        </div>
+                        <div class="rounded-2xl p-6 flex flex-col gap-1" style="background:rgba(240,192,64,.15);border:1px solid rgba(240,192,64,.4)">
+                            <p class="text-xs font-semibold uppercase tracking-widest" style="color:#F0C040">ROI sur votre abonnement Starter</p>
+                            <p class="text-5xl font-extrabold" style="color:#F0C040">{{ new Intl.NumberFormat('fr-FR').format(roiPct) }} %</p>
+                            <p class="text-xs text-white/50">pour {{ new Intl.NumberFormat('fr-FR').format(STARTER_PRICE) }} FCFA / mois</p>
+                        </div>
+                        <a v-if="canRegister" href="/register"
+                           class="mt-2 block rounded-xl py-3.5 text-center text-sm font-extrabold tracking-wide transition hover:scale-105 active:scale-95 shadow-lg"
+                           style="background:#F0C040;color:#001d3d">
+                            Commencer maintenant →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══ COMPARATEUR DÉTAILLÉ DES PLANS ══ -->
+        <section class="px-6 py-20 bg-gray-50">
+            <div class="mx-auto max-w-7xl">
+                <div class="text-center mb-12">
+                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest mb-3" style="background:#eff6ff;color:#0062CC">Comparateur</span>
+                    <h2 class="text-3xl font-extrabold text-gray-900">Quel plan vous correspond ?</h2>
+                    <p class="mt-3 text-gray-500 text-sm">Toutes les fonctionnalités, plan par plan, sans ambiguïté.</p>
+                </div>
+                <div class="overflow-x-auto rounded-2xl shadow-xl">
+                    <table class="w-full min-w-[580px] border-collapse bg-white text-sm">
+                        <thead>
+                            <tr style="background:#001d3d">
+                                <th class="p-4 text-left font-semibold text-white/50 w-48">Fonctionnalité</th>
+                                <th v-for="(col, ci) in staticPlans" :key="col"
+                                    class="p-4 text-center font-bold text-white"
+                                    :class="ci === 2 ? 'border-l-2 border-r-2 border-yellow-400' : ''">
+                                    {{ col }}
+                                    <div v-if="ci === 2" class="text-[10px] font-normal mt-0.5" style="color:#F0C040">⭐ Populaire</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(row, ri) in staticRows" :key="row.label"
+                                class="border-b border-gray-100 transition hover:bg-blue-50/30"
+                                :class="ri % 2 === 0 ? 'bg-white' : 'bg-gray-50/60'">
+                                <td class="p-4 font-medium text-gray-700">{{ row.label }}</td>
+                                <td v-for="(val2, ci) in row.values" :key="ci"
+                                    class="p-4 text-center font-semibold"
+                                    :class="[
+                                        ci === 2 ? 'border-l-2 border-r-2 border-yellow-300/40 text-blue-700' : 'text-gray-700',
+                                        val2 === '✅' ? 'text-green-600' : '',
+                                        val2 === '❌' ? 'text-gray-200' : '',
+                                    ]">
+                                    {{ val2 }}
+                                </td>
+                            </tr>
+                            <!-- Ligne CTA -->
+                            <tr style="background:#f8faff">
+                                <td class="p-4 text-gray-400 text-xs">Commencer →</td>
+                                <td v-for="(col, ci) in staticPlans" :key="col" class="p-4 text-center"
+                                    :class="ci === 2 ? 'border-l-2 border-r-2 border-yellow-300/40' : ''">
+                                    <a v-if="canRegister" href="/register"
+                                       class="inline-block rounded-lg px-4 py-2 text-xs font-bold transition hover:scale-105"
+                                       :style="ci === 2
+                                           ? 'background:#0062CC;color:#fff'
+                                           : 'background:#eff6ff;color:#0062CC'">
+                                        Essai gratuit →
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ══ FAQ PRICING ENRICHIE ══ -->
+        <section class="px-6 py-20 bg-white">
+            <div class="mx-auto max-w-3xl">
+                <div class="text-center mb-12">
+                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest mb-3" style="background:#eff6ff;color:#0062CC">FAQ Pricing</span>
+                    <h2 class="text-3xl font-extrabold text-gray-900">Vos questions sur les abonnements</h2>
+                </div>
+                <div class="divide-y divide-gray-100 rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+                    <div v-for="(faq, i) in enrichedFaqs" :key="i" class="bg-white">
+                        <button class="flex w-full items-center justify-between px-6 py-5 text-left font-semibold text-gray-900 hover:bg-gray-50 transition"
+                                @click="toggleEnrichedFaq(i)">
+                            <span>{{ faq.q }}</span>
+                            <span class="ml-4 flex-shrink-0 h-6 w-6 rounded-full flex items-center justify-center text-sm font-extrabold transition-transform duration-200"
+                                  :class="openEnrichedFaq === i ? 'rotate-45' : ''"
+                                  style="background:#F0C040;color:#001d3d">+</span>
+                        </button>
+                        <div v-show="openEnrichedFaq === i"
+                             class="px-6 pb-5 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+                            {{ faq.a }}
+                        </div>
                     </div>
                 </div>
             </div>

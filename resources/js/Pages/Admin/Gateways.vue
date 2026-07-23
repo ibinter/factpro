@@ -49,6 +49,58 @@ const gatewayMeta = {
             { key: 'secret_hash', label: 'Secret Hash (webhook)', type: 'password' },
         ],
     },
+    wave_ci: {
+        label: 'Wave CI',
+        emoji: '🌊',
+        description: 'Paiement direct Wave — CI, SN, ML, BF, GN, UG, TZ',
+        fields: [
+            { key: 'api_key', label: 'API Key (Bearer token)', type: 'password' },
+            { key: 'secret_key', label: 'Webhook Secret', type: 'password' },
+        ],
+    },
+    mtn_momo: {
+        label: 'MTN Mobile Money',
+        emoji: '📱',
+        description: 'MTN MoMo API — CI, GH, CM, BJ, RW, UG',
+        fields: [
+            { key: 'api_user', label: 'API User (UUID)', type: 'text' },
+            { key: 'api_key', label: 'API Key', type: 'password' },
+            { key: 'subscription_key', label: 'Subscription Key (Ocp-Apim)', type: 'password' },
+            { key: 'environment', label: 'Environnement (sandbox / production)', type: 'text' },
+        ],
+    },
+    orange_money: {
+        label: 'Orange Money CI',
+        emoji: '🟠',
+        description: 'Orange Money WebPay — CI, SN, ML, BF, CM, MG',
+        fields: [
+            { key: 'client_id', label: 'Client ID (OAuth2)', type: 'text' },
+            { key: 'client_secret', label: 'Client Secret', type: 'password' },
+            { key: 'merchant_key', label: 'Merchant Key', type: 'password' },
+            { key: 'notif_key', label: 'Notification Key', type: 'password' },
+        ],
+    },
+    paydunya: {
+        label: 'PayDunya',
+        emoji: '🅿',
+        description: 'Agrégateur Sénégal et Afrique de l\'Ouest — SN, CI, BJ, TG',
+        fields: [
+            { key: 'master_key', label: 'Master Key', type: 'password' },
+            { key: 'private_key', label: 'Private Key', type: 'password' },
+            { key: 'public_key', label: 'Public Key', type: 'text' },
+            { key: 'token', label: 'Token', type: 'password' },
+        ],
+    },
+    stripe: {
+        label: 'Stripe (International)',
+        emoji: '💳',
+        description: 'Visa, Mastercard, Amex — paiement carte internationale',
+        fields: [
+            { key: 'secret_key', label: 'Secret Key (sk_live_...)', type: 'password' },
+            { key: 'publishable_key', label: 'Publishable Key (pk_live_...)', type: 'text' },
+            { key: 'webhook_secret', label: 'Webhook Secret (whsec_...)', type: 'password' },
+        ],
+    },
 };
 
 // Un form par gateway

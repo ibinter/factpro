@@ -35,6 +35,31 @@ class GatewayConfigController extends Controller
             'supported_countries'  => ['CI', 'SN', 'GH', 'NG', 'CM', 'UG', 'KE', 'TZ'],
             'supported_currencies' => ['XOF', 'XAF', 'GHS', 'NGN', 'KES', 'USD'],
         ],
+        [
+            'gateway'              => 'wave_ci',
+            'supported_countries'  => ['CI', 'SN', 'ML', 'BF', 'GN', 'UG', 'TZ'],
+            'supported_currencies' => ['XOF', 'UGX', 'TZS'],
+        ],
+        [
+            'gateway'              => 'mtn_momo',
+            'supported_countries'  => ['CI', 'GH', 'CM', 'BJ', 'RW', 'UG', 'ZM', 'ZW'],
+            'supported_currencies' => ['XOF', 'GHS', 'XAF', 'RWF', 'UGX'],
+        ],
+        [
+            'gateway'              => 'orange_money',
+            'supported_countries'  => ['CI', 'SN', 'ML', 'BF', 'CM', 'MG', 'GN'],
+            'supported_currencies' => ['XOF', 'XAF', 'MGA'],
+        ],
+        [
+            'gateway'              => 'paydunya',
+            'supported_countries'  => ['SN', 'CI', 'BJ', 'TG', 'GN', 'ML', 'BF'],
+            'supported_currencies' => ['XOF'],
+        ],
+        [
+            'gateway'              => 'stripe',
+            'supported_countries'  => ['*'],
+            'supported_currencies' => ['USD', 'EUR', 'GBP', 'XOF'],
+        ],
     ];
 
     public function index(): Response
@@ -47,7 +72,10 @@ class GatewayConfigController extends Controller
             );
         }
 
-        $order = ['moneroo' => 0, 'cinetpay' => 1, 'fedapay' => 2, 'flutterwave' => 3];
+        $order = [
+            'moneroo' => 0, 'cinetpay' => 1, 'fedapay' => 2, 'flutterwave' => 3,
+            'wave_ci' => 4, 'mtn_momo' => 5, 'orange_money' => 6, 'paydunya' => 7, 'stripe' => 8,
+        ];
 
         $gateways = GatewayConfig::all()
             ->sortBy(fn ($g) => $order[$g->gateway] ?? 99)

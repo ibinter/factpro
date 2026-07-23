@@ -15,6 +15,7 @@ Route::get('/health', function () {
 use App\Http\Controllers\Admin\DeliveryAdminController;
 use App\Http\Controllers\Admin\DeliveryAgentController;
 use App\Http\Controllers\Admin\PaymentValidationController;
+use App\Http\Controllers\Admin\RevenueController;
 use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CustomerController;
@@ -119,6 +120,7 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->grou
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('crypto-wallets');
 
+    Route::get('/revenue', [RevenueController::class, 'index'])->name('revenue');
     Route::get('/payments', [PaymentValidationController::class, 'index'])->name('payments');
     Route::post('/payments/{transaction}/validate', [PaymentValidationController::class, 'validatePayment'])->name('payments.validate');
     Route::post('/payments/{transaction}/reject', [PaymentValidationController::class, 'reject'])->name('payments.reject');
