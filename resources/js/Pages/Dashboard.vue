@@ -1,6 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import OnboardingTour from '@/Components/OnboardingTour.vue';
+import OnboardingChecklist from '@/Components/OnboardingChecklist.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
 
@@ -189,6 +190,9 @@ const alertIcon  = { danger: '🔴', warning: '⚠️', info: 'ℹ️' };
             </div>
 
             <div class="mx-auto max-w-7xl px-4 sm:px-6 py-6 space-y-6">
+
+                <!-- Onboarding checklist -->
+                <OnboardingChecklist />
 
                 <!-- Alerts -->
                 <div v-if="alerts && alerts.length" class="space-y-2">

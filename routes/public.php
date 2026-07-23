@@ -4,6 +4,7 @@
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\PartnersController;
 use App\Http\Controllers\TestimonialsController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\LegalController;
@@ -29,6 +30,10 @@ Route::get('/temoignages', [TestimonialsController::class, 'index'])->name('test
 // Blog public.
 Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
 Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
+
+// Page Partenaires / Revendeurs.
+Route::get('/partenaires', [PartnersController::class, 'index'])->name('partners');
+Route::post('/partenaires/candidature', [PartnersController::class, 'apply'])->middleware('throttle:3,1')->name('partners.apply');
 
 // Page Contact + traitement formulaire.
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');

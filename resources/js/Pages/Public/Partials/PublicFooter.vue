@@ -72,6 +72,7 @@ const year = new Date().getFullYear();
                         <li><a href="/temoignages" class="hover:text-white transition">Témoignages clients</a></li>
                         <li><a href="/a-propos" class="hover:text-white transition">À propos d'IBIG Soft</a></li>
                         <li><a href="/contact" class="hover:text-white transition">Contact</a></li>
+                        <li><a href="/partenaires" class="hover:text-white transition">Programme partenaires</a></li>
                         <li><a href="https://ibigpartners.com/" target="_blank" rel="noopener" class="hover:text-white transition">Programme IBIG PARTNERS</a></li>
                         <li><a href="https://ibigsoft.com" target="_blank" rel="noopener" class="hover:text-white transition">Autres logiciels</a></li>
                         <li><a href="mailto:support@ibigsoft.com" class="hover:text-white transition">Support technique</a></li>

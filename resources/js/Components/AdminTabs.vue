@@ -15,6 +15,7 @@ const tabs = [
     { label: '🎟 Coupons', route: 'admin.coupons' },
     { label: '🌍 Passerelles', route: 'admin.gateways' },
     { label: '🎨 White-label', route: 'admin.white-label.index' },
+    { label: '💚 Santé', route: 'admin.health' },
     { label: '📣 NPS', route: 'admin.nps' },
     { label: '🎫 Support', route: 'admin.support.index' },
     { label: '📢 Annonces', route: 'admin.announcements.index' },

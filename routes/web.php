@@ -16,6 +16,7 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Admin\DeliveryAdminController;
 use App\Http\Controllers\Admin\DeliveryAgentController;
 use App\Http\Controllers\Admin\PaymentValidationController;
+use App\Http\Controllers\Admin\HealthController;
 use App\Http\Controllers\Admin\RevenueController;
 use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\BillingController;
@@ -51,6 +52,9 @@ Route::get('/verify/{uuid}', VerifyController::class)->name('verify');
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
+    // Onboarding checklist
+    Route::get('/onboarding/status', [\App\Http\Controllers\OnboardingChecklistController::class, 'status'])->name('onboarding.status');
+
     // Documentation API & SDK
     Route::get('/api-docs', ApiDocsController::class)->name('api-docs');
 
@@ -129,6 +133,7 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->grou
         ->names('crypto-wallets');
 
     Route::get('/revenue', [RevenueController::class, 'index'])->name('revenue');
+    Route::get('/health', [HealthController::class, 'index'])->name('health');
     Route::get('/payments', [PaymentValidationController::class, 'index'])->name('payments');
     Route::post('/payments/{transaction}/validate', [PaymentValidationController::class, 'validatePayment'])->name('payments.validate');
     Route::post('/payments/{transaction}/reject', [PaymentValidationController::class, 'reject'])->name('payments.reject');
