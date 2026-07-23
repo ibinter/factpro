@@ -20,6 +20,7 @@ const props = defineProps({
     canFacturX: { type: Boolean, default: false },
     hasApprovalAccess: { type: Boolean, default: true },
     hasWorkflows: { type: Boolean, default: false },
+    templates: { type: Array, default: () => [] },
 });
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
@@ -100,6 +101,27 @@ const finalize = () => {
         onFinish: () => { window.location.reload(); },
     });
 };
+
+// ── Changement de template (cosmétique, autorisé même finalisé) ───────────────
+const showTemplatePanel = ref(false);
+const templateForm = useForm({
+    template_key: props.document.template_key ?? '',
+    template_color_primary:   props.document.template_color_primary ?? '',
+    template_color_secondary: props.document.template_color_secondary ?? '',
+    template_color_accent:    props.document.template_color_accent ?? '',
+});
+const submitTemplate = () => {
+    templateForm.post(route('documents.template', props.document.id), {
+        onSuccess: () => { showTemplatePanel.value = false; window.location.reload(); },
+    });
+};
+const activeTemplateFamily = ref(null);
+const templateFamilies = computed(() => [...new Set(props.templates.map(t => t.family))]);
+const filteredShowTemplates = computed(() =>
+    activeTemplateFamily.value
+        ? props.templates.filter(t => t.family === activeTemplateFamily.value)
+        : props.templates
+);
 
 const showStatusModal = ref(false);
 const selectedStatus = ref(props.document.status);
@@ -274,6 +296,15 @@ const planProgress = computed(() => {
                     >
                         📄 PDF
                     </a>
+                    <button
+                        v-if="templates.length"
+                        @click="showTemplatePanel = !showTemplatePanel"
+                        class="rounded-md border border-purple-300 bg-purple-50 px-4 py-2 text-sm font-semibold text-purple-700 hover:bg-purple-100"
+                        :class="showTemplatePanel ? 'ring-2 ring-purple-400' : ''"
+                        title="Changer le modèle visuel"
+                    >
+                        🎨 Modèle
+                    </button>
                     <a
                         :href="route('documents.docx', document.id)"
                         class="rounded-md border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100"
@@ -347,6 +378,81 @@ const planProgress = computed(() => {
 
         <div class="py-8">
             <div class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+
+                <!-- Panneau sélecteur de modèle visuel -->
+                <Transition name="slide-down">
+                <div v-if="showTemplatePanel && templates.length" class="rounded-xl border border-purple-200 bg-purple-50 p-5 shadow-sm">
+                    <div class="mb-3 flex items-center justify-between">
+                        <h3 class="font-semibold text-purple-800">🎨 Choisir un modèle visuel</h3>
+                        <span class="text-xs text-purple-500">S'applique immédiatement au PDF</span>
+                    </div>
+
+                    <!-- Filtre famille -->
+                    <div class="mb-3 flex flex-wrap gap-1.5">
+                        <button type="button" @click="activeTemplateFamily = null"
+                            :class="activeTemplateFamily === null ? 'bg-purple-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:border-purple-300'"
+                            class="rounded-full px-3 py-1 text-xs font-medium transition-all">
+                            Tous ({{ templates.length }})
+                        </button>
+                        <button v-for="fam in templateFamilies" :key="fam" type="button"
+                            @click="activeTemplateFamily = fam"
+                            :class="activeTemplateFamily === fam ? 'bg-purple-600 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:border-purple-300'"
+                            class="rounded-full px-3 py-1 text-xs font-medium transition-all">
+                            {{ fam }}
+                        </button>
+                    </div>
+
+                    <!-- Grille de templates -->
+                    <div class="max-h-56 overflow-y-auto rounded-lg border border-purple-100 bg-white p-2">
+                        <div class="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+                            <div v-for="t in filteredShowTemplates" :key="t.key"
+                                @click="templateForm.template_key = t.key"
+                                :class="[
+                                    'relative cursor-pointer rounded-lg border-2 overflow-hidden transition-all',
+                                    templateForm.template_key === t.key
+                                        ? 'border-purple-500 shadow-md ring-1 ring-purple-400'
+                                        : 'border-gray-200 hover:border-purple-300'
+                                ]">
+                                <!-- Mini aperçu -->
+                                <div class="h-16 w-full" :style="{ background: t.secondary || '#f8fafc' }">
+                                    <div class="h-4 w-full flex items-center px-1.5 gap-1" :style="{ backgroundColor: t.primary }">
+                                        <div class="h-1.5 w-1.5 rounded-full bg-white/40"></div>
+                                        <div class="h-1 flex-grow rounded bg-white/50"></div>
+                                    </div>
+                                    <div class="px-1.5 pt-1 space-y-0.5">
+                                        <div v-for="i in 3" :key="i" class="flex gap-0.5">
+                                            <div class="h-0.5 flex-grow rounded bg-gray-200"></div>
+                                            <div class="h-0.5 w-4 rounded bg-gray-200"></div>
+                                        </div>
+                                    </div>
+                                    <div class="absolute inset-x-1.5 bottom-1.5 h-2.5 rounded flex items-center justify-end px-1" :style="{ backgroundColor: t.primary }">
+                                        <div class="h-1 w-5 rounded bg-white/70"></div>
+                                    </div>
+                                </div>
+                                <div class="px-1.5 py-1 text-center" :style="{ borderTop: `2px solid ${t.primary}` }">
+                                    <span class="text-[9px] font-medium text-gray-700 leading-tight block truncate">{{ t.name }}</span>
+                                </div>
+                                <div v-if="templateForm.template_key === t.key"
+                                    class="absolute inset-0 flex items-center justify-center bg-purple-500/10">
+                                    <span class="text-purple-600 text-lg">✓</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 flex justify-end gap-2">
+                        <button type="button" @click="showTemplatePanel = false"
+                            class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-600 hover:bg-gray-50">
+                            Annuler
+                        </button>
+                        <button type="button" @click="submitTemplate" :disabled="templateForm.processing"
+                            class="rounded-lg bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700 disabled:opacity-60">
+                            {{ templateForm.processing ? 'Enregistrement…' : '✓ Appliquer ce modèle' }}
+                        </button>
+                    </div>
+                </div>
+                </Transition>
+
                 <div class="grid gap-6 lg:grid-cols-3">
                     <!-- Infos -->
                     <div class="rounded-lg bg-white p-6 shadow">

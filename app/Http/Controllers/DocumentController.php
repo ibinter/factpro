@@ -172,6 +172,7 @@ class DocumentController extends Controller
             'hasWorkflows' => \App\Models\ApprovalWorkflow::where('company_id', $company->id)
                 ->where('is_active', true)
                 ->exists(),
+            'templates' => $this->templatesForFront($request->user()),
         ]);
     }
 
@@ -338,6 +339,25 @@ class DocumentController extends Controller
     }
 
     /** Change le statut manuellement (override ERP). */
+    /** Met à jour uniquement le template cosmétique — autorisé même sur document finalisé. */
+    public function updateTemplate(Request $request, Document $document): RedirectResponse
+    {
+        $this->authorizeDocument($request, $document);
+
+        $allowed = array_keys($this->allowedTemplates($request->user()));
+
+        $data = $request->validate([
+            'template_key'            => ['nullable', 'string', 'max:40', Rule::in($allowed)],
+            'template_color_primary'  => 'nullable|string|max:7|regex:/^#[0-9a-fA-F]{6}$/',
+            'template_color_secondary'=> 'nullable|string|max:7|regex:/^#[0-9a-fA-F]{6}$/',
+            'template_color_accent'   => 'nullable|string|max:7|regex:/^#[0-9a-fA-F]{6}$/',
+        ]);
+
+        $document->update($data);
+
+        return back()->with('success', 'Modèle visuel mis à jour.');
+    }
+
     public function changeStatus(Request $request, Document $document): RedirectResponse
     {
         $this->authorizeDocument($request, $document);

@@ -94,6 +94,7 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::resource('documents', DocumentController::class);
     Route::post('/documents/{document}/finalize', [DocumentController::class, 'finalize'])->name('documents.finalize');
     Route::post('/documents/{document}/status', [DocumentController::class, 'changeStatus'])->name('documents.status');
+    Route::post('/documents/{document}/template', [DocumentController::class, 'updateTemplate'])->name('documents.template');
     Route::post('/documents/{document}/convert', [DocumentController::class, 'convert'])->name('documents.convert');
     Route::post('/documents/{document}/payments', [DocumentController::class, 'registerPayment'])->name('documents.payments');
     Route::get('/documents/{document}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');
