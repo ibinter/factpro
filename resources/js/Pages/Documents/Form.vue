@@ -325,9 +325,36 @@ const saveQuickCustomer = async () => {
 };
 
 // ── Templates ─────────────────────────────────────────────────────────────────
+const COSMETIC_TEMPLATE_TYPES = [
+    'invoice','credit_note','proforma','advance_invoice','deposit_invoice',
+    'recurring_invoice','final_invoice','corrective_invoice','tax_invoice','commercial_invoice',
+    'quote','price_offer','service_quote','work_quote','repair_estimate',
+    'delivery_note','packing_list','shipping_order','picking_list',
+    'transfer_note','goods_receipt','return_note','goods_return',
+    'purchase_order','supplier_order','rfq',
+    'payment_receipt','cash_receipt','petty_cash_receipt','advance_receipt','refund_receipt',
+    'contract','service_contract','lease_agreement','maintenance_contract',
+    'partnership_agreement','nda','framework_agreement','subcontracting_contract',
+    'meeting_minutes','pv_reception','pv_handover','acceptance_report',
+    'conflict_pv','general_assembly_pv',
+    'mission_order','travel_request','expense_report',
+    'site_report','inspection_report','progress_report','daily_report',
+    'rental_inventory','inventory_check','property_inspection',
+];
+const typeAcceptsCosmeticTemplate = computed(() => COSMETIC_TEMPLATE_TYPES.includes(form.type));
 const activeFamily      = ref(null);
 const families          = computed(() => [...new Set(props.templates.map(t => t.family))]);
-const filteredTemplates = computed(() => activeFamily.value ? props.templates.filter(t => t.family === activeFamily.value) : props.templates);
+const filteredTemplates = computed(() => {
+    if (!typeAcceptsCosmeticTemplate.value) return [];
+    return activeFamily.value ? props.templates.filter(t => t.family === activeFamily.value) : props.templates;
+});
+// Réinitialiser le template sélectionné si le type choisi ne supporte pas les templates cosmétiques
+watch(() => form.type, () => {
+    if (!typeAcceptsCosmeticTemplate.value) {
+        form.template_key = '';
+        activeFamily.value = null;
+    }
+});
 
 // Modal prévisualisation
 const previewTemplate   = ref(null);
@@ -484,7 +511,7 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
                     <!-- ═══════════════════════════════════════════════════════ -->
                     <!-- ── GALERIE DE MODÈLES PDF avec aperçu ─────────────── -->
                     <!-- ═══════════════════════════════════════════════════════ -->
-                    <div v-if="templates.length" class="pt-3 border-t border-gray-100">
+                    <div v-if="templates.length && typeAcceptsCosmeticTemplate" class="pt-3 border-t border-gray-100">
                         <div class="flex items-center justify-between mb-3">
                             <div>
                                 <InputLabel value="Modèle visuel du document" class="!mb-0" />
