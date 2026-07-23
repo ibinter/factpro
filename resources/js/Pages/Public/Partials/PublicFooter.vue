@@ -56,6 +56,7 @@ const year = new Date().getFullYear();
                 <div>
                     <h3 class="mb-4 text-xs font-bold uppercase tracking-widest text-white">Ressources</h3>
                     <ul class="space-y-2 text-xs">
+                        <li><a href="/blog" class="hover:text-white transition">Blog</a></li>
                         <li><a href="/help" class="hover:text-white transition">Centre d'aide</a></li>
                         <li><a href="/#faq" class="hover:text-white transition">FAQ</a></li>
                         <li><a href="/help/guide" class="hover:text-white transition">Guide utilisateur</a></li>
@@ -68,6 +69,7 @@ const year = new Date().getFullYear();
                 <div>
                     <h3 class="mb-4 text-xs font-bold uppercase tracking-widest text-white">IBIG Soft</h3>
                     <ul class="space-y-2 text-xs">
+                        <li><a href="/temoignages" class="hover:text-white transition">Témoignages clients</a></li>
                         <li><a href="/a-propos" class="hover:text-white transition">À propos d'IBIG Soft</a></li>
                         <li><a href="/contact" class="hover:text-white transition">Contact</a></li>
                         <li><a href="https://ibigpartners.com/" target="_blank" rel="noopener" class="hover:text-white transition">Programme IBIG PARTNERS</a></li>

@@ -13,6 +13,7 @@ import NpsSurvey from '@/Components/NpsSurvey.vue';
 import GlobalSearch from '@/Components/GlobalSearch.vue';
 import UpgradeModal from '@/Components/UpgradeModal.vue';
 import Analytics from '@/Components/Analytics.vue';
+import AnnouncementBanner from '@/Components/AnnouncementBanner.vue';
 import { useUpgradeModal } from '@/Composables/useUpgradeModal';
 import { Link, router, usePage } from '@inertiajs/vue3';
 
@@ -62,6 +63,9 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
 <template>
     <div :dir="isRtl ? 'rtl' : 'ltr'" :class="{ 'text-right': isRtl }">
         <div class="min-h-screen bg-gray-100">
+            <!-- Annonces in-app (admin broadcast) -->
+            <AnnouncementBanner />
+
             <!-- Bannière hors-ligne (Phase 12 PWA) -->
             <OfflineBanner />
 

@@ -21,6 +21,8 @@ const open = ref(false);
                 <a href="/#fonctionnalites" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Fonctionnalités</a>
                 <a href="/pricing" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Tarifs</a>
                 <a href="/#faq" class="text-sm font-semibold text-gray-600 hover:text-brand-600">FAQ</a>
+                <a href="/temoignages" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Témoignages</a>
+                <a href="/blog" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Blog</a>
                 <a href="/a-propos" class="text-sm font-semibold text-gray-600 hover:text-brand-600">À propos</a>
                 <a href="/contact" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Contact</a>
             </div>
@@ -61,6 +63,8 @@ const open = ref(false);
                 <a href="/#fonctionnalites" class="text-sm font-semibold text-gray-700" @click="open = false">Fonctionnalités</a>
                 <a href="/pricing" class="text-sm font-semibold text-gray-700" @click="open = false">Tarifs</a>
                 <a href="/#faq" class="text-sm font-semibold text-gray-700" @click="open = false">FAQ</a>
+                <a href="/temoignages" class="text-sm font-semibold text-gray-700" @click="open = false">Témoignages</a>
+                <a href="/blog" class="text-sm font-semibold text-gray-700" @click="open = false">Blog</a>
                 <a href="/a-propos" class="text-sm font-semibold text-gray-700" @click="open = false">À propos</a>
                 <a href="/contact" class="text-sm font-semibold text-gray-700" @click="open = false">Contact</a>
                 <div class="mt-2 flex flex-col gap-2">

@@ -104,6 +104,10 @@ class HandleInertiaRequests extends Middleware
                 'ga4_id'   => config('factpro.analytics.ga4_id', ''),
                 'pixel_id' => config('factpro.analytics.pixel_id', ''),
             ],
+            'announcements' => \App\Models\Announcement::visible()->orderByDesc('created_at')->get()->map(fn($a) => [
+                'id' => $a->id, 'title' => $a->title, 'message' => $a->message,
+                'type' => $a->type, 'link_text' => $a->link_text, 'link_url' => $a->link_url,
+            ]),
             'whiteLabel' => fn () => null, // Le middleware InjectWhiteLabel override si besoin
             'locale' => fn () => App::getLocale(),
             'translations' => fn () => [

@@ -2,7 +2,9 @@
 
 // Pages de vente publiques (cahier §1/§22) — possédé par l'agent Landing.
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\TestimonialsController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PublicController;
@@ -20,6 +22,13 @@ Route::get('/status', [StatusController::class, 'index'])->name('status');
 
 // Page À propos d'IBIG Soft.
 Route::get('/a-propos', [AboutController::class, 'index'])->name('about');
+
+// Page Témoignages / Cas clients.
+Route::get('/temoignages', [TestimonialsController::class, 'index'])->name('testimonials');
+
+// Blog public.
+Route::get('/blog', [BlogController::class, 'index'])->name('blog.index');
+Route::get('/blog/{slug}', [BlogController::class, 'show'])->name('blog.show');
 
 // Page Contact + traitement formulaire.
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');

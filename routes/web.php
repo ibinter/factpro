@@ -135,6 +135,16 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->grou
     Route::post('/payments/{transaction}/complement', [PaymentValidationController::class, 'requestComplement'])->name('payments.complement');
     Route::get('/proofs/{proof}', [PaymentValidationController::class, 'proof'])->name('proofs.show');
 
+    // Blog
+    Route::prefix('blog')->name('blog.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\BlogAdminController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\BlogAdminController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\BlogAdminController::class, 'store'])->name('store');
+        Route::get('/{post}/edit', [\App\Http\Controllers\Admin\BlogAdminController::class, 'edit'])->name('edit');
+        Route::put('/{post}', [\App\Http\Controllers\Admin\BlogAdminController::class, 'update'])->name('update');
+        Route::delete('/{post}', [\App\Http\Controllers\Admin\BlogAdminController::class, 'destroy'])->name('destroy');
+    });
+
     // NPS
     Route::get('/nps', [\App\Http\Controllers\NpsController::class, 'adminIndex'])->name('nps');
 
@@ -354,4 +364,12 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin/support')->name('admin.
     Route::get('/', [SupportAdminController::class, 'index'])->name('index');
     Route::get('/{ticket}', [SupportAdminController::class, 'show'])->name('show');
     Route::post('/{ticket}/reply', [SupportAdminController::class, 'reply'])->name('reply');
+});
+
+// Module Annonces in-app
+Route::middleware(['auth', 'superadmin'])->prefix('admin/announcements')->name('admin.announcements.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\AnnouncementController::class, 'index'])->name('index');
+    Route::post('/', [\App\Http\Controllers\Admin\AnnouncementController::class, 'store'])->name('store');
+    Route::patch('/{announcement}/toggle', [\App\Http\Controllers\Admin\AnnouncementController::class, 'toggle'])->name('toggle');
+    Route::delete('/{announcement}', [\App\Http\Controllers\Admin\AnnouncementController::class, 'destroy'])->name('destroy');
 });
