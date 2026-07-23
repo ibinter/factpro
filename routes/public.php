@@ -2,6 +2,7 @@
 
 // Pages de vente publiques (cahier §1/§22) — possédé par l'agent Landing.
 use App\Http\Controllers\AboutController;
+use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PartnersController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\DemoController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PublicVerifyController;
+use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,8 +27,14 @@ Route::get('/demo-login', [DemoController::class, 'login'])
 // Page de statut système publique.
 Route::get('/status', [StatusController::class, 'index'])->name('status');
 
+// Page Sécurité & Confiance.
+Route::get('/securite-confiance', [SecurityController::class, 'index'])->name('security');
+
 // Page À propos d'IBIG Soft.
 Route::get('/a-propos', [AboutController::class, 'index'])->name('about');
+
+// Roadmap publique — vote pour les fonctionnalités à venir.
+Route::get('/roadmap', [RoadmapController::class, 'index'])->name('roadmap');
 
 // Page Témoignages / Cas clients.
 Route::get('/temoignages', [TestimonialsController::class, 'index'])->name('testimonials');

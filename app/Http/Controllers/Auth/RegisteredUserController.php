@@ -67,6 +67,16 @@ class RegisteredUserController extends Controller
             // Essai gratuit 7 jours (cahier des charges §1.3 / script §13)
             $licenses->startTrial($user);
 
+            // Attacher les UTM capturés en session
+            $utmFields = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'referrer_url'];
+            $utmData = array_filter(array_intersect_key(session()->all(), array_flip($utmFields)));
+            if (!empty($utmData)) {
+                $user->update($utmData);
+                foreach ($utmFields as $field) {
+                    session()->forget($field);
+                }
+            }
+
             return $user;
         });
 

@@ -93,6 +93,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Changelog / Nouveautés
     Route::get('/nouveautes', [\App\Http\Controllers\ChangelogController::class, 'index'])->name('changelog.index');
+
+    // Roadmap — vote (utilisateurs connectés)
+    Route::post('/roadmap/{feature}/vote', [\App\Http\Controllers\RoadmapController::class, 'vote'])->middleware('throttle:20,1')->name('roadmap.vote');
 });
 
 /*
@@ -138,6 +141,7 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->grou
         ->names('crypto-wallets');
 
     Route::get('/revenue', [RevenueController::class, 'index'])->name('revenue');
+    Route::get('/acquisition', [\App\Http\Controllers\Admin\AcquisitionController::class, 'index'])->name('acquisition');
     Route::get('/health', [HealthController::class, 'index'])->name('health');
     Route::get('/payments', [PaymentValidationController::class, 'index'])->name('payments');
     Route::post('/payments/{transaction}/validate', [PaymentValidationController::class, 'validatePayment'])->name('payments.validate');
@@ -157,6 +161,14 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->grou
 
     // NPS
     Route::get('/nps', [\App\Http\Controllers\NpsController::class, 'adminIndex'])->name('nps');
+
+    // Roadmap admin
+    Route::prefix('roadmap')->name('roadmap.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\RoadmapAdminController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\Admin\RoadmapAdminController::class, 'store'])->name('store');
+        Route::put('/{feature}', [\App\Http\Controllers\Admin\RoadmapAdminController::class, 'update'])->name('update');
+        Route::delete('/{feature}', [\App\Http\Controllers\Admin\RoadmapAdminController::class, 'destroy'])->name('destroy');
+    });
 
     // Livraisons COD
     Route::get('/deliveries', [DeliveryAdminController::class, 'index'])->name('deliveries.index');

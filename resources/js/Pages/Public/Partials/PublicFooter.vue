@@ -57,6 +57,7 @@ const year = new Date().getFullYear();
                     <h3 class="mb-4 text-xs font-bold uppercase tracking-widest text-white">Ressources</h3>
                     <ul class="space-y-2 text-xs">
                         <li><a href="/blog" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="/roadmap" class="hover:text-white transition">Roadmap</a></li>
                         <li><a href="/help" class="hover:text-white transition">Centre d'aide</a></li>
                         <li><a href="/#faq" class="hover:text-white transition">FAQ</a></li>
                         <li><a href="/help/guide" class="hover:text-white transition">Guide utilisateur</a></li>
@@ -89,6 +90,7 @@ const year = new Date().getFullYear();
                         <li><a href="/legal/cookies" class="hover:text-white transition">Cookies</a></li>
                         <li><a href="/legal/pi" class="hover:text-white transition">Propriété intellectuelle</a></li>
                         <li><a href="/legal/resiliation" class="hover:text-white transition">Résiliation</a></li>
+                        <li><a href="/securite-confiance" class="hover:text-white transition">Sécurité &amp; Confiance</a></li>
                     </ul>
                 </div>
             </div>

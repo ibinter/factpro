@@ -23,6 +23,7 @@ const open = ref(false);
                 <a href="/#faq" class="text-sm font-semibold text-gray-600 hover:text-brand-600">FAQ</a>
                 <a href="/temoignages" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Témoignages</a>
                 <a href="/blog" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Blog</a>
+                <a href="/roadmap" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Roadmap</a>
                 <a href="/a-propos" class="text-sm font-semibold text-gray-600 hover:text-brand-600">À propos</a>
                 <a href="/partenaires" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Partenaires</a>
                 <a href="/contact" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Contact</a>
@@ -73,6 +74,7 @@ const open = ref(false);
                 <a href="/#faq" class="text-sm font-semibold text-gray-700" @click="open = false">FAQ</a>
                 <a href="/temoignages" class="text-sm font-semibold text-gray-700" @click="open = false">Témoignages</a>
                 <a href="/blog" class="text-sm font-semibold text-gray-700" @click="open = false">Blog</a>
+                <a href="/roadmap" class="text-sm font-semibold text-gray-700" @click="open = false">Roadmap</a>
                 <a href="/a-propos" class="text-sm font-semibold text-gray-700" @click="open = false">À propos</a>
                 <a href="/partenaires" class="text-sm font-semibold text-gray-700" @click="open = false">Partenaires</a>
                 <a href="/contact" class="text-sm font-semibold text-gray-700" @click="open = false">Contact</a>

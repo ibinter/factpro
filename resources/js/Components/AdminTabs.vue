@@ -17,9 +17,11 @@ const tabs = [
     { label: '🎨 White-label', route: 'admin.white-label.index' },
     { label: '💚 Santé', route: 'admin.health' },
     { label: '📣 NPS', route: 'admin.nps' },
+    { label: '📈 Acquisition', route: 'admin.acquisition' },
     { label: '🎫 Support', route: 'admin.support.index' },
     { label: '📢 Annonces', route: 'admin.announcements.index' },
     { label: '📝 Blog', route: 'admin.blog.index' },
+    { label: '🗺️ Roadmap', route: 'admin.roadmap.index' },
 ];
 
 const isActive = (name) => {

@@ -26,6 +26,11 @@ class User extends Authenticatable
         'referral_code',
         'referred_by_id',
         'language',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_content',
+        'referrer_url',
     ];
 
     protected $hidden = [
