@@ -380,16 +380,32 @@ class DocumentController extends Controller
     {
         $this->authorizeDocument($request, $document);
 
-        $data = $request->validate([
-            'amount' => 'required|numeric|min:0.01',
-            'method' => 'required|in:cash,mobile_money,card,bank_transfer,cheque,credit',
-            'reference' => 'nullable|string|max:100',
-            'paid_at' => 'required|date',
-            'notes' => 'nullable|string',
+        $validated = $request->validate([
+            'amount'          => 'required|numeric|min:0.01',
+            'method'          => 'required|in:cash,wave,orange_money,mtn_momo,moov_money,mobile_money,card,bank_transfer,cheque,cinetpay,fedapay,flutterwave,credit',
+            'reference'       => 'nullable|string|max:100',
+            'paid_at'         => 'required|date',
+            'notes'           => 'nullable|string|max:500',
+            'status_override' => 'nullable|in:paid,partial',
         ]);
 
+        $data             = $validated;
         $data['currency'] = $document->currency;
+        unset($data['status_override']);
+
         $this->documents->registerPayment($document, $data, $request->user());
+
+        // Si l'utilisateur a explicitement choisi un statut cible, l'appliquer
+        if (!empty($validated['status_override'])) {
+            $old = $document->status;
+            $new = $validated['status_override'];
+            $document->refresh();
+            $document->update(['status' => $new]);
+            if ($new === 'paid' && !$document->finalized_at) {
+                $this->documents->finalize($document);
+            }
+            DocumentAuditLog::record($document, "status_changed:{$old}→{$new}", $request->user());
+        }
 
         DocumentAuditLog::record($document, 'payment_registered', $request->user(), ['amount' => $data['amount'], 'method' => $data['method']]);
 

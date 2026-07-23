@@ -60,18 +60,31 @@ const isPayable = computed(() =>
 );
 
 const showPaymentModal = ref(false);
+const paymentStatusTarget = ref(null); // statut à appliquer après paiement (paid|partial|null)
 const paymentForm = useForm({
     amount: balanceDue.value,
     method: 'cash',
     reference: '',
     paid_at: new Date().toISOString().slice(0, 10),
     notes: '',
+    status_override: null,
 });
 
 const submitPayment = () => {
-    paymentForm.post(route('documents.payments', props.document.id), {
-        onFinish: () => { if (!paymentForm.hasErrors) window.location.reload(); },
+    const data = { ...paymentForm.data(), status_override: paymentStatusTarget.value };
+    paymentForm.transform(() => data).post(route('documents.payments', props.document.id), {
+        onSuccess: () => { showPaymentModal.value = false; window.location.reload(); },
     });
+};
+
+const openPaymentModal = (statusTarget = null) => {
+    paymentStatusTarget.value = statusTarget;
+    paymentForm.amount = balanceDue.value > 0 ? balanceDue.value : props.document.total;
+    paymentForm.method = 'cash';
+    paymentForm.reference = '';
+    paymentForm.paid_at = new Date().toISOString().slice(0, 10);
+    paymentForm.notes = '';
+    showPaymentModal.value = true;
 };
 
 const showConvertModal = ref(false);
@@ -91,7 +104,13 @@ const finalize = () => {
 const showStatusModal = ref(false);
 const selectedStatus = ref(props.document.status);
 const changeStatus = () => {
-    router.post(`/documents/${props.document.id}/status`, { status: selectedStatus.value }, {
+    const newStatus = selectedStatus.value;
+    showStatusModal.value = false;
+    if (['paid', 'partial'].includes(newStatus)) {
+        openPaymentModal(newStatus);
+        return;
+    }
+    router.post(`/documents/${props.document.id}/status`, { status: newStatus }, {
         onFinish: () => { window.location.reload(); },
     });
 };
@@ -113,8 +132,19 @@ const submitSend = () => {
 };
 
 const methodLabels = {
-    cash: 'Espèces', mobile_money: 'Mobile Money', card: 'Carte bancaire',
-    bank_transfer: 'Virement', cheque: 'Chèque', credit: 'Crédit client',
+    cash: '💵 Espèces',
+    wave: '🌊 Wave',
+    orange_money: '🟠 Orange Money',
+    mtn_momo: '🟡 MTN MoMo',
+    moov_money: '🔵 Moov Money',
+    mobile_money: '📱 Autre Mobile Money',
+    card: '💳 Carte bancaire',
+    bank_transfer: '🏦 Virement bancaire',
+    cheque: '📝 Chèque',
+    cinetpay: '🌐 CinetPay',
+    fedapay: '🌐 FedaPay',
+    flutterwave: '🌐 Flutterwave',
+    credit: '🤝 Crédit client',
 };
 
 /* -------------------------------------------------------------------------
@@ -294,7 +324,7 @@ const planProgress = computed(() => {
                     </button>
                     <button
                         v-if="isPayable"
-                        @click="showPaymentModal = true"
+                        @click="openPaymentModal()"
                         class="rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-700"
                     >
                         + Paiement
@@ -750,33 +780,110 @@ const planProgress = computed(() => {
         </Modal>
 
         <!-- Modale paiement -->
-        <Modal :show="showPaymentModal" @close="showPaymentModal = false">
+        <!-- Modal Paiement enrichie -->
+        <Modal :show="showPaymentModal" @close="showPaymentModal = false" max-width="lg">
             <div class="p-6">
-                <h3 class="mb-4 text-lg font-semibold text-gray-800">Enregistrer un paiement</h3>
-                <div class="space-y-4">
+                <!-- En-tête -->
+                <div class="mb-5 flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-xl">💰</div>
                     <div>
-                        <InputLabel value="Montant *" />
-                        <TextInput v-model="paymentForm.amount" type="number" step="0.01" min="0.01" class="mt-1 block w-full" />
-                        <InputError :message="paymentForm.errors.amount" class="mt-1" />
-                    </div>
-                    <div>
-                        <InputLabel value="Moyen de paiement" />
-                        <select v-model="paymentForm.method" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
-                            <option v-for="(label, value) in methodLabels" :key="value" :value="value">{{ label }}</option>
-                        </select>
-                    </div>
-                    <div>
-                        <InputLabel value="Date *" />
-                        <TextInput v-model="paymentForm.paid_at" type="date" class="mt-1 block w-full" />
-                    </div>
-                    <div>
-                        <InputLabel value="Référence" />
-                        <TextInput v-model="paymentForm.reference" class="mt-1 block w-full" placeholder="N° transaction, chèque…" />
+                        <h3 class="text-lg font-bold text-gray-900">Enregistrer un paiement</h3>
+                        <p class="text-sm text-gray-500">{{ document.number }} · {{ document.customer?.name }}</p>
                     </div>
                 </div>
-                <div class="mt-6 flex justify-end gap-3">
-                    <SecondaryButton @click="showPaymentModal = false">Annuler</SecondaryButton>
-                    <PrimaryButton :disabled="paymentForm.processing" @click="submitPayment">Enregistrer</PrimaryButton>
+
+                <!-- Résumé solde -->
+                <div class="mb-5 rounded-lg bg-gray-50 px-4 py-3 text-sm">
+                    <div class="flex justify-between text-gray-600">
+                        <span>Total document</span>
+                        <span class="font-medium">{{ fmt(document.total) }} {{ document.currency }}</span>
+                    </div>
+                    <div v-if="document.amount_paid > 0" class="flex justify-between text-green-700">
+                        <span>Déjà encaissé</span>
+                        <span>−{{ fmt(document.amount_paid) }} {{ document.currency }}</span>
+                    </div>
+                    <div class="mt-1 flex justify-between border-t border-gray-200 pt-1 font-semibold text-gray-900">
+                        <span>Solde restant dû</span>
+                        <span class="text-green-700">{{ fmt(balanceDue) }} {{ document.currency }}</span>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Montant -->
+                    <div>
+                        <InputLabel value="Montant encaissé *" />
+                        <div class="relative mt-1">
+                            <TextInput
+                                v-model="paymentForm.amount"
+                                type="number" step="0.01" min="0.01"
+                                class="block w-full pr-16"
+                            />
+                            <span class="absolute inset-y-0 right-3 flex items-center text-sm text-gray-400">{{ document.currency }}</span>
+                        </div>
+                        <InputError :message="paymentForm.errors.amount" class="mt-1" />
+                    </div>
+
+                    <!-- Moyen de paiement -->
+                    <div>
+                        <InputLabel value="Moyen de paiement *" />
+                        <div class="mt-2 grid grid-cols-3 gap-2">
+                            <button
+                                v-for="(label, value) in methodLabels" :key="value"
+                                type="button"
+                                @click="paymentForm.method = value"
+                                :class="[
+                                    'rounded-lg border-2 px-2 py-2 text-xs font-medium transition-all',
+                                    paymentForm.method === value
+                                        ? 'border-green-500 bg-green-50 text-green-700'
+                                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                                ]"
+                            >
+                                {{ label }}
+                            </button>
+                        </div>
+                        <InputError :message="paymentForm.errors.method" class="mt-1" />
+                    </div>
+
+                    <!-- Référence / N° transaction -->
+                    <div>
+                        <InputLabel value="Référence / N° transaction" />
+                        <TextInput
+                            v-model="paymentForm.reference"
+                            class="mt-1 block w-full"
+                            placeholder="Ex: TXN-2026-00123, chèque n°456…"
+                        />
+                    </div>
+
+                    <!-- Date de paiement -->
+                    <div>
+                        <InputLabel value="Date de paiement *" />
+                        <TextInput v-model="paymentForm.paid_at" type="date" class="mt-1 block w-full" />
+                        <InputError :message="paymentForm.errors.paid_at" class="mt-1" />
+                    </div>
+
+                    <!-- Notes internes -->
+                    <div>
+                        <InputLabel value="Notes internes (comptabilité)" />
+                        <textarea
+                            v-model="paymentForm.notes"
+                            rows="2"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm"
+                            placeholder="Observations, rapprochement bancaire…"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex items-center justify-between">
+                    <p v-if="paymentStatusTarget" class="text-xs text-gray-500">
+                        Statut mis à jour → <strong>{{ paymentStatusTarget === 'paid' ? 'Payé' : 'Partiel' }}</strong>
+                    </p>
+                    <div class="flex gap-3 ml-auto">
+                        <SecondaryButton @click="showPaymentModal = false">Annuler</SecondaryButton>
+                        <PrimaryButton :disabled="paymentForm.processing" @click="submitPayment" class="bg-green-600 hover:bg-green-700">
+                            <span v-if="paymentForm.processing">Enregistrement…</span>
+                            <span v-else>✓ Enregistrer le paiement</span>
+                        </PrimaryButton>
+                    </div>
                 </div>
             </div>
         </Modal>
