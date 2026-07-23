@@ -565,7 +565,15 @@ class DocumentController extends Controller
         $registry = config('pdf_templates', []);
         $limit = $this->licenses->currentFor($user)?->limit('templates');
 
-        return $limit === null ? $registry : array_slice($registry, 0, $limit, true);
+        if ($limit === null) {
+            return $registry;
+        }
+
+        // Séparer templates génériques (soumis à la limite) et templates type-spécifiques (toujours inclus)
+        $generic  = array_filter($registry, fn($t) => empty($t['for_types']));
+        $specific = array_filter($registry, fn($t) => !empty($t['for_types']));
+
+        return array_slice($generic, 0, $limit, true) + $specific;
     }
 
     /** Liste des modèles autorisés, formatée pour le sélecteur de l'éditeur. */
