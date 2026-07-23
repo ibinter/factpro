@@ -166,7 +166,7 @@ class DocumentEngine
             'signature_labels' => ['RH', 'Directeur', 'DG'],
         ],
         'payslip' => [
-            'template'      => 'pdf.engine.payslip',
+            'template'      => 'pdf.engine.document-payslip',
             'format'        => 'a4',
             'orientation'   => 'portrait',
             'primary_color' => '#1a56db',

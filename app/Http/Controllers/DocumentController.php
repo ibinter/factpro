@@ -519,27 +519,35 @@ class DocumentController extends Controller
     ];
 
     /**
-     * Résout la vue Blade du modèle visuel (cahier §16) : template du document,
-     * sinon modèle par défaut de la société, sinon fallback sur pdf.document.
-     * Les types à moteur dédié (payslip, prescription, report_card, leave_request)
-     * ignorent les templates cosmétiques et retournent toujours 'pdf.document'
-     * pour laisser le moteur utiliser sa propre vue.
+     * Résout la vue Blade du modèle visuel.
+     * - Templates avec for_types : s'appliquent uniquement aux types listés (ex: payslip)
+     * - Templates sans for_types : s'appliquent aux COSMETIC_TEMPLATE_TYPES classiques
+     * - Types sans template compatible → 'pdf.document' → le moteur utilise sa propre vue
      */
     private function resolveTemplateView(Document $document): string
     {
-        // Types à moteur dédié : ne jamais appliquer un template cosmétique facture
-        if (! in_array($document->type, self::COSMETIC_TEMPLATE_TYPES, true)) {
-            return 'pdf.document';
-        }
-
         $key = $document->template_key ?: $document->company->default_template;
 
         if ($key) {
-            if (view()->exists("pdf.layouts.{$key}")) {
-                return "pdf.layouts.{$key}";
+            $tplConfig = config("pdf_templates.{$key}", []);
+
+            // Template type-spécifique (ex: payslip-classique pour payslip)
+            if (!empty($tplConfig['for_types'])) {
+                if (in_array($document->type, $tplConfig['for_types'], true)) {
+                    // Ces templates réutilisent la vue moteur dédiée avec les couleurs du template
+                    return 'pdf.document'; // laisse le moteur rendre, les couleurs sont passées via $primaryColor etc.
+                }
+                return 'pdf.document'; // for_types ne correspond pas → moteur
             }
-            if (config("pdf_templates.{$key}") && view()->exists("pdf.templates.{$key}")) {
-                return "pdf.templates.{$key}";
+
+            // Template cosmétique générique : seulement pour les types compatibles
+            if (in_array($document->type, self::COSMETIC_TEMPLATE_TYPES, true)) {
+                if (view()->exists("pdf.layouts.{$key}")) {
+                    return "pdf.layouts.{$key}";
+                }
+                if (view()->exists("pdf.templates.{$key}")) {
+                    return "pdf.templates.{$key}";
+                }
             }
         }
 
@@ -565,13 +573,14 @@ class DocumentController extends Controller
     {
         return collect($this->allowedTemplates($user))
             ->map(fn ($t, $key) => [
-                'key' => $key,
-                'name' => $t['name'],
-                'family' => $t['family'],
+                'key'       => $key,
+                'name'      => $t['name'],
+                'family'    => $t['family'],
                 'description' => $t['description'] ?? '',
-                'primary' => $t['primary'],
+                'primary'   => $t['primary'],
                 'secondary' => $t['secondary'],
-                'accent' => $t['accent'],
+                'accent'    => $t['accent'],
+                'for_types' => $t['for_types'] ?? null, // null = tous types cosmétiques
             ])
             ->values()
             ->all();

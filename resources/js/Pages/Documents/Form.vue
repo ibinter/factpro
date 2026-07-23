@@ -341,19 +341,27 @@ const COSMETIC_TEMPLATE_TYPES = [
     'site_report','inspection_report','progress_report','daily_report',
     'rental_inventory','inventory_check','property_inspection',
 ];
-const typeAcceptsCosmeticTemplate = computed(() => COSMETIC_TEMPLATE_TYPES.includes(form.type));
+// Templates compatibles avec le type de document courant
+const compatibleTemplates = computed(() => {
+    return props.templates.filter(t => {
+        if (t.for_types) return t.for_types.includes(form.type);
+        return COSMETIC_TEMPLATE_TYPES.includes(form.type);
+    });
+});
+const typeAcceptsCosmeticTemplate = computed(() => compatibleTemplates.value.length > 0);
 const activeFamily      = ref(null);
-const families          = computed(() => [...new Set(props.templates.map(t => t.family))]);
+const families          = computed(() => [...new Set(compatibleTemplates.value.map(t => t.family))]);
 const filteredTemplates = computed(() => {
     if (!typeAcceptsCosmeticTemplate.value) return [];
-    return activeFamily.value ? props.templates.filter(t => t.family === activeFamily.value) : props.templates;
+    return activeFamily.value
+        ? compatibleTemplates.value.filter(t => t.family === activeFamily.value)
+        : compatibleTemplates.value;
 });
-// Réinitialiser le template sélectionné si le type choisi ne supporte pas les templates cosmétiques
 watch(() => form.type, () => {
     if (!typeAcceptsCosmeticTemplate.value) {
         form.template_key = '';
-        activeFamily.value = null;
     }
+    activeFamily.value = null;
 });
 
 // Modal prévisualisation
@@ -1347,6 +1355,69 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
                         <div class="sm:col-span-2">
                             <InputLabel value="Motif / Objet" />
                             <TextInput v-model="form.meta.purpose" class="mt-1 block w-full" placeholder="Motif de la demande ou de la mission" />
+                        </div>
+                    </div>
+
+                    <!-- Champs spécifiques bulletin de paie -->
+                    <div v-if="form.type === 'payslip'" class="mt-5 border-t border-violet-100 pt-5">
+                        <h4 class="text-sm font-semibold text-violet-700 mb-3">💰 Données salariales</h4>
+                        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            <div>
+                                <InputLabel value="Période (mois/année)" />
+                                <TextInput v-model="form.meta.period" class="mt-1 block w-full" placeholder="Ex: Juin 2025" />
+                            </div>
+                            <div>
+                                <InputLabel value="N° CNSS / Sécurité sociale" />
+                                <TextInput v-model="form.meta.cnss_number" class="mt-1 block w-full" placeholder="N° immatriculation" />
+                            </div>
+                            <div>
+                                <InputLabel value="Type de contrat" />
+                                <select v-model="form.meta.contract_type" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500">
+                                    <option value="">—</option>
+                                    <option value="CDI">CDI</option>
+                                    <option value="CDD">CDD</option>
+                                    <option value="Stage">Stage</option>
+                                    <option value="Freelance">Freelance</option>
+                                </select>
+                            </div>
+                            <div>
+                                <InputLabel value="Salaire brut" />
+                                <TextInput v-model="form.meta.gross_salary" type="number" min="0" step="1" class="mt-1 block w-full" placeholder="0" />
+                            </div>
+                            <div>
+                                <InputLabel value="Cotisations salariales" />
+                                <TextInput v-model="form.meta.employee_contributions" type="number" min="0" step="1" class="mt-1 block w-full" placeholder="0" />
+                            </div>
+                            <div>
+                                <InputLabel value="IRPP / Impôt" />
+                                <TextInput v-model="form.meta.irpp" type="number" min="0" step="1" class="mt-1 block w-full" placeholder="0" />
+                            </div>
+                            <div>
+                                <InputLabel value="Autres retenues" />
+                                <TextInput v-model="form.meta.other_deductions" type="number" min="0" step="1" class="mt-1 block w-full" placeholder="0" />
+                            </div>
+                            <div>
+                                <InputLabel value="Cotisations patronales" />
+                                <TextInput v-model="form.meta.employer_contributions" type="number" min="0" step="1" class="mt-1 block w-full" placeholder="0" />
+                            </div>
+                            <div>
+                                <InputLabel value="Net à payer" />
+                                <TextInput v-model="form.meta.net_salary" type="number" min="0" step="1" class="mt-1 block w-full" placeholder="0" />
+                            </div>
+                            <div>
+                                <InputLabel value="Date de paiement" />
+                                <TextInput v-model="form.meta.payment_date" type="date" class="mt-1 block w-full" />
+                            </div>
+                            <div>
+                                <InputLabel value="Mode de paiement" />
+                                <select v-model="form.meta.payment_method" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm">
+                                    <option value="">—</option>
+                                    <option value="Virement">Virement bancaire</option>
+                                    <option value="Espèces">Espèces</option>
+                                    <option value="Chèque">Chèque</option>
+                                    <option value="Mobile Money">Mobile Money</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>

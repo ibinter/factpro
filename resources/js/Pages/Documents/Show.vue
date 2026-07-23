@@ -103,6 +103,7 @@ const finalize = () => {
 };
 
 // ── Changement de template (cosmétique, autorisé même finalisé) ───────────────
+// Templates compatibles avec ce document (for_types ou type cosmétique classique)
 const COSMETIC_TEMPLATE_TYPES = [
     'invoice','credit_note','proforma','advance_invoice','deposit_invoice',
     'recurring_invoice','final_invoice','corrective_invoice','tax_invoice','commercial_invoice',
@@ -119,7 +120,13 @@ const COSMETIC_TEMPLATE_TYPES = [
     'site_report','inspection_report','progress_report','daily_report',
     'rental_inventory','inventory_check','property_inspection',
 ];
-const acceptsCosmeticTemplate = computed(() => COSMETIC_TEMPLATE_TYPES.includes(props.document.type));
+const docCompatibleTemplates = computed(() =>
+    props.templates.filter(t => {
+        if (t.for_types) return t.for_types.includes(props.document.type);
+        return COSMETIC_TEMPLATE_TYPES.includes(props.document.type);
+    })
+);
+const acceptsCosmeticTemplate = computed(() => docCompatibleTemplates.value.length > 0);
 const showTemplatePanel = ref(false);
 const templateForm = useForm({
     template_key: props.document.template_key ?? '',
@@ -133,11 +140,11 @@ const submitTemplate = () => {
     });
 };
 const activeTemplateFamily = ref(null);
-const templateFamilies = computed(() => [...new Set(props.templates.map(t => t.family))]);
+const templateFamilies = computed(() => [...new Set(docCompatibleTemplates.value.map(t => t.family))]);
 const filteredShowTemplates = computed(() =>
     activeTemplateFamily.value
-        ? props.templates.filter(t => t.family === activeTemplateFamily.value)
-        : props.templates
+        ? docCompatibleTemplates.value.filter(t => t.family === activeTemplateFamily.value)
+        : docCompatibleTemplates.value
 );
 
 const showStatusModal = ref(false);

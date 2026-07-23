@@ -801,4 +801,60 @@ return [
         'accent' => '#27AE60',
     ],
 
+    // ══════════════════════════════════════════════════════════════════════
+    // ── Templates BULLETIN DE PAIE (for_types: payslip) ──────────────────
+    // Ces templates s'appliquent uniquement aux documents de type payslip.
+    // Ils passent les couleurs à pdf.engine.document-payslip.
+    // ══════════════════════════════════════════════════════════════════════
+    'payslip-classique' => [
+        'name'        => 'Bulletin Classique',
+        'family'      => 'Bulletins de Paie',
+        'description' => 'Bleu institutionnel sobre — en-tête structuré, tableau cotisations clair, net à payer en évidence.',
+        'plan_min'    => 'starter',
+        'for_types'   => ['payslip'],
+        'primary'     => '#1a56db',
+        'secondary'   => '#eff6ff',
+        'accent'      => '#f0c040',
+    ],
+    'payslip-moderne' => [
+        'name'        => 'Bulletin Moderne',
+        'family'      => 'Bulletins de Paie',
+        'description' => 'Violet RH contemporain, fond lavande doux — design épuré adapté aux entreprises modernes.',
+        'plan_min'    => 'starter',
+        'for_types'   => ['payslip'],
+        'primary'     => '#7c3aed',
+        'secondary'   => '#f5f3ff',
+        'accent'      => '#f59e0b',
+    ],
+    'payslip-green' => [
+        'name'        => 'Bulletin Vert OHADA',
+        'family'      => 'Bulletins de Paie',
+        'description' => 'Vert institutionnel OHADA/Afrique — sobre et officiel pour les entreprises francophones.',
+        'plan_min'    => 'starter',
+        'for_types'   => ['payslip'],
+        'primary'     => '#166534',
+        'secondary'   => '#f0fdf4',
+        'accent'      => '#ca8a04',
+    ],
+    'payslip-dark' => [
+        'name'        => 'Bulletin Premium Dark',
+        'family'      => 'Bulletins de Paie',
+        'description' => 'En-tête sombre anthracite, accent or — rendu prestige pour cadres et dirigeants.',
+        'plan_min'    => 'pro',
+        'for_types'   => ['payslip'],
+        'primary'     => '#1a1a2e',
+        'secondary'   => '#f8f9fa',
+        'accent'      => '#c9a227',
+    ],
+    'payslip-orange' => [
+        'name'        => 'Bulletin Orange Afrique',
+        'family'      => 'Bulletins de Paie',
+        'description' => 'Orange vif et noir — contraste maximal, idéal pour PME et TPE africaines.',
+        'plan_min'    => 'starter',
+        'for_types'   => ['payslip'],
+        'primary'     => '#ea580c',
+        'secondary'   => '#fff7ed',
+        'accent'      => '#1e3a5f',
+    ],
+
 ];
