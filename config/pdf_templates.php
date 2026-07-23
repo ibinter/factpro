@@ -13,6 +13,82 @@
 
 return [
 
+    // ══════════════════════════════════════════════════════════════════════
+    // ── Famille LAYOUTS (structures radicalement différentes) ─────────────
+    // ══════════════════════════════════════════════════════════════════════
+    'layout-band' => [
+        'name'        => 'Bande Latérale',
+        'family'      => 'Layouts',
+        'description' => 'Bande colorée latérale gauche — structure radicalement différente avec coordonnées société dans la bande.',
+        'plan_min'    => 'starter',
+        'primary'     => '#0062cc',
+        'secondary'   => '#e8f0fe',
+        'accent'      => '#f0c040',
+    ],
+    'layout-hero' => [
+        'name'        => 'Hero Pleine Largeur',
+        'family'      => 'Layouts',
+        'description' => 'Bandeau héro pleine largeur avec logo centré, grille émetteur/client en cards et totaux colorés.',
+        'plan_min'    => 'starter',
+        'primary'     => '#7c3aed',
+        'secondary'   => '#5b21b6',
+        'accent'      => '#fbbf24',
+    ],
+    'layout-minimal' => [
+        'name'        => 'Ultra Minimaliste',
+        'family'      => 'Layouts',
+        'description' => 'Zéro fond coloré — que du texte et des filets fins, typographie aérée et QR minuscule.',
+        'plan_min'    => 'starter',
+        'primary'     => '#374151',
+        'secondary'   => '#9ca3af',
+        'accent'      => '#6366f1',
+    ],
+    'layout-dark' => [
+        'name'        => 'En-tête Sombre',
+        'family'      => 'Layouts',
+        'description' => 'Header #1a1a2e très sombre, type document en accent néon, totaux dans boîte sombre.',
+        'plan_min'    => 'pro',
+        'primary'     => '#0062cc',
+        'secondary'   => '#1a1a2e',
+        'accent'      => '#00e5ff',
+    ],
+    'layout-luxury' => [
+        'name'        => 'Luxe Premium',
+        'family'      => 'Layouts',
+        'description' => 'Titre centré avec lignes décoratives flanquantes, double bordure accent, logo filigrane en fond.',
+        'plan_min'    => 'pro',
+        'primary'     => '#111111',
+        'secondary'   => '#f9f9f9',
+        'accent'      => '#c9a227',
+    ],
+    'layout-diagonal' => [
+        'name'        => 'Diagonale Moderne',
+        'family'      => 'Layouts',
+        'description' => 'Header coupé en diagonale, bande accent inverse, labels de section en pastilles colorées.',
+        'plan_min'    => 'pro',
+        'primary'     => '#0d9488',
+        'secondary'   => '#ccfbf1',
+        'accent'      => '#f59e0b',
+    ],
+    'layout-card' => [
+        'name'        => 'Cartes Rondes',
+        'family'      => 'Layouts',
+        'description' => 'Chaque section dans une card avec border-radius et ombre douce, totaux sur fond primaryColor.',
+        'plan_min'    => 'business',
+        'primary'     => '#1d4ed8',
+        'secondary'   => '#eff6ff',
+        'accent'      => '#f97316',
+    ],
+    'layout-official' => [
+        'name'        => 'Officiel / Gouvernemental',
+        'family'      => 'Layouts',
+        'description' => 'Logo et nom société centrés en haut, titre document avec décoration ══, style notarial officiel.',
+        'plan_min'    => 'business',
+        'primary'     => '#1e3a5f',
+        'secondary'   => '#f0f4ff',
+        'accent'      => '#b45309',
+    ],
+
     // ── Famille CORPORATE B2B ────────────────────────────────────────────
     'corporate-01' => [
         'name' => 'Corporate Marine',

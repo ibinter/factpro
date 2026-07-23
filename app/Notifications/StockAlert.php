@@ -21,11 +21,11 @@ class StockAlert extends Notification
     {
         return [
             'type' => 'stock_alert',
-            'title' => "Stock bas — {$this->product->name}",
+            'title' => "Stock bas â€” {$this->product->name}",
             'message' => "Stock actuel : {$this->product->stock_quantity} (seuil : {$this->product->stock_alert_threshold})",
             'url' => '/stock',
             'product_id' => $this->product->id,
-            'icon' => '⚠️',
+            'icon' => 'âš ï¸',
         ];
     }
 }

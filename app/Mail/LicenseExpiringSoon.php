@@ -23,7 +23,7 @@ class LicenseExpiringSoon extends Mailable
         $jours = $this->daysLeft > 1 ? "{$this->daysLeft} jours" : '1 jour';
 
         return new Envelope(
-            subject: "⏰ Votre licence expire dans {$jours}",
+            subject: "â° Votre licence expire dans {$jours}",
         );
     }
 

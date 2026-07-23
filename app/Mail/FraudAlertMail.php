@@ -24,7 +24,7 @@ class FraudAlertMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: '[FRAUDE] Score ' . $this->score . ' — commande #' . $this->order->order_number,
+            subject: '[FRAUDE] Score ' . $this->score . ' â€” commande #' . $this->order->order_number,
         );
     }
 
@@ -39,7 +39,7 @@ class FraudAlertMail extends Mailable
     public function build(): static
     {
         return $this
-            ->subject('[FRAUDE] Score ' . $this->score . ' — commande #' . $this->order->order_number)
+            ->subject('[FRAUDE] Score ' . $this->score . ' â€” commande #' . $this->order->order_number)
             ->text('emails.fraud-alert')
             ->with([
                 'order'  => $this->order,

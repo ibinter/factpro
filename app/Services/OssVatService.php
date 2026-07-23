@@ -147,7 +147,7 @@ class OssVatService
     }
 
     /**
-     * Returns true if total EU sales for the year are below the 10 000 € threshold.
+     * Returns true if total EU sales for the year are below the 10 000 â‚¬ threshold.
      */
     public function isBelowThreshold(int $companyId, int $year): bool
     {
@@ -178,7 +178,7 @@ class OssVatService
         $pattern     = self::VAT_PATTERNS[$countryCode] ?? null;
 
         if ($pattern === null) {
-            // Unknown country: basic check — starts with country code and has digits
+            // Unknown country: basic check â€” starts with country code and has digits
             return (bool) preg_match('/^' . $countryCode . '\w{5,}$/', $vatNumber);
         }
 

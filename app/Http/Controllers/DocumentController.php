@@ -444,13 +444,21 @@ class DocumentController extends Controller
             }
         }
 
+        // Couleurs dynamiques : custom sur le document > défaut du template > défaut moteur
+        $templateConfig = config("pdf_templates.{$document->template_key}", []);
+        $primaryColor   = $document->template_color_primary   ?: ($templateConfig['primary']   ?? $engineConfig['primary_color']);
+        $secondaryColor = $document->template_color_secondary ?: ($templateConfig['secondary'] ?? '#f0f4ff');
+        $accentColor    = $document->template_color_accent    ?: ($templateConfig['accent']    ?? '#f0c040');
+
         $pdf = Pdf::loadView($viewName, [
             'document'        => $document,
             'company'         => $document->company,
             'logoBase64'      => $logoBase64,
             'qrDataUri'       => $qr->forDocument($document),
             'watermark'       => $document->trial_watermark ? config('factpro.trial.watermark_text') : null,
-            'primaryColor'    => $engineConfig['primary_color'],
+            'primaryColor'    => $primaryColor,
+            'secondaryColor'  => $secondaryColor,
+            'accentColor'     => $accentColor,
             'signatureLabels' => $engineConfig['signature_labels'] ?? [],
         ])->setPaper($engineConfig['format'], $engineConfig['orientation']);
 
@@ -465,8 +473,13 @@ class DocumentController extends Controller
     {
         $key = $document->template_key ?: $document->company->default_template;
 
-        if ($key && config("pdf_templates.{$key}") && view()->exists("pdf.templates.{$key}")) {
-            return "pdf.templates.{$key}";
+        if ($key) {
+            if (view()->exists("pdf.layouts.{$key}")) {
+                return "pdf.layouts.{$key}";
+            }
+            if (config("pdf_templates.{$key}") && view()->exists("pdf.templates.{$key}")) {
+                return "pdf.templates.{$key}";
+            }
         }
 
         return 'pdf.document';

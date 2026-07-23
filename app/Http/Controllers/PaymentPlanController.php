@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace App\Http\Controllers;
 
@@ -12,8 +12,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Acomptes & plans de paiement �chelonn�s (cahier IBIG �12).
- * R�serv� aux forfaits PRO et plus (�22.1) � 403 sinon.
+ * Acomptes & plans de paiement échelonnés (cahier IBIG §12).
+ * Réservé aux forfaits PRO et plus (§22.1) → 403 sinon.
  */
 class PaymentPlanController extends Controller
 {
@@ -23,7 +23,7 @@ class PaymentPlanController extends Controller
     ) {
     }
 
-    /** Le forfait courant donne-t-il acc�s aux plans de paiement ? (PRO et plus) */
+    /** Le forfait courant donne-t-il accès aux plans de paiement ? (PRO et plus) */
     private function hasAccess(Request $request): bool
     {
         $license = $this->licenses->currentFor($request->user());
@@ -38,7 +38,7 @@ class PaymentPlanController extends Controller
         abort_unless(
             $this->hasAccess($request),
             403,
-            'Les plans de paiement (acomptes) sont disponibles d�s le forfait PRO.'
+            'Les plans de paiement (acomptes) sont disponibles dès le forfait PRO.'
         );
     }
 
@@ -47,7 +47,7 @@ class PaymentPlanController extends Controller
         abort_unless($plan->company_id === $request->user()->current_company_id, 403);
     }
 
-    /** Liste des plans de la soci�t� + statistiques. */
+    /** Liste des plans de la société + statistiques. */
     public function index(Request $request): Response
     {
         $this->authorizeAccess($request);
@@ -70,9 +70,9 @@ class PaymentPlanController extends Controller
             ->count();
 
         $stats = [
-            'active' => $activePlans->count(),
+            'active'      => $activePlans->count(),
             'outstanding' => round($activePlans->sum(fn (PaymentPlan $p) => $p->remaining), 2),
-            'upcoming' => $upcoming,
+            'upcoming'    => $upcoming,
         ];
 
         return Inertia::render('PaymentPlans/Index', [
@@ -81,7 +81,7 @@ class PaymentPlanController extends Controller
         ]);
     }
 
-    /** D�tail d'un plan + �ch�ancier complet. */
+    /** Détail d'un plan + échéancier complet. */
     public function show(Request $request, PaymentPlan $plan): Response
     {
         $this->authorizeAccess($request);
@@ -98,7 +98,7 @@ class PaymentPlanController extends Controller
         ]);
     }
 
-    /** G�n�re la facture d'acompte / de solde d'une �ch�ance. */
+    /** Génère la facture d'acompte / de solde d'une échéance. */
     public function invoiceInstallment(Request $request, PaymentPlanInstallment $installment): RedirectResponse
     {
         $this->authorizeAccess($request);
@@ -106,63 +106,62 @@ class PaymentPlanController extends Controller
         $this->authorizePlan($request, $plan);
 
         if ($plan->status === 'cancelled') {
-            return back()->with('error', 'Ce plan est annul�.');
+            return back()->with('error', 'Ce plan est annulé.');
         }
 
         if ($installment->document_id !== null) {
-            return back()->with('error', 'Une facture a d�j� �t� g�n�r�e pour cette �ch�ance.');
+            return back()->with('error', 'Une facture a déjà été générée pour cette échéance.');
         }
 
         $document = $this->plans->generateInstallmentInvoice($installment, $request->user());
 
         return redirect()->route('documents.show', $document)
-            ->with('success', $document->type_label.' '.$document->number.' g�n�r�e pour l\'�ch�ance � '.$installment->label.' �.');
+            ->with('success', $document->type_label.' '.$document->number.' générée pour l\'échéance « '.$installment->label.' ».');
     }
 
-    /** Annule un plan tant qu'aucune �ch�ance n'est pay�e. */
+    /** Annule un plan tant qu'aucune échéance n'est payée. */
     public function cancel(Request $request, PaymentPlan $plan): RedirectResponse
     {
         $this->authorizeAccess($request);
         $this->authorizePlan($request, $plan);
 
         if ($plan->installments()->where('status', 'paid')->exists()) {
-            return back()->with('error', 'Impossible d\'annuler : une �ch�ance est d�j� pay�e.');
+            return back()->with('error', 'Impossible d\'annuler : une échéance est déjà payée.');
         }
 
         $plan->update(['status' => 'cancelled']);
 
-        return back()->with('success', 'Plan de paiement annul�.');
+        return back()->with('success', 'Plan de paiement annulé.');
     }
 
-    /** Formate un plan pour le front (avec progression et �ch�ances). */
+    /** Formate un plan pour le front (avec progression et échéances). */
     private function presentPlan(PaymentPlan $plan, bool $detailed = false): array
     {
         $installments = $plan->installments->map(fn (PaymentPlanInstallment $i) => [
-            'id' => $i->id,
-            'label' => $i->label,
-            'due_date' => $i->due_date?->toDateString(),
-            'amount' => (float) $i->amount,
-            'percentage' => $i->percentage !== null ? (float) $i->percentage : null,
-            'status' => $i->status,
+            'id'          => $i->id,
+            'label'       => $i->label,
+            'due_date'    => $i->due_date?->toDateString(),
+            'amount'      => (float) $i->amount,
+            'percentage'  => $i->percentage !== null ? (float) $i->percentage : null,
+            'status'      => $i->status,
             'document_id' => $i->document_id,
-            'document' => $detailed ? $i->document : null,
-            'sort_order' => $i->sort_order,
+            'document'    => $detailed ? $i->document : null,
+            'sort_order'  => $i->sort_order,
         ])->values();
 
         return [
-            'id' => $plan->id,
-            'name' => $plan->name,
-            'status' => $plan->status,
-            'total_amount' => (float) $plan->total_amount,
-            'total_invoiced' => $plan->total_invoiced,
-            'remaining' => $plan->remaining,
-            'currency' => $plan->currency,
-            'notes' => $plan->notes,
-            'customer' => $plan->customer,
+            'id'              => $plan->id,
+            'name'            => $plan->name,
+            'status'          => $plan->status,
+            'total_amount'    => (float) $plan->total_amount,
+            'total_invoiced'  => $plan->total_invoiced,
+            'remaining'       => $plan->remaining,
+            'currency'        => $plan->currency,
+            'notes'           => $plan->notes,
+            'customer'        => $plan->customer,
             'source_document' => $plan->sourceDocument,
-            'installments' => $installments,
-            'created_at' => $plan->created_at?->toDateString(),
+            'installments'    => $installments,
+            'created_at'      => $plan->created_at?->toDateString(),
         ];
     }
 }
-

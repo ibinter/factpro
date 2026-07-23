@@ -1,4 +1,4 @@
-﻿<?php
+ï»¿<?php
 
 namespace App\Http\Controllers;
 
@@ -24,7 +24,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Espace client � Abonnement & Facturation � (script �15).
+ * Espace client ï¿½ Abonnement & Facturation ï¿½ (script ï¿½15).
  */
 class BillingController extends Controller
 {
@@ -35,7 +35,7 @@ class BillingController extends Controller
     ) {
     }
 
-    /** Page des forfaits (comparatif � cahier �22). */
+    /** Page des forfaits (comparatif ï¿½ cahier ï¿½22). */
     public function plans(Request $request): Response
     {
         $rates = config('factpro.exchange_rates_xof');
@@ -64,7 +64,7 @@ class BillingController extends Controller
         ]);
     }
 
-    /** Cr�e la commande et redirige vers la page de paiement (script �2). */
+    /** Crï¿½e la commande et redirige vers la page de paiement (script ï¿½2). */
     public function subscribe(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -82,7 +82,7 @@ class BillingController extends Controller
             $request->user()->country ?? 'CI',
         );
 
-        // Offres sp�ciales ONG / �cole : applique le coupon syst�me automatiquement
+        // Offres spï¿½ciales ONG / ï¿½cole : applique le coupon systï¿½me automatiquement
         if (! empty($data['org_type'])) {
             $systemCouponCode = match ($data['org_type']) {
                 'ong'    => 'ONG50',
@@ -112,19 +112,19 @@ class BillingController extends Controller
             }
         }
 
-        // Programme ambassadeur : r�compense le parrain si applicable
+        // Programme ambassadeur : rï¿½compense le parrain si applicable
         app(\App\Services\ReferralService::class)->rewardReferrer($request->user());
 
         return redirect()->route('billing.checkout', $order);
     }
 
-    /** Page de paiement : r�capitulatif + cartes de moyens de paiement (script �5). */
+    /** Page de paiement : rï¿½capitulatif + cartes de moyens de paiement (script ï¿½5). */
     public function checkout(Request $request, Order $order): Response|RedirectResponse
     {
         abort_unless($order->user_id === $request->user()->id, 403);
 
         if ($order->status === 'paid') {
-            return redirect()->route('billing.index')->with('success', 'Cette commande est d�j� pay�e.');
+            return redirect()->route('billing.index')->with('success', 'Cette commande est dï¿½jï¿½ payï¿½e.');
         }
 
         $methods = PaymentMethodConfig::where('is_active', true)
@@ -150,18 +150,18 @@ class BillingController extends Controller
     }
 
     /**
-     * Applique un code promo � une commande et recalcule le total (cahier �22.2).
+     * Applique un code promo ï¿½ une commande et recalcule le total (cahier ï¿½22.2).
      *
-     * Choix d'impl�mentation : la redemption est enregistr�e d�s l'application du
-     * code (la commande n'est pas encore pay�e). C'est acceptable pour ce module
-     * self-contained ; removeCoupon() l'annule proprement si le code est retir�.
+     * Choix d'implï¿½mentation : la redemption est enregistrï¿½e dï¿½s l'application du
+     * code (la commande n'est pas encore payï¿½e). C'est acceptable pour ce module
+     * self-contained ; removeCoupon() l'annule proprement si le code est retirï¿½.
      */
     public function applyCoupon(Request $request, Order $order): RedirectResponse
     {
         abort_unless($order->user_id === $request->user()->id, 403);
 
         if (! $order->isPayable()) {
-            return back()->with('error', 'Cette commande ne peut plus �tre modifi�e.');
+            return back()->with('error', 'Cette commande ne peut plus ï¿½tre modifiï¿½e.');
         }
 
         $data = $request->validate([
@@ -181,7 +181,7 @@ class BillingController extends Controller
             return back()->with('error', $result['message']);
         }
 
-        // Retire un �ventuel coupon d�j� appliqu� avant d'en poser un nouveau.
+        // Retire un ï¿½ventuel coupon dï¿½jï¿½ appliquï¿½ avant d'en poser un nouveau.
         $this->clearCoupon($order);
 
         $coupon = $result['coupon'];
@@ -195,16 +195,16 @@ class BillingController extends Controller
             'metadata' => array_merge($order->metadata ?? [], ['coupon_code' => $coupon->code]),
         ]);
 
-        return redirect()->route('billing.index')->with('success', "Code promo � {$coupon->code} � appliqu�.");
+        return redirect()->route('billing.index')->with('success', "Code promo ï¿½ {$coupon->code} ï¿½ appliquï¿½.");
     }
 
-    /** Retire le code promo appliqu� et restaure le montant d'origine. */
+    /** Retire le code promo appliquï¿½ et restaure le montant d'origine. */
     public function removeCoupon(Request $request, Order $order): RedirectResponse
     {
         abort_unless($order->user_id === $request->user()->id, 403);
 
         if (! $order->isPayable()) {
-            return back()->with('error', 'Cette commande ne peut plus �tre modifi�e.');
+            return back()->with('error', 'Cette commande ne peut plus ï¿½tre modifiï¿½e.');
         }
 
         $this->clearCoupon($order);
@@ -215,10 +215,10 @@ class BillingController extends Controller
             'metadata' => array_diff_key($order->metadata ?? [], ['coupon_code' => null]),
         ]);
 
-        return redirect()->route('billing.index')->with('success', 'Code promo retir�.');
+        return redirect()->route('billing.index')->with('success', 'Code promo retirï¿½.');
     }
 
-    /** Annule la redemption li�e au coupon actuellement pos� sur la commande. */
+    /** Annule la redemption liï¿½e au coupon actuellement posï¿½ sur la commande. */
     private function clearCoupon(Order $order): void
     {
         $current = $order->metadata['coupon_code'] ?? null;
@@ -234,7 +234,7 @@ class BillingController extends Controller
         }
     }
 
-    /** D�claration d'un paiement manuel avec preuve (script �4.2). */
+    /** Dï¿½claration d'un paiement manuel avec preuve (script ï¿½4.2). */
     public function submitProof(Request $request, Order $order): RedirectResponse
     {
         abort_unless($order->user_id === $request->user()->id, 403);
@@ -267,10 +267,10 @@ class BillingController extends Controller
         $this->payments->submitManualPayment($order, $data['provider'], $data, $request->file('proof'));
 
         return redirect()->route('billing.proof-status', $order->id)
-            ->with('success', 'Votre d�claration a �t� re�ue et sera v�rifi�e par notre �quipe.');
+            ->with('success', 'Votre dï¿½claration a ï¿½tï¿½ reï¿½ue et sera vï¿½rifiï¿½e par notre ï¿½quipe.');
     }
 
-    /** Page de suivi de preuve apr�s soumission. */
+    /** Page de suivi de preuve aprï¿½s soumission. */
     public function proofStatus(Request $request, Order $order): Response
     {
         abort_unless($order->user_id === $request->user()->id, 403);
@@ -301,18 +301,18 @@ class BillingController extends Controller
         ]);
     }
 
-    /** T�l�chargement re�u pour commande pay�e. */
+    /** Tï¿½lï¿½chargement reï¿½u pour commande payï¿½e. */
     public function downloadReceipt(Request $request, Order $order): HttpResponse|RedirectResponse
     {
         abort_unless($order->user_id === $request->user()->id, 403);
 
         if ($order->status !== 'paid') {
             return redirect()->route('billing.index')
-                ->with('error', 'Le re�u n\'est disponible que pour les commandes pay�es.');
+                ->with('error', 'Le reï¿½u n\'est disponible que pour les commandes payï¿½es.');
         }
 
         $order->load('plan');
-        $content = "RE�U DE PAIEMENT\n\nCommande : {$order->order_number}\nForfait : {$order->plan?->name}\nMontant : {$order->total_amount} {$order->currency}\nDate : {$order->paid_at}\n";
+        $content = "REï¿½U DE PAIEMENT\n\nCommande : {$order->order_number}\nForfait : {$order->plan?->name}\nMontant : {$order->total_amount} {$order->currency}\nDate : {$order->paid_at}\n";
 
         return response($content, 200, [
             'Content-Type' => 'text/plain',
@@ -320,13 +320,13 @@ class BillingController extends Controller
         ]);
     }
 
-    /** Ajoute un compl�ment de preuve (documents suppl�mentaires). */
+    /** Ajoute un complï¿½ment de preuve (documents supplï¿½mentaires). */
     public function addComplement(Request $request, Order $order): RedirectResponse
     {
         abort_unless($order->user_id === $request->user()->id, 403);
 
         if (! in_array($order->status, ['proof_submitted', 'under_review', 'missing_info'])) {
-            return back()->with('error', 'Impossible d\'ajouter un compl�ment dans l\'�tat actuel de la commande.');
+            return back()->with('error', 'Impossible d\'ajouter un complï¿½ment dans l\'ï¿½tat actuel de la commande.');
         }
 
         $maxKb = config('factpro.proofs.max_size_mb', 10) * 1024;
@@ -363,10 +363,10 @@ class BillingController extends Controller
             $order->update(['status' => 'under_review']);
         }
 
-        return redirect()->route('billing.index')->with('success', 'Votre compl�ment a �t� ajout� et sera examin� par notre �quipe.');
+        return redirect()->route('billing.index')->with('success', 'Votre complï¿½ment a ï¿½tï¿½ ajoutï¿½ et sera examinï¿½ par notre ï¿½quipe.');
     }
 
-    /** D�claration de paiement par ch�que bancaire. */
+    /** Dï¿½claration de paiement par chï¿½que bancaire. */
     public function initiateCheque(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -401,10 +401,10 @@ class BillingController extends Controller
         ], $request->hasFile('proof') ? $request->file('proof') : null);
 
         return redirect()->route('billing.proof-status', $order)
-            ->with('success', 'Votre d�claration de ch�que a �t� enregistr�e. Nous vous contacterons apr�s encaissement.');
+            ->with('success', 'Votre dï¿½claration de chï¿½que a ï¿½tï¿½ enregistrï¿½e. Nous vous contacterons aprï¿½s encaissement.');
     }
 
-    /** D�claration d'un paiement en cryptomonnaie (tx hash + preuve optionnelle). */
+    /** Dï¿½claration d'un paiement en cryptomonnaie (tx hash + preuve optionnelle). */
     public function initiateCrypto(Request $request): RedirectResponse
     {
         $request->validate([
@@ -422,13 +422,13 @@ class BillingController extends Controller
 
         $wallet = CryptoWallet::findOrFail($request->wallet_id);
 
-        // Anti-doublon : rejeter un hash d�j� soumis et non rejet�
+        // Anti-doublon : rejeter un hash dï¿½jï¿½ soumis et non rejetï¿½
         $exists = PaymentTransaction::where('provider_reference', $request->tx_hash)
             ->whereIn('status', ['pending', 'under_review', 'manually_validated', 'succeeded'])
             ->exists();
 
         if ($exists) {
-            return back()->withErrors(['tx_hash' => 'Ce hash de transaction a d�j� �t� soumis.']);
+            return back()->withErrors(['tx_hash' => 'Ce hash de transaction a dï¿½jï¿½ ï¿½tï¿½ soumis.']);
         }
 
         $proofFile = $request->hasFile('proof') ? $request->file('proof') : null;
@@ -444,7 +444,7 @@ class BillingController extends Controller
             $proofFile,
         );
 
-        // Stocke les d�tails crypto dans la colonne metadata
+        // Stocke les dï¿½tails crypto dans la colonne metadata
         $transaction->update([
             'metadata' => [
                 'wallet_id'      => $wallet->id,
@@ -457,13 +457,13 @@ class BillingController extends Controller
         ]);
 
         return redirect()->route('billing.proof-status', $order)
-            ->with('success', 'Votre transaction crypto a �t� soumise. V�rification en cours.');
+            ->with('success', 'Votre transaction crypto a ï¿½tï¿½ soumise. Vï¿½rification en cours.');
     }
 
-    // -- Voucher / Code pr�pay� ----------------------------------------------
+    // -- Voucher / Code prï¿½payï¿½ ----------------------------------------------
 
     /**
-     * V�rifie un code pr�pay� sans l'activer � retourne les infos du code.
+     * Vï¿½rifie un code prï¿½payï¿½ sans l'activer ï¿½ retourne les infos du code.
      */
     public function verifyVoucher(Request $request): JsonResponse
     {
@@ -474,7 +474,7 @@ class BillingController extends Controller
     }
 
     /**
-     * Active un code pr�pay� ? licence instantan�e.
+     * Active un code prï¿½payï¿½ ? licence instantanï¿½e.
      */
     public function redeemVoucher(Request $request): RedirectResponse
     {
@@ -484,18 +484,18 @@ class BillingController extends Controller
             $user    = auth()->user();
             $company = $user->currentCompany ?? $user->companies()->first();
 
-            abort_unless($company !== null, 403, 'Aucune soci�t� associ�e � ce compte.');
+            abort_unless($company !== null, 403, 'Aucune sociï¿½tï¿½ associï¿½e ï¿½ ce compte.');
 
             app(VoucherService::class)->redeem($request->code, $company->id, $user->id);
 
             return redirect()->route('billing.index')
-                ->with('success', 'Licence activ�e ! Bon d�marrage avec IBIG FactPro.');
+                ->with('success', 'Licence activï¿½e ! Bon dï¿½marrage avec IBIG FactPro.');
         } catch (\RuntimeException $e) {
             return back()->withErrors(['code' => $e->getMessage()]);
         }
     }
 
-    /** Tableau de bord abonnement + historique (script �15). */
+    /** Tableau de bord abonnement + historique (script ï¿½15). */
     public function index(Request $request): Response
     {
         $user = $request->user();
@@ -521,7 +521,7 @@ class BillingController extends Controller
         ]);
     }
 
-    // -- Paiement � la livraison (COD) --------------------------------------
+    // -- Paiement ï¿½ la livraison (COD) --------------------------------------
 
     /** Le client soumet une commande avec livraison physique. */
     public function initiateDelivery(Request $request): RedirectResponse
@@ -546,7 +546,7 @@ class BillingController extends Controller
         app(DeliveryPaymentService::class)->createDeliveryOrder($order, $data);
 
         return redirect()->route('billing.delivery-status', $order)
-            ->with('success', 'Votre commande de livraison a �t� enregistr�e. Un agent vous contactera sous 24h.');
+            ->with('success', 'Votre commande de livraison a ï¿½tï¿½ enregistrï¿½e. Un agent vous contactera sous 24h.');
     }
 
     /** Page de suivi de la livraison. */

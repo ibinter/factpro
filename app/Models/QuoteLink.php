@@ -21,7 +21,7 @@ class QuoteLink extends Model
         'require_signature'   => 'boolean',
     ];
 
-    /** Masque la signature dans toArray() (peut être volumineuse & sensible). */
+    /** Masque la signature dans toArray() (peut Ãªtre volumineuse & sensible). */
     protected $hidden = ['client_signature_data', 'password'];
 
     public function document(): BelongsTo
