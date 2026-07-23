@@ -132,6 +132,9 @@ Schedule::call(function () {
 // E-mails de cycle de vie : fin d'essai J-3/J-1, expiration licence J-7/J-1, licence expirée hier
 Schedule::command('emails:lifecycle')->dailyAt('09:00');
 
+// Séquence d'onboarding : J+1, J+3, J+7, J+14 après inscription
+Schedule::command('emails:onboarding')->dailyAt('10:00');
+
 /*
 |--------------------------------------------------------------------------
 | Monitoring santé applicative — Phase 17

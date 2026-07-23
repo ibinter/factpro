@@ -5,12 +5,16 @@ use App\Http\Controllers\DemoController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\PublicVerifyController;
+use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
 
 // Accès démo instantané — connecte le compte demo@factpro.test sans mot de passe.
 Route::get('/demo-login', [DemoController::class, 'login'])
     ->middleware('throttle:20,1')
     ->name('demo.login');
+
+// Page de statut système publique.
+Route::get('/status', [StatusController::class, 'index'])->name('status');
 
 // Grille tarifaire détaillée (Inertia).
 Route::get('/pricing', [PublicController::class, 'pricing'])->name('public.pricing');
