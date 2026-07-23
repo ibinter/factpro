@@ -7,6 +7,7 @@ import PublicFooter from '@/Pages/Public/Partials/PublicFooter.vue';
 import Sara from '@/Components/Sara.vue';
 import CookieBanner from '@/Components/CookieBanner.vue';
 import WhatsAppButton from '@/Components/WhatsAppButton.vue';
+import Analytics from '@/Components/Analytics.vue';
 
 const props = defineProps({
     canLogin:    { type: Boolean, default: true },
@@ -334,7 +335,32 @@ const partnerCommissions = [
 </script>
 
 <template>
-    <Head :title="lang === 'fr' ? 'IBIG FactPro — Facturation professionnelle pour l\'Afrique et le monde' : 'IBIG FactPro — Professional invoicing for Africa and beyond'" />
+    <Head title="IBIG FactPro — Logiciel de facturation pour PME africaines">
+        <meta name="description" content="Créez vos factures, devis et bons de livraison en quelques secondes. Logiciel de gestion commerciale OHADA pour les PME d'Afrique francophone.">
+        <meta property="og:title" content="IBIG FactPro — Logiciel de facturation pour PME africaines">
+        <meta property="og:description" content="Créez vos factures, devis et bons de livraison en quelques secondes. Logiciel de gestion commerciale OHADA pour les PME d'Afrique francophone.">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://factpro.ibigsoft.com">
+        <meta property="og:site_name" content="IBIG FactPro">
+        <meta property="og:locale" content="fr_FR">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="IBIG FactPro — Logiciel de facturation PME Afrique">
+        <meta name="twitter:description" content="Facturation, devis, stocks, caisse POS. Conforme OHADA. Essai gratuit 14 jours.">
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": "IBIG FactPro",
+            "applicationCategory": "BusinessApplication",
+            "operatingSystem": "Web, iOS, Android",
+            "description": "Logiciel de facturation et gestion commerciale pour PME africaines, conforme OHADA",
+            "url": "https://factpro.ibigsoft.com",
+            "author": { "@type": "Organization", "name": "IBIG Soft SARL", "address": { "@type": "PostalAddress", "addressLocality": "Abidjan", "addressCountry": "CI" } },
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "XOF", "description": "Essai gratuit 14 jours" },
+            "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "312" }
+        }
+        </script>
+    </Head>
 
     <div class="min-h-screen bg-white text-gray-800">
         <!-- ═══════════════════════════════ INFO BAR ═══════════════════════════════ -->
@@ -1180,6 +1206,9 @@ const partnerCommissions = [
 
     <!-- WhatsApp flottant (§8 cahier) -->
     <WhatsAppButton />
+
+    <!-- Analytics (GA4 + Meta Pixel) — chargé seulement si consentement cookie -->
+    <Analytics />
 </template>
 
 <style scoped>

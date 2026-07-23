@@ -2,6 +2,7 @@
 import { Head, Link } from '@inertiajs/vue3';
 import PublicNav from '@/Pages/Public/Partials/PublicNav.vue';
 import PublicFooter from '@/Pages/Public/Partials/PublicFooter.vue';
+import Analytics from '@/Components/Analytics.vue';
 
 defineProps({
     canLogin:    { type: Boolean, default: true },
@@ -25,7 +26,10 @@ const team = [
 </script>
 
 <template>
-    <Head title="À propos d'IBIG Soft — FactPro" />
+    <Head title="À propos d'IBIG Soft — FactPro">
+        <meta name="description" content="IBIG Soft SARL — Éditeur ivoirien de logiciels de gestion pour PME africaines. Fondé à Abidjan, présent dans 18 pays.">
+        <meta property="og:title" content="À propos d'IBIG Soft — L'innovation au service des entrepreneurs africains">
+    </Head>
 
     <PublicNav :can-login="canLogin" :can-register="canRegister" />
 
@@ -169,4 +173,5 @@ const team = [
     </section>
 
     <PublicFooter />
+    <Analytics />
 </template>

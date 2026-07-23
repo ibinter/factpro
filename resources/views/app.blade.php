@@ -15,6 +15,10 @@
         <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
         <link rel="icon" type="image/svg+xml" href="/logo_icon.svg">
 
+        <link rel="canonical" href="{{ url()->current() }}">
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+        <link rel="dns-prefetch" href="https://connect.facebook.net">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />

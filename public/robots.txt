@@ -1,2 +1,10 @@
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /billing
+Disallow: /api/
+Disallow: /notifications
+Disallow: /profile
+
+Sitemap: https://factpro.ibigsoft.com/sitemap.xml

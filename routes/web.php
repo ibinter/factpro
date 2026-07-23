@@ -12,6 +12,7 @@ Route::get('/health', function () {
     ]);
 })->name('health');
 
+use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\Admin\DeliveryAdminController;
 use App\Http\Controllers\Admin\DeliveryAgentController;
 use App\Http\Controllers\Admin\PaymentValidationController;
@@ -27,6 +28,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VerifyController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -332,4 +335,23 @@ Route::middleware(['auth', 'verified'])->prefix('gdpr')->name('gdpr.')->group(fu
     Route::post('/export-data', [GdprComplianceController::class, 'exportData'])->name('export-data');
     Route::post('/delete-subject', [GdprComplianceController::class, 'deleteSubject'])->name('delete-subject');
     Route::get('/report', [GdprComplianceController::class, 'generateReport'])->name('report');
+});
+
+
+// Module Support Tickets
+use App\Http\Controllers\SupportTicketController;
+use App\Http\Controllers\Admin\SupportAdminController;
+
+Route::middleware(['auth', 'verified'])->prefix('support')->name('support.')->group(function () {
+    Route::get('/', [SupportTicketController::class, 'index'])->name('index');
+    Route::get('/create', [SupportTicketController::class, 'create'])->name('create');
+    Route::post('/', [SupportTicketController::class, 'store'])->middleware('throttle:5,1')->name('store');
+    Route::get('/{supportTicket}', [SupportTicketController::class, 'show'])->name('show');
+    Route::post('/{supportTicket}/reply', [SupportTicketController::class, 'reply'])->middleware('throttle:10,1')->name('reply');
+});
+
+Route::middleware(['auth', 'superadmin'])->prefix('admin/support')->name('admin.support.')->group(function () {
+    Route::get('/', [SupportAdminController::class, 'index'])->name('index');
+    Route::get('/{ticket}', [SupportAdminController::class, 'show'])->name('show');
+    Route::post('/{ticket}/reply', [SupportAdminController::class, 'reply'])->name('reply');
 });

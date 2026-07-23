@@ -16,6 +16,7 @@ const tabs = [
     { label: '🌍 Passerelles', route: 'admin.gateways' },
     { label: '🎨 White-label', route: 'admin.white-label.index' },
     { label: '📣 NPS', route: 'admin.nps' },
+    { label: '🎫 Support', route: 'admin.support.index' },
 ];
 
 const isActive = (name) => {

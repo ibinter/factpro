@@ -100,6 +100,10 @@ class HandleInertiaRequests extends Middleware
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),
             ],
+            'analytics' => [
+                'ga4_id'   => config('factpro.analytics.ga4_id', ''),
+                'pixel_id' => config('factpro.analytics.pixel_id', ''),
+            ],
             'whiteLabel' => fn () => null, // Le middleware InjectWhiteLabel override si besoin
             'locale' => fn () => App::getLocale(),
             'translations' => fn () => [

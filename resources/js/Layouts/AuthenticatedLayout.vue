@@ -12,6 +12,7 @@ import Sara from '@/Components/Sara.vue';
 import NpsSurvey from '@/Components/NpsSurvey.vue';
 import GlobalSearch from '@/Components/GlobalSearch.vue';
 import UpgradeModal from '@/Components/UpgradeModal.vue';
+import Analytics from '@/Components/Analytics.vue';
 import { useUpgradeModal } from '@/Composables/useUpgradeModal';
 import { Link, router, usePage } from '@inertiajs/vue3';
 
@@ -305,6 +306,7 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                         <DropdownLink :href="route('referral.index')">🎁 Parrainage</DropdownLink>
                                         <DropdownLink :href="route('labels.index')">Étiquettes & codes-barres</DropdownLink>
                                         <DropdownLink :href="route('api-tokens.index')">API & Intégrations</DropdownLink>
+                                        <DropdownLink :href="route('support.index')">🎫 Support & Aide</DropdownLink>
                                         <DropdownLink :href="route('gdpr.index')">Mes données & RGPD</DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
                                             Déconnexion
@@ -451,6 +453,7 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
             <GlobalSearch />
             <NpsSurvey :user="$page.props.auth.user" />
             <Sara mode="internal" />
+            <Analytics />
         </div>
     </div>
 </template>

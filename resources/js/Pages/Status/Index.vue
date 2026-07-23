@@ -75,7 +75,10 @@ const fmt = (n) => Number(n || 0).toLocaleString('fr-FR');
 </script>
 
 <template>
-    <Head title="Statut des services — IBIG FactPro" />
+    <Head title="Statut des services — IBIG FactPro">
+        <meta name="description" content="Statut en temps réel des services IBIG FactPro. Vérifiez la disponibilité de l'application, de l'API et des emails.">
+        <meta name="robots" content="noindex, follow">
+    </Head>
 
     <PublicNav :can-login="canLogin" :can-register="canRegister" />
 

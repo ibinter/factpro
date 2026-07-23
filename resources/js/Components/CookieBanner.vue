@@ -14,14 +14,17 @@ onMounted(() => {
 
 function acceptAll() {
     localStorage.setItem('factpro_cookies', JSON.stringify({ preferences: true, statistics: true, marketing: true, ts: Date.now() }));
+    window.dispatchEvent(new CustomEvent('cookie:updated'));
     show.value = false;
 }
 function rejectAll() {
     localStorage.setItem('factpro_cookies', JSON.stringify({ preferences: false, statistics: false, marketing: false, ts: Date.now() }));
+    window.dispatchEvent(new CustomEvent('cookie:updated'));
     show.value = false;
 }
 function saveCustom() {
     localStorage.setItem('factpro_cookies', JSON.stringify({ ...prefs.value, ts: Date.now() }));
+    window.dispatchEvent(new CustomEvent('cookie:updated'));
     show.value = false;
     showCustom.value = false;
 }

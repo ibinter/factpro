@@ -28,6 +28,11 @@ return [
         'base_url' => 'https://api.moneroo.io/v1',
     ],
 
+    'analytics' => [
+        'ga4_id'   => env('GA4_MEASUREMENT_ID', ''),
+        'pixel_id' => env('META_PIXEL_ID', ''),
+    ],
+
     'proofs' => [
         'disk' => env('PROOF_STORAGE_DISK', 'local'),
         'max_size_mb' => (int) env('PROOF_MAX_SIZE_MB', 10),

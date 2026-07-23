@@ -4,6 +4,7 @@ import { useForm, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import PublicNav from '@/Pages/Public/Partials/PublicNav.vue';
 import PublicFooter from '@/Pages/Public/Partials/PublicFooter.vue';
+import Analytics from '@/Components/Analytics.vue';
 
 defineProps({
     canLogin:    { type: Boolean, default: true },
@@ -37,7 +38,10 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Contactez-nous — IBIG FactPro" />
+    <Head title="Contactez-nous — IBIG FactPro">
+        <meta name="description" content="Contactez l'équipe IBIG Soft pour une démo, du support ou un partenariat. Réponse sous 24h.">
+        <meta property="og:title" content="Contact IBIG FactPro — Support &amp; Démo">
+    </Head>
 
     <PublicNav :can-login="canLogin" :can-register="canRegister" />
 
@@ -211,4 +215,5 @@ function submit() {
     </section>
 
     <PublicFooter />
+    <Analytics />
 </template>

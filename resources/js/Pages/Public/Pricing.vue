@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import PublicNav from '@/Pages/Public/Partials/PublicNav.vue';
 import PublicFooter from '@/Pages/Public/Partials/PublicFooter.vue';
+import Analytics from '@/Components/Analytics.vue';
 
 const props = defineProps({
     plans: { type: Array, default: () => [] },
@@ -118,7 +119,13 @@ const staticRows = [
 </script>
 
 <template>
-    <Head title="Tarifs — IBIG FactPro" />
+    <Head title="Tarifs — IBIG FactPro">
+        <meta name="description" content="Plans et tarifs FactPro : Gratuit, Starter 4 900 FCFA/mois, Pro, Business. Essai 14 jours sans carte bancaire.">
+        <meta property="og:title" content="Tarifs FactPro — Plans adaptés à chaque entreprise">
+        <meta property="og:description" content="Plans et tarifs FactPro : Gratuit, Starter 4 900 FCFA/mois, Pro, Business. Essai 14 jours sans carte bancaire.">
+        <meta property="og:type" content="website">
+        <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Tarifs FactPro","description":"Plans et tarifs FactPro pour PME africaines"}</script>
+    </Head>
 
     <div class="min-h-screen bg-white text-gray-800">
         <PublicNav :can-login="canLogin" :can-register="canRegister" />
@@ -557,6 +564,7 @@ const staticRows = [
 
         <PublicFooter />
     </div>
+    <Analytics />
 </template>
 
 <style scoped>
