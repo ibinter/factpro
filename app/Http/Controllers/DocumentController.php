@@ -496,11 +496,42 @@ class DocumentController extends Controller
     }
 
     /**
+     * Types de documents qui acceptent les templates cosmétiques (layouts/templates).
+     * Les autres types ont un moteur PDF dédié (payslip, prescription, etc.)
+     * et doivent toujours utiliser leur vue engine — jamais un layout facture.
+     */
+    private const COSMETIC_TEMPLATE_TYPES = [
+        'invoice', 'credit_note', 'proforma', 'advance_invoice', 'deposit_invoice',
+        'recurring_invoice', 'final_invoice', 'corrective_invoice', 'tax_invoice',
+        'commercial_invoice',
+        'quote', 'price_offer', 'service_quote', 'work_quote', 'repair_estimate',
+        'delivery_note', 'packing_list', 'shipping_order', 'picking_list',
+        'transfer_note', 'goods_receipt', 'return_note', 'goods_return',
+        'purchase_order', 'supplier_order', 'rfq',
+        'payment_receipt', 'cash_receipt', 'petty_cash_receipt', 'advance_receipt', 'refund_receipt',
+        'contract', 'service_contract', 'lease_agreement', 'maintenance_contract',
+        'partnership_agreement', 'nda', 'framework_agreement', 'subcontracting_contract',
+        'meeting_minutes', 'pv_reception', 'pv_handover', 'acceptance_report',
+        'conflict_pv', 'general_assembly_pv',
+        'mission_order', 'travel_request', 'expense_report',
+        'site_report', 'inspection_report', 'progress_report', 'daily_report',
+        'rental_inventory', 'inventory_check', 'property_inspection',
+    ];
+
+    /**
      * Résout la vue Blade du modèle visuel (cahier §16) : template du document,
      * sinon modèle par défaut de la société, sinon fallback sur pdf.document.
+     * Les types à moteur dédié (payslip, prescription, report_card, leave_request)
+     * ignorent les templates cosmétiques et retournent toujours 'pdf.document'
+     * pour laisser le moteur utiliser sa propre vue.
      */
     private function resolveTemplateView(Document $document): string
     {
+        // Types à moteur dédié : ne jamais appliquer un template cosmétique facture
+        if (! in_array($document->type, self::COSMETIC_TEMPLATE_TYPES, true)) {
+            return 'pdf.document';
+        }
+
         $key = $document->template_key ?: $document->company->default_template;
 
         if ($key) {

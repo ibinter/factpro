@@ -103,6 +103,23 @@ const finalize = () => {
 };
 
 // ── Changement de template (cosmétique, autorisé même finalisé) ───────────────
+const COSMETIC_TEMPLATE_TYPES = [
+    'invoice','credit_note','proforma','advance_invoice','deposit_invoice',
+    'recurring_invoice','final_invoice','corrective_invoice','tax_invoice','commercial_invoice',
+    'quote','price_offer','service_quote','work_quote','repair_estimate',
+    'delivery_note','packing_list','shipping_order','picking_list',
+    'transfer_note','goods_receipt','return_note','goods_return',
+    'purchase_order','supplier_order','rfq',
+    'payment_receipt','cash_receipt','petty_cash_receipt','advance_receipt','refund_receipt',
+    'contract','service_contract','lease_agreement','maintenance_contract',
+    'partnership_agreement','nda','framework_agreement','subcontracting_contract',
+    'meeting_minutes','pv_reception','pv_handover','acceptance_report',
+    'conflict_pv','general_assembly_pv',
+    'mission_order','travel_request','expense_report',
+    'site_report','inspection_report','progress_report','daily_report',
+    'rental_inventory','inventory_check','property_inspection',
+];
+const acceptsCosmeticTemplate = computed(() => COSMETIC_TEMPLATE_TYPES.includes(props.document.type));
 const showTemplatePanel = ref(false);
 const templateForm = useForm({
     template_key: props.document.template_key ?? '',
@@ -297,7 +314,7 @@ const planProgress = computed(() => {
                         📄 PDF
                     </a>
                     <button
-                        v-if="templates.length"
+                        v-if="templates.length && acceptsCosmeticTemplate"
                         @click="showTemplatePanel = !showTemplatePanel"
                         class="rounded-md border border-purple-300 bg-purple-50 px-4 py-2 text-sm font-semibold text-purple-700 hover:bg-purple-100"
                         :class="showTemplatePanel ? 'ring-2 ring-purple-400' : ''"
