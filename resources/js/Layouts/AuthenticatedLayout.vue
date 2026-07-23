@@ -8,6 +8,8 @@ import NotificationBell from '@/Components/NotificationBell.vue';
 import LanguageSelector from '@/Components/LanguageSelector.vue';
 import OfflineBanner from '@/Components/OfflineBanner.vue';
 import PushOptIn from '@/Components/PushOptIn.vue';
+import Sara from '@/Components/Sara.vue';
+import GlobalSearch from '@/Components/GlobalSearch.vue';
 import { Link, router, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
@@ -184,6 +186,16 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                         </div>
 
                         <div class="hidden sm:ms-6 sm:flex sm:items-center">
+                            <!-- Recherche globale (Ctrl+K) -->
+                            <button
+                                type="button"
+                                @click="document.dispatchEvent(new KeyboardEvent('keydown', {key:'k',ctrlKey:true,bubbles:true}))"
+                                class="mr-3 inline-flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-500 transition hover:border-brand-300 hover:text-gray-700 focus:outline-none"
+                            >
+                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35"/></svg>
+                                <span class="hidden lg:inline">Rechercher</span>
+                                <kbd class="hidden lg:inline rounded bg-gray-200 px-1.5 py-0.5 text-xs font-mono text-gray-400">Ctrl+K</kbd>
+                            </button>
                             <!-- Sélecteur de langue (Phase 11 i18n) -->
                             <div class="relative mr-3">
                                 <LanguageSelector />
@@ -403,6 +415,9 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
             <main>
                 <slot />
             </main>
+
+            <GlobalSearch />
+            <Sara mode="internal" />
         </div>
     </div>
 </template>

@@ -152,5 +152,7 @@ class DatabaseSeeder extends Seeder
                 [...$method, 'is_active' => true],
             );
         }
+
+        $this->call(DemoDataSeeder::class);
     }
 }

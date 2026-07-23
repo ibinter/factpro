@@ -45,4 +45,64 @@ class LegalController extends Controller
     {
         return Inertia::render('Legal/Resiliation', $this->sharedProps());
     }
+
+    public function sla(): Response
+    {
+        return Inertia::render('Legal/Sla', $this->sharedProps());
+    }
+
+    public function securite(): Response
+    {
+        return Inertia::render('Legal/Securite', $this->sharedProps());
+    }
+
+    public function accessibilite(): Response
+    {
+        return Inertia::render('Legal/Accessibilite', $this->sharedProps());
+    }
+
+    public function remboursement(): Response
+    {
+        return Inertia::render('Legal/Remboursement', $this->sharedProps());
+    }
+
+    public function antiSpam(): Response
+    {
+        return Inertia::render('Legal/AntiSpam', $this->sharedProps());
+    }
+
+    public function conditionsApi(): Response
+    {
+        return Inertia::render('Legal/ConditionsApi', $this->sharedProps());
+    }
+
+    public function partenaires(): Response
+    {
+        return Inertia::render('Legal/Partenaires', $this->sharedProps());
+    }
+
+    public function utilisationAcceptable(): Response
+    {
+        return Inertia::render('Legal/UtilisationAcceptable', $this->sharedProps());
+    }
+
+    public function rgpdDetails(): Response
+    {
+        return Inertia::render('Legal/RgpdDetails', $this->sharedProps());
+    }
+
+    public function dpa(): Response
+    {
+        return Inertia::render('Legal/Dpa', $this->sharedProps());
+    }
+
+    public function planContinuite(): Response
+    {
+        return Inertia::render('Legal/PlanContinuite', $this->sharedProps());
+    }
+
+    public function charteEthique(): Response
+    {
+        return Inertia::render('Legal/CharteEthique', $this->sharedProps());
+    }
 }

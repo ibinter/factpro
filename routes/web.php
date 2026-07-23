@@ -102,6 +102,8 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::get('/documents/export/excel', [DocumentController::class, 'exportExcel'])->name('documents.export.excel');
     Route::post('/documents/{document}/send', DocumentSendController::class)->name('documents.send');
     Route::post('/documents/{document}/clone', [DocumentController::class, 'clone'])->name('documents.clone');
+
+    Route::get('/search', \App\Http\Controllers\GlobalSearchController::class)->name('search.global');
 });
 
 /*
@@ -159,6 +161,7 @@ require __DIR__.'/gdpr.php';
 require __DIR__.'/tax-config.php';
 require __DIR__.'/payment-gateways.php';
 require __DIR__.'/referral.php';
+require __DIR__.'/help.php';
 
 require __DIR__.'/white-label.php';
 require __DIR__.'/facturx.php';

@@ -305,6 +305,20 @@ const EN = {
     ctaBtn2: 'I already have an account',
 };
 
+/* ── Info Bar ── */
+const showInfoBar = ref(!sessionStorage.getItem('factpro_infobar_hidden'));
+function dismissInfoBar() {
+    sessionStorage.setItem('factpro_infobar_hidden', '1');
+    showInfoBar.value = false;
+}
+
+/* ── Testimonials ── */
+const testimonials = [
+    { name: 'Kouamé A.', role: 'Commerçant, Abidjan', text: 'FactPro a transformé ma gestion. Je crée mes factures en 2 minutes et mes clients reçoivent tout automatiquement.', rating: 5, avatar: 'K' },
+    { name: 'Marie T.', role: 'Restauratrice, Dakar', text: 'Le suivi des encaissements Mobile Money est parfait pour mon activité. Je recommande à tous les entrepreneurs.', rating: 5, avatar: 'M' },
+    { name: 'Jean-Paul B.', role: 'IT Consultant, Lomé', text: "L'API REST m'a permis d'intégrer FactPro dans mes outils existants. Support réactif et excellent.", rating: 5, avatar: 'J' },
+];
+
 const partnerStatuses = [
     { label: 'STARTER', icon: '⭐', color: '#6b7280', bg: '#f9fafb', min: 0, desc_fr: 'Débutant actif', desc_en: 'Active beginner' },
     { label: 'SILVER',  icon: '⭐⭐', color: '#64748b', bg: '#f1f5f9', min: 5,  desc_fr: '5+ ventes/mois', desc_en: '5+ sales/month' },
@@ -323,6 +337,20 @@ const partnerCommissions = [
     <Head :title="lang === 'fr' ? 'IBIG FactPro — Facturation professionnelle pour l\'Afrique et le monde' : 'IBIG FactPro — Professional invoicing for Africa and beyond'" />
 
     <div class="min-h-screen bg-white text-gray-800">
+        <!-- ═══════════════════════════════ INFO BAR ═══════════════════════════════ -->
+        <div v-if="showInfoBar" style="background:#001d3d" class="relative flex items-center justify-center px-4 py-2 text-xs text-white">
+            <span class="mr-1">🎉</span>
+            <span v-if="lang === 'fr'">
+                Essai gratuit 7 jours · Sans carte bancaire · Accès complet immédiat →
+                <a href="/register" class="ml-1 font-bold underline" style="color:#F0C040">Commencer gratuitement</a>
+            </span>
+            <span v-else>
+                7-day free trial · No credit card · Full access immediately →
+                <a href="/register" class="ml-1 font-bold underline" style="color:#F0C040">Get started free</a>
+            </span>
+            <button @click="dismissInfoBar" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-base leading-none" aria-label="Fermer">×</button>
+        </div>
+
         <!-- NAV avec toggle langue -->
         <nav class="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur">
             <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -569,6 +597,24 @@ const partnerCommissions = [
             </div>
         </section>
 
+        <!-- ═══════════════════════════════ TRUST BADGES ═══════════════════════════════ -->
+        <section class="bg-white border-t border-gray-100 py-4 px-6">
+            <div class="mx-auto max-w-5xl flex flex-wrap items-center justify-center gap-4">
+                <span v-for="badge in [
+                    { icon: '🔒', label_fr: 'SSL/TLS Sécurisé',          label_en: 'SSL/TLS Secured' },
+                    { icon: '🏦', label_fr: 'Paiement Mobile Money',      label_en: 'Mobile Money Payment' },
+                    { icon: '⭐', label_fr: 'Note 4.8/5',                 label_en: 'Rated 4.8/5' },
+                    { icon: '🌍', label_fr: '9 Pays Afrique',             label_en: '9 African Countries' },
+                    { icon: '📋', label_fr: 'Conforme OHADA',             label_en: 'OHADA Compliant' },
+                    { icon: '🔄', label_fr: 'Synchronisation temps réel', label_en: 'Real-time Sync' },
+                ]" :key="badge.label_fr"
+                    class="inline-flex items-center gap-1.5 rounded-full border border-gray-200 px-4 py-1.5 text-xs font-semibold text-gray-600 shadow-sm">
+                    <span>{{ badge.icon }}</span>
+                    <span>{{ lang === 'fr' ? badge.label_fr : badge.label_en }}</span>
+                </span>
+            </div>
+        </section>
+
         <!-- ═══════════════════════════════ STATS ═══════════════════════════════ -->
         <section class="bg-white px-6 pt-16 pb-10">
             <div class="mx-auto max-w-5xl grid grid-cols-2 gap-6 lg:grid-cols-4">
@@ -620,6 +666,64 @@ const partnerCommissions = [
                         <div class="text-4xl">{{ item.icon }}</div>
                         <h3 class="mt-4 text-lg font-bold text-brand-900">{{ item.title }}</h3>
                         <p class="mt-2 text-sm text-gray-600 leading-relaxed">{{ item.text }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ PROBLÈMES RÉSOLUS ═══════════════════════════════ -->
+        <section class="px-6 py-20 bg-white">
+            <div class="mx-auto max-w-5xl">
+                <div class="text-center mb-12">
+                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#fef2f2;color:#dc2626">{{ lang === 'fr' ? 'La transformation' : 'The transformation' }}</span>
+                    <h2 class="mt-4 text-3xl font-extrabold text-brand-900 sm:text-4xl">
+                        {{ lang === 'fr' ? 'Avant vs. Avec IBIG FactPro' : 'Before vs. With IBIG FactPro' }}
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <!-- Sans FactPro -->
+                    <div class="rounded-2xl p-8 space-y-4" style="background:#fff5f5;border:1px solid #fecaca">
+                        <h3 class="font-extrabold text-lg mb-4" style="color:#dc2626">
+                            {{ lang === 'fr' ? '❌ Sans FactPro' : '❌ Without FactPro' }}
+                        </h3>
+                        <div v-for="item in lang === 'fr' ? [
+                            'Factures Excel désorganisées',
+                            'Aucun suivi des paiements',
+                            'Oublis de relance clients',
+                            'Comptabilité manuelle',
+                            'Documents non sécurisés',
+                        ] : [
+                            'Disorganized Excel invoices',
+                            'No payment tracking',
+                            'Forgotten client follow-ups',
+                            'Manual accounting',
+                            'Unsecured documents',
+                        ]" :key="item" class="flex items-center gap-3 text-sm text-gray-700">
+                            <span class="flex-shrink-0 text-base">❌</span>
+                            <span>{{ item }}</span>
+                        </div>
+                    </div>
+                    <!-- Avec FactPro -->
+                    <div class="rounded-2xl p-8 space-y-4" style="background:#f0fdf4;border:1px solid #bbf7d0">
+                        <h3 class="font-extrabold text-lg mb-4" style="color:#16a34a">
+                            {{ lang === 'fr' ? '✅ Avec IBIG FactPro' : '✅ With IBIG FactPro' }}
+                        </h3>
+                        <div v-for="item in lang === 'fr' ? [
+                            'Facturation professionnelle en 2 clics',
+                            'Tableau de bord en temps réel',
+                            'Relances automatiques par WhatsApp/Email',
+                            'Rapports financiers automatisés',
+                            'Coffre-fort numérique AES-256',
+                        ] : [
+                            'Professional invoicing in 2 clicks',
+                            'Real-time dashboard',
+                            'Automatic WhatsApp/Email reminders',
+                            'Automated financial reports',
+                            'AES-256 digital vault',
+                        ]" :key="item" class="flex items-center gap-3 text-sm text-gray-700">
+                            <span class="flex-shrink-0 text-base">✅</span>
+                            <span>{{ item }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -784,6 +888,47 @@ const partnerCommissions = [
             </div>
         </section>
 
+        <!-- ═══════════════════════════════ IBIG SOFT PRODUCTS ═══════════════════════════════ -->
+        <section class="px-6 py-24 bg-white">
+            <div class="mx-auto max-w-7xl">
+                <div class="text-center mb-12">
+                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#eff6ff;color:#0062CC">IBIG Soft</span>
+                    <h2 class="mt-4 text-3xl font-extrabold text-brand-900 sm:text-4xl">
+                        {{ lang === 'fr' ? 'Découvrez tous nos logiciels' : 'Discover all our software' }}
+                    </h2>
+                    <p class="mt-3 text-gray-500">{{ lang === 'fr' ? 'IBIG Soft — Solutions SaaS pour l\'Afrique' : 'IBIG Soft — SaaS Solutions for Africa' }}</p>
+                </div>
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div v-for="product in [
+                        { icon: '🏢', name: 'IBIG RH',    desc_fr: 'Gestion RH & Paie',               desc_en: 'HR & Payroll Management',     soon: true },
+                        { icon: '📊', name: 'IBIG Stock',  desc_fr: 'Gestion des stocks',              desc_en: 'Inventory Management',        soon: true },
+                        { icon: '🏪', name: 'IBIG POS',    desc_fr: 'Point de vente (caisse)',         desc_en: 'Point of Sale (Cash Register)',soon: true },
+                        { icon: '📈', name: 'IBIG CRM',    desc_fr: 'Gestion de la relation client',   desc_en: 'Customer Relationship Mgmt',  soon: true },
+                        { icon: '🏗️', name: 'IBIG BTP',    desc_fr: 'Gestion de chantiers',            desc_en: 'Construction Management',     soon: true },
+                        { icon: '📚', name: 'IBIG École',  desc_fr: 'Gestion scolaire',                desc_en: 'School Management',           soon: true },
+                    ]" :key="product.name"
+                        class="relative flex flex-col rounded-2xl border p-6 transition hover:-translate-y-1 hover:shadow-lg"
+                        style="border-color:#dbeafe;background:#fafcff">
+                        <span v-if="product.soon"
+                              class="absolute right-4 top-4 rounded-full px-2 py-0.5 text-xs font-bold"
+                              style="background:#eff6ff;color:#0062CC;border:1px solid #bfdbfe">
+                            {{ lang === 'fr' ? 'Bientôt disponible' : 'Coming soon' }}
+                        </span>
+                        <div class="text-4xl mb-4">{{ product.icon }}</div>
+                        <h3 class="font-extrabold text-brand-900 text-lg">{{ product.name }}</h3>
+                        <p class="mt-1 text-sm text-gray-500 flex-1">{{ lang === 'fr' ? product.desc_fr : product.desc_en }}</p>
+                    </div>
+                </div>
+                <div class="mt-10 text-center">
+                    <a href="https://www.ibigsoft.com" target="_blank" rel="noopener"
+                       class="inline-flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-bold text-white transition hover:opacity-90"
+                       style="background:linear-gradient(135deg,#001d3d,#0062CC)">
+                        {{ lang === 'fr' ? 'Explorer ibigsoft.com →' : 'Explore ibigsoft.com →' }}
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- ═══════════════════════════════ FAQ ═══════════════════════════════ -->
         <section id="faq" class="px-6 py-24" style="background:#f8faff">
             <div class="mx-auto max-w-3xl">
@@ -916,6 +1061,37 @@ const partnerCommissions = [
                     <div v-for="integ in ['CinetPay','FedaPay','Flutterwave','Orange Money','MTN MoMo','Zapier','Make','WhatsApp','Stripe','API REST']" :key="integ"
                          class="rounded-xl border border-gray-100 px-5 py-3 text-sm font-semibold text-gray-700 shadow-sm hover:shadow-md transition">
                         {{ integ }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ TÉMOIGNAGES ═══════════════════════════════ -->
+        <section v-if="testimonials.length > 0" class="px-6 py-24" style="background:#f8faff">
+            <div class="mx-auto max-w-7xl">
+                <div class="text-center mb-12">
+                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#eff6ff;color:#0062CC">{{ lang === 'fr' ? 'Témoignages' : 'Testimonials' }}</span>
+                    <h2 class="mt-4 text-3xl font-extrabold text-brand-900 sm:text-4xl">
+                        {{ lang === 'fr' ? 'Ce que disent nos clients' : 'What our clients say' }}
+                    </h2>
+                </div>
+                <div class="grid gap-6 sm:grid-cols-1 lg:grid-cols-3">
+                    <div v-for="testi in testimonials" :key="testi.name"
+                         class="flex flex-col rounded-2xl bg-white p-7 shadow-sm ring-1 ring-gray-100 transition hover:-translate-y-1 hover:shadow-md">
+                        <!-- Stars -->
+                        <div class="flex gap-0.5 mb-4">
+                            <span v-for="n in testi.rating" :key="n" style="color:#F0C040">⭐</span>
+                        </div>
+                        <!-- Quote -->
+                        <p class="text-sm text-gray-600 leading-relaxed flex-1">"{{ testi.text }}"</p>
+                        <!-- Author -->
+                        <div class="mt-6 flex items-center gap-3">
+                            <div class="h-10 w-10 rounded-full flex items-center justify-center text-sm font-extrabold text-white flex-shrink-0" style="background:linear-gradient(135deg,#001d3d,#0062CC)">{{ testi.avatar }}</div>
+                            <div>
+                                <div class="font-bold text-sm text-brand-900">{{ testi.name }}</div>
+                                <div class="text-xs text-gray-400">{{ testi.role }}</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

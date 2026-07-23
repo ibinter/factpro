@@ -3,20 +3,21 @@ import { ref, onMounted } from 'vue';
 
 const show = ref(false);
 const showCustom = ref(false);
-const prefs = ref({ analytics: false, marketing: false });
+const prefs = ref({ preferences: false, statistics: false, marketing: false });
 
 onMounted(() => {
-    if (!localStorage.getItem('factpro_cookies')) {
+    const stored = localStorage.getItem('factpro_cookies');
+    if (!stored) {
         setTimeout(() => { show.value = true; }, 1200);
     }
 });
 
 function acceptAll() {
-    localStorage.setItem('factpro_cookies', JSON.stringify({ analytics: true, marketing: true, ts: Date.now() }));
+    localStorage.setItem('factpro_cookies', JSON.stringify({ preferences: true, statistics: true, marketing: true, ts: Date.now() }));
     show.value = false;
 }
 function rejectAll() {
-    localStorage.setItem('factpro_cookies', JSON.stringify({ analytics: false, marketing: false, ts: Date.now() }));
+    localStorage.setItem('factpro_cookies', JSON.stringify({ preferences: false, statistics: false, marketing: false, ts: Date.now() }));
     show.value = false;
 }
 function saveCustom() {
@@ -40,7 +41,7 @@ function saveCustom() {
                         <div class="flex-1">
                             <p class="text-sm font-semibold text-white mb-1">Nous utilisons des cookies</p>
                             <p class="text-xs text-white/60 leading-relaxed">
-                                IBIG FactPro utilise des cookies nécessaires au fonctionnement du service et, avec votre accord, des cookies analytiques pour améliorer l'expérience. Aucun cookie non essentiel n'est déposé sans votre consentement.
+                                IBIG FactPro utilise des cookies nécessaires au fonctionnement du service et, avec votre accord, des cookies de préférences, statistiques et marketing pour améliorer votre expérience. Aucun cookie non essentiel n'est déposé sans votre consentement.
                                 <a href="/legal/cookies" class="underline text-blue-300 hover:text-blue-200 ml-1">En savoir plus</a>
                             </p>
                         </div>
@@ -76,20 +77,32 @@ function saveCustom() {
                         </label>
                         <label class="flex items-center justify-between gap-4 cursor-pointer">
                             <div>
-                                <div class="text-sm font-semibold text-white">Cookies analytiques</div>
-                                <div class="text-xs text-white/50">Amélioration de l'expérience utilisateur.</div>
+                                <div class="text-sm font-semibold text-white">Cookies de préférences</div>
+                                <div class="text-xs text-white/50">Langue, thème, paramètres d'affichage.</div>
                             </div>
-                            <button @click="prefs.analytics = !prefs.analytics"
+                            <button @click="prefs.preferences = !prefs.preferences"
                                     class="w-10 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0"
-                                    :style="prefs.analytics ? 'background:#0062CC' : 'background:rgba(255,255,255,.2)'">
+                                    :style="prefs.preferences ? 'background:#0062CC' : 'background:rgba(255,255,255,.2)'">
                                 <span class="absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all duration-200"
-                                      :style="prefs.analytics ? 'left:22px' : 'left:2px'"></span>
+                                      :style="prefs.preferences ? 'left:22px' : 'left:2px'"></span>
+                            </button>
+                        </label>
+                        <label class="flex items-center justify-between gap-4 cursor-pointer">
+                            <div>
+                                <div class="text-sm font-semibold text-white">Cookies statistiques</div>
+                                <div class="text-xs text-white/50">Mesure d'audience anonymisée, amélioration du service.</div>
+                            </div>
+                            <button @click="prefs.statistics = !prefs.statistics"
+                                    class="w-10 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0"
+                                    :style="prefs.statistics ? 'background:#0062CC' : 'background:rgba(255,255,255,.2)'">
+                                <span class="absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all duration-200"
+                                      :style="prefs.statistics ? 'left:22px' : 'left:2px'"></span>
                             </button>
                         </label>
                         <label class="flex items-center justify-between gap-4 cursor-pointer">
                             <div>
                                 <div class="text-sm font-semibold text-white">Cookies marketing</div>
-                                <div class="text-xs text-white/50">Publicités personnalisées et campagnes.</div>
+                                <div class="text-xs text-white/50">Publicités personnalisées et campagnes ciblées.</div>
                             </div>
                             <button @click="prefs.marketing = !prefs.marketing"
                                     class="w-10 h-6 rounded-full transition-colors duration-200 relative flex-shrink-0"

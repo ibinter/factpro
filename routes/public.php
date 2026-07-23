@@ -38,6 +38,18 @@ Route::prefix('legal')->name('legal.')->group(function () {
     Route::get('/confidentialite', [LegalController::class, 'confidentialite'])->name('confidentialite');
     Route::get('/cookies',         [LegalController::class, 'cookies'])->name('cookies');
     Route::get('/pi',              [LegalController::class, 'pi'])->name('pi');
-    Route::get('/resiliation',     [LegalController::class, 'resiliation'])->name('resiliation');
+    Route::get('/resiliation',           [LegalController::class, 'resiliation'])->name('resiliation');
+    Route::get('/sla',                   [LegalController::class, 'sla'])->name('sla');
+    Route::get('/securite',              [LegalController::class, 'securite'])->name('securite');
+    Route::get('/accessibilite',         [LegalController::class, 'accessibilite'])->name('accessibilite');
+    Route::get('/remboursement',         [LegalController::class, 'remboursement'])->name('remboursement');
+    Route::get('/anti-spam',             [LegalController::class, 'antiSpam'])->name('anti-spam');
+    Route::get('/conditions-api',        [LegalController::class, 'conditionsApi'])->name('conditions-api');
+    Route::get('/partenaires',           [LegalController::class, 'partenaires'])->name('partenaires');
+    Route::get('/utilisation-acceptable',[LegalController::class, 'utilisationAcceptable'])->name('utilisation-acceptable');
+    Route::get('/rgpd-details',          [LegalController::class, 'rgpdDetails'])->name('rgpd-details');
+    Route::get('/dpa',                   [LegalController::class, 'dpa'])->name('dpa');
+    Route::get('/plan-continuite',       [LegalController::class, 'planContinuite'])->name('plan-continuite');
+    Route::get('/charte-ethique',        [LegalController::class, 'charteEthique'])->name('charte-ethique');
 });
 

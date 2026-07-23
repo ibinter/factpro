@@ -18,6 +18,18 @@ const LINKS = [
     { label: 'Cookies',                    href: '/legal/cookies' },
     { label: 'Propriété intellectuelle',   href: '/legal/pi' },
     { label: 'Résiliation',                href: '/legal/resiliation' },
+    { label: 'SLA',                        href: '/legal/sla' },
+    { label: 'Politique de sécurité',      href: '/legal/securite' },
+    { label: 'Accessibilité',              href: '/legal/accessibilite' },
+    { label: 'Remboursement',              href: '/legal/remboursement' },
+    { label: 'Anti-spam',                  href: '/legal/anti-spam' },
+    { label: 'Conditions API',             href: '/legal/conditions-api' },
+    { label: 'Partenaires',                href: '/legal/partenaires' },
+    { label: 'Utilisation acceptable',     href: '/legal/utilisation-acceptable' },
+    { label: 'RGPD détaillé',             href: '/legal/rgpd-details' },
+    { label: 'DPA',                        href: '/legal/dpa' },
+    { label: 'Plan de continuité',         href: '/legal/plan-continuite' },
+    { label: 'Charte éthique',             href: '/legal/charte-ethique' },
 ];
 
 const active = computed(() => {

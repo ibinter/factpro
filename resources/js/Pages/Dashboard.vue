@@ -1,5 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import OnboardingTour from '@/Components/OnboardingTour.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
 
@@ -107,6 +108,35 @@ const statusColor = { paid: 'bg-emerald-100 text-emerald-700', sent: 'bg-blue-10
 const statusLbl   = { paid: 'Payée', sent: 'Envoyée', draft: 'Brouillon', overdue: 'En retard', partial: 'Partielle', cancelled: 'Annulée', viewed: 'Vue', converted: 'Convertie', accepted: 'Accepté', rejected: 'Refusé' };
 const formatDate  = (d) => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
 
+// ── Onboarding tour ──────────────────────────────────────────────────────────
+const showTour = ref(!localStorage.getItem('factpro_tour_completed'));
+const tourSteps = [
+    {
+        target: '#sidebar-nav',
+        title: 'Navigation principale',
+        content: 'Accédez à toutes les fonctionnalités depuis ce menu : clients, factures, produits, rapports et bien plus.',
+        position: 'right',
+    },
+    {
+        target: '[data-tour="create-invoice"]',
+        title: 'Créer une facture',
+        content: 'Cliquez ici pour créer votre première facture en moins de 2 minutes.',
+        position: 'bottom',
+    },
+    {
+        target: '[data-tour="dashboard-stats"]',
+        title: 'Tableau de bord',
+        content: 'Suivez votre chiffre d\'affaires, vos encaissements et vos indicateurs clés en temps réel.',
+        position: 'bottom',
+    },
+    {
+        target: '[data-tour="company-settings"]',
+        title: 'Paramètres société',
+        content: 'Configurez votre logo, informations fiscales et préférences ici.',
+        position: 'left',
+    },
+];
+
 // ── Alerts ───────────────────────────────────────────────────────────────────
 const alertsOpen = ref(true);
 const alertBg    = { danger: 'bg-red-50 border-red-200 text-red-800', warning: 'bg-amber-50 border-amber-200 text-amber-800', info: 'bg-blue-50 border-blue-200 text-blue-800' };
@@ -116,6 +146,12 @@ const alertIcon  = { danger: '🔴', warning: '⚠️', info: 'ℹ️' };
 <template>
     <Head title="Tableau de bord" />
     <AuthenticatedLayout>
+        <OnboardingTour
+            v-if="showTour"
+            :steps="tourSteps"
+            @complete="showTour = false"
+            @skip="showTour = false"
+        />
         <div class="min-h-screen bg-gray-50 pb-12">
 
             <!-- Header -->
@@ -127,6 +163,7 @@ const alertIcon  = { danger: '🔴', warning: '⚠️', info: 'ℹ️' };
                     </div>
                     <div class="flex flex-wrap gap-2">
                         <Link :href="route('documents.create', { type: 'invoice' })"
+                            data-tour="create-invoice"
                             class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-brand-700 transition-colors">
                             <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                             Facture
@@ -177,7 +214,7 @@ const alertIcon  = { danger: '🔴', warning: '⚠️', info: 'ℹ️' };
                 </div>
 
                 <!-- KPI Cards -->
-                <div class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <div class="grid grid-cols-2 gap-3 lg:grid-cols-4" data-tour="dashboard-stats">
                     <!-- CA du mois -->
                     <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-brand-500 to-brand-700 p-5 text-white shadow-md">
                         <div class="absolute -right-4 -top-4 h-20 w-20 rounded-full bg-white/10"></div>

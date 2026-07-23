@@ -125,6 +125,15 @@ Schedule::call(function () {
 
 /*
 |--------------------------------------------------------------------------
+| Cycle de vie e-mails — essais & licences
+|--------------------------------------------------------------------------
+*/
+
+// E-mails de cycle de vie : fin d'essai J-3/J-1, expiration licence J-7/J-1, licence expirée hier
+Schedule::command('emails:lifecycle')->dailyAt('09:00');
+
+/*
+|--------------------------------------------------------------------------
 | Monitoring santé applicative — Phase 17
 |--------------------------------------------------------------------------
 */

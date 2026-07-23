@@ -1,36 +1,100 @@
 <script setup>
-import { ref, nextTick } from 'vue';
+import { ref, computed, nextTick } from 'vue';
 import axios from 'axios';
 
+const props = defineProps({ mode: { type: String, default: 'public' } });
+
 const open = ref(false);
+const minimized = ref(false);
 const input = ref('');
 const loading = ref(false);
+const inputError = ref('');
+const unreadCount = ref(0);
 const messagesEl = ref(null);
+
+const welcomeMessage = computed(() =>
+    props.mode === 'internal'
+        ? "Bonjour ! Je suis SARA, votre assistante IA. Je peux vous guider dans FactPro, expliquer les fonctionnalités et vous aider à créer des documents."
+        : "Bonjour ! Je suis SARA, l'assistante intelligente de IBIG FactPro. Posez-moi toutes vos questions sur le logiciel, les tarifs et l'essai gratuit."
+);
+
+const suggestions = computed(() =>
+    props.mode === 'internal'
+        ? ["Comment créer une facture ?", "Expliquer les KPIs du tableau de bord", "Comment ajouter un client ?", "Comment générer un devis ?"]
+        : ["C'est quoi l'essai gratuit ?", "Quels sont les tarifs ?", "Est-ce compatible mobile ?", "Comment créer une facture ?"]
+);
+
 const messages = ref([
-    { role: 'assistant', content: "Bonjour ! Je suis SARA, votre assistante IA FactPro. Comment puis-je vous aider aujourd'hui ?" }
+    { role: 'assistant', content: welcomeMessage.value }
 ]);
 
-const suggestions = [
-    "C'est quoi l'essai gratuit ?",
-    'Quels sont les tarifs ?',
-    'Est-ce compatible mobile ?',
-    'Comment fonctionne le QR ?',
-];
+const BLOCKED_KEYWORDS = ["mot de passe", "password", "carte bancaire", "numéro de carte", "code secret", "pin", "bdf", "hack", "exploit", "injection", "xss", "sql"];
+const REFUSAL_MSG = "Je suis désolée, je ne peux pas vous aider avec ce type de demande. Pour la sécurité, contactez notre support à support@ibigsoft.com";
+
+function isBlocked(text) {
+    const lower = text.toLowerCase();
+    return BLOCKED_KEYWORDS.some(k => lower.includes(k));
+}
+
+function openChat() {
+    open.value = true;
+    minimized.value = false;
+    unreadCount.value = 0;
+}
+
+function toggleChat() {
+    if (open.value && !minimized.value) {
+        open.value = false;
+    } else {
+        openChat();
+    }
+}
+
+function minimize() {
+    minimized.value = true;
+    open.value = false;
+}
+
+function resetConversation() {
+    messages.value = [{ role: 'assistant', content: welcomeMessage.value }];
+    input.value = '';
+    inputError.value = '';
+}
 
 async function send(text) {
     const msg = (text || input.value).trim();
     if (!msg || loading.value) return;
+
+    inputError.value = '';
+
+    if (msg.length > 500) {
+        inputError.value = "Message trop long (max 500 caractères)";
+        return;
+    }
+
+    if (isBlocked(msg)) {
+        input.value = '';
+        messages.value.push({ role: 'user', content: msg });
+        messages.value.push({ role: 'assistant', content: REFUSAL_MSG });
+        if (!open.value) unreadCount.value++;
+        await scrollBottom();
+        return;
+    }
+
     input.value = '';
     messages.value.push({ role: 'user', content: msg });
     loading.value = true;
     await scrollBottom();
+
     try {
         const history = messages.value.slice(-10).map(m => ({ role: m.role, content: m.content }));
-        const { data } = await axios.post('/api/sara/chat', { messages: history });
+        const { data } = await axios.post('/api/sara/chat', { messages: history, mode: props.mode });
         messages.value.push({ role: 'assistant', content: data.reply });
+        if (!open.value) unreadCount.value++;
     } catch (e) {
         const err = e.response?.data?.error ?? e.response?.data?.message ?? null;
         messages.value.push({ role: 'assistant', content: err ?? 'Désolée, problème de connexion. Réessayez.' });
+        if (!open.value) unreadCount.value++;
     } finally {
         loading.value = false;
         await scrollBottom();
@@ -48,7 +112,6 @@ function onKey(e) {
 </script>
 
 <template>
-    <!-- Bubble trigger -->
     <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
         <!-- Chat window -->
         <Transition name="sara-slide">
@@ -59,11 +122,15 @@ function onKey(e) {
                         <div class="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-xl font-bold text-white">S</div>
                         <span class="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-green-400"></span>
                     </div>
-                    <div>
+                    <div class="flex-1 min-w-0">
                         <p class="text-sm font-bold text-white">SARA</p>
-                        <p class="text-xs text-white/70">Assistante IA FactPro · En ligne</p>
+                        <p class="text-xs text-white/70 truncate">{{ mode === 'internal' ? 'Assistante IA · FactPro' : 'Assistante IA FactPro · En ligne' }}</p>
                     </div>
-                    <button @click="open = false" class="ml-auto text-white/60 hover:text-white">
+                    <button @click="resetConversation" class="text-[10px] text-white/60 hover:text-white border border-white/30 rounded px-1.5 py-0.5 shrink-0" title="Nouvelle conversation">
+                        Nouvelle conversation
+                    </button>
+                    <button @click="minimize" class="text-white/60 hover:text-white ml-1 text-lg font-bold leading-none" title="Réduire">–</button>
+                    <button @click="open = false" class="text-white/60 hover:text-white ml-1" title="Fermer">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                     </button>
                 </div>
@@ -92,17 +159,18 @@ function onKey(e) {
                         <button
                             v-for="s in suggestions" :key="s"
                             @click="send(s)"
-                            class="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700 transition hover:bg-brand-100"
+                            class="rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700 transition hover:bg-blue-100"
                         >{{ s }}</button>
                     </div>
                 </div>
 
                 <!-- Input -->
                 <div class="border-t border-gray-100 p-3">
-                    <div class="flex items-end gap-2 rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 focus-within:border-brand-400">
+                    <div class="flex items-end gap-2 rounded-xl border bg-gray-50 px-3 py-2 focus-within:border-blue-400" :class="inputError ? 'border-red-300' : 'border-gray-200'">
                         <textarea
                             v-model="input"
                             @keydown="onKey"
+                            @input="inputError = ''"
                             rows="1"
                             placeholder="Posez votre question…"
                             class="flex-1 resize-none bg-transparent text-sm text-gray-800 outline-none placeholder:text-gray-400"
@@ -117,15 +185,19 @@ function onKey(e) {
                             <svg class="h-4 w-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19V5m-7 7l7-7 7 7"/></svg>
                         </button>
                     </div>
-                    <p class="mt-1 text-center text-[10px] text-gray-400">SARA · IA de IBIG FactPro</p>
+                    <div class="mt-1 flex items-center justify-between px-0.5">
+                        <p v-if="inputError" class="text-[10px] text-red-500">{{ inputError }}</p>
+                        <p v-else class="text-[10px] text-gray-400">{{ input.length }}/500</p>
+                        <p class="text-[10px] text-gray-400">SARA · IA de IBIG FactPro</p>
+                    </div>
                 </div>
             </div>
         </Transition>
 
         <!-- Toggle button -->
         <button
-            @click="open = !open"
-            class="flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition hover:scale-105 active:scale-95"
+            @click="toggleChat"
+            class="relative flex h-14 w-14 items-center justify-center rounded-full shadow-xl transition hover:scale-105 active:scale-95"
             style="background:linear-gradient(135deg,#0062CC,#002D5B)"
             aria-label="Ouvrir SARA"
         >
@@ -133,6 +205,11 @@ function onKey(e) {
                 <svg v-if="!open" key="chat" class="h-6 w-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                 <svg v-else key="close" class="h-6 w-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </Transition>
+            <!-- Unread badge -->
+            <span
+                v-if="unreadCount > 0 && !open"
+                class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white"
+            >{{ unreadCount }}</span>
         </button>
     </div>
 </template>
