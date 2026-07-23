@@ -37,7 +37,7 @@
         {{-- IBIG SOFT — Script universel : section "Nos solutions" + footer sur les pages publiques --}}
         @php
             $publicRoutes = ['home','public.pricing','about','contact','contact.store','demo','demo.store','blog.index','blog.show','testimonials','roadmap','roadmap.vote','security','partners'];
-            $ibigRender = request()->routeIs(...$publicRoutes) ? 'all' : 'none';
+            $ibigRender = request()->routeIs(...$publicRoutes) ? 'solutions' : 'none';
         @endphp
         <script src="/assets/js/ibigsoft-universal.js"
                 data-solution="factpro"

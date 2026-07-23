@@ -914,46 +914,9 @@ const partnerCommissions = [
             </div>
         </section>
 
-        <!-- ═══════════════════════════════ IBIG SOFT PRODUCTS ═══════════════════════════════ -->
-        <section class="px-6 py-24 bg-white">
-            <div class="mx-auto max-w-7xl">
-                <div class="text-center mb-12">
-                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#eff6ff;color:#0062CC">IBIG Soft</span>
-                    <h2 class="mt-4 text-3xl font-extrabold text-brand-900 sm:text-4xl">
-                        {{ lang === 'fr' ? 'Découvrez tous nos logiciels' : 'Discover all our software' }}
-                    </h2>
-                    <p class="mt-3 text-gray-500">{{ lang === 'fr' ? 'IBIG Soft — Solutions SaaS pour l\'Afrique' : 'IBIG Soft — SaaS Solutions for Africa' }}</p>
-                </div>
-                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    <div v-for="product in [
-                        { icon: '🏢', name: 'IBIG RH',    desc_fr: 'Gestion RH & Paie',               desc_en: 'HR & Payroll Management',     soon: true },
-                        { icon: '📊', name: 'IBIG Stock',  desc_fr: 'Gestion des stocks',              desc_en: 'Inventory Management',        soon: true },
-                        { icon: '🏪', name: 'IBIG POS',    desc_fr: 'Point de vente (caisse)',         desc_en: 'Point of Sale (Cash Register)',soon: true },
-                        { icon: '📈', name: 'IBIG CRM',    desc_fr: 'Gestion de la relation client',   desc_en: 'Customer Relationship Mgmt',  soon: true },
-                        { icon: '🏗️', name: 'IBIG BTP',    desc_fr: 'Gestion de chantiers',            desc_en: 'Construction Management',     soon: true },
-                        { icon: '📚', name: 'IBIG École',  desc_fr: 'Gestion scolaire',                desc_en: 'School Management',           soon: true },
-                    ]" :key="product.name"
-                        class="relative flex flex-col rounded-2xl border p-6 transition hover:-translate-y-1 hover:shadow-lg"
-                        style="border-color:#dbeafe;background:#fafcff">
-                        <span v-if="product.soon"
-                              class="absolute right-4 top-4 rounded-full px-2 py-0.5 text-xs font-bold"
-                              style="background:#eff6ff;color:#0062CC;border:1px solid #bfdbfe">
-                            {{ lang === 'fr' ? 'Bientôt disponible' : 'Coming soon' }}
-                        </span>
-                        <div class="text-4xl mb-4">{{ product.icon }}</div>
-                        <h3 class="font-extrabold text-brand-900 text-lg">{{ product.name }}</h3>
-                        <p class="mt-1 text-sm text-gray-500 flex-1">{{ lang === 'fr' ? product.desc_fr : product.desc_en }}</p>
-                    </div>
-                </div>
-                <div class="mt-10 text-center">
-                    <a href="https://www.ibigsoft.com" target="_blank" rel="noopener"
-                       class="inline-flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-bold text-white transition hover:opacity-90"
-                       style="background:linear-gradient(135deg,#001d3d,#0062CC)">
-                        {{ lang === 'fr' ? 'Explorer ibigsoft.com →' : 'Explore ibigsoft.com →' }}
-                    </a>
-                </div>
-            </div>
-        </section>
+        <!-- ═══════════════════════════════ IBIG SOFT PRODUCTS (carrousel universel) ═══════════════════════════════ -->
+        <!-- Le script ibigsoft-universal.js injecte ici le carrousel réel des 16 solutions IBIG SOFT -->
+        <div data-ibig="solutions"></div>
 
         <!-- ═══════════════════════════════ FAQ ═══════════════════════════════ -->
         <section id="faq" class="px-6 py-24" style="background:#f8faff">
