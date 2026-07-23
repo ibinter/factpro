@@ -34,7 +34,7 @@ body { font-family: DejaVu Sans, Arial, sans-serif; font-size:10px; color:#222; 
 .header-right { text-align:right; font-size:9px; color:#555; }
 
 .badge { display:inline-block; padding:2px 9px; border-radius:10px; font-size:9px; font-weight:bold;
-         background:{{ $sc }}; color:{{ $pc }}; margin-top:4px; }
+         background:{{ $ac }}; color:#fff; margin-top:4px; }
 
 .info-row { display:flex; gap:14px; margin-bottom:16px; }
 .info-block { flex:1; border:1px solid #e5e7eb; border-radius:5px; padding:10px; }
@@ -53,7 +53,7 @@ td.right { text-align:right; font-family:monospace; }
 td.center { text-align:center; }
 tfoot td { padding:6px 8px; font-weight:bold; background:#f3f4f6; }
 
-.totals { border:2px solid {{ $pc }}; border-radius:5px; padding:12px 14px; margin-bottom:16px; }
+.totals { border:2px solid {{ $ac }}; border-radius:5px; padding:12px 14px; margin-bottom:16px; }
 .trow { display:flex; justify-content:space-between; padding:4px 0;
         border-bottom:1px solid #f3f4f6; font-size:10px; }
 .trow:last-child { border-bottom:none; }
@@ -61,8 +61,8 @@ tfoot td { padding:6px 8px; font-weight:bold; background:#f3f4f6; }
            border-radius:3px; font-weight:bold; font-size:12px; border:none; }
 .trow .lbl { color:#374151; }
 .trow .val { font-family:monospace; font-weight:bold; }
-.trow.hl .lbl { color:{{ $pc }}; }
-.trow.hl .val { color:{{ $pc }}; font-size:13px; }
+.trow.hl .lbl { color:{{ $ac }}; }
+.trow.hl .val { color:{{ $ac }}; font-size:13px; }
 
 .footer { border-top:1px solid #e5e7eb; padding-top:10px; font-size:8px; color:#9ca3af; text-align:center; }
 .footer p { margin:2px 0; }
