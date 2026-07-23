@@ -13,6 +13,10 @@ use App\Http\Controllers\PublicVerifyController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
 
+// Page de capture leads — demande de démonstration personnalisée.
+Route::get('/demo', [DemoController::class, 'index'])->name('demo');
+Route::post('/demo', [DemoController::class, 'store'])->middleware('throttle:3,1')->name('demo.store');
+
 // Accès démo instantané — connecte le compte demo@factpro.test sans mot de passe.
 Route::get('/demo-login', [DemoController::class, 'login'])
     ->middleware('throttle:20,1')

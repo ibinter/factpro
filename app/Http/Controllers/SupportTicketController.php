@@ -42,11 +42,7 @@ class SupportTicketController extends Controller
 
         // Email confirmation client
         try {
-            Mail::raw(
-                "Votre ticket #{$ticket->ticket_number} a été créé.\n\nSujet : {$ticket->subject}\n\nNous vous répondrons dans les meilleurs délais.\n\nÉquipe IBIG FactPro",
-                fn ($m) => $m->to($request->user()->email)
-                             ->subject("[FactPro Support] Ticket #{$ticket->ticket_number} créé")
-            );
+            Mail::to($request->user()->email)->send(new \App\Mail\Support\TicketCreatedMail($request->user(), $ticket));
             // Email admin
             Mail::raw(
                 "Nouveau ticket #{$ticket->ticket_number}\nDe : {$request->user()->name} ({$request->user()->email})\nSujet : {$ticket->subject}\nCatégorie : {$ticket->category}\nPriorité : {$ticket->priority}\n\n{$ticket->first_message}",

@@ -86,6 +86,11 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // RGPD — portabilité & suppression
+    Route::get('/profile/rgpd', [\App\Http\Controllers\RgpdController::class, 'show'])->name('profile.rgpd');
+    Route::get('/profile/export-data', [\App\Http\Controllers\RgpdController::class, 'export'])->middleware('throttle:2,60')->name('profile.export');
+    Route::post('/profile/delete-request', [\App\Http\Controllers\RgpdController::class, 'requestDeletion'])->middleware('throttle:1,60')->name('profile.delete-request');
+
     // Changelog / Nouveautés
     Route::get('/nouveautes', [\App\Http\Controllers\ChangelogController::class, 'index'])->name('changelog.index');
 });

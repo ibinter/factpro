@@ -57,6 +57,15 @@ defineProps({
                 >
                     <DeleteUserForm class="max-w-xl" />
                 </div>
+
+                <div class="text-center">
+                    <a
+                        :href="route('profile.rgpd')"
+                        class="inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
+                    >
+                        Mes données &amp; RGPD →
+                    </a>
+                </div>
             </div>
         </div>
     </AuthenticatedLayout>

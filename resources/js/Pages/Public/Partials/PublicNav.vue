@@ -30,6 +30,13 @@ const open = ref(false);
 
             <div class="hidden items-center gap-3 md:flex">
                 <a
+                    href="/demo"
+                    class="rounded-lg px-4 py-2 text-sm font-bold shadow transition hover:opacity-90"
+                    style="background:#C9A84C;color:#002D5B;"
+                >
+                    Demander une démo
+                </a>
+                <a
                     v-if="canLogin"
                     href="/login"
                     class="px-3 py-2 text-sm font-semibold text-brand-900 hover:text-brand-600"
@@ -70,6 +77,14 @@ const open = ref(false);
                 <a href="/partenaires" class="text-sm font-semibold text-gray-700" @click="open = false">Partenaires</a>
                 <a href="/contact" class="text-sm font-semibold text-gray-700" @click="open = false">Contact</a>
                 <div class="mt-2 flex flex-col gap-2">
+                    <a
+                        href="/demo"
+                        class="rounded-lg px-4 py-2 text-center text-sm font-bold"
+                        style="background:#C9A84C;color:#002D5B;"
+                        @click="open = false"
+                    >
+                        Demander une démo
+                    </a>
                     <a
                         v-if="canLogin"
                         href="/login"

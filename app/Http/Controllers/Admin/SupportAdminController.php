@@ -60,12 +60,7 @@ class SupportAdminController extends Controller {
 
         // Email notif client
         try {
-            Mail::raw(
-                "L'équipe IBIG a répondu à votre ticket #{$ticket->ticket_number}.\n\n".
-                "Message : {$request->message}\n\nConsultez votre ticket : ".url("/support/{$ticket->id}"),
-                fn ($m) => $m->to($ticket->user->email)
-                             ->subject("[FactPro Support] Réponse à votre ticket #{$ticket->ticket_number}")
-            );
+            Mail::to($ticket->user->email)->send(new \App\Mail\Support\TicketReplyMail($ticket->user, $ticket, $request->message));
         } catch (\Throwable) {}
 
         return back()->with('success', 'Réponse envoyée au client.');
