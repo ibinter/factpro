@@ -33,5 +33,17 @@
         @inertia
 
         {{-- Service Worker registered once in app.js --}}
+
+        {{-- IBIG SOFT — Script universel : section "Nos solutions" + footer sur les pages publiques --}}
+        @php
+            $publicRoutes = ['welcome','pricing','about','contact','demo','blog','blog.show','testimonials','roadmap','security','partners'];
+            $ibigRender = request()->routeIs(...$publicRoutes) ? 'all' : 'none';
+        @endphp
+        <script src="/assets/js/ibigsoft-universal.js"
+                data-solution="factpro"
+                data-accent="#0284C7"
+                data-render="{{ $ibigRender }}"
+                data-masquer-courante="true"
+                defer></script>
     </body>
 </html>
