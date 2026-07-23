@@ -1,0 +1,33 @@
+{
+  "appId": "com.ibigsoft.factpro",
+  "appName": "IBIG FactPro",
+  "webDir": "public/build",
+  "server": {
+    "androidScheme": "https",
+    "hostname": "factpro.ibigsoft.com",
+    "iosScheme": "https"
+  },
+  "plugins": {
+    "Geolocation": {
+      "permissions": ["location"]
+    },
+    "StatusBar": {
+      "style": "Dark",
+      "backgroundColor": "#1a56db"
+    },
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#1a56db",
+      "showSpinner": false
+    }
+  },
+  "android": {
+    "buildOptions": {
+      "keystorePath": "android/app/ibigfactpro.keystore",
+      "keystoreAlias": "factpro"
+    }
+  },
+  "ios": {
+    "contentInset": "automatic"
+  }
+}

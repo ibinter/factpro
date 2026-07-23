@@ -225,6 +225,23 @@ require __DIR__.'/mobile-money.php';
 require __DIR__.'/status.php';
 
 // Phase 14 — Intelligence & Automatisation IA
+// Module D — Visites terrain & Signature tablette
+use App\Http\Controllers\VisitController;
+use App\Http\Controllers\SignatureController;
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/visits', [VisitController::class, 'index'])->name('visits.index');
+    Route::post('/visits', [VisitController::class, 'store'])->name('visits.store');
+    Route::patch('/visits/{visit}', [VisitController::class, 'update'])->name('visits.update');
+    Route::delete('/visits/{visit}', [VisitController::class, 'destroy'])->name('visits.destroy');
+    Route::post('/visits/{visit}/checkin', [VisitController::class, 'checkin'])->name('visits.checkin');
+    Route::post('/visits/{visit}/checkout', [VisitController::class, 'checkout'])->name('visits.checkout');
+
+    // Signature tablette
+    Route::get('/documents/{document}/signature', [SignatureController::class, 'show'])->name('documents.signature.show');
+    Route::post('/documents/{document}/signature', [SignatureController::class, 'store'])->name('documents.signature.store');
+    Route::delete('/documents/{document}/signature', [SignatureController::class, 'destroy'])->name('documents.signature.destroy');
+});
+
 use App\Http\Controllers\AiReminderController;
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/ai/reminder/{customer}', [AiReminderController::class, 'generate'])->name('ai.reminder');
