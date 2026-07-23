@@ -437,15 +437,9 @@ class DocumentController extends Controller
 
         $engineConfig = $this->engine->resolve($document);
 
-        // Pour les types "invoice", le template cosmétique personnalisé prime sur le moteur
-        // Pour tous les autres types, le moteur documentaire prime toujours
-        $isInvoiceFamily = in_array($document->type, [
-            'invoice', 'credit_note', 'proforma', 'deposit_invoice',
-            'simple_invoice', 'export_invoice', 'tax_exempt_invoice',
-            'rectification_invoice', 'balance_invoice',
-        ]);
+        // Le template cosmétique s'applique à tous les types de documents dès qu'un modèle est sélectionné
         $cosmeticView = $this->resolveTemplateView($document);
-        $viewName = ($isInvoiceFamily && $cosmeticView !== 'pdf.document')
+        $viewName = $cosmeticView !== 'pdf.document'
             ? $cosmeticView
             : $engineConfig['template'];
 
