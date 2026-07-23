@@ -50,14 +50,11 @@
 {{-- Tableau lignes --}}
 @include('pdf.engine.blocks._items-financial', ['document' => $document, 'primaryColor' => $primaryColor])
 
-{{-- Totaux --}}
-@include('pdf.engine.blocks._totals', ['document' => $document, 'primaryColor' => $primaryColor])
+{{-- Totaux + QR anti-falsification --}}
+@include('pdf.engine.blocks._totals', ['document' => $document, 'primaryColor' => $primaryColor, 'qrDataUri' => $qrDataUri ?? null])
 
 {{-- Paiement --}}
 @include('pdf.engine.blocks._payment-info', ['company' => $company, 'document' => $document, 'primaryColor' => $primaryColor])
-
-{{-- QR --}}
-@include('pdf.engine.blocks._qr-auth', ['qrDataUri' => $qrDataUri ?? null, 'document' => $document])
 
 {{-- Notes --}}
 @include('pdf.engine.blocks._notes', ['document' => $document])

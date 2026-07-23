@@ -17,6 +17,7 @@ use App\Services\OutgoingWebhookService;
 use App\Services\PaymentPlanService;
 use App\Services\QrCodeService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -432,9 +433,21 @@ class DocumentController extends Controller
             ? $cosmeticView
             : $engineConfig['template'];
 
+        // Logo en base64 — DomPDF ne charge pas les URLs HTTP distantes
+        $logoBase64 = null;
+        $logoPath   = $document->company->logo_path ?? null;
+        if ($logoPath) {
+            $absPath = Storage::disk('public')->path($logoPath);
+            if (file_exists($absPath)) {
+                $mime        = mime_content_type($absPath) ?: 'image/png';
+                $logoBase64  = 'data:' . $mime . ';base64,' . base64_encode(file_get_contents($absPath));
+            }
+        }
+
         $pdf = Pdf::loadView($viewName, [
             'document'        => $document,
             'company'         => $document->company,
+            'logoBase64'      => $logoBase64,
             'qrDataUri'       => $qr->forDocument($document),
             'watermark'       => $document->trial_watermark ? config('factpro.trial.watermark_text') : null,
             'primaryColor'    => $engineConfig['primary_color'],

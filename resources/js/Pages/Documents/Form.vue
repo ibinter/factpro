@@ -329,6 +329,16 @@ const activeFamily      = ref(null);
 const families          = computed(() => [...new Set(props.templates.map(t => t.family))]);
 const filteredTemplates = computed(() => activeFamily.value ? props.templates.filter(t => t.family === activeFamily.value) : props.templates);
 
+// Modal prévisualisation
+const previewTemplate   = ref(null);
+const showPreviewModal  = ref(false);
+function openPreview(t) { previewTemplate.value = t; showPreviewModal.value = true; }
+function closePreview()  { showPreviewModal.value = false; }
+function selectFromPreview() {
+    if (previewTemplate.value) form.template_key = previewTemplate.value.key;
+    closePreview();
+}
+
 // ── Submit ────────────────────────────────────────────────────────────────────
 const submit = () => {
     const opts = {
@@ -471,45 +481,243 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
                         </div>
                     </div>
 
-                    <!-- Sélecteur de modèle PDF -->
-                    <div v-if="templates.length" class="pt-2 border-t border-gray-50">
-                        <div class="flex items-center justify-between mb-2">
-                            <InputLabel value="Modèle visuel du PDF" class="!mb-0" />
-                            <span class="text-xs text-gray-400">{{ templates.length }} modèles disponibles</span>
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- ── GALERIE DE MODÈLES PDF avec aperçu ─────────────── -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <div v-if="templates.length" class="pt-3 border-t border-gray-100">
+                        <div class="flex items-center justify-between mb-3">
+                            <div>
+                                <InputLabel value="Modèle visuel du document" class="!mb-0" />
+                                <p class="text-xs text-gray-400 mt-0.5">Cliquez sur 👁 pour voir l'aperçu complet avant de valider</p>
+                            </div>
+                            <span class="text-xs font-medium text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full">{{ templates.length }} modèles</span>
                         </div>
-                        <div class="mb-2 flex flex-wrap gap-1.5">
+
+                        <!-- Filtres par famille -->
+                        <div class="mb-3 flex flex-wrap gap-1.5">
                             <button type="button" @click="activeFamily = null"
                                 class="rounded-full px-3 py-1 text-xs font-medium transition-colors"
-                                :class="!activeFamily ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                                :class="!activeFamily ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
                                 Tous ({{ templates.length }})
                             </button>
                             <button v-for="fam in families" :key="fam" type="button" @click="activeFamily = fam"
                                 class="rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize"
-                                :class="activeFamily === fam ? 'bg-brand-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                                :class="activeFamily === fam ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
                                 {{ fam }}
                             </button>
                         </div>
-                        <div class="max-h-44 overflow-y-auto rounded-lg border border-gray-100 p-2">
-                            <div class="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-5">
-                                <button v-for="t in filteredTemplates" :key="t.key" type="button" @click="form.template_key = t.key" :title="t.description"
-                                    class="flex items-center gap-2 rounded-lg border px-2.5 py-2 text-left transition-all"
-                                    :class="form.template_key === t.key ? 'border-brand-600 bg-brand-50 ring-1 ring-brand-600' : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'">
-                                    <span class="flex shrink-0 items-center -space-x-1">
-                                        <span class="h-4 w-4 rounded-full border-2 border-white shadow-sm" :style="{ backgroundColor: t.primary }"></span>
-                                        <span class="h-4 w-4 rounded-full border-2 border-white shadow-sm" :style="{ backgroundColor: t.secondary }"></span>
-                                        <span class="h-3.5 w-3.5 rounded-full border-2 border-white shadow-sm" :style="{ backgroundColor: t.accent }"></span>
-                                    </span>
-                                    <span class="min-w-0">
-                                        <span class="block truncate text-[11px] font-semibold leading-tight" :class="form.template_key === t.key ? 'text-brand-700' : 'text-gray-700'">{{ t.name }}</span>
-                                        <span class="block truncate text-[9px] text-gray-400 capitalize">{{ t.family }}</span>
-                                    </span>
-                                    <span v-if="form.template_key === t.key" class="ml-auto flex-shrink-0 text-brand-600">
-                                        <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                                    </span>
-                                </button>
+
+                        <!-- Grille de cartes -->
+                        <div class="max-h-72 overflow-y-auto rounded-xl border border-gray-100 bg-gray-50 p-2.5">
+                            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                                <div v-for="t in filteredTemplates" :key="t.key"
+                                    class="group relative rounded-xl border-2 overflow-hidden cursor-pointer transition-all duration-150"
+                                    :class="form.template_key === t.key
+                                        ? 'border-brand-500 shadow-md ring-1 ring-brand-400'
+                                        : 'border-gray-200 bg-white hover:border-brand-300 hover:shadow-sm'"
+                                    @click="form.template_key = t.key">
+
+                                    <!-- Mini aperçu document -->
+                                    <div class="relative h-24 w-full overflow-hidden" :style="{ background: t.secondary || '#f8fafc' }">
+                                        <!-- Bande header -->
+                                        <div class="absolute inset-x-0 top-0 h-5 flex items-center px-2 gap-1.5"
+                                            :style="{ backgroundColor: t.primary }">
+                                            <div class="h-2.5 w-2.5 rounded-full bg-white/30 flex-shrink-0"></div>
+                                            <div class="h-1.5 rounded bg-white/50 flex-grow"></div>
+                                            <div class="h-1.5 w-6 rounded bg-white/70"></div>
+                                        </div>
+                                        <!-- Corps simulé -->
+                                        <div class="absolute inset-x-2 top-7 space-y-1">
+                                            <div class="h-1 rounded" :style="{ backgroundColor: t.primary, opacity: 0.15, width: '70%' }"></div>
+                                            <div class="h-px rounded bg-gray-300 w-full"></div>
+                                            <div v-for="i in 3" :key="i" class="flex gap-1">
+                                                <div class="h-1 rounded bg-gray-300 flex-grow"></div>
+                                                <div class="h-1 w-6 rounded bg-gray-300"></div>
+                                                <div class="h-1 w-7 rounded bg-gray-300"></div>
+                                            </div>
+                                            <div class="h-px rounded bg-gray-300 w-full"></div>
+                                        </div>
+                                        <!-- Total bar -->
+                                        <div class="absolute inset-x-2 bottom-3 h-3 rounded flex items-center justify-end px-2"
+                                            :style="{ backgroundColor: t.primary }">
+                                            <div class="h-1 w-10 rounded bg-white/70"></div>
+                                        </div>
+                                        <!-- Bouton aperçu au survol -->
+                                        <button type="button"
+                                            class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all opacity-0 group-hover:opacity-100"
+                                            @click.stop="openPreview(t)">
+                                            <span class="bg-white text-gray-800 text-xs font-semibold rounded-full px-3 py-1 shadow flex items-center gap-1">
+                                                👁 Aperçu
+                                            </span>
+                                        </button>
+                                        <!-- Badge sélectionné -->
+                                        <div v-if="form.template_key === t.key"
+                                            class="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-white flex items-center justify-center shadow">
+                                            <svg class="h-2.5 w-2.5 text-brand-600" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <!-- Nom & famille -->
+                                    <div class="px-2 py-1.5 bg-white">
+                                        <div class="text-[10px] font-semibold leading-tight truncate"
+                                            :class="form.template_key === t.key ? 'text-brand-700' : 'text-gray-700'">
+                                            {{ t.name }}
+                                        </div>
+                                        <div class="flex items-center gap-1 mt-0.5">
+                                            <div class="flex -space-x-0.5">
+                                                <span class="h-2 w-2 rounded-full border border-white" :style="{ backgroundColor: t.primary }"></span>
+                                                <span class="h-2 w-2 rounded-full border border-white" :style="{ backgroundColor: t.accent }"></span>
+                                            </div>
+                                            <span class="text-[9px] text-gray-400 capitalize truncate">{{ t.family }}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Modèle sélectionné -->
+                        <div v-if="form.template_key" class="mt-2 flex items-center gap-2 text-xs text-brand-700 bg-brand-50 rounded-lg px-3 py-2">
+                            <svg class="h-3.5 w-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            Modèle sélectionné : <strong>{{ templates.find(t => t.key === form.template_key)?.name }}</strong>
+                            <button type="button" @click="form.template_key = ''" class="ml-auto text-gray-400 hover:text-red-500 text-xs">✕</button>
+                        </div>
                     </div>
+
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <!-- ── MODAL APERÇU TEMPLATE ───────────────────────────── -->
+                    <!-- ═══════════════════════════════════════════════════════ -->
+                    <Teleport to="body">
+                        <Transition name="modal-fade">
+                        <div v-if="showPreviewModal && previewTemplate"
+                            class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                            @click.self="closePreview">
+                            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+
+                                <!-- Header modal -->
+                                <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex -space-x-1">
+                                            <span class="h-5 w-5 rounded-full border-2 border-white shadow" :style="{ backgroundColor: previewTemplate.primary }"></span>
+                                            <span class="h-5 w-5 rounded-full border-2 border-white shadow" :style="{ backgroundColor: previewTemplate.secondary }"></span>
+                                            <span class="h-4 w-4 rounded-full border-2 border-white shadow" :style="{ backgroundColor: previewTemplate.accent }"></span>
+                                        </div>
+                                        <div>
+                                            <h3 class="font-bold text-gray-900 text-sm">{{ previewTemplate.name }}</h3>
+                                            <p class="text-xs text-gray-400 capitalize">{{ previewTemplate.family }} · {{ previewTemplate.description }}</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" @click="closePreview" class="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100">
+                                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                    </button>
+                                </div>
+
+                                <!-- Aperçu simulé A4 -->
+                                <div class="flex-1 overflow-y-auto bg-gray-200 p-6">
+                                    <div class="mx-auto bg-white shadow-xl" style="width:100%;max-width:520px;min-height:680px;padding:28px;">
+
+                                        <!-- Header doc -->
+                                        <div class="flex justify-between items-start mb-5">
+                                            <div>
+                                                <div class="h-8 w-24 rounded mb-2" :style="{ backgroundColor: previewTemplate.primary + '22' }"></div>
+                                                <div class="font-bold text-sm" :style="{ color: previewTemplate.primary }">KOFFI & ASSOCIÉS SARL</div>
+                                                <div class="text-xs text-gray-400">12 Rue du Commerce, Abidjan-Plateau<br>Tél : +225 07 00 00 00 · RC CI-ABJ-2019</div>
+                                            </div>
+                                            <div class="text-right">
+                                                <div class="text-2xl font-black" :style="{ color: previewTemplate.primary }">FACTURE</div>
+                                                <div class="text-xs text-gray-500 mt-1">N° FAC-2024-0842</div>
+                                                <div class="text-xs text-gray-500">Date : 23/07/2024</div>
+                                                <div class="text-xs text-gray-500">Échéance : 22/08/2024</div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Divider -->
+                                        <div class="h-0.5 mb-4" :style="{ backgroundColor: previewTemplate.primary }"></div>
+
+                                        <!-- Client -->
+                                        <div class="mb-4 p-3 rounded-lg" :style="{ backgroundColor: previewTemplate.primary + '10' }">
+                                            <div class="text-[10px] font-bold uppercase tracking-wide mb-1" :style="{ color: previewTemplate.primary }">Facturé à</div>
+                                            <div class="font-semibold text-sm text-gray-800">ORANGE CÔTE D'IVOIRE S.A.</div>
+                                            <div class="text-xs text-gray-500">Direction Achats · Abidjan-Plateau, CI</div>
+                                        </div>
+
+                                        <!-- Tableau -->
+                                        <table class="w-full text-xs mb-4" style="border-collapse:collapse;">
+                                            <thead>
+                                                <tr :style="{ backgroundColor: previewTemplate.primary }">
+                                                    <th class="text-left text-white px-3 py-2 text-[10px]">Désignation</th>
+                                                    <th class="text-right text-white px-2 py-2 text-[10px] w-8">Qté</th>
+                                                    <th class="text-right text-white px-2 py-2 text-[10px] w-20">P.U. HT</th>
+                                                    <th class="text-right text-white px-3 py-2 text-[10px] w-20">Total HT</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(row, i) in [
+                                                    { d:'Audit infrastructure réseau & sécurité', q:'1', pu:'350 000', t:'350 000' },
+                                                    { d:'Déploiement VLAN multi-sites', q:'3', pu:'85 000', t:'255 000' },
+                                                    { d:'Formation équipe IT (5 techniciens)', q:'15j', pu:'18 000', t:'270 000' },
+                                                ]" :key="i" :style="{ backgroundColor: i % 2 === 0 ? previewTemplate.secondary + '40' : 'white' }">
+                                                    <td class="px-3 py-1.5 text-gray-700">{{ row.d }}</td>
+                                                    <td class="px-2 py-1.5 text-right text-gray-600">{{ row.q }}</td>
+                                                    <td class="px-2 py-1.5 text-right text-gray-600">{{ row.pu }}</td>
+                                                    <td class="px-3 py-1.5 text-right font-medium text-gray-800">{{ row.t }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                        <!-- Totaux -->
+                                        <div class="flex justify-between items-end gap-4">
+                                            <!-- QR simulé -->
+                                            <div class="flex items-center gap-3 p-2 border border-gray-200 rounded-lg bg-gray-50">
+                                                <div class="grid grid-cols-3 gap-px w-10 h-10 bg-gray-200 rounded">
+                                                    <template v-for="i in 9" :key="i">
+                                                        <div class="rounded-sm" :style="{ backgroundColor: [1,2,4,5,6,8].includes(i) ? previewTemplate.primary : 'white' }"></div>
+                                                    </template>
+                                                </div>
+                                                <div class="text-[9px] text-gray-500">Scan pour<br>vérifier</div>
+                                            </div>
+                                            <!-- Totaux -->
+                                            <div class="flex-1 max-w-xs">
+                                                <div class="flex justify-between text-xs py-1 border-b border-gray-100">
+                                                    <span class="text-gray-500">Sous-total HT</span>
+                                                    <span class="font-medium">875 000 XOF</span>
+                                                </div>
+                                                <div class="flex justify-between text-xs py-1 border-b border-gray-100">
+                                                    <span class="text-gray-500">TVA (18%)</span>
+                                                    <span>157 500 XOF</span>
+                                                </div>
+                                                <div class="flex justify-between px-3 py-2 rounded text-sm font-bold text-white mt-1"
+                                                    :style="{ backgroundColor: previewTemplate.primary }">
+                                                    <span>TOTAL TTC</span>
+                                                    <span>1 032 500 XOF</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Footer -->
+                                        <div class="mt-5 pt-3 border-t text-center text-[9px] text-gray-400">
+                                            KOFFI & ASSOCIÉS SARL · 12 Rue du Commerce, Abidjan-Plateau · RCCM CI-ABJ-2019-B-15234<br>
+                                            Pénalités de retard applicables au taux légal · Généré par <strong>IBIG FactPro</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Footer modal -->
+                                <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50">
+                                    <button type="button" @click="closePreview" class="text-sm text-gray-500 hover:text-gray-700 font-medium">
+                                        ← Continuer à parcourir
+                                    </button>
+                                    <button type="button" @click="selectFromPreview"
+                                        class="px-5 py-2 rounded-xl text-sm font-semibold text-white shadow transition-opacity hover:opacity-90"
+                                        :style="{ backgroundColor: previewTemplate.primary }">
+                                        ✓ Choisir ce modèle
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        </Transition>
+                    </Teleport>
                 </div>
 
                 <!-- ══════════════════════════════════════════════════════════ -->
@@ -1427,3 +1635,8 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
         </div>
     </AuthenticatedLayout>
 </template>
+
+<style scoped>
+.modal-fade-enter-active, .modal-fade-leave-active { transition: opacity .2s ease; }
+.modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }
+</style>
