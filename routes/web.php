@@ -221,6 +221,9 @@ require __DIR__.'/special-labels.php';
 // Phase 16 — Scan caméra POS Mobile
 require __DIR__.'/barcode.php';
 
+// Phase 16A/16B — Chiffrement AES-256 & Coffre-fort numérique immuable
+require __DIR__.'/vault.php';
+
 // Phase 17 — Mobile Money Direct
 require __DIR__.'/mobile-money.php';
 
@@ -276,6 +279,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/ged/folders/{gedFolder}', [GedController::class, 'deleteFolder'])->name('ged.folders.destroy');
 });
 
+// Phase 16E — Signatures qualifiées eIDAS niveau avancé
+require __DIR__.'/signatures.php';
+
 // Phase 14 — Portail Fournisseur (pages publiques)
 use App\Http\Controllers\SupplierPortalController;
 Route::get('/supplier/portal/{token}', [SupplierPortalController::class, 'show'])->name('supplier.portal.show');
@@ -288,3 +294,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/supplier-offers/{offer}/select', [SupplierPortalController::class, 'select'])->name('supplier.select');
 });
 
+
+// Phase 16C — Politique de sécurité & sessions
+use App\Http\Controllers\SecurityPolicyController;
+Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->group(function () {
+    Route::get('/policy', [SecurityPolicyController::class, 'show'])->name('policy');
+    Route::put('/policy', [SecurityPolicyController::class, 'update'])->name('policy.update');
+    Route::get('/access-logs', [SecurityPolicyController::class, 'accessLogs'])->name('access-logs');
+    Route::get('/sessions', [SecurityPolicyController::class, 'sessions'])->name('sessions');
+    Route::delete('/sessions/{sessionId}', [SecurityPolicyController::class, 'killSession'])->name('sessions.kill');
+    Route::delete('/sessions', [SecurityPolicyController::class, 'killAllSessions'])->name('sessions.kill-all');
+});
+
+// Phase 16D — Conformité RGPD
+use App\Http\Controllers\GdprComplianceController;
+Route::middleware(['auth', 'verified'])->prefix('gdpr')->name('gdpr.')->group(function () {
+    Route::get('/', [GdprComplianceController::class, 'dashboard'])->name('dashboard');
+    Route::get('/requests', [GdprComplianceController::class, 'requests'])->name('requests');
+    Route::post('/requests', [GdprComplianceController::class, 'createRequest'])->name('requests.store');
+    Route::put('/requests/{gdprRequest}', [GdprComplianceController::class, 'updateRequest'])->name('requests.update');
+    Route::post('/export-data', [GdprComplianceController::class, 'exportData'])->name('export-data');
+    Route::post('/delete-subject', [GdprComplianceController::class, 'deleteSubject'])->name('delete-subject');
+    Route::get('/report', [GdprComplianceController::class, 'generateReport'])->name('report');
+});

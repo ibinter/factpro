@@ -36,6 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'license' => \App\Http\Middleware\EnsureLicenseActive::class,
             'superadmin' => \App\Http\Middleware\EnsureSuperadmin::class,
             'validate.incoming.webhook' => \App\Http\Middleware\ValidateIncomingWebhookToken::class,
+            'security.policy' => \App\Http\Middleware\CheckSecurityPolicy::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

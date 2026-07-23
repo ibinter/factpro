@@ -137,3 +137,12 @@ Schedule::command('app:health-check --alert')->dailyAt('06:00')->name('health.ch
 |--------------------------------------------------------------------------
 */
 Schedule::command('scoring:customers')->dailyAt('02:00');
+
+/*
+|--------------------------------------------------------------------------
+| Coffre-fort numérique — Phase 16B
+|--------------------------------------------------------------------------
+*/
+
+// Archive automatique des documents finalisés des dernières 24h
+Schedule::command('vault:auto-archive')->dailyAt('01:00')->name('vault.auto-archive');

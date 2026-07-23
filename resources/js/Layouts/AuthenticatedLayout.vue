@@ -154,6 +154,21 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                                     </div>
                                                 </div>
                                                 <div class="mt-3 border-t border-gray-100 pt-2">
+                                                    <p class="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Sécurité & Conformité</p>
+                                                    <a href="/vault" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                        <span>🔐</span><span>Coffre-fort</span>
+                                                    </a>
+                                                    <a :href="route('signatures.dashboard')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors" :class="route().current('signatures.*') ? 'font-semibold text-brand-700' : ''">
+                                                        <span>✍️</span><span>Signatures eIDAS</span>
+                                                    </a>
+                                                    <a href="/security/policy" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                        <span>🛡️</span><span>Politique sécurité</span>
+                                                    </a>
+                                                    <a :href="route('gdpr.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                        <span>📋</span><span>RGPD</span>
+                                                    </a>
+                                                </div>
+                                                <div class="mt-2 border-t border-gray-100 pt-2">
                                                     <a :href="route('billing.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-50 transition-colors">
                                                         <span>💳</span><span>Abonnement & Facturation</span>
                                                     </a>
@@ -306,6 +321,9 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('reminders.index')" :active="route().current('reminders.*')">
                             Relances
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink :href="route('signatures.dashboard')" :active="route().current('signatures.*')">
+                            Signatures
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('billing.index')" :active="route().current('billing.*')">
                             Abonnement
