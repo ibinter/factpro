@@ -154,7 +154,7 @@ onUnmounted(() => { cancelAnimationFrame(animId); clearTimeout(pauseTimer); });
         <div style="max-width:1200px;margin:0 auto;padding:0 20px;">
             <p style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-top:6px;font-size:13px;color:#4A5568;">
                 Besoin d'aide pour choisir ?
-                <a href="mailto:contact@ibigsoft.com" style="color:#1D6FE0;font-weight:600;text-decoration:none;">contact@ibigsoft.com</a>
+                <a href="mailto:support@ibigsoft.com" style="color:#1D6FE0;font-weight:600;text-decoration:none;">support@ibigsoft.com</a>
                 ou WhatsApp
                 <a href="https://wa.me/2250778882592" target="_blank" rel="noopener" style="color:#1D6FE0;font-weight:600;text-decoration:none;">+225 07 78 88 25 92</a>
             </p>
