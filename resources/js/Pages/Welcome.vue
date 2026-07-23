@@ -8,6 +8,7 @@ import Sara from '@/Components/Sara.vue';
 import CookieBanner from '@/Components/CookieBanner.vue';
 import WhatsAppButton from '@/Components/WhatsAppButton.vue';
 import Analytics from '@/Components/Analytics.vue';
+import IbigSoftSolutions from '@/Components/IbigSoftSolutions.vue';
 
 const props = defineProps({
     canLogin:    { type: Boolean, default: true },
@@ -914,9 +915,8 @@ const partnerCommissions = [
             </div>
         </section>
 
-        <!-- ═══════════════════════════════ IBIG SOFT PRODUCTS (carrousel universel) ═══════════════════════════════ -->
-        <!-- Le script ibigsoft-universal.js injecte ici le carrousel réel des 16 solutions IBIG SOFT -->
-        <div data-ibig="solutions"></div>
+        <!-- ═══════════════════════════════ IBIG SOFT PRODUCTS ═══════════════════════════════ -->
+        <IbigSoftSolutions />
 
         <!-- ═══════════════════════════════ FAQ ═══════════════════════════════ -->
         <section id="faq" class="px-6 py-24" style="background:#f8faff">
