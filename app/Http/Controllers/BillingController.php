@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Coupon;
 use App\Models\CryptoWallet;
+use App\Models\GatewayConfig;
 use App\Models\Order;
 use App\Models\PaymentMethodConfig;
 use App\Models\PaymentProof;
@@ -146,6 +147,11 @@ class BillingController extends Controller
             ] : null,
             'activeWallets' => $activeWallets,
             'codEnabled' => (bool) config('services.cod.enabled', false),
+            'waveCiEnabled'      => GatewayConfig::forGateway('wave_ci')->is_active,
+            'mtnMomoEnabled'     => GatewayConfig::forGateway('mtn_momo')->is_active,
+            'orangeMoneyEnabled' => GatewayConfig::forGateway('orange_money')->is_active,
+            'paydunyaEnabled'    => GatewayConfig::forGateway('paydunya')->is_active,
+            'stripeEnabled'      => GatewayConfig::forGateway('stripe')->is_active,
         ]);
     }
 

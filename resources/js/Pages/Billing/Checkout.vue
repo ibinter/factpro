@@ -11,6 +11,11 @@ const props = defineProps({
     order: Object,
     manualMethods: Array,
     monerooEnabled: Boolean,
+    waveCiEnabled: Boolean,
+    mtnMomoEnabled: Boolean,
+    orangeMoneyEnabled: Boolean,
+    paydunyaEnabled: Boolean,
+    stripeEnabled: Boolean,
     appliedCoupon: Object,
     activeWallets: { type: Array, default: () => [] },
     codEnabled: { type: Boolean, default: false },
@@ -165,6 +170,51 @@ const payWithMoneroo = () => {
     });
 };
 
+// ── Wave CI ───────────────────────────────────────────────────────────────
+const waveCiProcessing = ref(false);
+const payWithWaveCi = () => {
+    waveCiProcessing.value = true;
+    router.post(route('billing.wave_ci.initiate', props.order.id), {}, {
+        onFinish: () => { waveCiProcessing.value = false; },
+    });
+};
+
+// ── MTN MoMo ─────────────────────────────────────────────────────────────
+const mtnMomoProcessing = ref(false);
+const payWithMtnMomo = () => {
+    mtnMomoProcessing.value = true;
+    router.post(route('billing.mtn_momo.initiate', props.order.id), {}, {
+        onFinish: () => { mtnMomoProcessing.value = false; },
+    });
+};
+
+// ── Orange Money CI ───────────────────────────────────────────────────────
+const orangeMoneyProcessing = ref(false);
+const payWithOrangeMoney = () => {
+    orangeMoneyProcessing.value = true;
+    router.post(route('billing.orange_money.initiate', props.order.id), {}, {
+        onFinish: () => { orangeMoneyProcessing.value = false; },
+    });
+};
+
+// ── PayDunya (Sénégal) ────────────────────────────────────────────────────
+const paydunyaProcessing = ref(false);
+const payWithPaydunya = () => {
+    paydunyaProcessing.value = true;
+    router.post(route('billing.paydunya.initiate', props.order.id), {}, {
+        onFinish: () => { paydunyaProcessing.value = false; },
+    });
+};
+
+// ── Stripe (international) ────────────────────────────────────────────────
+const stripeProcessing = ref(false);
+const payWithStripe = () => {
+    stripeProcessing.value = true;
+    router.post(route('billing.stripe.initiate', props.order.id), {}, {
+        onFinish: () => { stripeProcessing.value = false; },
+    });
+};
+
 // ── Voucher / Code prépayé ────────────────────────────────────────────────
 const voucherCode = ref('');
 const verifying = ref(false);
@@ -305,6 +355,106 @@ const submitCod = () => {
                         </p>
                         <PrimaryButton :disabled="monerooProcessing" @click="payWithMoneroo" class="w-full justify-center">
                             {{ monerooProcessing ? 'Redirection…' : `Payer maintenant — ${fmt(order.total_amount)} ${order.currency}` }}
+                        </PrimaryButton>
+                    </div>
+                </div>
+
+                <!-- ═══════ Wave CI ═══════ -->
+                <div v-if="waveCiEnabled" class="overflow-hidden rounded-xl border-2 border-sky-500 bg-white shadow-sm">
+                    <button @click="toggle('wave_ci')" class="flex w-full items-center justify-between gap-4 p-5 text-left">
+                        <div class="flex items-center gap-4">
+                            <span class="flex h-12 w-12 items-center justify-center rounded-full text-xl flex-shrink-0" style="background:#00BCD4">🌊</span>
+                            <div>
+                                <div class="font-semibold text-gray-800">Payer avec Wave</div>
+                                <div class="text-xs text-gray-500">CI · SN · ML · BF · GN · UG · TZ · <span class="text-green-600 font-semibold">Activation immédiate</span></div>
+                            </div>
+                        </div>
+                        <span class="text-gray-400 text-lg">{{ activePanel === 'wave_ci' ? '▲' : '▼' }}</span>
+                    </button>
+                    <div v-show="activePanel === 'wave_ci'" class="border-t bg-gray-50 p-5">
+                        <p class="mb-4 text-sm text-gray-600">Vous serez redirigé vers l'interface Wave pour approuver le paiement depuis votre compte Wave.</p>
+                        <PrimaryButton :disabled="waveCiProcessing" @click="payWithWaveCi" class="w-full justify-center" style="background:#00BCD4;border-color:#00BCD4">
+                            {{ waveCiProcessing ? 'Redirection Wave…' : `Payer avec Wave — ${fmt(order.total_amount)} ${order.currency}` }}
+                        </PrimaryButton>
+                    </div>
+                </div>
+
+                <!-- ═══════ MTN Mobile Money ═══════ -->
+                <div v-if="mtnMomoEnabled" class="overflow-hidden rounded-xl border-2 border-yellow-400 bg-white shadow-sm">
+                    <button @click="toggle('mtn_momo')" class="flex w-full items-center justify-between gap-4 p-5 text-left">
+                        <div class="flex items-center gap-4">
+                            <span class="flex h-12 w-12 items-center justify-center rounded-full text-xl flex-shrink-0 font-bold text-black" style="background:#FFCB05">M</span>
+                            <div>
+                                <div class="font-semibold text-gray-800">MTN Mobile Money</div>
+                                <div class="text-xs text-gray-500">CI · GH · CM · BJ · RW · UG · <span class="text-green-600 font-semibold">Activation immédiate</span></div>
+                            </div>
+                        </div>
+                        <span class="text-gray-400 text-lg">{{ activePanel === 'mtn_momo' ? '▲' : '▼' }}</span>
+                    </button>
+                    <div v-show="activePanel === 'mtn_momo'" class="border-t bg-gray-50 p-5">
+                        <p class="mb-4 text-sm text-gray-600">Une demande de paiement sera envoyée sur votre téléphone MTN. Approuvez-la dans l'application MTN MoMo.</p>
+                        <PrimaryButton :disabled="mtnMomoProcessing" @click="payWithMtnMomo" class="w-full justify-center" style="background:#FFCB05;border-color:#FFCB05;color:#000">
+                            {{ mtnMomoProcessing ? 'Envoi en cours…' : `Payer avec MTN MoMo — ${fmt(order.total_amount)} ${order.currency}` }}
+                        </PrimaryButton>
+                    </div>
+                </div>
+
+                <!-- ═══════ Orange Money CI ═══════ -->
+                <div v-if="orangeMoneyEnabled" class="overflow-hidden rounded-xl border-2 border-orange-500 bg-white shadow-sm">
+                    <button @click="toggle('orange_money_api')" class="flex w-full items-center justify-between gap-4 p-5 text-left">
+                        <div class="flex items-center gap-4">
+                            <span class="flex h-12 w-12 items-center justify-center rounded-full text-xl flex-shrink-0" style="background:#FF6600">🟠</span>
+                            <div>
+                                <div class="font-semibold text-gray-800">Orange Money</div>
+                                <div class="text-xs text-gray-500">CI · SN · ML · BF · CM · MG · <span class="text-green-600 font-semibold">Activation immédiate</span></div>
+                            </div>
+                        </div>
+                        <span class="text-gray-400 text-lg">{{ activePanel === 'orange_money_api' ? '▲' : '▼' }}</span>
+                    </button>
+                    <div v-show="activePanel === 'orange_money_api'" class="border-t bg-gray-50 p-5">
+                        <p class="mb-4 text-sm text-gray-600">Vous serez redirigé vers la page de paiement Orange Money sécurisée pour confirmer votre transaction.</p>
+                        <PrimaryButton :disabled="orangeMoneyProcessing" @click="payWithOrangeMoney" class="w-full justify-center" style="background:#FF6600;border-color:#FF6600">
+                            {{ orangeMoneyProcessing ? 'Redirection…' : `Payer avec Orange Money — ${fmt(order.total_amount)} ${order.currency}` }}
+                        </PrimaryButton>
+                    </div>
+                </div>
+
+                <!-- ═══════ PayDunya (Sénégal) ═══════ -->
+                <div v-if="paydunyaEnabled" class="overflow-hidden rounded-xl border-2 border-green-600 bg-white shadow-sm">
+                    <button @click="toggle('paydunya')" class="flex w-full items-center justify-between gap-4 p-5 text-left">
+                        <div class="flex items-center gap-4">
+                            <span class="flex h-12 w-12 items-center justify-center rounded-full text-xl flex-shrink-0" style="background:#1A9B3C">🅿</span>
+                            <div>
+                                <div class="font-semibold text-gray-800">PayDunya</div>
+                                <div class="text-xs text-gray-500">SN · CI · BJ · TG · GN · ML · BF · <span class="text-green-600 font-semibold">Activation immédiate</span></div>
+                            </div>
+                        </div>
+                        <span class="text-gray-400 text-lg">{{ activePanel === 'paydunya' ? '▲' : '▼' }}</span>
+                    </button>
+                    <div v-show="activePanel === 'paydunya'" class="border-t bg-gray-50 p-5">
+                        <p class="mb-4 text-sm text-gray-600">Payez avec Orange Money, Free Money, Wave, Wari et d'autres solutions populaires en Afrique de l'Ouest via PayDunya.</p>
+                        <PrimaryButton :disabled="paydunyaProcessing" @click="payWithPaydunya" class="w-full justify-center" style="background:#1A9B3C;border-color:#1A9B3C">
+                            {{ paydunyaProcessing ? 'Redirection PayDunya…' : `Payer avec PayDunya — ${fmt(order.total_amount)} ${order.currency}` }}
+                        </PrimaryButton>
+                    </div>
+                </div>
+
+                <!-- ═══════ Stripe (international) ═══════ -->
+                <div v-if="stripeEnabled" class="overflow-hidden rounded-xl border-2 bg-white shadow-sm" style="border-color:#635BFF">
+                    <button @click="toggle('stripe')" class="flex w-full items-center justify-between gap-4 p-5 text-left">
+                        <div class="flex items-center gap-4">
+                            <span class="flex h-12 w-12 items-center justify-center rounded-full text-xl text-white flex-shrink-0" style="background:#635BFF">💳</span>
+                            <div>
+                                <div class="font-semibold text-gray-800">Carte bancaire internationale (Stripe)</div>
+                                <div class="text-xs text-gray-500">Visa · Mastercard · Amex · <span class="text-green-600 font-semibold">Activation immédiate</span></div>
+                            </div>
+                        </div>
+                        <span class="text-gray-400 text-lg">{{ activePanel === 'stripe' ? '▲' : '▼' }}</span>
+                    </button>
+                    <div v-show="activePanel === 'stripe'" class="border-t bg-gray-50 p-5">
+                        <p class="mb-4 text-sm text-gray-600">Paiement sécurisé par Stripe. Vos données bancaires ne transitent jamais par nos serveurs — elles sont chiffrées directement chez Stripe.</p>
+                        <PrimaryButton :disabled="stripeProcessing" @click="payWithStripe" class="w-full justify-center" style="background:#635BFF;border-color:#635BFF">
+                            {{ stripeProcessing ? 'Redirection Stripe…' : `Payer par carte — ${fmt(order.total_amount)} ${order.currency}` }}
                         </PrimaryButton>
                     </div>
                 </div>
