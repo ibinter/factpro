@@ -24,11 +24,14 @@ const fetchUnreadCount = async () => {
 
 const fetchRecent = async () => {
     try {
-        const res = await fetch('/notifications?per_page=5', {
-            headers: { Accept: 'application/json', 'X-Inertia': 'true', 'X-Inertia-Version': '', 'X-Requested-With': 'XMLHttpRequest' },
+        const res = await fetch(route('notifications.recent'), {
+            headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
             credentials: 'same-origin',
         });
-        // On utilise l'API JSON du controller via une route dédiée
+        if (res.ok) {
+            const data = await res.json();
+            notifications.value = data.data ?? [];
+        }
     } catch (e) {
         // silencieux
     }
@@ -36,6 +39,9 @@ const fetchRecent = async () => {
 
 const toggleDropdown = () => {
     open.value = !open.value;
+    if (open.value) {
+        fetchRecent();
+    }
 };
 
 const closeDropdown = (e) => {
@@ -49,9 +55,19 @@ const markAllRead = () => {
         preserveScroll: true,
         onSuccess: () => {
             unreadCount.value = 0;
-            open.value = false;
+            notifications.value = notifications.value.map(n => ({ ...n, read_at: new Date().toISOString() }));
         },
     });
+};
+
+const typeIcon = (notif) => {
+    const type = notif.data?.type ?? notif.type ?? '';
+    if (notif.data?.icon) return notif.data.icon;
+    if (type.includes('document') || type.includes('invoice') || type.includes('facture')) return '📄';
+    if (type.includes('payment') || type.includes('paiement')) return '💰';
+    if (type.includes('alert') || type.includes('warning')) return '⚠️';
+    if (type.includes('team') || type.includes('user')) return '👥';
+    return '🔔';
 };
 
 const timeAgo = (dateStr) => {
@@ -118,11 +134,28 @@ onUnmounted(() => {
                 </button>
             </div>
 
-            <!-- Corps : lien vers la page complète -->
-            <div class="py-2">
-                <p class="px-4 py-3 text-sm text-gray-500">
-                    {{ unreadCount > 0 ? `${unreadCount} notification(s) non lue(s)` : 'Aucune notification non lue' }}
-                </p>
+            <!-- Corps : liste des 5 dernières notifications -->
+            <div class="max-h-72 overflow-y-auto">
+                <div v-if="notifications.length === 0" class="px-4 py-5 text-center text-sm text-gray-400">
+                    {{ unreadCount > 0 ? `${unreadCount} notification(s) non lue(s)` : 'Aucune notification' }}
+                </div>
+                <ul v-else class="divide-y divide-gray-50">
+                    <li
+                        v-for="notif in notifications"
+                        :key="notif.id"
+                        class="flex items-start gap-3 px-4 py-3 transition hover:bg-gray-50"
+                        :class="{ 'border-l-2 border-blue-500 bg-blue-50/40': !notif.read_at }"
+                    >
+                        <span class="mt-0.5 shrink-0 text-lg">{{ typeIcon(notif) }}</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="truncate text-sm font-medium text-gray-900">
+                                {{ notif.data?.title ?? 'Notification' }}
+                            </p>
+                            <p class="mt-0.5 line-clamp-1 text-xs text-gray-500">{{ notif.data?.message }}</p>
+                        </div>
+                        <span class="shrink-0 text-[10px] text-gray-400">{{ timeAgo(notif.created_at) }}</span>
+                    </li>
+                </ul>
             </div>
 
             <!-- Footer -->
@@ -132,7 +165,7 @@ onUnmounted(() => {
                     class="block text-center text-sm font-medium text-brand-600 hover:underline"
                     @click="open = false"
                 >
-                    Voir toutes les notifications
+                    Voir toutes les notifications →
                 </Link>
             </div>
         </div>

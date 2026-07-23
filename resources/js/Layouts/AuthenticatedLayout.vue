@@ -10,15 +10,28 @@ import OfflineBanner from '@/Components/OfflineBanner.vue';
 import PushOptIn from '@/Components/PushOptIn.vue';
 import Sara from '@/Components/Sara.vue';
 import GlobalSearch from '@/Components/GlobalSearch.vue';
+import UpgradeModal from '@/Components/UpgradeModal.vue';
+import { useUpgradeModal } from '@/Composables/useUpgradeModal';
 import { Link, router, usePage } from '@inertiajs/vue3';
 
 const showingNavigationDropdown = ref(false);
 const page = usePage();
 
+// Changelog "NEW" badge
+const changelogSeen = ref(typeof localStorage !== 'undefined' && localStorage.getItem('factpro_changelog_seen_2.4.0') === '1');
+function markChangelogSeen() {
+    if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('factpro_changelog_seen_2.4.0', '1');
+    }
+    changelogSeen.value = true;
+}
+
 const license = computed(() => page.props.license);
 const flash = computed(() => page.props.flash ?? {});
 const isSuperadmin = computed(() => page.props.auth.user?.is_superadmin);
 const isRtl = computed(() => page.props.locale === 'ar');
+
+const upgradeModal = useUpgradeModal();
 
 // Multi-sociétés : société courante + liste des sociétés du compte
 const currentCompany = computed(() => page.props.company);
@@ -272,6 +285,18 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                     </template>
 
                                     <template #content>
+                                        <Link
+                                            href="/nouveautes"
+                                            class="flex w-full items-center gap-2 px-4 py-2 text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                                            @click="markChangelogSeen"
+                                        >
+                                            🚀 Nouveautés
+                                            <span
+                                                v-if="!changelogSeen"
+                                                class="ml-auto rounded-full px-1.5 py-0.5 text-[10px] font-bold animate-pulse"
+                                                style="background:#F0C040;color:#001d3d"
+                                            >NEW</span>
+                                        </Link>
                                         <DropdownLink :href="route('profile.edit')">Mon profil</DropdownLink>
                                         <DropdownLink :href="route('companies.index')">Mes sociétés</DropdownLink>
                                         <DropdownLink :href="route('team.index')">Mon équipe</DropdownLink>
@@ -416,6 +441,12 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                 <slot />
             </main>
 
+            <UpgradeModal
+                :show="upgradeModal.show.value"
+                :feature="upgradeModal.feature.value"
+                :required-plan="upgradeModal.requiredPlan.value"
+                @close="upgradeModal.closeUpgradeModal()"
+            />
             <GlobalSearch />
             <Sara mode="internal" />
         </div>
