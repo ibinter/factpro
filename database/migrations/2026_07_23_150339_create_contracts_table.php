@@ -11,6 +11,13 @@ return new class extends Migration
         // Rename legacy HR contracts table if it still uses 'contracts' name and new table doesn't exist yet
         if (Schema::hasColumn('contracts', 'employee_id')) {
             Schema::rename('contracts', 'employee_contracts');
+            // Drop FKs that kept the old 'contracts_*' name so new contracts table can reuse the names
+            try {
+                \DB::statement('ALTER TABLE `employee_contracts` DROP FOREIGN KEY `contracts_company_id_foreign`');
+            } catch (\Throwable) {}
+            try {
+                \DB::statement('ALTER TABLE `employee_contracts` DROP FOREIGN KEY `contracts_employee_id_foreign`');
+            } catch (\Throwable) {}
         }
 
         // Skip creation if contracts already has the new schema
