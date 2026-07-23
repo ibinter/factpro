@@ -21,6 +21,8 @@ const open = ref(false);
                 <a href="/#fonctionnalites" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Fonctionnalités</a>
                 <a href="/pricing" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Tarifs</a>
                 <a href="/#faq" class="text-sm font-semibold text-gray-600 hover:text-brand-600">FAQ</a>
+                <a href="/a-propos" class="text-sm font-semibold text-gray-600 hover:text-brand-600">À propos</a>
+                <a href="/contact" class="text-sm font-semibold text-gray-600 hover:text-brand-600">Contact</a>
             </div>
 
             <div class="hidden items-center gap-3 md:flex">
@@ -57,8 +59,10 @@ const open = ref(false);
         <div v-show="open" class="border-t border-gray-100 bg-white px-6 py-4 md:hidden">
             <div class="flex flex-col gap-3">
                 <a href="/#fonctionnalites" class="text-sm font-semibold text-gray-700" @click="open = false">Fonctionnalités</a>
-                <a href="/pricing" class="text-sm font-semibold text-gray-700">Tarifs</a>
+                <a href="/pricing" class="text-sm font-semibold text-gray-700" @click="open = false">Tarifs</a>
                 <a href="/#faq" class="text-sm font-semibold text-gray-700" @click="open = false">FAQ</a>
+                <a href="/a-propos" class="text-sm font-semibold text-gray-700" @click="open = false">À propos</a>
+                <a href="/contact" class="text-sm font-semibold text-gray-700" @click="open = false">Contact</a>
                 <div class="mt-2 flex flex-col gap-2">
                     <a
                         v-if="canLogin"

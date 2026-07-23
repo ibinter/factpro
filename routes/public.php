@@ -1,6 +1,8 @@
 <?php
 
 // Pages de vente publiques (cahier §1/§22) — possédé par l'agent Landing.
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PublicController;
@@ -15,6 +17,13 @@ Route::get('/demo-login', [DemoController::class, 'login'])
 
 // Page de statut système publique.
 Route::get('/status', [StatusController::class, 'index'])->name('status');
+
+// Page À propos d'IBIG Soft.
+Route::get('/a-propos', [AboutController::class, 'index'])->name('about');
+
+// Page Contact + traitement formulaire.
+Route::get('/contact', [ContactController::class, 'show'])->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact.store');
 
 // Grille tarifaire détaillée (Inertia).
 Route::get('/pricing', [PublicController::class, 'pricing'])->name('public.pricing');

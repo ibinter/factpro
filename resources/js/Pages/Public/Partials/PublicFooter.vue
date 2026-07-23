@@ -68,10 +68,10 @@ const year = new Date().getFullYear();
                 <div>
                     <h3 class="mb-4 text-xs font-bold uppercase tracking-widest text-white">IBIG Soft</h3>
                     <ul class="space-y-2 text-xs">
-                        <li><a href="https://ibigsoft.com" target="_blank" rel="noopener" class="hover:text-white transition">À propos d'IBIG Soft</a></li>
+                        <li><a href="/a-propos" class="hover:text-white transition">À propos d'IBIG Soft</a></li>
+                        <li><a href="/contact" class="hover:text-white transition">Contact</a></li>
                         <li><a href="https://ibigpartners.com/" target="_blank" rel="noopener" class="hover:text-white transition">Programme IBIG PARTNERS</a></li>
                         <li><a href="https://ibigsoft.com" target="_blank" rel="noopener" class="hover:text-white transition">Autres logiciels</a></li>
-                        <li><a href="mailto:factpro@ibigsoft.com" class="hover:text-white transition">Contact</a></li>
                         <li><a href="mailto:support@ibigsoft.com" class="hover:text-white transition">Support technique</a></li>
                     </ul>
                 </div>

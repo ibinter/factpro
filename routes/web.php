@@ -108,6 +108,11 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::post('/documents/{document}/clone', [DocumentController::class, 'clone'])->name('documents.clone');
 
     Route::get('/search', \App\Http\Controllers\GlobalSearchController::class)->name('search.global');
+
+    // NPS
+    Route::post('/nps', [\App\Http\Controllers\NpsController::class, 'store'])
+        ->middleware('throttle:3,1')
+        ->name('nps.store');
 });
 
 /*
@@ -126,6 +131,9 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->grou
     Route::post('/payments/{transaction}/reject', [PaymentValidationController::class, 'reject'])->name('payments.reject');
     Route::post('/payments/{transaction}/complement', [PaymentValidationController::class, 'requestComplement'])->name('payments.complement');
     Route::get('/proofs/{proof}', [PaymentValidationController::class, 'proof'])->name('proofs.show');
+
+    // NPS
+    Route::get('/nps', [\App\Http\Controllers\NpsController::class, 'adminIndex'])->name('nps');
 
     // Livraisons COD
     Route::get('/deliveries', [DeliveryAdminController::class, 'index'])->name('deliveries.index');

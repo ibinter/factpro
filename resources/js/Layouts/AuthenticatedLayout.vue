@@ -9,6 +9,7 @@ import LanguageSelector from '@/Components/LanguageSelector.vue';
 import OfflineBanner from '@/Components/OfflineBanner.vue';
 import PushOptIn from '@/Components/PushOptIn.vue';
 import Sara from '@/Components/Sara.vue';
+import NpsSurvey from '@/Components/NpsSurvey.vue';
 import GlobalSearch from '@/Components/GlobalSearch.vue';
 import UpgradeModal from '@/Components/UpgradeModal.vue';
 import { useUpgradeModal } from '@/Composables/useUpgradeModal';
@@ -448,6 +449,7 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                 @close="upgradeModal.closeUpgradeModal()"
             />
             <GlobalSearch />
+            <NpsSurvey :user="$page.props.auth.user" />
             <Sara mode="internal" />
         </div>
     </div>
