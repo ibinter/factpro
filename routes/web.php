@@ -223,3 +223,29 @@ require __DIR__.'/mobile-money.php';
 
 // Phase 17 — Statut Système & Ops
 require __DIR__.'/status.php';
+
+// Phase 14 — Intelligence & Automatisation IA
+use App\Http\Controllers\AiReminderController;
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/ai/reminder/{customer}', [AiReminderController::class, 'generate'])->name('ai.reminder');
+    Route::get('/ai/suggest-price-v2', [AiReminderController::class, 'suggestPrice'])->name('ai.suggest-price-v2');
+});
+
+// Phase 14 — Immobilisations
+use App\Http\Controllers\AssetController;
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::resource('assets', AssetController::class);
+});
+
+// Phase 14 — Portail Fournisseur (pages publiques)
+use App\Http\Controllers\SupplierPortalController;
+Route::get('/supplier/portal/{token}', [SupplierPortalController::class, 'show'])->name('supplier.portal.show');
+Route::post('/supplier/portal/{token}/respond', [SupplierPortalController::class, 'respond'])->name('supplier.portal.respond');
+
+// Phase 14 — Portail Fournisseur (pages internes)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/documents/{document}/invite-supplier', [SupplierPortalController::class, 'invite'])->name('supplier.invite');
+    Route::get('/documents/{document}/supplier-compare', [SupplierPortalController::class, 'compare'])->name('supplier.compare');
+    Route::post('/supplier-offers/{offer}/select', [SupplierPortalController::class, 'select'])->name('supplier.select');
+});
+

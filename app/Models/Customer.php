@@ -22,4 +22,9 @@ class Customer extends Model
     {
         return $this->hasMany(Document::class);
     }
+
+    public function score(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\App\Models\CustomerScore::class);
+    }
 }

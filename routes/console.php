@@ -130,3 +130,10 @@ Schedule::call(function () {
 */
 
 Schedule::command('app:health-check --alert')->dailyAt('06:00')->name('health.check');
+
+/*
+|--------------------------------------------------------------------------
+| Scoring clients — Phase 14
+|--------------------------------------------------------------------------
+*/
+Schedule::command('scoring:customers')->dailyAt('02:00');
