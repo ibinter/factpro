@@ -8,6 +8,7 @@ use App\Models\PaymentAuditLog;
 use App\Models\PaymentTransaction;
 use App\Models\Plan;
 use App\Models\User;
+use App\Notifications\PaymentValidatedNotification;
 use App\Notifications\TrialStartedNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -105,6 +106,9 @@ class LicenseService
                     'ends_at' => $current->ends_at->toDateTimeString(),
                 ], adminId: $adminId);
 
+                // E-mail : confirmation renouvellement
+                $user->notify(new PaymentValidatedNotification($transaction));
+
                 return $current;
             }
 
@@ -136,6 +140,9 @@ class LicenseService
                 'months' => $months,
                 'order' => $order->order_number,
             ], adminId: $adminId);
+
+            // E-mail : confirmation activation licence payante
+            $user->notify(new PaymentValidatedNotification($transaction));
 
             return $license;
         });
@@ -245,6 +252,9 @@ class LicenseService
                 'admin_id'       => $admin->id,
                 'new_expires_at' => $license->ends_at->toISOString(),
             ], adminId: $admin->id);
+
+            // E-mail : licence provisoire confirmée → active
+            $license->user->notify(new PaymentValidatedNotification($transaction));
 
             return $license;
         });

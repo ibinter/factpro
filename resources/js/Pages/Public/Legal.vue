@@ -44,8 +44,11 @@ const otherPages = [
 </script>
 
 <template>
-    <Head :title="page + ' — IBIG FactPro'">
-        <meta name="description" :content="'Page légale ' + page + ' de ' + 'IBIG FactPro, éditeur IBIG SARL.'">
+    <Head>
+        <title>{{ page }} — IBIG FactPro</title>
+        <meta name="description" :content="`${page} d'IBIG SARL pour le logiciel de facturation IBIG FactPro. Retrouvez toutes nos conditions légales.`">
+        <meta property="og:title" :content="`${page} — IBIG FactPro`">
+        <link rel="canonical" :href="`https://factpro.ibigsoft.com/legal/${slug}`">
     </Head>
 
     <PublicNav />

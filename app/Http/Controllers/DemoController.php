@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -74,18 +73,8 @@ class DemoController extends Controller
         return back()->with('demo_success', true);
     }
 
-    public function login()
+    public function login(): Response
     {
-        $user = User::where('email', 'demo@factpro.test')->first();
-
-        if (! $user) {
-            return redirect('/')->with('error', 'Compte démo non disponible. Contactez-nous.');
-        }
-
-        Auth::login($user, remember: false);
-
-        session()->regenerate();
-
-        return redirect()->route('dashboard');
+        return Inertia::render('Auth/DemoLogin');
     }
 }

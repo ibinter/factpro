@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── Fix global : empêcher le scroll horizontal sur tout le site ── */
+html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+}

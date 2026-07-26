@@ -1,0 +1,401 @@
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
+const openSteps = ref({}); // { 'scenarioId-stepIndex': true }
+
+const scenarios = [
+  {
+    id: 'cabinet',
+    initials: 'FK',
+    bgColor: '#0062CC',
+    badge: 'Comptabilité',
+    badgeColor: '#0062CC',
+    title: 'Cabinet comptable — Fiduliance SARL',
+    persona: 'Awa KONÉ gère 12 clients PME à Abidjan. Elle émet 80 factures par mois.',
+    steps: [
+      {
+        num: 1,
+        title: 'Création des 12 sociétés clientes en multi-entreprises',
+        detail: 'Dans Paramètres > Multi-entreprises, créez un espace distinct pour chacun de vos 12 clients PME. Chaque société dispose de son propre RCCM, numéro fiscal, logo et plafond TVA. Vous basculez d\'un espace à l\'autre en 1 clic depuis la barre d\'en-tête.',
+      },
+      {
+        num: 2,
+        title: 'Configuration des modèles de facture OHADA pour chaque client',
+        detail: 'Pour chaque société cliente, allez dans Paramètres > Templates et sélectionnez un modèle conforme OHADA. Personnalisez les couleurs aux couleurs de l\'entreprise, activez l\'en-tête RCCM / NIF / Registre du Commerce et choisissez la mention légale de TVA appropriée (assujetti, exonéré, forfait).',
+      },
+      {
+        num: 3,
+        title: 'Génération des factures mensuelles en lot',
+        detail: 'Accédez à Documents > Récurrences. Pour chaque client, créez un modèle de facture récurrente (prestation mensuelle, abonnement, honoraires). FactPro génère automatiquement les 80 factures le 1ᵉʳ de chaque mois et les envoie aux clients concernés sans intervention manuelle.',
+      },
+      {
+        num: 4,
+        title: 'Export FEC pour chaque client en fin de mois',
+        detail: 'En fin de mois, dans Rapports > Comptabilité > Export FEC, sélectionnez la période (mois écoulé) et l\'entreprise cliente. Le fichier FEC normalisé est exporté en quelques secondes. Répétez l\'opération pour chacune des 12 sociétés en changeant le contexte d\'entreprise actif.',
+      },
+      {
+        num: 5,
+        title: 'Suivi TVA collectée / déductible',
+        detail: 'Rapports > Fiscal > TVA. Le tableau distingue automatiquement la TVA collectée sur vos ventes et la TVA déductible sur vos achats. Choisissez le régime déclaratif (mensuel ou trimestriel) et exportez la déclaration pré-remplie pour l\'administration fiscale ivoirienne (DGI).',
+      },
+      {
+        num: 6,
+        title: 'Envoi automatique des relevés de compte clients',
+        detail: 'Dans la fiche de chaque client, cliquez sur "Relevé de compte > Planifier". Configurez l\'envoi automatique le dernier jour ouvré du mois. Le relevé PDF liste toutes les factures, paiements et le solde dû. Le client reçoit son relevé par email sans action de votre part.',
+      },
+    ],
+  },
+  {
+    id: 'boutique',
+    initials: 'KA',
+    bgColor: '#7c3aed',
+    badge: 'Commerce de détail',
+    badgeColor: '#7c3aed',
+    title: 'Boutique de prêt-à-porter — Mode Africaine',
+    persona: 'Koffi ASSI tient une boutique à Cocody avec 3 vendeurs et une caisse.',
+    steps: [
+      {
+        num: 1,
+        title: 'Import du catalogue 200 articles depuis Excel',
+        detail: 'Allez dans Produits > Importer. Téléchargez le modèle CSV fourni, remplissez les colonnes (nom, SKU, catégorie, taille, couleur, prix de vente, prix d\'achat, stock initial, seuil d\'alerte) et importez. Les 200 articles sont créés en quelques secondes avec leurs variantes (taille S / M / L / XL).',
+      },
+      {
+        num: 2,
+        title: 'Configuration des alertes stock (seuil < 5 unités)',
+        detail: 'Pour chaque article (ou en masse via l\'import CSV), définissez un seuil d\'alerte à 5 unités. Lorsque le stock descend en dessous, une notification apparaît sur le dashboard de Koffi et une alerte email est envoyée au responsable des achats.',
+      },
+      {
+        num: 3,
+        title: 'Ouverture de caisse POS chaque matin',
+        detail: 'Depuis l\'écran POS (Point de Vente), cliquez sur "Ouvrir la caisse". Saisissez le fonds de caisse du matin (montant en espèces). Chaque vendeur dispose de son propre identifiant. FactPro horodate l\'ouverture et journalise chaque transaction de la session.',
+      },
+      {
+        num: 4,
+        title: 'Vente tactile, encaissement Orange Money / Wave',
+        detail: 'Sur l\'écran POS tactile, recherchez les articles par nom, SKU ou scan code-barres. Le total s\'affiche en temps réel. Au moment de l\'encaissement, choisissez le mode de paiement : Espèces, Orange Money CI, Wave ou Carte. Pour les Mobile Money, un QR code de paiement s\'affiche immédiatement ; la confirmation arrive en quelques secondes.',
+      },
+      {
+        num: 5,
+        title: 'Rapport Z de fin de journée',
+        detail: 'En fin de journée, dans le POS, cliquez sur "Fermer la caisse > Générer le rapport Z". Le rapport affiche : total des ventes par mode de paiement, nombre de transactions, panier moyen, articles les plus vendus et le solde caisse théorique vs. réel. Exportable en PDF pour la comptabilité.',
+      },
+      {
+        num: 6,
+        title: 'Commande fournisseur automatique quand stock faible',
+        detail: 'Dans Achats > Commandes automatiques, configurez les fournisseurs et les quantités de réapprovisionnement par produit. Lorsque le stock passe sous le seuil d\'alerte, FactPro génère automatiquement un bon de commande fournisseur et l\'envoie par email au fournisseur. Vous validez en 1 clic.',
+      },
+    ],
+  },
+  {
+    id: 'prestataire',
+    initials: 'MD',
+    bgColor: '#059669',
+    badge: 'Services IT',
+    badgeColor: '#059669',
+    title: 'Prestataire IT — TechSolutions CI',
+    persona: 'Moussa DIALLO facture des projets informatiques et des abonnements maintenance.',
+    steps: [
+      {
+        num: 1,
+        title: 'Création des services (développement, infogérance, formation)',
+        detail: 'Dans Produits > Nouveau produit, créez vos services en activant le type "Service" (pas de suivi de stock). Exemples : "Développement web" (à la journée), "Infogérance mensuelle" (abonnement récurrent), "Formation FactPro" (forfait). Définissez pour chacun le prix HT, la TVA applicable et l\'unité de facturation (jour, mois, forfait).',
+      },
+      {
+        num: 2,
+        title: 'Devis signable en ligne envoyé au client',
+        detail: 'Documents > Nouveau devis. Sélectionnez le client, ajoutez les services, les jalons et les conditions. Cliquez sur "Lien de signature" : un lien unique est généré. Le client ouvre le lien sur son navigateur, consulte le devis interactif, accepte les conditions et signe électroniquement via OTP SMS. La signature est horodatée et juridiquement valable.',
+      },
+      {
+        num: 3,
+        title: 'Acompte de 30% à la commande, solde à la livraison',
+        detail: 'Une fois le devis signé, convertissez-le en facture et cliquez sur "Ajouter un acompte > 30%". Une facture d\'acompte distincte est générée et envoyée au client. FactPro calcule automatiquement le solde (70%) et crée la facture de solde, prête à être envoyée à la livraison du projet.',
+      },
+      {
+        num: 4,
+        title: 'Factures récurrentes pour les contrats de maintenance',
+        detail: 'Documents > Récurrences > Nouveau modèle. Associez le modèle au client et au service "Infogérance mensuelle". Définissez la fréquence (mensuelle), la date de début, la durée du contrat et le montant. FactPro génère et envoie la facture automatiquement chaque mois, sans intervention.',
+      },
+      {
+        num: 5,
+        title: 'Suivi du pipeline commercial (prospects → devis → facture → paiement)',
+        detail: 'Dans le CRM intégré, chaque prospect passe par des étapes : Prospect > Qualifié > Devis envoyé > Devis signé > En cours > Livré > Payé. Le tableau Kanban visuel permet de voir d\'un coup d\'œil l\'avancement de tous les projets et le CA potentiel du pipeline.',
+      },
+      {
+        num: 6,
+        title: 'Relances automatiques à 30 / 60 jours',
+        detail: 'Dans Paramètres > Relances, configurez 3 niveaux : Rappel amical (J+7 après échéance), Relance ferme (J+30) et Mise en demeure (J+60). Les emails sont personnalisables avec le nom du client, le montant dû et le lien de paiement. FactPro envoie les relances automatiquement sans que Moussa n\'ait à s\'en souvenir.',
+      },
+    ],
+  },
+  {
+    id: 'restaurant',
+    initials: 'AT',
+    bgColor: '#dc2626',
+    badge: 'Restauration',
+    badgeColor: '#dc2626',
+    title: 'Restaurant — Le Savoureux',
+    persona: 'Aminata TRAORÉ gère un restaurant avec 4 tables et service livraison.',
+    steps: [
+      {
+        num: 1,
+        title: 'Configuration POS avec les tables et le menu',
+        detail: 'Dans les paramètres POS > Plan de salle, dessinez votre salle avec vos 4 tables (Table 1 à Table 4) et ajoutez une zone "Livraison". Créez votre menu en catégories (Entrées, Plats, Desserts, Boissons) avec les prix TTC et les descriptions. Les photos des plats s\'affichent directement sur l\'écran de prise de commande.',
+      },
+      {
+        num: 2,
+        title: 'Prise de commande par table, envoi en cuisine',
+        detail: 'Le serveur sélectionne la table sur le plan de salle, ajoute les articles commandés et appuie sur "Envoyer en cuisine". Le bon de commande s\'imprime automatiquement sur l\'imprimante cuisine (ticket printer). Les modifications (ajout, annulation d\'un article) sont transmises en temps réel. Le statut "En préparation" s\'affiche sur l\'écran du serveur.',
+      },
+      {
+        num: 3,
+        title: 'Encaissement (espèces, carte, Wave)',
+        detail: 'Quand le client demande l\'addition, le serveur clique sur "Générer l\'addition" depuis la table. La facture est présentée sur l\'écran. L\'encaissement peut se faire en espèces (rendu de monnaie calculé automatiquement), par carte (intégration TPE), ou par Wave CI (QR code affiché sur la tablette). Le reçu est imprimé immédiatement ou envoyé par email/SMS.',
+      },
+      {
+        num: 4,
+        title: 'Gestion des stocks ingrédients avec alertes',
+        detail: 'Pour chaque plat du menu, configurez la liste des ingrédients et les quantités utilisées (recette). À chaque vente, FactPro décrémente automatiquement le stock des ingrédients correspondants. Lorsqu\'un ingrédient passe sous le seuil d\'alerte (ex. : tomates < 2 kg), une notification est envoyée à Aminata sur son téléphone.',
+      },
+      {
+        num: 5,
+        title: 'Rapport des ventes par catégorie (entrée/plat/dessert/boisson)',
+        detail: 'Rapports > Ventes > Par catégorie. Filtrez par journée, semaine ou mois. Le graphique affiche le CA par catégorie, le nombre de couverts, le ticket moyen, les plats les plus commandés et les heures de pointe. Ces données permettent à Aminata d\'optimiser son menu et de réduire le gaspillage alimentaire.',
+      },
+      {
+        num: 6,
+        title: 'Fidélisation clients (programme points)',
+        detail: 'Dans Clients > Programme de fidélité, configurez l\'accumulation de points (1 point = 500 FCFA dépensé) et les récompenses (1 000 points = repas offert). À chaque passage en caisse, le client donne son numéro de téléphone ; ses points sont crédités automatiquement. Un SMS de confirmation lui est envoyé avec son solde de points.',
+      },
+    ],
+  },
+  {
+    id: 'ong',
+    initials: 'SM',
+    bgColor: '#d97706',
+    badge: 'ONG / Association',
+    badgeColor: '#d97706',
+    title: 'ONG — Femmes Entrepreneurs Africa',
+    persona: 'Sylvie MENSAH gère une ONG avec des projets et des donateurs.',
+    steps: [
+      {
+        num: 1,
+        title: 'Configuration en mode association (pas de TVA, numérotation spéciale)',
+        detail: 'Dans Paramètres > Société > Type d\'entité, sélectionnez "Association / ONG". FactPro désactive automatiquement la TVA sur tous les documents et adapte la numérotation (DON-2026-0001 pour les reçus de dons, COTI-2026-0001 pour les cotisations). La mention "Association loi 1901 / Agréée par..." apparaît en bas de chaque document.',
+      },
+      {
+        num: 2,
+        title: 'Reçus de dons (fiscalement déductibles)',
+        detail: 'Lorsqu\'un donateur effectue un versement, créez un reçu via Documents > Nouveau > Reçu de don. Renseignez le montant, la date et l\'objet du don. Le reçu généré mentionne automatiquement la déductibilité fiscale, le numéro d\'agrément de l\'ONG et la formule légale requise. Le PDF est envoyé immédiatement par email au donateur.',
+      },
+      {
+        num: 3,
+        title: 'Suivi budgétaire par projet',
+        detail: 'Dans Projets > Nouveau projet, créez chaque programme (ex. : "Formation entrepreneuriat 2026", "Microcrédits Abidjan"). Définissez le budget alloué par bailleur. Toutes les dépenses et recettes sont imputées au projet correspondant. Un tableau de bord par projet affiche en temps réel le taux de consommation du budget et l\'écart au prévisionnel.',
+      },
+      {
+        num: 4,
+        title: 'Rapports financiers pour les bailleurs de fonds',
+        detail: 'Rapports > Projets > Rapport financier bailleur. Sélectionnez le projet, la période de reporting et le format (PDF ou Excel). Le rapport inclut : récapitulatif des dépenses par poste budgétaire, justificatifs (factures fournisseurs), avancement des activités et indicateurs de performance. Prêt à envoyer à l\'Union Européenne, à l\'AFD ou à tout autre bailleur.',
+      },
+      {
+        num: 5,
+        title: 'Export SYSCOHADA pour l\'audit annuel',
+        detail: 'En fin d\'exercice, Rapports > Comptabilité > Export SYSCOHADA. FactPro génère les états financiers normalisés (bilan, compte de résultat, tableau de flux de trésorerie) au format SYSCOHADA révisé, conforme aux normes comptables en vigueur en Côte d\'Ivoire et dans la zone OHADA. L\'auditeur externe peut importer directement ces données.',
+      },
+      {
+        num: 6,
+        title: 'Gestion des membres et cotisations',
+        detail: 'Dans Membres > Nouveau membre, enregistrez chaque adhérente avec ses informations et sa catégorie (membre actif, bienfaitrice, honoraire). Configurez la cotisation annuelle par catégorie. FactPro génère automatiquement les appels à cotisation en début d\'année et relance les membres n\'ayant pas encore payé. Le registre des membres est tenu à jour en temps réel.',
+      },
+    ],
+  },
+];
+
+function toggleStep(scenarioId, stepIndex) {
+  const key = `${scenarioId}-${stepIndex}`;
+  openSteps.value[key] = !openSteps.value[key];
+}
+
+function isStepOpen(scenarioId, stepIndex) {
+  return !!openSteps.value[`${scenarioId}-${stepIndex}`];
+}
+</script>
+
+<template>
+  <Head title="Cas pratiques — Centre d'aide" />
+
+  <AuthenticatedLayout>
+    <template #header>
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">🎯</span>
+        <div>
+          <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100 leading-tight">
+            Cas pratiques
+          </h2>
+          <p class="text-sm text-gray-500 dark:text-gray-400">
+            5 scénarios sectoriels réalistes — étape par étape
+          </p>
+        </div>
+      </div>
+    </template>
+
+    <div class="py-8">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+
+        <!-- Hero -->
+        <div
+          class="rounded-2xl p-8 text-center"
+          style="background: linear-gradient(135deg, #002D5B 0%, #0062CC 60%, #1a56db 100%);"
+        >
+          <h1 class="text-3xl font-extrabold text-white mb-2">Cas pratiques par secteur</h1>
+          <p class="text-blue-200 max-w-xl mx-auto">
+            Découvrez comment des entrepreneurs africains utilisent FactPro au quotidien. Chaque scénario détaille les étapes concrètes, depuis la configuration jusqu'au suivi complet.
+          </p>
+        </div>
+
+        <!-- Scenarios -->
+        <div class="space-y-6">
+          <div
+            v-for="scenario in scenarios"
+            :key="scenario.id"
+            class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+          >
+            <!-- Card header -->
+            <div class="flex items-start gap-4 p-6 border-b border-gray-100 dark:border-gray-700">
+              <!-- Avatar placeholder -->
+              <div
+                class="flex-shrink-0 w-14 h-14 rounded-xl flex items-center justify-center text-white font-extrabold text-lg shadow-md"
+                :style="`background: ${scenario.bgColor}`"
+              >
+                {{ scenario.initials }}
+              </div>
+
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2 mb-1">
+                  <!-- Badge secteur -->
+                  <span
+                    class="text-xs font-bold px-3 py-1 rounded-full text-white"
+                    :style="`background: ${scenario.badgeColor}`"
+                  >
+                    {{ scenario.badge }}
+                  </span>
+                </div>
+                <h3 class="text-base font-bold text-gray-900 dark:text-gray-100 leading-tight">
+                  {{ scenario.title }}
+                </h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400 italic">
+                  "{{ scenario.persona }}"
+                </p>
+              </div>
+
+              <div class="flex-shrink-0 text-xs text-gray-400 dark:text-gray-500 font-medium whitespace-nowrap">
+                {{ scenario.steps.length }} étapes
+              </div>
+            </div>
+
+            <!-- Steps accordion -->
+            <div class="divide-y divide-gray-100 dark:divide-gray-700">
+              <div v-for="(step, idx) in scenario.steps" :key="idx">
+                <button
+                  @click="toggleStep(scenario.id, idx)"
+                  class="w-full flex items-start gap-3 px-6 py-4 text-left hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors duration-150 focus:outline-none group"
+                >
+                  <!-- Step number badge -->
+                  <span
+                    class="mt-0.5 flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200"
+                    :style="isStepOpen(scenario.id, idx)
+                      ? `background:${scenario.bgColor}; color:white`
+                      : `background:${scenario.bgColor}18; color:${scenario.bgColor}`"
+                  >
+                    {{ step.num }}
+                  </span>
+                  <span class="font-medium text-gray-800 dark:text-gray-100 text-sm leading-relaxed flex-1">
+                    {{ step.title }}
+                  </span>
+                  <span
+                    class="flex-shrink-0 ml-2 mt-0.5 text-gray-400 dark:text-gray-500 text-lg transition-transform duration-200"
+                    :class="isStepOpen(scenario.id, idx) ? 'rotate-90' : ''"
+                  >›</span>
+                </button>
+
+                <!-- Step detail -->
+                <Transition
+                  enter-active-class="transition-all duration-200 ease-out"
+                  enter-from-class="opacity-0 max-h-0"
+                  enter-to-class="opacity-100 max-h-96"
+                  leave-active-class="transition-all duration-150 ease-in"
+                  leave-from-class="opacity-100 max-h-96"
+                  leave-to-class="opacity-0 max-h-0"
+                >
+                  <div v-if="isStepOpen(scenario.id, idx)" class="overflow-hidden">
+                    <div class="px-6 pb-5">
+                      <div
+                        class="ml-10 text-sm text-gray-600 dark:text-gray-300 leading-relaxed bg-gray-50 dark:bg-gray-700 rounded-xl p-4 border-l-4"
+                        :style="`border-left-color: ${scenario.bgColor}`"
+                      >
+                        {{ step.detail }}
+                      </div>
+                    </div>
+                  </div>
+                </Transition>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA — contact -->
+        <div class="rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-600 p-8 text-center bg-gray-50 dark:bg-gray-800">
+          <div class="text-4xl mb-3">💡</div>
+          <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+            Votre cas n'est pas listé ?
+          </h3>
+          <p class="text-gray-500 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            Chaque activité a ses spécificités. Notre équipe vous accompagne pour configurer FactPro selon votre métier.
+          </p>
+          <div class="flex flex-wrap justify-center gap-3">
+            <a
+              href="/contact"
+              class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-150 hover:shadow-lg hover:-translate-y-0.5"
+              style="background-color: #0062CC;"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+              </svg>
+              Contactez-nous
+            </a>
+            <a
+              href="https://wa.me/2250555059901"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-150 hover:shadow-lg hover:-translate-y-0.5"
+              style="background-color: #25D366;"
+            >
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+              </svg>
+              WhatsApp
+            </a>
+            <a
+              href="/help"
+              class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 transition-all duration-150 hover:shadow-lg hover:-translate-y-0.5"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              Centre d'aide
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </AuthenticatedLayout>
+</template>
+
+<style scoped>
+.max-h-96 { max-height: 24rem; }
+.max-h-0  { max-height: 0; }
+.rotate-90 { transform: rotate(90deg); }
+</style>

@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
 const appVersion = usePage().props.app_version;
@@ -305,6 +305,23 @@ function openSara() {
           </p>
         </div>
 
+        <!-- ── Guide utilisateur complet ── -->
+        <div v-if="!isSearching">
+          <Link
+            href="/help/guide"
+            class="group flex items-center gap-5 p-5 rounded-2xl border-2 border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950 hover:border-blue-400 hover:shadow-lg transition-all duration-200"
+          >
+            <span class="text-4xl flex-shrink-0 group-hover:scale-110 transition-transform duration-150">📖</span>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-gray-800 dark:text-gray-100 text-base">Guide utilisateur complet</h3>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">10 modules · Procédures étape par étape · Démarrage, Facturation, Clients, Stock, Paiements, Caisse POS…</p>
+            </div>
+            <svg class="w-5 h-5 text-blue-400 flex-shrink-0 group-hover:translate-x-1 transition-transform duration-150" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </Link>
+        </div>
+
         <!-- ── Category grid ── -->
         <div v-if="!isSearching">
           <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Parcourir par catégorie</h2>
@@ -330,6 +347,43 @@ function openSara() {
                   : 'background:#f3f4f6; color:#6b7280'"
               >{{ cat.faqs.length }} FAQ</span>
             </button>
+          </div>
+        </div>
+
+        <!-- ── Ressources rapides ── -->
+        <div v-if="!isSearching">
+          <h2 class="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Ressources utiles</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <a
+              href="/help/cas-pratiques"
+              class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-400 hover:shadow-md transition-all duration-150 group"
+            >
+              <span class="text-3xl group-hover:scale-110 transition-transform duration-150 flex-shrink-0">🎯</span>
+              <div>
+                <p class="font-semibold text-gray-800 dark:text-gray-100 text-sm">Cas pratiques</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">5 scénarios sectoriels : cabinet comptable, boutique, IT, restaurant, ONG.</p>
+              </div>
+            </a>
+            <a
+              href="/help/academy"
+              class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-400 hover:shadow-md transition-all duration-150 group"
+            >
+              <span class="text-3xl group-hover:scale-110 transition-transform duration-150 flex-shrink-0">🎓</span>
+              <div>
+                <p class="font-semibold text-gray-800 dark:text-gray-100 text-sm">Académie / Formation</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Tutoriels vidéo et guides PDF pour maîtriser FactPro rapidement.</p>
+              </div>
+            </a>
+            <a
+              href="/faq"
+              class="flex items-start gap-4 p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-400 hover:shadow-md transition-all duration-150 group"
+            >
+              <span class="text-3xl group-hover:scale-110 transition-transform duration-150 flex-shrink-0">📖</span>
+              <div>
+                <p class="font-semibold text-gray-800 dark:text-gray-100 text-sm">FAQ publique</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Questions fréquentes accessibles sans connexion pour vos clients.</p>
+              </div>
+            </a>
           </div>
         </div>
 

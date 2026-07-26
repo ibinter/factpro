@@ -1,6 +1,5 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import OnboardingTour from '@/Components/OnboardingTour.vue';
 import OnboardingChecklist from '@/Components/OnboardingChecklist.vue';
 import { Head, Link } from '@inertiajs/vue3';
 import { ref, computed, onMounted } from 'vue';
@@ -111,35 +110,6 @@ const statusColor = { paid: 'bg-emerald-100 text-emerald-700', sent: 'bg-blue-10
 const statusLbl   = { paid: 'Payée', sent: 'Envoyée', draft: 'Brouillon', overdue: 'En retard', partial: 'Partielle', cancelled: 'Annulée', viewed: 'Vue', converted: 'Convertie', accepted: 'Accepté', rejected: 'Refusé' };
 const formatDate  = (d) => d ? new Date(d).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—';
 
-// ── Onboarding tour ──────────────────────────────────────────────────────────
-const showTour = ref(!localStorage.getItem('factpro_tour_completed'));
-const tourSteps = [
-    {
-        target: '#sidebar-nav',
-        title: 'Navigation principale',
-        content: 'Accédez à toutes les fonctionnalités depuis ce menu : clients, factures, produits, rapports et bien plus.',
-        position: 'right',
-    },
-    {
-        target: '[data-tour="create-invoice"]',
-        title: 'Créer une facture',
-        content: 'Cliquez ici pour créer votre première facture en moins de 2 minutes.',
-        position: 'bottom',
-    },
-    {
-        target: '[data-tour="dashboard-stats"]',
-        title: 'Tableau de bord',
-        content: 'Suivez votre chiffre d\'affaires, vos encaissements et vos indicateurs clés en temps réel.',
-        position: 'bottom',
-    },
-    {
-        target: '[data-tour="company-settings"]',
-        title: 'Paramètres société',
-        content: 'Configurez votre logo, informations fiscales et préférences ici.',
-        position: 'left',
-    },
-];
-
 // ── Alerts ───────────────────────────────────────────────────────────────────
 const alertsOpen = ref(true);
 const alertBg    = { danger: 'bg-red-50 border-red-200 text-red-800', warning: 'bg-amber-50 border-amber-200 text-amber-800', info: 'bg-blue-50 border-blue-200 text-blue-800' };
@@ -149,12 +119,6 @@ const alertIcon  = { danger: '🔴', warning: '⚠️', info: 'ℹ️' };
 <template>
     <Head title="Tableau de bord" />
     <AuthenticatedLayout>
-        <OnboardingTour
-            v-if="showTour"
-            :steps="tourSteps"
-            @complete="showTour = false"
-            @skip="showTour = false"
-        />
         <div class="min-h-screen bg-gray-50 pb-12">
 
             <!-- Header -->

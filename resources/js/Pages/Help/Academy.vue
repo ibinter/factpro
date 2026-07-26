@@ -151,8 +151,12 @@ function niveauClass(niveau) {
 </script>
 
 <template>
-    <Head title="Académie IBIG FactPro — Formations et ressources">
-        <meta name="description" content="Maîtrisez FactPro grâce à nos parcours de formation, guides PDF et ressources téléchargeables." />
+    <Head>
+        <title>Académie IBIG FactPro — Formations et ressources</title>
+        <meta name="description" content="Maîtrisez IBIG FactPro grâce à nos 8 parcours de formation, guides PDF téléchargeables et tutoriels vidéo. Formation gratuite pour tous les abonnés.">
+        <meta property="og:title" content="Académie IBIG FactPro — Formations et ressources">
+        <meta property="og:description" content="Maîtrisez IBIG FactPro grâce à nos 8 parcours de formation, guides PDF téléchargeables et tutoriels vidéo. Formation gratuite pour tous les abonnés.">
+        <link rel="canonical" href="https://factpro.ibigsoft.com/help/academy">
     </Head>
 
     <PublicNav :can-login="canLogin" :can-register="canRegister" />
@@ -442,8 +446,11 @@ function niveauClass(niveau) {
 /* ── Parcours grid ── */
 .parcours-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1, 1fr);
     gap: 1.25rem;
+}
+@media (min-width: 480px) {
+    .parcours-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (min-width: 640px) {
     .parcours-grid { grid-template-columns: repeat(3, 1fr); }

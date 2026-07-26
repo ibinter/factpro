@@ -718,7 +718,7 @@ const howSteps = [
                 <span v-for="badge in [
                     { icon: '🔒', label_fr: 'SSL/TLS Sécurisé',          label_en: 'SSL/TLS Secured' },
                     { icon: '🏦', label_fr: 'Paiement Mobile Money',      label_en: 'Mobile Money Payment' },
-                    { icon: '⭐', label_fr: 'Note 4.8/5',                 label_en: 'Rated 4.8/5' },
+                    { icon: '⭐', label_fr: 'Note 4.8/5*',                label_en: 'Rated 4.8/5*' },
                     { icon: '🌍', label_fr: '9 Pays Afrique',             label_en: '9 African Countries' },
                     { icon: '📋', label_fr: 'Conforme OHADA',             label_en: 'OHADA Compliant' },
                     { icon: '🔄', label_fr: 'Synchronisation temps réel', label_en: 'Real-time Sync' },
@@ -728,6 +728,7 @@ const howSteps = [
                     <span>{{ lang === 'fr' ? badge.label_fr : badge.label_en }}</span>
                 </span>
             </div>
+            <p class="text-center text-xs text-gray-400 mt-3">* {{ lang === 'fr' ? 'Chiffre indicatif basé sur les retours de nos bêta-testeurs.' : 'Indicative figure based on our beta-testers\' feedback.' }}</p>
         </section>
 
         <!-- ═══════════════════════════════ STATS ═══════════════════════════════ -->
@@ -1191,7 +1192,7 @@ const howSteps = [
                         { icon: '💰', nameFr: 'Trésorerie', nameEn: 'Treasury', descFr: 'Encaissements, dépenses, solde temps réel', descEn: 'Collections, expenses, real-time balance', badge: 'Pro+' },
                         { icon: '🏪', nameFr: 'Caisse POS', nameEn: 'POS Register', descFr: 'Point de vente tactile, ticket thermique', descEn: 'Touch point of sale, thermal receipt', badge: 'Pro+' },
                         { icon: '📊', nameFr: 'Rapports', nameEn: 'Reports', descFr: 'KPIs, graphiques, exports PDF/Excel', descEn: 'KPIs, charts, PDF/Excel exports', badge: 'Starter+' },
-                        { icon: '🤖', nameFr: 'Assistant IA SARA', nameEn: 'AI Assistant SARA', descFr: 'Aide, recherche, suggestions', descEn: 'Help, search, suggestions', badge: lang === \'fr\' ? \'Tous plans\' : \'All plans\' },
+                        { icon: '🤖', nameFr: 'Assistant IA SARA', nameEn: 'AI Assistant SARA', descFr: 'Aide, recherche, suggestions', descEn: 'Help, search, suggestions', badge: 'Tous plans' },
                         { icon: '🔗', nameFr: 'API & Webhooks', nameEn: 'API & Webhooks', descFr: 'Intégrations Zapier, Make, REST', descEn: 'Zapier, Make, REST integrations', badge: 'Business+' },
                     ]" :key="mod.nameFr"
                          class="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-5 border border-gray-100 flex flex-col" style="border-left:4px solid #001d3d">

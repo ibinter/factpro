@@ -67,7 +67,7 @@ const shortTestimonials = [
     <section style="background:linear-gradient(135deg,#001d3d 0%,#002D5B 100%)" class="py-24 px-6 text-center text-white">
         <div class="mx-auto max-w-4xl">
             <span class="inline-block mb-6 rounded-full px-4 py-1.5 text-xs font-semibold" style="background:rgba(240,192,64,.15);color:#F0C040;border:1px solid rgba(240,192,64,.3)">
-                ⭐ 4.8/5 sur 312 avis vérifiés
+                ⭐ 4.8/5 (chiffres indicatifs)
             </span>
             <h1 class="text-4xl md:text-5xl font-extrabold mb-6 leading-tight">
                 Ils nous font confiance
@@ -77,13 +77,13 @@ const shortTestimonials = [
             </p>
             <!-- Stats band -->
             <div class="inline-flex flex-wrap justify-center gap-x-6 gap-y-2 rounded-2xl px-8 py-4 text-sm font-bold" style="background:#F0C040;color:#001d3d">
-                <span>4.8/5 ★ sur 312 avis</span>
+                <span>4.8/5 ★ (chiffres indicatifs)</span>
                 <span class="hidden sm:inline opacity-40">·</span>
                 <span>500+ clients actifs</span>
                 <span class="hidden sm:inline opacity-40">·</span>
                 <span>18 pays</span>
                 <span class="hidden sm:inline opacity-40">·</span>
-                <span>99.97% uptime</span>
+                <span>99,5% uptime (objectif SLA)</span>
             </div>
         </div>
     </section>

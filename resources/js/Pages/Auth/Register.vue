@@ -134,6 +134,10 @@ const submit = () => {
                 <InputError class="mt-2" :message="form.errors.password_confirmation" />
             </div>
 
+            <div class="mt-6 rounded-md bg-gray-50 border border-gray-100 px-4 py-3 text-center text-xs text-gray-500 leading-relaxed">
+                🔒 Essai 7 jours sans carte bancaire · Annulation à tout moment · Données sécurisées en Europe
+            </div>
+
             <div class="mt-4 flex items-center justify-end">
                 <Link
                     :href="route('login')"

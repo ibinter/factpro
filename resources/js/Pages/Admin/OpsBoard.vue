@@ -17,8 +17,8 @@
     <!-- KPI Row -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 text-center">
-        <div class="text-3xl font-bold text-green-600">99.9%</div>
-        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Uptime 30 jours</div>
+        <div class="text-3xl font-bold text-green-600">99.9%</div><!-- TODO: calculer depuis métriques réelles -->
+        <div class="text-sm text-gray-500 dark:text-gray-400 mt-1">Uptime 30 jours (objectif SLA)</div>
       </div>
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 text-center">
         <div class="text-3xl font-bold text-blue-600">{{ monthlyCount }}</div>

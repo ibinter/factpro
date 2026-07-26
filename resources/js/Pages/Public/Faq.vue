@@ -548,7 +548,13 @@ function openSara() {
 </script>
 
 <template>
-  <Head title="FAQ — Questions fréquentes | FactPro" />
+  <Head>
+    <title>FAQ IBIG FactPro — 100 questions fréquentes</title>
+    <meta name="description" content="Trouvez les réponses à vos questions sur IBIG FactPro : facturation, clients, stock, paiements, abonnement et support. 100 réponses disponibles.">
+    <meta property="og:title" content="FAQ IBIG FactPro">
+    <meta property="og:description" content="Trouvez les réponses à vos questions sur IBIG FactPro : facturation, clients, stock, paiements, abonnement et support. 100 réponses disponibles.">
+    <link rel="canonical" href="https://factpro.ibigsoft.com/faq">
+  </Head>
 
   <PublicNav />
 

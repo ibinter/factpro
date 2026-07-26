@@ -41,7 +41,13 @@ const isRtl = computed(() => page.props.locale === 'ar');
 const upgradeModal = useUpgradeModal();
 
 // Onboarding tour (§11.1)
+// onboarding_completed vient d'Inertia ; onboardingDone permet de fermer le tour
+// localement sans attendre un rechargement de page (le POST retourne du JSON,
+// preserveState:true empêche la mise à jour des props dans la même navigation).
 const onboardingCompleted = computed(() => page.props.onboarding_completed ?? true);
+const onboardingDone = ref(false);
+const showOnboarding = computed(() => !onboardingCompleted.value && !onboardingDone.value);
+function handleOnboardingDone() { onboardingDone.value = true; }
 
 // Multi-sociétés : société courante + liste des sociétés du compte
 const currentCompany = computed(() => page.props.company);
@@ -469,9 +475,9 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
             />
             <!-- Visite guidée première connexion (§11.1) -->
             <OnboardingTour
-                :show="!onboardingCompleted"
-                @complete="onboardingCompleted"
-                @skip="onboardingCompleted"
+                :show="showOnboarding"
+                @complete="handleOnboardingDone"
+                @skip="handleOnboardingDone"
             />
             <GlobalSearch />
             <NpsSurvey :user="$page.props.auth.user" />

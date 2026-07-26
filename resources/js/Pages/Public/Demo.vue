@@ -297,7 +297,7 @@ const demoFeatures = [
                     <li class="text-gray-200">|</li>
                     <li class="flex items-center gap-2">
                         <span class="text-yellow-400 text-xl">★</span>
-                        <span>4.8/5 étoiles</span>
+                        <span>4.8/5 étoiles (chiffres indicatifs)</span>
                     </li>
                     <li class="text-gray-200">|</li>
                     <li class="flex items-center gap-2">

@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { Head, router, usePage } from '@inertiajs/vue3';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AdminTabs from '@/Components/AdminTabs.vue';
 
 const props = defineProps({
@@ -64,6 +65,11 @@ function clearCache(type) {
 
 <template>
     <Head title="Observabilité — IBIG FactPro" />
+
+    <AuthenticatedLayout>
+        <template #header>
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Observabilité</h2>
+        </template>
 
     <div class="min-h-screen bg-gray-50">
         <!-- Admin Tabs -->
@@ -278,4 +284,5 @@ function clearCache(type) {
 
         </div>
     </div>
+    </AuthenticatedLayout>
 </template>

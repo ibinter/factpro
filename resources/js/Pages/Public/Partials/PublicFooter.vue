@@ -84,6 +84,7 @@ const year = new Date().getFullYear();
                         <li><a href="/faq" class="hover:text-white transition">FAQ</a></li>
                         <li><a href="/help/guide" class="hover:text-white transition">Guide utilisateur</a></li>
                         <li><a href="/help/academy" class="hover:text-white transition">Académie / Formation</a></li>
+                        <li><a href="/help/cas-pratiques" class="hover:text-white transition">Cas pratiques</a></li>
                         <li><a href="/changelog" class="hover:text-white transition">Nouveautés</a></li>
                         <li><a href="/status" class="hover:text-white transition">Statut des services</a></li>
                     </ul>
