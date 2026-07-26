@@ -202,9 +202,9 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; }
                 <tr><td>Sous-total HT</td><td>{{ number_format((float)($document->subtotal ?? 0), 0, ',', ' ') }} {{ $document->currency }}</td></tr>
                 <tr><td>TVA</td><td>{{ number_format((float)($document->tax_amount ?? 0), 0, ',', ' ') }} {{ $document->currency }}</td></tr>
                 <tr class="ttc-row"><td>TOTAL TTC</td><td>{{ number_format((float)($document->total ?? 0), 0, ',', ' ') }} {{ $document->currency }}</td></tr>
-                @if(($document->paid_amount ?? 0) > 0)
-                <tr><td>Payé</td><td>{{ number_format((float)$document->paid_amount, 0, ',', ' ') }} {{ $document->currency }}</td></tr>
-                <tr class="reste-row"><td>Reste à payer</td><td>{{ number_format((float)(($document->total ?? 0) - ($document->paid_amount ?? 0)), 0, ',', ' ') }} {{ $document->currency }}</td></tr>
+                @if(($document->amount_paid ?? 0) > 0)
+                <tr><td>Payé</td><td>{{ number_format((float)$document->amount_paid, 0, ',', ' ') }} {{ $document->currency }}</td></tr>
+                <tr class="reste-row"><td>Reste à payer</td><td>{{ number_format((float)(($document->total ?? 0) - ($document->amount_paid ?? 0)), 0, ',', ' ') }} {{ $document->currency }}</td></tr>
                 @endif
             </table>
         </div>
