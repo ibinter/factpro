@@ -191,6 +191,12 @@ class ExcelExportController extends Controller
     /** Vérifie que l'utilisateur a un forfait BUSINESS ou ENTERPRISE. */
     private function authorizeExport(Request $request): void
     {
+        abort_if(
+            $request->user()?->isDemoAccount(),
+            403,
+            '⛔ Export désactivé en mode démo. Créez un vrai compte pour exporter vos données.'
+        );
+
         $license = $this->licenses->currentFor($request->user());
 
         abort_unless(

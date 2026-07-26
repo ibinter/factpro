@@ -9,15 +9,30 @@ use Symfony\Component\HttpFoundation\Response;
 class EnsureNotDemoRestricted
 {
     /**
-     * Patterns d'URL bloqués pour les comptes démo (méthodes mutantes).
+     * Patterns d'URL bloqués pour les comptes démo (méthodes mutantes POST/PUT/PATCH/DELETE).
      */
     private const BLOCKED_PATTERNS = [
         '#^/([\w-]+/)?export#',
-        '#^/documents/\d+/send#',
+        '#^/documents/[^/]+/send#',
         '#^/reminders/#',
         '#^/settings/#',
         '#^/api/#',
         '#^/webhooks/#',
+    ];
+
+    /**
+     * Téléchargements GET bloqués pour les comptes démo.
+     * Un visiteur ne doit pas pouvoir récupérer un fichier utilisable.
+     */
+    private const BLOCKED_DOWNLOADS = [
+        '#^/documents/[^/]+/docx#',       // Word .docx
+        '#^/documents/[^/]+/pdf#',         // PDF
+        '#^/documents/[^/]+/download#',    // téléchargement générique
+        '#^/excel/#',                       // exports Excel
+        '#^/[^/]+/export#',                // exports CSV/Excel partout
+        '#^/fec/#',                         // export FEC comptable
+        '#^/payslips?/[^/]+/pdf#',         // bulletins de paie
+        '#^/labels?/[^/]+/download#',      // étiquettes
     ];
 
     /**
@@ -38,6 +53,18 @@ class EnsureNotDemoRestricted
         }
 
         $path = '/' . ltrim($request->path(), '/');
+
+        // Bloquer tous les téléchargements de fichiers (GET) pour les comptes démo
+        if ($request->isMethod('GET')) {
+            foreach (self::BLOCKED_DOWNLOADS as $pattern) {
+                if (preg_match($pattern, $path)) {
+                    return $this->demoBlockedResponse(
+                        $request,
+                        '⛔ Téléchargement désactivé en mode démo. Créez un vrai compte pour exporter vos documents.'
+                    );
+                }
+            }
+        }
 
         // Bloquer les routes sensibles sur les méthodes mutantes
         if (in_array($request->method(), ['POST', 'PUT', 'PATCH', 'DELETE'])) {

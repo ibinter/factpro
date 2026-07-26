@@ -446,6 +446,10 @@ class DocumentController extends Controller
     /** Télécharge le PDF (avec QR anti-falsification + filigrane essai le cas échéant). */
     public function pdf(Request $request, Document $document, QrCodeService $qr)
     {
+        if ($request->user()?->isDemoAccount()) {
+            return redirect()->back()->with('error', '⛔ Export PDF désactivé en mode démo. Créez un vrai compte.');
+        }
+
         $this->authorizeDocument($request, $document);
 
         $document->load(['lines', 'customer', 'company']);
@@ -660,6 +664,10 @@ class DocumentController extends Controller
     /** Télécharge le document au format Word (.docx). */
     public function docx(Request $request, Document $document)
     {
+        if ($request->user()?->isDemoAccount()) {
+            return redirect()->back()->with('error', '⛔ Export Word désactivé en mode démo. Créez un vrai compte.');
+        }
+
         $this->authorizeDocument($request, $document);
         $document->load(['lines', 'customer', 'company']);
 
