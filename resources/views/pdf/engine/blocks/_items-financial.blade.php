@@ -39,7 +39,7 @@
           @endif
         </td>
         <td style="padding:7px 10px;text-align:right;font-size:9px;font-family:monospace;font-weight:bold;">
-          {{ number_format((float)($line->total ?? $line->total_ht ?? ($line->unit_price * $line->quantity) ?? 0), 0, ',', ' ') }}
+          {{ number_format((float)($line->line_total ?? $line->total ?? $line->total_ht ?? ((float)$line->unit_price * (float)$line->quantity)), 0, ',', ' ') }}
         </td>
       </tr>
     @empty

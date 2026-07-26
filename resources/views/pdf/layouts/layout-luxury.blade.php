@@ -236,7 +236,7 @@ body { font-family: DejaVu Sans, serif; font-size: 11px; color: #1a1a1a; backgro
         <td>{{ $line->unit ?? '' }}</td>
         <td class="r">{{ number_format((float)($line->unit_price ?? 0), 0, ',', ' ') }}</td>
         <td class="r">{{ number_format((float)($line->tax_rate ?? 0), 0, ',', ' ') }} %</td>
-        <td class="r">{{ number_format((float)($line->total ?? 0), 0, ',', ' ') }}</td>
+        <td class="r">{{ number_format((float)($line->line_total ?? 0), 0, ',', ' ') }}</td>
     </tr>
     @endforeach
     </tbody>

@@ -244,24 +244,38 @@ class DemoUsersSeeder extends Seeder
 
             try {
                 $doc = $docClass::create([
-                    'company_id'    => $company->id,
-                    'user_id'       => $admin->id,
-                    'customer_id'   => $customer->id,
-                    'type'          => $s['type'],
-                    'status'        => $s['status'],
-                    'number'        => $number,
-                    'date'          => $date->toDateString(),
-                    'due_date'      => $dueDate->toDateString(),
-                    'currency'      => 'XOF',
-                    'subtotal'      => $subtotal,
-                    'tax_amount'    => $taxAmount,
-                    'total'         => $total,
-                    'paid_amount'   => in_array($s['status'], ['paid']) ? $total : 0,
-                    'notes'         => null,
-                    'lines'         => $lines,
+                    'company_id'  => $company->id,
+                    'user_id'     => $admin->id,
+                    'customer_id' => $customer->id,
+                    'type'        => $s['type'],
+                    'status'      => $s['status'],
+                    'number'      => $number,
+                    'date'        => $date->toDateString(),
+                    'due_date'    => $dueDate->toDateString(),
+                    'currency'    => 'XOF',
+                    'subtotal'    => $subtotal,
+                    'tax_amount'  => $taxAmount,
+                    'total'       => $total,
+                    'paid_amount' => in_array($s['status'], ['paid']) ? $total : 0,
+                    'notes'       => null,
                 ]);
-            } catch (\Throwable) {
-                // Si le schéma diffère légèrement, on ignore
+
+                // Créer les lignes dans document_lines
+                foreach ($lines as $sortOrder => $lineData) {
+                    \App\Models\DocumentLine::create([
+                        'document_id' => $doc->id,
+                        'product_id'  => $lineData['product_id'],
+                        'description' => $lineData['description'],
+                        'quantity'    => $lineData['quantity'],
+                        'unit'        => 'unité',
+                        'unit_price'  => $lineData['unit_price'],
+                        'tax_rate'    => $lineData['tax_rate'],
+                        'line_total'  => $lineData['total'],
+                        'sort_order'  => $sortOrder,
+                    ]);
+                }
+            } catch (\Throwable $e) {
+                $this->command->warn('Document ignoré: ' . $e->getMessage());
             }
         }
     }
