@@ -117,7 +117,8 @@
                         ]);
                     @endphp
                     {{ implode(', ', $parts) }}<br>
-                    @if($company->phone)Tél : {{ $company->phone }}@if($company->email) · @endif@endif
+                    @if($company->phone)Tél : {{ $company->phone }}@if($company->email) · @endif
+                    @endif
                     @if($company->email){{ $company->email }}@endif
                     @if($company->tax_id)<br>N° Fiscal : {{ $company->tax_id }}@endif
                 </div>
