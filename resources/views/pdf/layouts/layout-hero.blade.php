@@ -135,7 +135,7 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; }
     <div id="hero-docinfo">
         <div class="doc-number">N° {{ $document->number }}</div>
         <div class="doc-date">
-            Émis le {{ \Carbon\Carbon::parse($document->date)->format('d/m/Y') }}
+            Émis le {{ \Carbon\Carbon::parse($document->issue_date ?? $document->date)->format('d/m/Y') }}
             @if($document->due_date)<br>Échéance {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}@endif
         </div>
     </div>

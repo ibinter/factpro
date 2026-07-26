@@ -188,7 +188,7 @@ body { font-family: DejaVu Sans, serif; font-size: 11px; color: #1a1a1a; backgro
     </div>
     <div class="doc-number">N° {{ $document->number }}</div>
     <div class="doc-dates">
-        <span>Émis le {{ \Carbon\Carbon::parse($document->date)->format('d/m/Y') }}</span>
+        <span>Émis le {{ \Carbon\Carbon::parse($document->issue_date ?? $document->date)->format('d/m/Y') }}</span>
         @if($document->due_date)<span>Échéance : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}</span>@endif
     </div>
 </div>

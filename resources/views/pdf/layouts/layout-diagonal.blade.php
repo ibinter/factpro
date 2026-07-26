@@ -166,7 +166,7 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
     <div id="accent-band-inner">
         <table style="width:100%"><tr>
             <td style="padding-left:25mm">N° {{ $document->number }}</td>
-            <td style="text-align:center">{{ \Carbon\Carbon::parse($document->date)->format('d/m/Y') }}</td>
+            <td style="text-align:center">{{ \Carbon\Carbon::parse($document->issue_date ?? $document->date)->format('d/m/Y') }}</td>
             <td style="text-align:right;padding-right:4mm">@if($document->due_date)Échéance : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}@endif</td>
         </tr></table>
     </div>

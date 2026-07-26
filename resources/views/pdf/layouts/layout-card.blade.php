@@ -180,7 +180,7 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
             <div class="doc-info-card">
                 <div class="doc-type">{{ $document->type_label }}</div>
                 <div class="doc-number">N° {{ $document->number }}</div>
-                <div class="doc-date">{{ \Carbon\Carbon::parse($document->date)->format('d/m/Y') }}
+                <div class="doc-date">{{ \Carbon\Carbon::parse($document->issue_date ?? $document->date)->format('d/m/Y') }}
                     @if($document->due_date) · Éch. {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}@endif
                 </div>
             </div>

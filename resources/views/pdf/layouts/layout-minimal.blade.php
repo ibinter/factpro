@@ -147,7 +147,7 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
 
 <div class="doc-meta">
     <span>N° <strong>{{ $document->number }}</strong></span>
-    <span>{{ \Carbon\Carbon::parse($document->date)->format('d/m/Y') }}</span>
+    <span>{{ \Carbon\Carbon::parse($document->issue_date ?? $document->date)->format('d/m/Y') }}</span>
     @if($document->due_date)<span>Échéance : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}</span>@endif
     <span>{{ $document->currency }}</span>
 </div>

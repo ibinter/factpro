@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <style>
-@@page { margin: 22mm 18mm 28mm 90mm; }
+@@page { margin: 22mm 18mm 28mm 65mm; }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; }
 
 /* Bande latérale gauche fixe */
 #band {
     position: fixed;
-    top: -22mm; left: -18mm;
-    width: 72mm;
+    top: -22mm; left: -65mm;
+    width: 65mm;
     bottom: -28mm;
     background: {{ $primaryColor }};
     color: #fff;
@@ -149,7 +149,7 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; }
     <div id="doc-title">{{ $document->type_label }}</div>
     <div id="doc-meta">
         <span>N° {{ $document->number }}</span>
-        <span>Date : {{ \Carbon\Carbon::parse($document->date)->format('d/m/Y') }}</span>
+        <span>Date : {{ \Carbon\Carbon::parse($document->issue_date ?? $document->date)->format('d/m/Y') }}</span>
         @if($document->due_date)<span>Échéance : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}</span>@endif
     </div>
 

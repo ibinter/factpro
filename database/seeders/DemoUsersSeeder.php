@@ -245,18 +245,18 @@ class DemoUsersSeeder extends Seeder
             try {
                 $doc = $docClass::create([
                     'company_id'  => $company->id,
-                    'user_id'     => $admin->id,
+                    'created_by'  => $admin->id,
                     'customer_id' => $customer->id,
                     'type'        => $s['type'],
                     'status'      => $s['status'],
                     'number'      => $number,
-                    'date'        => $date->toDateString(),
+                    'issue_date'  => $date->toDateString(),
                     'due_date'    => $dueDate->toDateString(),
                     'currency'    => 'XOF',
                     'subtotal'    => $subtotal,
                     'tax_amount'  => $taxAmount,
                     'total'       => $total,
-                    'paid_amount' => in_array($s['status'], ['paid']) ? $total : 0,
+                    'amount_paid' => in_array($s['status'], ['paid']) ? $total : 0,
                     'notes'       => null,
                 ]);
 
