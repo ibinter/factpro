@@ -1,5 +1,8 @@
 <script setup>
+import { ref } from 'vue';
 import { Head, Link } from '@inertiajs/vue3';
+
+const copied = ref(false);
 
 const profiles = [
     {
@@ -57,6 +60,17 @@ function goToLogin(email) {
             </div>
         </div>
 
+        <!-- Mot de passe commun -->
+        <div class="mb-6 flex items-center gap-3 bg-white/10 border border-amber-400/40 rounded-xl px-5 py-3 text-sm text-white">
+            <span class="text-amber-300 text-lg">🔑</span>
+            <span>Mot de passe pour tous les comptes : <strong class="text-amber-300 font-mono text-base tracking-widest">demo1234</strong></span>
+            <button
+                @click="navigator.clipboard.writeText('demo1234').then(() => copied = true)"
+                class="ml-2 text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg px-2 py-1 transition"
+                title="Copier"
+            >{{ copied ? '✅ Copié' : '📋 Copier' }}</button>
+        </div>
+
         <!-- Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full max-w-3xl">
             <div
@@ -66,14 +80,24 @@ function goToLogin(email) {
             >
                 <div class="text-5xl mb-4">{{ profile.icon }}</div>
                 <h2 class="text-white font-bold text-lg mb-2">{{ profile.label }}</h2>
-                <p class="text-brand-200 text-sm mb-6 leading-relaxed">{{ profile.description }}</p>
+                <p class="text-brand-200 text-sm mb-4 leading-relaxed">{{ profile.description }}</p>
+                <!-- Identifiants visibles -->
+                <div class="w-full bg-black/20 rounded-xl p-3 mb-4 text-left text-xs space-y-1">
+                    <div class="flex justify-between text-white/60">
+                        <span>Email</span>
+                        <span class="text-white font-mono truncate ml-2 max-w-[140px]">{{ profile.email }}</span>
+                    </div>
+                    <div class="flex justify-between text-white/60">
+                        <span>Mot de passe</span>
+                        <span class="text-amber-300 font-mono font-bold tracking-widest">demo1234</span>
+                    </div>
+                </div>
                 <button
                     @click="goToLogin(profile.email)"
                     class="w-full bg-amber-400 hover:bg-amber-300 text-amber-900 font-semibold py-2.5 px-4 rounded-xl transition-colors duration-150 text-sm shadow"
                 >
-                    Se connecter
+                    Se connecter →
                 </button>
-                <p class="mt-3 text-brand-300 text-xs opacity-70 truncate w-full">{{ profile.email }}</p>
             </div>
         </div>
 
