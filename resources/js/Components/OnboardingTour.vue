@@ -1,425 +1,379 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
-    steps: { type: Array, required: true },
+    show: {
+        type: Boolean,
+        default: false,
+    },
 });
+
 const emit = defineEmits(['complete', 'skip']);
 
-// ── State ────────────────────────────────────────────────────────────────────
 const currentStep = ref(0);
-const visible     = ref(false);
-const tooltipStyle = ref({});
-const spotlightStyle = ref({});
-const spotlightRect = ref(null);
+const animating = ref(false);
 
-const step = computed(() => props.steps[currentStep.value]);
-const isLast = computed(() => currentStep.value === props.steps.length - 1);
+const steps = [
+    {
+        icon: '🎉',
+        title: 'Bienvenue !',
+        text: "Bienvenue sur IBIG FactPro ! Je suis SARA, votre assistante. Laissez-moi vous faire découvrir les fonctionnalités clés en 2 minutes.",
+        cta: 'Commencer la visite →',
+    },
+    {
+        icon: '📊',
+        title: 'Votre tableau de bord',
+        text: "Retrouvez ici vos KPIs, votre CA du mois, vos factures récentes et les alertes importantes.",
+        cta: 'Suivant →',
+    },
+    {
+        icon: '📄',
+        title: 'Créer votre première facture',
+        text: "Cliquez sur Nouvelle Facture pour créer votre premier document en moins de 30 secondes.",
+        cta: 'Suivant →',
+    },
+    {
+        icon: '👥',
+        title: 'Vos clients',
+        text: "Importez vos clients existants ou créez-les un par un. Retrouvez leur historique complet ici.",
+        cta: 'Suivant →',
+    },
+    {
+        icon: '✅',
+        title: 'Vous êtes prêt !',
+        text: "Vous connaissez l'essentiel. Explorez les autres modules à votre rythme. Le guide utilisateur et SARA sont là pour vous aider.",
+        cta: 'Terminer',
+    },
+];
 
-// ── Spotlight / tooltip positioning ──────────────────────────────────────────
-function positionForStep(s) {
-    if (!s) return;
-    const el = document.querySelector(s.target);
-    if (!el) {
-        // No target found — show centered tooltip, no spotlight
-        spotlightRect.value = null;
-        spotlightStyle.value = { display: 'none' };
-        tooltipStyle.value = {
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-        };
-        return;
-    }
+const totalSteps = steps.length;
+const currentStepData = computed(() => steps[currentStep.value]);
+const isFirst = computed(() => currentStep.value === 0);
+const isLast = computed(() => currentStep.value === totalSteps - 1);
 
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-    nextTick(() => {
-        const rect = el.getBoundingClientRect();
-        const pad = 8;
-        spotlightRect.value = rect;
-        spotlightStyle.value = {
-            position: 'fixed',
-            top:    `${rect.top  - pad}px`,
-            left:   `${rect.left - pad}px`,
-            width:  `${rect.width  + pad * 2}px`,
-            height: `${rect.height + pad * 2}px`,
-            borderRadius: '8px',
-            // The "hole" is created via the overlay's clip approach in the template
-        };
-
-        // Tooltip position
-        const TW = 300; // tooltip width
-        const TH = 240; // approx tooltip height
-        const margin = 16;
-        const pos = s.position ?? 'bottom';
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-
-        let top, left;
-
-        if (pos === 'bottom') {
-            top  = rect.bottom + pad + margin;
-            left = rect.left + rect.width / 2 - TW / 2;
-        } else if (pos === 'top') {
-            top  = rect.top - pad - margin - TH;
-            left = rect.left + rect.width / 2 - TW / 2;
-        } else if (pos === 'right') {
-            top  = rect.top + rect.height / 2 - TH / 2;
-            left = rect.right + pad + margin;
-        } else { // left
-            top  = rect.top + rect.height / 2 - TH / 2;
-            left = rect.left - pad - margin - TW;
-        }
-
-        // Clamp within viewport
-        left = Math.max(margin, Math.min(left, vw - TW - margin));
-        top  = Math.max(margin, Math.min(top, vh - TH - margin));
-
-        tooltipStyle.value = {
-            position: 'fixed',
-            top:  `${top}px`,
-            left: `${left}px`,
-            width: `${TW}px`,
-        };
-    });
+function goTo(index) {
+    if (animating.value) return;
+    animating.value = true;
+    setTimeout(() => {
+        currentStep.value = index;
+        animating.value = false;
+    }, 200);
 }
 
-// ── Navigation ────────────────────────────────────────────────────────────────
 function next() {
     if (isLast.value) {
         complete();
     } else {
-        currentStep.value++;
+        goTo(currentStep.value + 1);
     }
 }
 
 function prev() {
-    if (currentStep.value > 0) currentStep.value--;
+    if (!isFirst.value) {
+        goTo(currentStep.value - 1);
+    }
 }
 
 function complete() {
-    localStorage.setItem('factpro_tour_completed', '1');
-    visible.value = false;
-    emit('complete');
+    router.post('/onboarding/complete', {}, {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => emit('complete'),
+        onError: () => emit('complete'),
+    });
 }
 
 function skip() {
-    localStorage.setItem('factpro_tour_completed', '1');
-    visible.value = false;
-    emit('skip');
+    router.post('/onboarding/skip', {}, {
+        preserveScroll: true,
+        preserveState: true,
+        onSuccess: () => emit('skip'),
+        onError: () => emit('skip'),
+    });
 }
 
-// Re-position when step changes
-watch(currentStep, async () => {
-    await nextTick();
-    positionForStep(step.value);
-}, { immediate: false });
-
-onMounted(async () => {
-    await nextTick();
-    visible.value = true;
-    positionForStep(step.value);
-
-    window.addEventListener('resize', onResize);
+// Reset step when tour re-opens
+watch(() => props.show, (val) => {
+    if (val) currentStep.value = 0;
 });
-
-onUnmounted(() => {
-    window.removeEventListener('resize', onResize);
-});
-
-function onResize() {
-    positionForStep(step.value);
-}
-
-// Spotlight hole coords for the SVG overlay approach
-const overlayClipId = 'tour-clip-' + Math.random().toString(36).slice(2);
 </script>
 
 <template>
     <Teleport to="body">
-        <Transition name="tour-fade">
-            <div v-if="visible" class="tour-root">
+        <Transition name="onboarding-fade">
+            <div
+                v-if="show"
+                class="onboarding-overlay"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="onboarding-title"
+            >
+                <!-- Backdrop -->
+                <div class="onboarding-backdrop" @click.self="skip" />
 
-                <!-- Dark overlay with spotlight hole -->
-                <div class="tour-overlay" @click.self="skip">
-                    <!-- Spotlight highlight box -->
-                    <div
-                        v-if="spotlightRect"
-                        class="tour-spotlight"
-                        :style="spotlightStyle"
-                    ></div>
-                </div>
-
-                <!-- Tooltip card -->
-                <Transition name="step-fade" mode="out-in">
-                    <div
-                        :key="currentStep"
-                        class="tour-tooltip"
-                        :style="tooltipStyle"
-                    >
+                <!-- Modal card -->
+                <Transition :name="animating ? 'onboarding-slide' : ''" mode="out-in">
+                    <div :key="currentStep" class="onboarding-card">
                         <!-- Header -->
-                        <div class="tour-header">
-                            <div class="tour-header-left">
-                                <span class="tour-step-badge">
-                                    Étape {{ currentStep + 1 }} / {{ steps.length }}
-                                </span>
-                                <h3 class="tour-title">{{ step.title }}</h3>
+                        <div class="onboarding-header">
+                            <div class="onboarding-header-brand">
+                                <img src="/logo.svg" alt="IBIG FactPro" class="onboarding-logo" />
                             </div>
-                            <button class="tour-skip-btn" @click="skip" title="Ignorer">
-                                ✕
+                            <button
+                                type="button"
+                                class="onboarding-close"
+                                @click="skip"
+                                aria-label="Ignorer la visite"
+                            >
+                                × Ignorer
                             </button>
                         </div>
 
                         <!-- Body -->
-                        <div class="tour-body">
-                            <p class="tour-content">{{ step.content }}</p>
+                        <div class="onboarding-body">
+                            <div class="onboarding-icon">{{ currentStepData.icon }}</div>
+                            <h2 id="onboarding-title" class="onboarding-title">
+                                {{ currentStepData.title }}
+                            </h2>
+                            <p class="onboarding-text">{{ currentStepData.text }}</p>
+
+                            <!-- Progress bar -->
+                            <div class="onboarding-progress-wrap" aria-label="Progression de la visite">
+                                <div class="onboarding-progress-track">
+                                    <div
+                                        class="onboarding-progress-fill"
+                                        :style="{ width: `${((currentStep + 1) / totalSteps) * 100}%` }"
+                                    />
+                                </div>
+                                <span class="onboarding-progress-label">
+                                    Étape {{ currentStep + 1 }}/{{ totalSteps }}
+                                </span>
+                            </div>
                         </div>
 
-                        <!-- Progress dots -->
-                        <div class="tour-dots">
-                            <span
-                                v-for="(_, i) in steps"
-                                :key="i"
-                                class="tour-dot"
-                                :class="{ 'tour-dot-active': i === currentStep }"
-                                @click="currentStep = i; positionForStep(steps[i])"
-                            ></span>
-                        </div>
-
-                        <!-- Footer actions -->
-                        <div class="tour-footer">
+                        <!-- Footer -->
+                        <div class="onboarding-footer">
                             <button
-                                v-if="currentStep > 0"
-                                class="btn-prev"
+                                v-if="!isFirst"
+                                type="button"
+                                class="onboarding-btn-prev"
                                 @click="prev"
                             >
                                 ← Précédent
                             </button>
-                            <span v-else></span>
+                            <span v-else />
 
-                            <div class="tour-footer-right">
-                                <button class="btn-skip-text" @click="skip">Ignorer la visite</button>
-                                <button
-                                    v-if="!isLast"
-                                    class="btn-next"
-                                    @click="next"
-                                >
-                                    Suivant →
-                                </button>
-                                <button
-                                    v-else
-                                    class="btn-finish"
-                                    @click="complete"
-                                >
-                                    Terminer ✓
-                                </button>
-                            </div>
+                            <button
+                                type="button"
+                                class="onboarding-btn-next"
+                                @click="next"
+                            >
+                                {{ currentStepData.cta }}
+                            </button>
+                        </div>
+
+                        <!-- "Retry later" link on last step -->
+                        <div v-if="isLast" class="onboarding-retry">
+                            <button type="button" class="onboarding-retry-link" @click="skip">
+                                Recommencer la visite plus tard
+                            </button>
                         </div>
                     </div>
                 </Transition>
-
             </div>
         </Transition>
     </Teleport>
 </template>
 
 <style scoped>
-/* ── Root ─────────────────────────────────────────────────────── */
-.tour-root {
+/* Overlay */
+.onboarding-overlay {
     position: fixed;
     inset: 0;
     z-index: 9999;
-    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* ── Overlay ──────────────────────────────────────────────────── */
-.tour-overlay {
-    position: fixed;
+.onboarding-backdrop {
+    position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.62);
-    pointer-events: all;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
 }
 
-/* Spotlight: bright cutout via box-shadow */
-.tour-spotlight {
-    position: fixed;
-    pointer-events: none;
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.62);
-    z-index: 10001;
-    background: transparent;
-    transition: all 0.3s cubic-bezier(.4,0,.2,1);
-    outline: 2px solid rgba(0, 98, 204, 0.6);
-    outline-offset: 2px;
-}
-
-/* ── Tooltip card ─────────────────────────────────────────────── */
-.tour-tooltip {
-    position: fixed;
-    z-index: 10002;
-    pointer-events: all;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 40px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.1);
+/* Card */
+.onboarding-card {
+    position: relative;
+    z-index: 1;
+    background: #ffffff;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 26rem;
+    margin: 1rem;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
     overflow: hidden;
-    min-width: 280px;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
-.tour-header {
-    background: #0062CC;
-    padding: 0.9rem 1rem 0.75rem;
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0.5rem;
-}
-.tour-header-left { flex: 1; }
-
-.tour-step-badge {
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    color: rgba(255,255,255,0.65);
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 0.25rem;
-}
-
-.tour-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1.3;
-}
-
-.tour-skip-btn {
-    background: rgba(255,255,255,0.15);
-    border: none;
-    color: rgba(255,255,255,0.8);
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 0.7rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.15s;
-    margin-top: 2px;
-}
-.tour-skip-btn:hover { background: rgba(255,255,255,0.3); }
-
-/* Body */
-.tour-body {
-    padding: 0.9rem 1rem 0.5rem;
-    background: #f9fafb;
-}
-.tour-content {
-    font-size: 0.875rem;
-    color: #374151;
-    line-height: 1.55;
-}
-
-/* Dots */
-.tour-dots {
-    display: flex;
-    justify-content: center;
-    gap: 6px;
-    padding: 0.6rem 1rem 0.3rem;
-    background: #f9fafb;
-}
-.tour-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #d1d5db;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.2s;
-}
-.tour-dot:hover { background: #9ca3af; }
-.tour-dot-active {
-    background: #0062CC;
-    transform: scale(1.25);
-}
-
-/* Footer */
-.tour-footer {
+.onboarding-header {
+    background: #001d3d;
+    padding: 1rem 1.25rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.65rem 1rem 0.75rem;
-    background: #fff;
-    border-top: 1px solid #f3f4f6;
-    gap: 0.5rem;
-}
-.tour-footer-right {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
 }
 
-.btn-prev {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: #0062CC;
-    background: transparent;
-    border: 1.5px solid #0062CC;
-    border-radius: 6px;
-    padding: 0.4rem 0.85rem;
-    cursor: pointer;
-    transition: background 0.15s;
+.onboarding-logo {
+    height: 2rem;
+    width: auto;
+    filter: brightness(0) invert(1);
 }
-.btn-prev:hover { background: #eff6ff; }
 
-.btn-skip-text {
-    font-size: 0.75rem;
-    color: #9ca3af;
+.onboarding-close {
+    color: rgba(255, 255, 255, 0.7);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0.3rem 0;
+    font-size: 0.85rem;
     transition: color 0.15s;
+    padding: 0;
 }
-.btn-skip-text:hover { color: #6b7280; }
+.onboarding-close:hover { color: #ffffff; }
 
-.btn-next {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #fff;
-    background: #0062CC;
-    border: none;
-    border-radius: 6px;
-    padding: 0.4rem 0.9rem;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
+/* Body */
+.onboarding-body {
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
 }
-.btn-next:hover { background: #004fa3; transform: translateY(-1px); }
 
-.btn-finish {
-    font-size: 0.8rem;
+.onboarding-icon {
+    font-size: 3rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+}
+
+.onboarding-title {
+    font-size: 1.25rem;
     font-weight: 700;
     color: #001d3d;
-    background: #F0C040;
-    border: none;
-    border-radius: 6px;
-    padding: 0.4rem 0.9rem;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-    box-shadow: 0 2px 8px rgba(240,192,64,0.35);
+    margin: 0 0 0.75rem;
 }
-.btn-finish:hover { background: #e0b030; transform: translateY(-1px); }
 
-/* ── Transitions ──────────────────────────────────────────────── */
-.tour-fade-enter-active,
-.tour-fade-leave-active { transition: opacity 0.3s ease; }
-.tour-fade-enter-from,
-.tour-fade-leave-to    { opacity: 0; }
+.onboarding-text {
+    font-size: 0.95rem;
+    color: #4b5563;
+    line-height: 1.6;
+    margin: 0 0 1.5rem;
+}
 
-.step-fade-enter-active,
-.step-fade-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
-.step-fade-enter-from   { opacity: 0; transform: translateY(6px); }
-.step-fade-leave-to     { opacity: 0; transform: translateY(-6px); }
+/* Progress */
+.onboarding-progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.onboarding-progress-track {
+    flex: 1;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.onboarding-progress-fill {
+    height: 100%;
+    background: #001d3d;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+.onboarding-progress-label {
+    font-size: 0.78rem;
+    color: #9ca3af;
+    white-space: nowrap;
+}
+
+/* Footer */
+.onboarding-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem 1.25rem;
+    border-top: 1px solid #f3f4f6;
+    gap: 0.75rem;
+}
+
+.onboarding-btn-prev {
+    background: none;
+    border: 1px solid #d1d5db;
+    color: #6b7280;
+    border-radius: 8px;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.onboarding-btn-prev:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+.onboarding-btn-next {
+    background: #001d3d;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.onboarding-btn-next:hover { background: #003063; }
+
+/* Retry link */
+.onboarding-retry {
+    text-align: center;
+    padding: 0 2rem 1.25rem;
+}
+.onboarding-retry-link {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.15s;
+}
+.onboarding-retry-link:hover { color: #4b5563; }
+
+/* Overlay fade transition */
+.onboarding-fade-enter-active,
+.onboarding-fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+.onboarding-fade-enter-from,
+.onboarding-fade-leave-to {
+    opacity: 0;
+}
+
+/* Step slide transition */
+.onboarding-slide-enter-active,
+.onboarding-slide-leave-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.onboarding-slide-enter-from {
+    opacity: 0;
+    transform: translateX(20px);
+}
+.onboarding-slide-leave-to {
+    opacity: 0;
+    transform: translateX(-20px);
+}
 </style>

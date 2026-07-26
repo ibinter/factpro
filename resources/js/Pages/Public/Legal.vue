@@ -460,6 +460,157 @@ const otherPages = [
                 <p>IBIG SARL privilégie la résolution amiable des litiges. En cas de désaccord persistant, les parties peuvent recourir à un médiateur agréé avant toute action judiciaire.</p>
             </template>
 
+            <template v-else-if="slug === 'sla'">
+                <h2>1. Objet</h2>
+                <p>Le présent Accord de Niveau de Service (SLA) définit les engagements d'IBIG SARL concernant la disponibilité, la performance et le support de la plateforme IBIG FactPro.</p>
+                <h2>2. Disponibilité garantie</h2>
+                <p>IBIG SARL s'engage à maintenir une disponibilité de la plateforme de <strong>99,5 % par mois</strong> (hors maintenances planifiées). La disponibilité est calculée comme suit : ((minutes du mois – minutes d'indisponibilité non planifiée) / minutes du mois) × 100.</p>
+                <h2>3. Temps de réponse du support</h2>
+                <p><strong>Critique (service inaccessible) :</strong> réponse sous 4 heures ouvrées.<br>
+                <strong>Majeur (fonctionnalité bloquante) :</strong> réponse sous 8 heures ouvrées.<br>
+                <strong>Mineur (question, amélioration) :</strong> réponse sous 2 jours ouvrés.</p>
+                <h2>4. Maintenances planifiées</h2>
+                <p>Les maintenances planifiées sont communiquées au minimum 48 heures à l'avance par email et notification in-app. Elles sont généralement effectuées entre 22h00 et 06h00 UTC.</p>
+                <h2>5. Crédits SLA</h2>
+                <p>En cas de non-respect des engagements de disponibilité (hors cas de force majeure), des crédits de service peuvent être accordés sur demande via <a href="mailto:support@ibigsoft.com">support@ibigsoft.com</a>.</p>
+                <h2>6. Exclusions</h2>
+                <p>Le SLA ne s'applique pas aux interruptions dues à : des cas de force majeure, des actes malveillants de tiers, des pannes Internet du client, ou des opérations effectuées par le client contraires aux CGU.</p>
+            </template>
+
+            <template v-else-if="slug === 'securite'">
+                <h2>1. Engagement sécurité</h2>
+                <p>IBIG SARL accorde une importance primordiale à la sécurité de vos données. Nous appliquons une politique de sécurité multicouche conforme aux bonnes pratiques de l'industrie.</p>
+                <h2>2. Chiffrement des données</h2>
+                <p>Toutes les communications entre votre navigateur et nos serveurs sont chiffrées via TLS 1.3. Les mots de passe sont stockés avec bcrypt (facteur de coût ≥ 12). Les données sensibles au repos sont chiffrées avec AES-256.</p>
+                <h2>3. Contrôle d'accès</h2>
+                <p>L'accès aux systèmes de production est limité aux ingénieurs habilités, via SSH avec clés asymétriques uniquement. L'authentification à deux facteurs (2FA) est obligatoire pour tous les accès administratifs.</p>
+                <h2>4. Surveillance et détection</h2>
+                <p>Nos serveurs sont surveillés 24h/24 par des outils automatisés détectant les anomalies, les tentatives d'intrusion et les comportements suspects. Les journaux d'accès sont conservés 12 mois.</p>
+                <h2>5. Tests et audits</h2>
+                <p>IBIG SARL réalise des tests de pénétration réguliers et des audits de code. Toute vulnérabilité identifiée est corrigée en priorité selon sa criticité.</p>
+                <h2>6. Signalement de vulnérabilités</h2>
+                <p>Si vous découvrez une vulnérabilité, merci de la signaler de façon responsable à <a href="mailto:security@ibigsoft.com">security@ibigsoft.com</a>. Nous nous engageons à vous répondre sous 72 heures.</p>
+            </template>
+
+            <template v-else-if="slug === 'accessibilite'">
+                <h2>1. Notre engagement</h2>
+                <p>IBIG SARL s'engage à rendre IBIG FactPro accessible au plus grand nombre, y compris aux personnes en situation de handicap, conformément aux standards WCAG 2.1 niveau AA.</p>
+                <h2>2. Fonctionnalités d'accessibilité</h2>
+                <p>La plateforme est conçue pour être navigable au clavier, compatible avec les lecteurs d'écran (ARIA labels), et offre un contraste suffisant (ratio ≥ 4.5:1 pour le texte normal). Le texte est redimensionnable sans perte de fonctionnalité.</p>
+                <h2>3. Limitations connues</h2>
+                <p>Certaines fonctionnalités avancées (éditeur PDF, galerie d'images) peuvent présenter des limitations d'accessibilité. Nous travaillons continuellement à leur amélioration.</p>
+                <h2>4. Contact accessibilité</h2>
+                <p>Pour signaler un problème d'accessibilité ou obtenir une assistance spécifique, contactez-nous à <a href="mailto:support@ibigsoft.com">support@ibigsoft.com</a> en précisant votre situation.</p>
+            </template>
+
+            <template v-else-if="slug === 'anti-spam'">
+                <h2>1. Politique anti-spam</h2>
+                <p>IBIG SARL s'engage à ne jamais envoyer de communications non sollicitées. Tous les emails envoyés via IBIG FactPro (relances, notifications, rapports) sont liés à l'utilisation du service ou à des communications que vous avez explicitement acceptées.</p>
+                <h2>2. Emails transactionnels</h2>
+                <p>Les emails transactionnels (factures, devis, confirmations) sont envoyés en votre nom à vos clients. Vous êtes seul responsable de l'utilisation de cette fonctionnalité dans le respect des lois anti-spam applicables.</p>
+                <h2>3. Désinscription</h2>
+                <p>Chaque email marketing contient un lien de désinscription. Les emails transactionnels liés à votre compte (factures, sécurité) ne peuvent pas être désactivés car ils sont essentiels au service.</p>
+                <h2>4. Signalement</h2>
+                <p>Si vous pensez avoir reçu un email abusif depuis notre plateforme, signalez-le à <a href="mailto:support@ibigsoft.com">support@ibigsoft.com</a>. Nous prenons ces signalements très au sérieux.</p>
+            </template>
+
+            <template v-else-if="slug === 'conditions-api'">
+                <h2>1. Accès à l'API</h2>
+                <p>L'accès à l'API REST publique IBIG FactPro est réservé aux abonnés des formules Business et Enterprise. Une clé API personnelle est requise pour chaque requête.</p>
+                <h2>2. Limites de débit</h2>
+                <p><strong>Business :</strong> 1 000 requêtes / heure.<br><strong>Enterprise :</strong> 10 000 requêtes / heure.<br>En cas de dépassement, les requêtes excédentaires sont rejetées avec un code HTTP 429.</p>
+                <h2>3. Utilisations autorisées</h2>
+                <p>L'API peut être utilisée pour intégrer FactPro à vos propres systèmes, automatiser des tâches, ou développer des applications pour vos clients. La revente d'accès API à des tiers sans accord préalable est interdite.</p>
+                <h2>4. Responsabilité</h2>
+                <p>Vous êtes responsable de la sécurité de votre clé API. En cas de compromission, révoquez-la immédiatement depuis votre espace Paramètres > API.</p>
+                <h2>5. Évolution</h2>
+                <p>IBIG SARL se réserve le droit de modifier ou de déprécier des endpoints avec un préavis de 90 jours pour les modifications majeures.</p>
+            </template>
+
+            <template v-else-if="slug === 'partenaires'">
+                <h2>1. Programme IBIG PARTNERS</h2>
+                <p>Le programme IBIG PARTNERS permet aux revendeurs, intégrateurs et consultants de distribuer et implémenter IBIG FactPro auprès de leurs clients.</p>
+                <h2>2. Conditions d'adhésion</h2>
+                <p>Pour rejoindre le programme, le partenaire doit : soumettre une demande via ibigsoft.com, disposer d'une structure légalement constituée, et s'engager à respecter les standards de qualité IBIG SOFT.</p>
+                <h2>3. Avantages partenaires</h2>
+                <p>Les partenaires bénéficient de remises sur les licences (jusqu'à 30%), d'un accès prioritaire au support, de formations exclusives, de matériaux marketing co-brandés, et d'une visibilité dans l'annuaire partenaires.</p>
+                <h2>4. Obligations</h2>
+                <p>Les partenaires s'engagent à ne pas dégrader l'image de marque IBIG SOFT, à ne pas sous-licencier sans autorisation, et à maintenir un niveau de service conforme aux attentes de qualité du programme.</p>
+                <h2>5. Contact</h2>
+                <p>Pour rejoindre le programme : <a href="mailto:partenaires@ibigsoft.com">partenaires@ibigsoft.com</a></p>
+            </template>
+
+            <template v-else-if="slug === 'utilisation-acceptable'">
+                <h2>1. Utilisations autorisées</h2>
+                <p>IBIG FactPro est destiné à la gestion commerciale et administrative légale de votre entreprise. Toute utilisation dans un cadre légal et conforme aux lois de votre pays est autorisée.</p>
+                <h2>2. Utilisations interdites</h2>
+                <p>Sont strictement interdits : l'utilisation de la plateforme pour des activités illégales, la fraude fiscale, le blanchiment d'argent, le spam, la tentative d'accès non autorisé à des systèmes tiers, ou tout acte contraire à l'ordre public.</p>
+                <h2>3. Contenu interdit</h2>
+                <p>Il est interdit de stocker, partager ou transmettre via la plateforme : du contenu offensant, illicite, diffamatoire, ou portant atteinte aux droits de tiers (marques, brevets, droits d'auteur).</p>
+                <h2>4. Sanctions</h2>
+                <p>Toute violation de cette politique peut entraîner la suspension immédiate du compte, sans remboursement, et le cas échéant des poursuites judiciaires.</p>
+            </template>
+
+            <template v-else-if="slug === 'rgpd-details'">
+                <h2>1. Base légale du traitement</h2>
+                <p>Le traitement de vos données personnelles repose sur : l'exécution du contrat (CGU), votre consentement (cookies non essentiels, communications marketing), l'intérêt légitime (sécurité, amélioration du service), et les obligations légales (conservation fiscale).</p>
+                <h2>2. Durées de conservation</h2>
+                <p><strong>Données de compte :</strong> durée de l'abonnement + 3 ans.<br>
+                <strong>Données de facturation :</strong> 10 ans (obligation légale).<br>
+                <strong>Logs techniques :</strong> 12 mois.<br>
+                <strong>Cookies analytiques :</strong> 13 mois maximum.</p>
+                <h2>3. Transferts hors UE/OHADA</h2>
+                <p>Vos données sont hébergées sur des serveurs situés en Europe (OVH Cloud). Certains sous-traitants peuvent être établis hors UE ; dans ce cas, des clauses contractuelles types (CCT) approuvées par la Commission européenne encadrent le transfert.</p>
+                <h2>4. Sous-traitants</h2>
+                <p>Nous faisons appel à des sous-traitants de confiance : OVH (hébergement), Stripe/CinetPay (paiement), Postmark (email transactionnel), Anthropic (IA SARA). Chacun est lié par un DPA (Data Processing Agreement).</p>
+                <h2>5. Vos droits</h2>
+                <p>Conformément au RGPD et aux lois OHADA applicables, vous disposez des droits d'accès, de rectification, d'effacement, de portabilité, de limitation et d'opposition. Exercez-les à <a href="mailto:legal@ibigsoft.com">legal@ibigsoft.com</a>.</p>
+            </template>
+
+            <template v-else-if="slug === 'dpa'">
+                <h2>1. Objet du DPA</h2>
+                <p>Le présent Accord de Traitement des Données (DPA) régit le traitement des données personnelles par IBIG SARL en qualité de sous-traitant pour le compte du client (responsable de traitement) dans le cadre des services IBIG FactPro.</p>
+                <h2>2. Instructions de traitement</h2>
+                <p>IBIG SARL traite les données personnelles uniquement sur instruction documentée du responsable de traitement, sauf obligation légale contraire. Le client conserve la maîtrise de ses données et peut en demander l'export ou la suppression à tout moment.</p>
+                <h2>3. Mesures de sécurité</h2>
+                <p>IBIG SARL met en œuvre les mesures techniques et organisationnelles visées à l'article 32 du RGPD : chiffrement, contrôle d'accès, journalisation, tests de pénétration réguliers.</p>
+                <h2>4. Sous-traitants ultérieurs</h2>
+                <p>Le client autorise IBIG SARL à avoir recours aux sous-traitants listés dans la Politique RGPD détaillée. Toute modification de cette liste fait l'objet d'une notification préalable de 30 jours.</p>
+                <h2>5. Notification de violation</h2>
+                <p>En cas de violation de données susceptible d'engager la notification RGPD, IBIG SARL notifie le client dans un délai de 72 heures suivant la détection, avec toutes les informations requises.</p>
+                <h2>6. Contact DPO</h2>
+                <p>Pour toute question relative au DPA : <a href="mailto:legal@ibigsoft.com">legal@ibigsoft.com</a></p>
+            </template>
+
+            <template v-else-if="slug === 'plan-continuite'">
+                <h2>1. Objectif</h2>
+                <p>Le Plan de Continuité d'Activité (PCA) d'IBIG SARL vise à garantir la continuité des services IBIG FactPro en cas d'incident majeur (panne serveur, sinistre, cyberattaque).</p>
+                <h2>2. Sauvegardes</h2>
+                <p>Les données sont sauvegardées automatiquement toutes les 24 heures. Les sauvegardes sont répliquées sur deux datacenters géographiquement distincts. La rétention est de 30 jours glissants.</p>
+                <h2>3. Objectifs de reprise</h2>
+                <p><strong>RTO (Recovery Time Objective) :</strong> reprise du service en moins de 4 heures.<br>
+                <strong>RPO (Recovery Point Objective) :</strong> perte de données maximale de 24 heures.</p>
+                <h2>4. Tests</h2>
+                <p>Des exercices de reprise sont réalisés au minimum une fois par trimestre. Les résultats sont documentés et utilisés pour améliorer le plan.</p>
+                <h2>5. Communication de crise</h2>
+                <p>En cas d'incident majeur, les clients sont notifiés par email et via la page de statut dans les 2 heures suivant la détection.</p>
+            </template>
+
+            <template v-else-if="slug === 'charte-ethique'">
+                <h2>1. Nos valeurs fondamentales</h2>
+                <p>IBIG SARL s'engage à exercer ses activités avec intégrité, transparence, respect et responsabilité. Ces valeurs guident chacune de nos décisions, de notre relation clients à notre management interne.</p>
+                <h2>2. Respect des droits humains</h2>
+                <p>IBIG SARL respecte les droits fondamentaux de ses employés, partenaires et clients. Nous condamnons toute forme de discrimination, harcèlement, travail forcé ou exploitation.</p>
+                <h2>3. Protection de l'environnement</h2>
+                <p>Nous nous efforçons de réduire notre empreinte numérique (optimisation des serveurs, hébergement vert) et encourageons nos clients à adopter la facturation électronique comme alternative écologique au papier.</p>
+                <h2>4. Lutte contre la corruption</h2>
+                <p>IBIG SARL rejette toute forme de corruption, de détournement de fonds ou de pratiques déloyales. Aucun employé, partenaire ou fournisseur ne doit offrir ou accepter des avantages indus.</p>
+                <h2>5. Confidentialité et données</h2>
+                <p>Nous traitons les données de nos clients avec le plus grand respect, uniquement pour les finalités déclarées, et sans jamais les vendre à des tiers à des fins commerciales.</p>
+                <h2>6. Signalement éthique</h2>
+                <p>Tout manquement à cette charte peut être signalé de manière confidentielle à <a href="mailto:legal@ibigsoft.com">legal@ibigsoft.com</a>. Les signalements de bonne foi sont protégés.</p>
+            </template>
+
         </div>
 
         <!-- Liens vers les autres pages légales -->

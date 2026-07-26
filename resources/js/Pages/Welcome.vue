@@ -1174,6 +1174,169 @@ const howSteps = [
             </div>
         </section>
 
+        <!-- ═══════════════════════════════ §7.10 MODULES ═══════════════════════════════ -->
+        <section class="px-6 py-24" style="background:#f8faff">
+            <div class="mx-auto max-w-6xl">
+                <div class="text-center mb-14">
+                    <h2 class="text-3xl font-extrabold mb-3" style="color:#001d3d">
+                        {{ lang === 'fr' ? 'Tous vos modules de gestion, dans une seule application' : 'All your management modules, in one application' }}
+                    </h2>
+                    <p class="text-gray-500 text-lg">{{ lang === 'fr' ? 'Adaptés à votre formule · Activables selon vos besoins' : 'Tailored to your plan · Activate what you need' }}</p>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-6">
+                    <div v-for="mod in [
+                        { icon: '📄', nameFr: 'Facturation', nameEn: 'Invoicing', descFr: 'Devis, factures, avoirs, bons de commande', descEn: 'Quotes, invoices, credits, purchase orders', badge: 'Starter+' },
+                        { icon: '👥', nameFr: 'Clients & CRM', nameEn: 'Clients & CRM', descFr: 'Fiche client, pipeline, relances auto', descEn: 'Client profile, pipeline, auto reminders', badge: 'Starter+' },
+                        { icon: '📦', nameFr: 'Stock & Produits', nameEn: 'Stock & Products', descFr: 'Inventaire, alertes, codes-barres', descEn: 'Inventory, alerts, barcodes', badge: 'Pro+' },
+                        { icon: '💰', nameFr: 'Trésorerie', nameEn: 'Treasury', descFr: 'Encaissements, dépenses, solde temps réel', descEn: 'Collections, expenses, real-time balance', badge: 'Pro+' },
+                        { icon: '🏪', nameFr: 'Caisse POS', nameEn: 'POS Register', descFr: 'Point de vente tactile, ticket thermique', descEn: 'Touch point of sale, thermal receipt', badge: 'Pro+' },
+                        { icon: '📊', nameFr: 'Rapports', nameEn: 'Reports', descFr: 'KPIs, graphiques, exports PDF/Excel', descEn: 'KPIs, charts, PDF/Excel exports', badge: 'Starter+' },
+                        { icon: '🤖', nameFr: 'Assistant IA SARA', nameEn: 'AI Assistant SARA', descFr: 'Aide, recherche, suggestions', descEn: 'Help, search, suggestions', badge: lang === \'fr\' ? \'Tous plans\' : \'All plans\' },
+                        { icon: '🔗', nameFr: 'API & Webhooks', nameEn: 'API & Webhooks', descFr: 'Intégrations Zapier, Make, REST', descEn: 'Zapier, Make, REST integrations', badge: 'Business+' },
+                    ]" :key="mod.nameFr"
+                         class="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-5 border border-gray-100 flex flex-col" style="border-left:4px solid #001d3d">
+                        <div class="text-4xl mb-3">{{ mod.icon }}</div>
+                        <div class="font-bold text-gray-900 mb-1">{{ lang === 'fr' ? mod.nameFr : mod.nameEn }}</div>
+                        <div class="text-sm text-gray-500 flex-1 mb-3">{{ lang === 'fr' ? mod.descFr : mod.descEn }}</div>
+                        <span class="self-start text-xs font-semibold px-2 py-1 rounded-full" style="background:#e8f0fe;color:#0062CC">
+                            {{ lang === 'fr' ? 'Inclus dans ' : 'Included in ' }}{{ mod.badge }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ §7.11 GALERIE ═══════════════════════════════ -->
+        <section class="px-6 py-24 bg-white">
+            <div class="mx-auto max-w-6xl">
+                <div class="text-center mb-14">
+                    <h2 class="text-3xl font-extrabold mb-3" style="color:#001d3d">
+                        {{ lang === 'fr' ? "Découvrez l'interface IBIG FactPro" : 'Discover the IBIG FactPro interface' }}
+                    </h2>
+                    <p class="text-gray-500 text-lg">{{ lang === 'fr' ? 'Conçue pour être rapide, claire et professionnelle sur tous les appareils.' : 'Designed to be fast, clear and professional on all devices.' }}</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div v-for="screen in [
+                        { icon: '📊', titleFr: 'Tableau de bord', titleEn: 'Dashboard', bulletsFr: ['KPIs temps réel et CA du mois', 'Graphiques chiffre d\'affaires', 'Alertes et dernières factures'], bulletsEn: ['Real-time KPIs & monthly revenue', 'Revenue charts', 'Alerts & recent invoices'] },
+                        { icon: '📄', titleFr: 'Créer une facture', titleEn: 'Create an invoice', bulletsFr: ['Sélectionnez client et produits', 'Calcul TVA automatique', 'Prêt en 30 secondes'], bulletsEn: ['Select client and products', 'Automatic VAT calculation', 'Ready in 30 seconds'] },
+                        { icon: '📱', titleFr: 'Version mobile', titleEn: 'Mobile version', bulletsFr: ['Toutes les fonctions sur smartphone', 'Installable en PWA', 'Interface tactile optimisée'], bulletsEn: ['All features on smartphone', 'Installable as PWA', 'Optimised touch interface'] },
+                        { icon: '🎯', titleFr: 'Rapports', titleEn: 'Reports', bulletsFr: ['Export PDF/Excel', 'Filtres par période', 'Comparaison N-1'], bulletsEn: ['PDF/Excel export', 'Period filters', 'Year-over-year comparison'] },
+                    ]" :key="screen.titleFr"
+                         class="rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition border border-gray-100 flex flex-col">
+                        <div class="px-4 py-3 font-bold text-white text-sm flex items-center gap-2" style="background:#001d3d">
+                            <span class="text-xl">{{ screen.icon }}</span>
+                            {{ lang === 'fr' ? screen.titleFr : screen.titleEn }}
+                        </div>
+                        <div class="p-4 flex-1">
+                            <ul class="space-y-2">
+                                <li v-for="b in (lang === 'fr' ? screen.bulletsFr : screen.bulletsEn)" :key="b" class="text-sm text-gray-600 flex items-start gap-2">
+                                    <span style="color:#0062CC;margin-top:2px">▸</span> {{ b }}
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="px-4 pb-4">
+                            <a href="/demo-login" class="inline-block text-xs font-semibold px-3 py-1 rounded-full" style="background:#0062CC;color:#fff">
+                                {{ lang === 'fr' ? 'Voir en démo' : 'View demo' }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a href="/#demo" class="inline-block font-bold px-8 py-4 rounded-xl text-white shadow-md hover:opacity-90 transition" style="background:#0062CC">
+                        {{ lang === 'fr' ? 'Demander une démonstration personnalisée' : 'Request a personalised demo' }}
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ §7.12 VIDÉO ═══════════════════════════════ -->
+        <section class="px-6 py-24" style="background:#f8faff">
+            <div class="mx-auto max-w-6xl">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-extrabold mb-3" style="color:#001d3d">
+                        {{ lang === 'fr' ? 'IBIG FactPro en 2 minutes' : 'IBIG FactPro in 2 minutes' }}
+                    </h2>
+                </div>
+                <div class="mx-auto max-w-3xl">
+                    <div class="rounded-2xl shadow-xl overflow-hidden flex flex-col items-center justify-center" style="background:linear-gradient(135deg,#001d3d 0%,#002D5B 60%,#0062CC 100%);aspect-ratio:16/9">
+                        <div class="flex flex-col items-center gap-5 p-8 text-center">
+                            <div class="rounded-full flex items-center justify-center" style="width:80px;height:80px;background:rgba(255,255,255,0.15);border:3px solid rgba(255,255,255,0.4)">
+                                <svg viewBox="0 0 24 24" fill="white" style="width:36px;height:36px;margin-left:4px"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                            <p class="text-white font-semibold text-lg">{{ lang === 'fr' ? 'Présentation officielle disponible prochainement' : 'Official presentation coming soon' }}</p>
+                            <a href="/#demo" class="text-sm font-semibold underline" style="color:#F0C040">
+                                {{ lang === 'fr' ? 'En attendant, demandez une démo en direct →' : 'Meanwhile, request a live demo →' }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ §7.15 TABLEAUX DE BORD ═══════════════════════════════ -->
+        <section class="px-6 py-24 bg-white">
+            <div class="mx-auto max-w-6xl">
+                <div class="text-center mb-14">
+                    <h2 class="text-3xl font-extrabold mb-3" style="color:#001d3d">
+                        {{ lang === 'fr' ? 'Des tableaux de bord adaptés à votre rôle' : 'Dashboards tailored to your role' }}
+                    </h2>
+                    <p class="text-gray-500 text-lg">{{ lang === 'fr' ? 'Chaque profil voit les informations dont il a besoin, en temps réel.' : 'Each profile sees the information it needs, in real time.' }}</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                    <div v-for="profile in [
+                        { icon: '👔', roleFr: 'Dirigeant', roleEn: 'Manager', colorFrom: '#001d3d', colorTo: '#002D5B', kpis: ['CA : 4 280 000 FCFA', 'Marge nette : 31 %', 'Top clients : 8 actifs', 'Factures en attente : 12', 'Trésorerie : +890 000 FCFA'] },
+                        { icon: '💼', roleFr: 'Comptable', roleEn: 'Accountant', colorFrom: '#0062CC', colorTo: '#004fa3', kpis: ['Encaissements : 2 140 000 FCFA', 'Dépenses : 650 000 FCFA', 'Exports comptables : 3 ce mois', 'TVA collectée : 384 000 FCFA', 'Solde final : +1 490 000 FCFA'] },
+                        { icon: '🏪', roleFr: 'Caissier', roleEn: 'Cashier', colorFrom: '#1a7c3e', colorTo: '#145c2e', kpis: ['Ventes du jour : 340 000 FCFA', 'Ticket moyen : 8 500 FCFA', 'Caisse ouverte depuis 08h00', 'Reçus émis : 40', 'Solde caisse : 340 000 FCFA'] },
+                    ]" :key="profile.roleFr"
+                         class="rounded-2xl overflow-hidden shadow-md hover:shadow-lg transition">
+                        <div class="px-6 py-5 flex items-center gap-4" :style="`background:linear-gradient(135deg,${profile.colorFrom},${profile.colorTo})`">
+                            <span class="text-4xl">{{ profile.icon }}</span>
+                            <span class="text-xl font-extrabold text-white">{{ lang === 'fr' ? profile.roleFr : profile.roleEn }}</span>
+                        </div>
+                        <div class="bg-white p-6">
+                            <ul class="space-y-3">
+                                <li v-for="kpi in profile.kpis" :key="kpi" class="flex items-start gap-2 text-sm text-gray-700">
+                                    <span style="color:#0062CC;margin-top:2px">▸</span> {{ kpi }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ §7.16 DOCUMENTS ═══════════════════════════════ -->
+        <section class="px-6 py-24" style="background:#f8faff">
+            <div class="mx-auto max-w-6xl">
+                <div class="text-center mb-14">
+                    <h2 class="text-3xl font-extrabold mb-3" style="color:#001d3d">
+                        {{ lang === 'fr' ? 'Des documents professionnels à votre image' : 'Professional documents that reflect your brand' }}
+                    </h2>
+                    <p class="text-gray-500 text-lg">{{ lang === 'fr' ? 'Factures, devis, reçus, rapports — avec votre logo, vos couleurs, un QR code anti-falsification.' : 'Invoices, quotes, receipts, reports — with your logo, colours, and anti-fraud QR code.' }}</p>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-5 mb-10">
+                    <div v-for="doc in [
+                        { icon: '📄', titleFr: 'Facture PDF', titleEn: 'PDF Invoice', descFr: 'Logo, OHADA, QR code, mentions légales', descEn: 'Logo, OHADA, QR code, legal notices' },
+                        { icon: '📋', titleFr: 'Devis signable', titleEn: 'Signable Quote', descFr: 'Lien public, signature en ligne, validité', descEn: 'Public link, online signature, validity' },
+                        { icon: '🧾', titleFr: 'Ticket de caisse', titleEn: 'Receipt', descFr: 'Thermique 58/80mm, header personnalisé', descEn: '58/80mm thermal, custom header' },
+                        { icon: '📊', titleFr: 'Rapport mensuel', titleEn: 'Monthly Report', descFr: 'CA, charges, marges, graphiques', descEn: 'Revenue, costs, margins, charts' },
+                        { icon: '📦', titleFr: 'Bon de livraison', titleEn: 'Delivery Note', descFr: 'Avec suivi et signature client', descEn: 'With tracking and client signature' },
+                        { icon: '💳', titleFr: 'Reçu de paiement', titleEn: 'Payment Receipt', descFr: 'Mobile Money, virement, espèces', descEn: 'Mobile Money, bank transfer, cash' },
+                    ]" :key="doc.titleFr"
+                         class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition p-5 flex flex-col gap-2">
+                        <span class="text-3xl">{{ doc.icon }}</span>
+                        <div class="font-bold text-gray-900">{{ lang === 'fr' ? doc.titleFr : doc.titleEn }}</div>
+                        <div class="text-sm text-gray-500">{{ lang === 'fr' ? doc.descFr : doc.descEn }}</div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <span class="inline-block text-sm font-semibold px-5 py-2 rounded-full" style="background:#001d3d;color:#F0C040">
+                        {{ lang === 'fr' ? '100+ modèles de documents disponibles' : '100+ document templates available' }}
+                    </span>
+                </div>
+            </div>
+        </section>
+
         <!-- ═══════════════════════════════ TÉMOIGNAGES ═══════════════════════════════ -->
         <section v-if="testimonials.length > 0" class="px-6 py-24" style="background:#f8faff">
             <div class="mx-auto max-w-7xl">

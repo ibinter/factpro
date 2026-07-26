@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\DeliveryAdminController;
 use App\Http\Controllers\Admin\DeliveryAgentController;
 use App\Http\Controllers\Admin\PaymentValidationController;
 use App\Http\Controllers\Admin\HealthController;
+use App\Http\Controllers\Admin\ObservabilityController;
 use App\Http\Controllers\Admin\RevenueController;
 use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\BillingController;
@@ -31,6 +32,11 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
+// API publique — modules & fonctionnalités §43
+Route::get('/api/public/modules', function () {
+    return response()->json(\App\Models\ModuleFeature::active()->get());
+})->name('public.modules');
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -61,6 +67,12 @@ Route::get('/legal/{slug}', [\App\Http\Controllers\LegalController::class, 'show
 Route::middleware(['auth'])->group(function () {
     // Onboarding checklist
     Route::get('/onboarding/status', [\App\Http\Controllers\OnboardingChecklistController::class, 'status'])->name('onboarding.status');
+
+    // Onboarding tour (§11.1)
+    Route::post('/onboarding/complete', [\App\Http\Controllers\OnboardingController::class, 'complete'])->name('onboarding.complete');
+    Route::post('/onboarding/skip', [\App\Http\Controllers\OnboardingController::class, 'skip'])->name('onboarding.skip');
+    Route::get('/onboarding/checklist/status', [\App\Http\Controllers\OnboardingChecklistController::class, 'status'])->name('onboarding.checklist.status');
+    Route::post('/onboarding/checklist/dismiss', [\App\Http\Controllers\OnboardingChecklistController::class, 'dismiss'])->name('onboarding.checklist.dismiss');
 
     // Documentation API & SDK
     Route::get('/api-docs', ApiDocsController::class)->name('api-docs');
@@ -152,9 +164,22 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->grou
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('crypto-wallets');
 
+    // Modules & Fonctionnalités — source de vérité §43
+    Route::get('/module-features', [\App\Http\Controllers\Admin\ModuleFeatureController::class, 'index'])->name('module-features.index');
+    Route::post('/module-features', [\App\Http\Controllers\Admin\ModuleFeatureController::class, 'store'])->name('module-features.store');
+    Route::put('/module-features/{id}', [\App\Http\Controllers\Admin\ModuleFeatureController::class, 'update'])->name('module-features.update');
+    Route::delete('/module-features/{id}', [\App\Http\Controllers\Admin\ModuleFeatureController::class, 'destroy'])->name('module-features.destroy');
+
     Route::get('/revenue', [RevenueController::class, 'index'])->name('revenue');
     Route::get('/acquisition', [\App\Http\Controllers\Admin\AcquisitionController::class, 'index'])->name('acquisition');
     Route::get('/health', [HealthController::class, 'index'])->name('health');
+
+    // Observabilité infrastructure (§29.2)
+    Route::get('/observability', [ObservabilityController::class, 'index'])->name('observability');
+    Route::post('/observability/cache/clear', [ObservabilityController::class, 'clearCache'])->name('observability.cache.clear');
+    Route::post('/observability/cache/config', [ObservabilityController::class, 'clearConfigCache'])->name('observability.cache.config');
+    Route::post('/observability/cache/route', [ObservabilityController::class, 'clearRouteCache'])->name('observability.cache.route');
+    Route::post('/observability/cache/view', [ObservabilityController::class, 'clearViewCache'])->name('observability.cache.view');
     Route::get('/payments', [PaymentValidationController::class, 'index'])->name('payments');
     Route::post('/payments/{transaction}/validate', [PaymentValidationController::class, 'validatePayment'])->name('payments.validate');
     Route::post('/payments/{transaction}/reject', [PaymentValidationController::class, 'reject'])->name('payments.reject');

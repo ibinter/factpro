@@ -32,6 +32,9 @@ class User extends Authenticatable
         'utm_content',
         'referrer_url',
         'last_version_seen_at',
+        'onboarding_completed',
+        'onboarding_completed_at',
+        'checklist_dismissed',
     ];
 
     protected $hidden = [
@@ -49,6 +52,9 @@ class User extends Authenticatable
             'is_superadmin' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
             'last_version_seen_at'    => 'datetime',
+            'onboarding_completed'    => 'boolean',
+            'onboarding_completed_at' => 'datetime',
+            'checklist_dismissed'     => 'boolean',
         ];
     }
 

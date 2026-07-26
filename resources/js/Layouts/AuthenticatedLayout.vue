@@ -15,6 +15,9 @@ import UpgradeModal from '@/Components/UpgradeModal.vue';
 import Analytics from '@/Components/Analytics.vue';
 import AnnouncementBanner from '@/Components/AnnouncementBanner.vue';
 import NewVersionBanner from '@/Components/NewVersionBanner.vue';
+import OnboardingTour from '@/Components/OnboardingTour.vue';
+import PwaUpdateBanner from '@/Components/PwaUpdateBanner.vue';
+import BottomNav from '@/Components/BottomNav.vue';
 import { useUpgradeModal } from '@/Composables/useUpgradeModal';
 import { Link, router, usePage } from '@inertiajs/vue3';
 
@@ -36,6 +39,9 @@ const isSuperadmin = computed(() => page.props.auth.user?.is_superadmin);
 const isRtl = computed(() => page.props.locale === 'ar');
 
 const upgradeModal = useUpgradeModal();
+
+// Onboarding tour (§11.1)
+const onboardingCompleted = computed(() => page.props.onboarding_completed ?? true);
 
 // Multi-sociétés : société courante + liste des sociétés du compte
 const currentCompany = computed(() => page.props.company);
@@ -64,6 +70,9 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
 <template>
     <div :dir="isRtl ? 'rtl' : 'ltr'" :class="{ 'text-right': isRtl }">
         <div class="min-h-screen bg-gray-100">
+            <!-- Bannière mise à jour PWA (§45.3) -->
+            <PwaUpdateBanner />
+
             <!-- Annonces in-app (admin broadcast) -->
             <AnnouncementBanner />
 
@@ -448,7 +457,7 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                 </div>
             </header>
 
-            <main>
+            <main class="pb-16 md:pb-0">
                 <slot />
             </main>
 
@@ -458,10 +467,18 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                 :required-plan="upgradeModal.requiredPlan.value"
                 @close="upgradeModal.closeUpgradeModal()"
             />
+            <!-- Visite guidée première connexion (§11.1) -->
+            <OnboardingTour
+                :show="!onboardingCompleted"
+                @complete="onboardingCompleted"
+                @skip="onboardingCompleted"
+            />
             <GlobalSearch />
             <NpsSurvey :user="$page.props.auth.user" />
             <Sara mode="internal" />
             <Analytics />
+            <!-- Navigation mobile bas d'écran (§9.3) -->
+            <BottomNav />
         </div>
     </div>
 </template>

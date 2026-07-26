@@ -15,6 +15,8 @@ const props = defineProps({
     topProducts: Array,
     alerts: Array,
     conversionRate: Number,
+    checklistProgress: { type: Object, default: () => null },
+    checklistDismissed: { type: Boolean, default: false },
 });
 
 // ── Formatters ──────────────────────────────────────────────────────────────

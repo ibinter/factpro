@@ -95,11 +95,24 @@ class OnboardingChecklistController extends Controller
         $total = count($steps);
 
         return response()->json([
-            'steps'    => $steps,
-            'done'     => $done,
-            'total'    => $total,
-            'percent'  => $total > 0 ? round(($done / $total) * 100) : 0,
-            'complete' => $done === $total,
+            'steps'              => $steps,
+            'done'               => $done,
+            'total'              => $total,
+            'percent'            => $total > 0 ? round(($done / $total) * 100) : 0,
+            'complete'           => $done === $total,
+            'checklist_dismissed' => (bool) ($user->checklist_dismissed ?? false),
         ]);
+    }
+
+    /**
+     * Marque la checklist comme masquée pour l'utilisateur connecté.
+     */
+    public function dismiss(Request $request): \Illuminate\Http\JsonResponse
+    {
+        $user = $request->user();
+        $user->checklist_dismissed = true;
+        $user->save();
+
+        return response()->json(['dismissed' => true]);
     }
 }

@@ -141,6 +141,13 @@ self.addEventListener('fetch', (event) => {
     // (d) Tout le reste → réseau direct, sans interception
 });
 
+/* ── Message : mise à jour contrôlée (PwaUpdateBanner) ── */
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
 /* ── Background Sync : vider la file de documents ── */
 self.addEventListener('sync', (event) => {
     if (event.tag === 'factpro-sync') {

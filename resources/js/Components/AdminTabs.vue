@@ -24,6 +24,8 @@ const tabs = [
     { label: '📝 Blog', route: 'admin.blog.index' },
     { label: '🗺️ Roadmap', route: 'admin.roadmap.index' },
     { label: '🏷️ Versions', route: 'admin.versions.index' },
+    { label: '🧩 Modules', route: 'admin.module-features.index' },
+    { label: '🏥 Observabilité', route: 'admin.observability' },
 ];
 
 const isActive = (name) => {
