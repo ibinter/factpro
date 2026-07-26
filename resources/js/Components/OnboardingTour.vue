@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     show: {
@@ -76,21 +75,19 @@ function prev() {
 }
 
 function complete() {
-    router.post('/onboarding/complete', {}, {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => emit('complete'),
-        onError: () => emit('complete'),
-    });
+    emit('complete');
+    fetch('/onboarding/complete', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '', 'Content-Type': 'application/json' },
+    }).catch(() => {});
 }
 
 function skip() {
-    router.post('/onboarding/skip', {}, {
-        preserveScroll: true,
-        preserveState: true,
-        onSuccess: () => emit('skip'),
-        onError: () => emit('skip'),
-    });
+    emit('skip');
+    fetch('/onboarding/skip', {
+        method: 'POST',
+        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '', 'Content-Type': 'application/json' },
+    }).catch(() => {});
 }
 
 // Reset step when tour re-opens
