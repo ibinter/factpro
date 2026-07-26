@@ -8,6 +8,7 @@ use App\Models\PaymentAuditLog;
 use App\Models\PaymentTransaction;
 use App\Models\Plan;
 use App\Models\User;
+use App\Notifications\TrialStartedNotification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -62,6 +63,9 @@ class LicenseService
         PaymentAuditLog::record('trial_started', 'license', $license->id, null, [
             'plan' => $plan->code, 'days' => $days,
         ]);
+
+        // E-mail #5 : "Essai gratuit démarré" (§20.1 cahier des charges)
+        $user->notify(new TrialStartedNotification($license));
 
         return $license;
     }
