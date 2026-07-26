@@ -161,3 +161,12 @@ Schedule::command('scoring:customers')->dailyAt('02:00');
 
 // Archive automatique des documents finalisés des dernières 24h
 Schedule::command('vault:auto-archive')->dailyAt('01:00')->name('vault.auto-archive');
+
+/*
+|--------------------------------------------------------------------------
+| Comptes démo — réinitialisation quotidienne
+|--------------------------------------------------------------------------
+*/
+
+// Réinitialise les données des comptes démo chaque nuit à 3h
+Schedule::command('demo:reset')->dailyAt('03:00')->name('demo.reset');

@@ -40,6 +40,9 @@ const isRtl = computed(() => page.props.locale === 'ar');
 
 const upgradeModal = useUpgradeModal();
 
+// Compte démo
+const isDemoAccount = computed(() => page.props.isDemoAccount ?? false);
+
 // Onboarding tour (§11.1)
 // onboarding_completed vient d'Inertia ; onboardingDone permet de fermer le tour
 // localement sans attendre un rechargement de page (le POST retourne du JSON,
@@ -87,6 +90,17 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
 
             <!-- Bannière hors-ligne (Phase 12 PWA) -->
             <OfflineBanner />
+
+            <!-- Bannière Mode Démo -->
+            <div
+                v-if="isDemoAccount"
+                class="sticky top-0 z-50 flex items-center justify-center gap-3 bg-orange-500 px-4 py-2 text-center text-sm font-semibold text-white"
+            >
+                <span>⚠️ Mode Démo — Données réinitialisées chaque nuit à 3h. Certaines fonctions sont désactivées.</span>
+                <Link :href="route('register')" class="rounded bg-white px-3 py-0.5 text-orange-600 font-bold hover:bg-orange-50 transition-colors">
+                    Créer un vrai compte →
+                </Link>
+            </div>
 
             <!-- Push opt-in (Phase 16) -->
             <PushOptIn />

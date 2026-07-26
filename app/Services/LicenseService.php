@@ -269,6 +269,11 @@ class LicenseService
     /** Le filigrane essai doit-il être appliqué aux documents ? */
     public function needsTrialWatermark(User $user): bool
     {
+        // Les comptes démo portent toujours un filigrane, quelle que soit leur licence.
+        if ($user->isDemoAccount()) {
+            return true;
+        }
+
         $license = $this->currentFor($user);
 
         return $license === null || $license->isTrial();

@@ -90,4 +90,12 @@ class User extends Authenticatable
     {
         return ! is_null($this->two_factor_confirmed_at);
     }
+
+    /**
+     * Détermine si ce compte est un compte de démonstration.
+     */
+    public function isDemoAccount(): bool
+    {
+        return str_ends_with($this->email, '@demo.factpro.ibigsoft.com');
+    }
 }

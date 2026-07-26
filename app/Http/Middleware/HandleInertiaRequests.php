@@ -116,6 +116,7 @@ class HandleInertiaRequests extends Middleware
                     ->first(['id', 'version', 'title', 'description'])
                 : null,
             'checklist_dismissed' => fn () => auth()->check() ? (bool) auth()->user()->checklist_dismissed : true,
+            'isDemoAccount' => $request->user()?->isDemoAccount() ?? false,
             'onboarding_completed' => fn () => auth()->check() ? auth()->user()->onboarding_completed : true,
             'whiteLabel' => fn () => null, // Le middleware InjectWhiteLabel override si besoin
             'locale' => fn () => App::getLocale(),

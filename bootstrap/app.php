@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             \App\Http\Middleware\TrackUtm::class,
+            \App\Http\Middleware\EnsureNotDemoRestricted::class,
         ]);
 
         $middleware->validateCsrfTokens(except: [
@@ -38,6 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'superadmin' => \App\Http\Middleware\EnsureSuperadmin::class,
             'validate.incoming.webhook' => \App\Http\Middleware\ValidateIncomingWebhookToken::class,
             'security.policy' => \App\Http\Middleware\CheckSecurityPolicy::class,
+            'demo' => \App\Http\Middleware\EnsureNotDemoRestricted::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
