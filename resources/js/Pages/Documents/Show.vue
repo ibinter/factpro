@@ -9,6 +9,9 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+
+const isDemo = computed(() => usePage().props.isDemoAccount ?? false);
 
 const props = defineProps({
     document: Object,
@@ -330,6 +333,7 @@ const planProgress = computed(() => {
                         🎨 Modèle
                     </button>
                     <a
+                        v-if="!isDemo"
                         :href="route('documents.docx', document.id)"
                         class="rounded-md border border-blue-300 bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100"
                         title="Télécharger en Word (.docx)"
