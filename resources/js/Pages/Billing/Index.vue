@@ -1,6 +1,6 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 
 const props = defineProps({
@@ -56,6 +56,20 @@ const tabs = [
     { key: 'payments', label: 'Paiements' },
     { key: 'methods', label: 'Moyens de paiement' },
 ];
+
+// ── Clé d'activation ──────────────────────────────────────────────────────
+const keyForm = useForm({ code: '' });
+const keySuccess = ref('');
+
+const redeemKey = () => {
+    keySuccess.value = '';
+    keyForm.post(route('billing.redeem-key'), {
+        onSuccess: (page) => {
+            keySuccess.value = page.props.flash?.success ?? 'Clé activée avec succès !';
+            keyForm.reset();
+        },
+    });
+};
 
 const paymentMethods = [
     { icon: '💳', title: 'Paiement en ligne (Moneroo)', desc: 'Carte bancaire, Mobile Money, Wallets — Activation automatique immédiate', delay: 'Immédiat' },
@@ -241,6 +255,36 @@ const paymentMethods = [
                                 {{ license?.status === 'trial' ? 'Choisir un forfait' : 'Renouveler / Changer' }}
                             </Link>
                         </div>
+                    </div>
+
+                    <!-- Clé d'activation -->
+                    <div class="rounded-lg bg-white p-6 shadow">
+                        <h3 class="mb-1 font-semibold text-gray-800">🔑 Vous avez une clé d'activation ?</h3>
+                        <p class="mb-4 text-sm text-gray-500">Saisissez votre code pour activer ou renouveler votre licence instantanément.</p>
+                        <div v-if="keySuccess" class="mb-3 rounded-md bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+                            ✓ {{ keySuccess }}
+                        </div>
+                        <form @submit.prevent="redeemKey" class="flex flex-wrap gap-3">
+                            <div class="flex-1">
+                                <input
+                                    v-model="keyForm.code"
+                                    type="text"
+                                    placeholder="IBFP-XXXX-XXXX-XXXX"
+                                    maxlength="19"
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                    class="w-full rounded-md border border-gray-300 px-4 py-2 font-mono text-sm uppercase tracking-widest focus:border-brand-500 focus:outline-none"
+                                    :class="{ 'border-red-400': keyForm.errors.code }"
+                                />
+                                <p v-if="keyForm.errors.code" class="mt-1 text-xs text-red-600">{{ keyForm.errors.code }}</p>
+                            </div>
+                            <button
+                                type="submit"
+                                :disabled="keyForm.processing || !keyForm.code"
+                                class="rounded-md bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:opacity-50">
+                                {{ keyForm.processing ? 'Activation...' : 'Activer' }}
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Commandes récentes -->

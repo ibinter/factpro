@@ -108,6 +108,13 @@ class HandleInertiaRequests extends Middleware
                 'id' => $a->id, 'title' => $a->title, 'message' => $a->message,
                 'type' => $a->type, 'link_text' => $a->link_text, 'link_url' => $a->link_url,
             ]),
+            'app_version' => fn () => \App\Models\AppVersion::published()->latest('published_at')->value('version') ?? '14.0',
+            'new_version' => fn () => auth()->check()
+                ? \App\Models\AppVersion::published()
+                    ->where('published_at', '>', auth()->user()->last_version_seen_at ?? '2020-01-01')
+                    ->latest('published_at')
+                    ->first(['id', 'version', 'title', 'description'])
+                : null,
             'whiteLabel' => fn () => null, // Le middleware InjectWhiteLabel override si besoin
             'locale' => fn () => App::getLocale(),
             'translations' => fn () => [

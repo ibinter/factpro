@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivationKey;
 use App\Models\Coupon;
 use App\Models\CryptoWallet;
 use App\Models\GatewayConfig;
+use App\Models\License;
 use App\Models\Order;
+use App\Models\PaymentAuditLog;
 use App\Models\PaymentMethodConfig;
 use App\Models\PaymentProof;
 use App\Models\PaymentTransaction;
 use App\Models\Plan;
+use App\Notifications\ActivationKeyRedeemedNotification;
 use App\Services\CouponService;
 use App\Services\DeliveryPaymentService;
 use App\Services\LicenseService;
 use App\Services\PaymentService;
 use App\Services\VoucherService;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -590,6 +595,111 @@ class BillingController extends Controller
                 ] : null,
             ] : null,
         ]);
+    }
+
+    /**
+     * Rachète une clé d'activation formule (cahier §19.6).
+     * Rate-limiting : 5 tentatives / 15 min par IP (middleware throttle:5,15).
+     */
+    public function redeemActivationKey(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'code' => ['required', 'string', 'regex:/^IBFP-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/'],
+        ], [
+            'code.regex' => 'Format invalide. Attendu : IBFP-XXXX-XXXX-XXXX',
+        ]);
+
+        $code = strtoupper(trim($data['code']));
+        $user = $request->user();
+        $company = $user->currentCompany;
+
+        if (! $company) {
+            return back()->withErrors(['code' => 'Vous devez avoir une société active pour activer une clé.']);
+        }
+
+        $key = ActivationKey::where('code', $code)->first();
+
+        if (! $key) {
+            return back()->withErrors(['code' => 'Clé d\'activation introuvable.']);
+        }
+
+        if (! $key->isUsable()) {
+            $msg = match ($key->status) {
+                'used'    => 'Cette clé a déjà été utilisée.',
+                'revoked' => 'Cette clé a été révoquée.',
+                'expired' => 'Cette clé a expiré.',
+                default   => 'Cette clé n\'est plus disponible.',
+            };
+            return back()->withErrors(['code' => $msg]);
+        }
+
+        // Vérifier que la clé n'est pas réservée à une autre société
+        if ($key->company_id && $key->company_id !== $company->id) {
+            return back()->withErrors(['code' => 'Cette clé n\'est pas destinée à votre société.']);
+        }
+
+        // Vérifier que la société n'a pas déjà utilisé cette clé
+        if (ActivationKey::where('used_by_company_id', $company->id)->where('code', $code)->exists()) {
+            return back()->withErrors(['code' => 'Votre société a déjà utilisé cette clé.']);
+        }
+
+        $license = DB::transaction(function () use ($key, $user, $company) {
+            $plan    = $key->plan;
+            $current = $this->licenses->currentFor($user);
+
+            // Renouvellement : licence active du même plan → prolonger
+            if ($current && $current->type !== 'trial' && $current->plan_id === $plan->id && $current->ends_at->isFuture()) {
+                $current->update([
+                    'ends_at'           => $current->ends_at->addDays($key->duration_days),
+                    'status'            => 'active',
+                    'activation_source' => 'activation_key',
+                ]);
+                $license = $current;
+            } else {
+                // Terminer l'essai en cours si besoin
+                if ($current && $current->type === 'trial') {
+                    $current->update(['status' => 'terminated']);
+                }
+
+                $license = License::create([
+                    'user_id'           => $user->id,
+                    'plan_id'           => $plan->id,
+                    'license_key'       => $this->licenses->generateKey(),
+                    'type'              => 'paid',
+                    'status'            => 'active',
+                    'starts_at'         => now(),
+                    'ends_at'           => now()->addDays($key->duration_days),
+                    'limits'            => $plan->limits,
+                    'activation_source' => 'activation_key',
+                ]);
+            }
+
+            // Marquer la clé comme utilisée
+            $key->update([
+                'status'              => 'used',
+                'used_by_company_id'  => $company->id,
+                'used_at'             => now(),
+            ]);
+
+            PaymentAuditLog::record('activation_key_redeemed', 'activation_key', $key->id, null, [
+                'code'         => $key->code,
+                'plan'         => $plan->code,
+                'duration_days'=> $key->duration_days,
+                'company_id'   => $company->id,
+                'license_id'   => $license->id,
+            ]);
+
+            return $license;
+        });
+
+        // Notification e-mail
+        try {
+            $user->notify(new ActivationKeyRedeemedNotification($key, $license));
+        } catch (\Throwable) {
+            // Non bloquant
+        }
+
+        return back()->with('success', 'Votre clé a été activée avec succès ! Votre licence ' . $key->plan->name . ' est active.');
     }
 }
 

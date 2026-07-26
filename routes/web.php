@@ -80,6 +80,8 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('throttle:6,1')->name('billing.initiate.delivery');
     Route::get('/billing/delivery-status/{order}', [BillingController::class, 'deliveryStatus'])
         ->name('billing.delivery-status');
+    Route::post('/billing/redeem-key', [BillingController::class, 'redeemActivationKey'])
+        ->middleware('throttle:5,15')->name('billing.redeem-key');
 
     // Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -96,6 +98,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Roadmap — vote (utilisateurs connectés)
     Route::post('/roadmap/{feature}/vote', [\App\Http\Controllers\RoadmapController::class, 'vote'])->middleware('throttle:20,1')->name('roadmap.vote');
+
+    // Nouvelle version — marquer comme vue
+    Route::post('/mark-version-seen', [\App\Http\Controllers\AppVersionController::class, 'markSeen'])->name('version.mark-seen');
 });
 
 /*
@@ -175,6 +180,22 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin')->name('admin.')->grou
     Route::post('/deliveries/{delivery}/assign', [DeliveryAdminController::class, 'assign'])->name('deliveries.assign');
     Route::post('/deliveries/{delivery}/confirm', [DeliveryAdminController::class, 'confirmPayment'])->name('deliveries.confirm');
     Route::resource('delivery-agents', DeliveryAgentController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    // Versions applicatives (§44)
+    Route::resource('versions', \App\Http\Controllers\Admin\AppVersionController::class)
+        ->only(['index', 'store', 'destroy'])
+        ->names('versions');
+    Route::post('/versions/{version}/publish', [\App\Http\Controllers\Admin\AppVersionController::class, 'publish'])
+        ->name('versions.publish');
+
+    // Clés d'activation formule (§19.6)
+    Route::resource('activation-keys', \App\Http\Controllers\Admin\ActivationKeyController::class)
+        ->only(['index', 'store', 'destroy'])
+        ->names('activation-keys');
+    Route::get('activation-keys/{batch}/export', [\App\Http\Controllers\Admin\ActivationKeyController::class, 'exportCsv'])
+        ->name('activation-keys.export');
+    Route::post('activation-keys/{activationKey}/revoke', [\App\Http\Controllers\Admin\ActivationKeyController::class, 'revoke'])
+        ->name('activation-keys.revoke');
 });
 
 require __DIR__.'/pos.php';

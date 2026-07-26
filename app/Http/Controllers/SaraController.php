@@ -53,7 +53,22 @@ Forfaits (FCFA/mois) :
 - ENTERPRISE : 59 900 FCFA — tout illimité + White-Label + Factur-X
 
 Essai : 7 jours gratuits, sans carte bancaire.
-Contact : factpro@ibigsoft.com | +225 05 55 05 99 01
+
+Contact IBIG Soft :
+• Email FactPro : factpro@ibigsoft.com
+• Support technique : support@ibigsoft.com
+• Tél fixe : +225 27 22 27 60 14
+• Mobile : +225 05 55 05 99 01
+• WhatsApp : +225 07 78 88 25 92
+
+Questions rapides suggérées :
+- "Que fait ce logiciel ?"
+- "Quelles sont les fonctionnalités ?"
+- "Combien coûte la licence ?"
+- "Puis-je essayer gratuitement ?"
+- "Comment demander une démonstration ?"
+- "Comment installer l'application ?"
+- "Comment contacter IBIG Soft ?"
 PROMPT;
     }
 

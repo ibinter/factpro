@@ -21,7 +21,7 @@ const welcomeMessage = computed(() =>
 const suggestions = computed(() =>
     props.mode === 'internal'
         ? ["Comment créer une facture ?", "Expliquer les KPIs du tableau de bord", "Comment ajouter un client ?", "Comment générer un devis ?"]
-        : ["C'est quoi l'essai gratuit ?", "Quels sont les tarifs ?", "Est-ce compatible mobile ?", "Comment créer une facture ?"]
+        : ["Que fait ce logiciel ?", "Quelles sont les fonctionnalités ?", "Combien coûte la licence ?", "Puis-je essayer gratuitement ?", "Comment demander une démonstration ?", "Comment installer l'application ?", "Comment contacter IBIG Soft ?"]
 );
 
 const messages = ref([

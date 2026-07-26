@@ -31,6 +31,7 @@ class User extends Authenticatable
         'utm_campaign',
         'utm_content',
         'referrer_url',
+        'last_version_seen_at',
     ];
 
     protected $hidden = [
@@ -47,6 +48,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_superadmin' => 'boolean',
             'two_factor_confirmed_at' => 'datetime',
+            'last_version_seen_at'    => 'datetime',
         ];
     }
 

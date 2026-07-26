@@ -1,7 +1,9 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+
+const appVersion = usePage().props.app_version;
 
 defineProps({});
 
@@ -264,6 +266,7 @@ function openSara() {
           </h2>
           <p class="text-sm text-gray-500 dark:text-gray-400">
             {{ totalFaqs }} questions répondues · 10 catégories
+            <span v-if="appVersion" class="ml-2 text-xs text-gray-400 dark:text-gray-500">· Version {{ appVersion }}</span>
           </p>
         </div>
       </div>

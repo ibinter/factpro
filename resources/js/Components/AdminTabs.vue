@@ -13,6 +13,7 @@ const tabs = [
     { label: '⚙️ Config. paiement', route: 'admin.payment-method-settings' },
     { label: '📦 Forfaits', route: 'admin.plans' },
     { label: '🎟 Coupons', route: 'admin.coupons' },
+    { label: '🔑 Clés', route: 'admin.activation-keys.index' },
     { label: '🌍 Passerelles', route: 'admin.gateways' },
     { label: '🎨 White-label', route: 'admin.white-label.index' },
     { label: '💚 Santé', route: 'admin.health' },
@@ -22,6 +23,7 @@ const tabs = [
     { label: '📢 Annonces', route: 'admin.announcements.index' },
     { label: '📝 Blog', route: 'admin.blog.index' },
     { label: '🗺️ Roadmap', route: 'admin.roadmap.index' },
+    { label: '🏷️ Versions', route: 'admin.versions.index' },
 ];
 
 const isActive = (name) => {

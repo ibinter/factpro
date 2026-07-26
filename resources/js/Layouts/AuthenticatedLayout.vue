@@ -14,6 +14,7 @@ import GlobalSearch from '@/Components/GlobalSearch.vue';
 import UpgradeModal from '@/Components/UpgradeModal.vue';
 import Analytics from '@/Components/Analytics.vue';
 import AnnouncementBanner from '@/Components/AnnouncementBanner.vue';
+import NewVersionBanner from '@/Components/NewVersionBanner.vue';
 import { useUpgradeModal } from '@/Composables/useUpgradeModal';
 import { Link, router, usePage } from '@inertiajs/vue3';
 
@@ -65,6 +66,9 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
         <div class="min-h-screen bg-gray-100">
             <!-- Annonces in-app (admin broadcast) -->
             <AnnouncementBanner />
+
+            <!-- Nouvelle version disponible (§44) -->
+            <NewVersionBanner />
 
             <!-- Bannière hors-ligne (Phase 12 PWA) -->
             <OfflineBanner />

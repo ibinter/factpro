@@ -1,6 +1,7 @@
 <?php
 
 // Pages de vente publiques (cahier §1/§22) — possédé par l'agent Landing.
+use App\Http\Controllers\ChangelogController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\RoadmapController;
 use App\Http\Controllers\BlogController;
@@ -29,6 +30,9 @@ Route::get('/status', [StatusController::class, 'index'])->name('status');
 
 // Page Sécurité & Confiance.
 Route::get('/securite-confiance', [SecurityController::class, 'index'])->name('security');
+
+// Changelog public — Nouveautés & Mises à jour.
+Route::get('/changelog', [ChangelogController::class, 'public'])->name('changelog');
 
 // Page À propos d'IBIG Soft.
 Route::get('/a-propos', [AboutController::class, 'index'])->name('about');

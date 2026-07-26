@@ -333,6 +333,84 @@ const partnerCommissions = [
     { level: 'N2', pct: '10%', label_fr: 'Ventes de vos filleuls', label_en: 'Your referrals\' sales' },
     { level: 'N3', pct: '5%',  label_fr: 'Ventes de leurs filleuls', label_en: 'Their referrals\' sales' },
 ];
+
+/* ── Zone 7.13 — Publics concernés ── */
+const audiences = [
+    {
+        colorBg: '#eff6ff', colorIcon: '#0062CC',
+        title_fr: 'PME & Startups', title_en: 'SMEs & Startups',
+        desc_fr: 'Gérez vos finances et clients dès le premier jour',
+        desc_en: 'Manage your finances and clients from day one',
+        path: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
+    },
+    {
+        colorBg: '#fef3c7', colorIcon: '#d97706',
+        title_fr: 'Grossistes & Distributeurs', title_en: 'Wholesalers & Distributors',
+        desc_fr: 'Stock multi-entrepôt, commandes, livraisons',
+        desc_en: 'Multi-warehouse stock, orders, deliveries',
+        path: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
+    },
+    {
+        colorBg: '#f0fdf4', colorIcon: '#16a34a',
+        title_fr: 'Prestataires de services', title_en: 'Service Providers',
+        desc_fr: 'Devis, facturation, suivi projets et RH',
+        desc_en: 'Quotes, invoicing, project & HR tracking',
+        path: 'M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z',
+    },
+    {
+        colorBg: '#faf5ff', colorIcon: '#7c3aed',
+        title_fr: 'Cabinets & Consultants', title_en: 'Firms & Consultants',
+        desc_fr: 'Honoraires, contrats, relances automatiques',
+        desc_en: 'Fees, contracts, automatic reminders',
+        path: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+    },
+    {
+        colorBg: '#fff7ed', colorIcon: '#ea580c',
+        title_fr: 'Associations & ONG', title_en: 'Associations & NGOs',
+        desc_fr: 'Budget, dons, rapports OHADA conformes',
+        desc_en: 'Budget, donations, OHADA-compliant reports',
+        path: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z',
+    },
+    {
+        colorBg: '#f0f9ff', colorIcon: '#0284c7',
+        title_fr: 'Multi-sites & Groupes', title_en: 'Multi-site & Groups',
+        desc_fr: 'Consolidation, tableaux de bord centralisés',
+        desc_en: 'Consolidation, centralized dashboards',
+        path: 'M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10',
+    },
+];
+
+/* ── Zone 7.14 — Comment ça marche ── */
+const howSteps = [
+    {
+        num: '1',
+        path: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z',
+        title_fr: 'Créez votre compte',        title_en: 'Create your account',
+        desc_fr: 'Inscription gratuite en 1 minute, sans carte bancaire',
+        desc_en: 'Free sign-up in 1 minute, no credit card required',
+    },
+    {
+        num: '2',
+        path: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z',
+        title_fr: 'Configurez votre société',  title_en: 'Set up your company',
+        desc_fr: 'Logo, coordonnées, devise, modules activés',
+        desc_en: 'Logo, details, currency, enabled modules',
+    },
+    {
+        num: '3',
+        path: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z',
+        title_fr: 'Invitez votre équipe',      title_en: 'Invite your team',
+        desc_fr: 'Rôles et droits personnalisables par collaborateur',
+        desc_en: 'Customizable roles and permissions per user',
+    },
+    {
+        num: '4',
+        path: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
+        title_fr: 'Gérez tout depuis un seul écran', title_en: 'Manage everything from one screen',
+        desc_fr: 'Facturation, stocks, rapports en temps réel',
+        desc_en: 'Invoicing, stock, real-time reports',
+    },
+];
 </script>
 
 <template>
@@ -364,22 +442,29 @@ const partnerCommissions = [
     </Head>
 
     <div class="min-h-screen bg-white text-gray-800">
-        <!-- ═══════════════════════════════ INFO BAR ═══════════════════════════════ -->
-        <div v-if="showInfoBar" style="background:#001d3d" class="relative flex items-center justify-center px-4 py-2 text-xs text-white">
-            <span class="mr-1">🎉</span>
-            <span v-if="lang === 'fr'">
-                Essai gratuit 7 jours · Sans carte bancaire · Accès complet immédiat →
-                <a href="/register" class="ml-1 font-bold underline" style="color:#F0C040">Commencer gratuitement</a>
+        <!-- ═══════════════════════════════ ZONE 7.1 — ANNOUNCEMENT BAR ═══════════════════════════════ -->
+        <div style="background:#002D5B;height:38px" class="sticky top-0 z-50 flex items-center justify-center px-4 text-white text-xs">
+            <!-- Desktop -->
+            <span class="hidden sm:flex items-center gap-0">
+                {{ lang === 'fr' ? 'Essayez IBIG FactPro gratuitement' : 'Try IBIG FactPro for free' }}
+                <span class="mx-3 opacity-30">|</span>
+                {{ lang === 'fr' ? 'Assistance :' : 'Support:' }}
+                <a href="/contact" class="mx-1 font-semibold underline hover:text-blue-200 transition">+225 27 22 27 60 14</a>
+                <span class="mx-3 opacity-30">|</span>
+                <button @click="toggleLang" class="font-bold hover:text-blue-200 transition">{{ lang === 'fr' ? 'FR / EN' : 'EN / FR' }}</button>
             </span>
-            <span v-else>
-                7-day free trial · No credit card · Full access immediately →
-                <a href="/register" class="ml-1 font-bold underline" style="color:#F0C040">Get started free</a>
+            <!-- Mobile condensé -->
+            <span class="flex sm:hidden items-center gap-2">
+                <a href="/register" class="font-semibold">{{ lang === 'fr' ? 'Essai gratuit' : 'Free trial' }}</a>
+                <span class="opacity-30">·</span>
+                <a href="/contact" class="font-semibold">Support</a>
+                <span class="opacity-30">·</span>
+                <button @click="toggleLang" class="font-bold">{{ lang === 'fr' ? 'FR' : 'EN' }}</button>
             </span>
-            <button @click="dismissInfoBar" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white text-base leading-none" aria-label="Fermer">×</button>
         </div>
 
         <!-- NAV avec toggle langue -->
-        <nav class="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur">
+        <nav class="sticky top-[38px] z-40 border-b border-gray-100 bg-white/95 backdrop-blur">
             <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                 <a href="/" class="flex items-center">
                     <img src="/logo.svg" alt="IBIG FactPro" class="h-10 w-auto" />
@@ -918,6 +1003,88 @@ const partnerCommissions = [
         <!-- ═══════════════════════════════ IBIG SOFT PRODUCTS ═══════════════════════════════ -->
         <IbigSoftSolutions />
 
+        <!-- ═══════════════════════════════ ZONE 7.13 — PUBLICS CONCERNÉS ═══════════════════════════════ -->
+        <section class="bg-white px-6 py-24">
+            <div class="mx-auto max-w-7xl">
+                <div class="mb-14 text-center">
+                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#eff6ff;color:#0062CC">{{ lang === 'fr' ? 'Pour qui ?' : 'Who is it for?' }}</span>
+                    <h2 class="mt-4 text-3xl font-extrabold text-brand-900 sm:text-4xl">
+                        {{ lang === 'fr' ? "IBIG FactPro s'adapte à toutes les organisations" : 'IBIG FactPro adapts to all organizations' }}
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <div
+                        v-for="audience in audiences"
+                        :key="audience.title_fr"
+                        class="group flex flex-col rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+                        style="border-radius:12px"
+                    >
+                        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-full" :style="`background:${audience.colorBg}`">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" :style="`color:${audience.colorIcon}`">
+                                <path stroke-linecap="round" stroke-linejoin="round" :d="audience.path" />
+                            </svg>
+                        </div>
+                        <h3 class="mb-2 font-bold text-brand-900">{{ lang === 'fr' ? audience.title_fr : audience.title_en }}</h3>
+                        <p class="text-sm leading-relaxed text-gray-500">{{ lang === 'fr' ? audience.desc_fr : audience.desc_en }}</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ ZONE 7.14 — COMMENT ÇA MARCHE ═══════════════════════════════ -->
+        <section class="px-6 py-24" style="background:#f8faff">
+            <div class="mx-auto max-w-7xl">
+                <div class="mb-14 text-center">
+                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#fef9ee;color:#b45309">{{ lang === 'fr' ? 'Démarrage' : 'Getting started' }}</span>
+                    <h2 class="mt-4 text-3xl font-extrabold text-brand-900 sm:text-4xl">
+                        {{ lang === 'fr' ? 'Comment démarrer en 4 étapes' : 'How to get started in 4 steps' }}
+                    </h2>
+                </div>
+
+                <!-- Étapes -->
+                <div class="relative grid grid-cols-1 gap-8 lg:grid-cols-4">
+                    <!-- Ligne de connexion desktop -->
+                    <div class="absolute top-10 left-0 right-0 hidden h-px lg:block" style="background:linear-gradient(90deg,transparent,#D4A01733,#D4A01766,#D4A01733,transparent)"></div>
+
+                    <div
+                        v-for="(step, i) in howSteps"
+                        :key="i"
+                        class="relative flex flex-col items-center text-center lg:items-start lg:text-left"
+                    >
+                        <!-- Numéro cerclé or -->
+                        <div class="relative z-10 mb-5 flex h-20 w-20 flex-shrink-0 items-center justify-center rounded-full shadow-lg"
+                             style="background:linear-gradient(135deg,#D4A017,#f0c040);box-shadow:0 8px 24px rgba(212,160,23,.35)">
+                            <span class="text-2xl font-black" style="color:#001d3d">{{ step.num }}</span>
+                        </div>
+                        <!-- Icône -->
+                        <div class="mb-4 flex h-12 w-12 items-center justify-center rounded-xl" style="background:#eff6ff">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="color:#0062CC">
+                                <path stroke-linecap="round" stroke-linejoin="round" :d="step.path" />
+                            </svg>
+                        </div>
+                        <h3 class="mb-2 text-lg font-bold text-brand-900">{{ lang === 'fr' ? step.title_fr : step.title_en }}</h3>
+                        <p class="text-sm leading-relaxed text-gray-500">{{ lang === 'fr' ? step.desc_fr : step.desc_en }}</p>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="mt-14 flex flex-wrap justify-center gap-4">
+                    <a v-if="props.canRegister" href="/register"
+                       class="inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-extrabold shadow-lg transition hover:scale-105 active:scale-95"
+                       style="background:linear-gradient(135deg,#D4A017,#f0c040);color:#001d3d;box-shadow:0 8px 24px rgba(212,160,23,.3)">
+                        {{ lang === 'fr' ? 'Commencer gratuitement' : 'Get started free' }}
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+                    </a>
+                    <a href="/demo-login"
+                       class="inline-flex items-center gap-2 rounded-xl border px-8 py-3.5 text-sm font-semibold transition hover:bg-brand-50"
+                       style="border-color:#0062CC;color:#0062CC">
+                        <span class="flex h-5 w-5 items-center justify-center rounded-full text-xs" style="background:#eff6ff">▶</span>
+                        {{ lang === 'fr' ? 'Voir une démo' : 'Watch a demo' }}
+                    </a>
+                </div>
+            </div>
+        </section>
+
         <!-- ═══════════════════════════════ FAQ ═══════════════════════════════ -->
         <section id="faq" class="px-6 py-24" style="background:#f8faff">
             <div class="mx-auto max-w-3xl">
@@ -936,57 +1103,6 @@ const partnerCommissions = [
                         <Transition name="faq-slide">
                             <div v-if="openFaq === i" class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">{{ faq.a }}</div>
                         </Transition>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ═══════════════════════════════ COMMENT ÇA MARCHE ═══════════════════════════════ -->
-        <section class="px-6 py-24 bg-white">
-            <div class="mx-auto max-w-5xl">
-                <div class="mb-14 text-center">
-                    <span class="rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#e8f0fe;color:#0062CC">Démarrage rapide</span>
-                    <h2 class="mt-4 text-3xl font-extrabold text-gray-900 sm:text-4xl">{{ lang === 'fr' ? 'Opérationnel en 4 étapes' : 'Up and running in 4 steps' }}</h2>
-                </div>
-                <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                    <div v-for="(step, i) in [
-                        { num:'01', icon:'📝', title: lang==='fr' ? 'Créez votre compte' : 'Create your account', desc: lang==='fr' ? 'Inscription gratuite en 60 secondes, sans carte bancaire.' : 'Free sign-up in 60 seconds, no card required.' },
-                        { num:'02', icon:'🏢', title: lang==='fr' ? 'Configurez votre société' : 'Set up your company', desc: lang==='fr' ? 'Renseignez vos informations, logo et paramètres fiscaux.' : 'Add your info, logo and tax settings.' },
-                        { num:'03', icon:'📄', title: lang==='fr' ? 'Créez vos documents' : 'Create your documents', desc: lang==='fr' ? 'Devis, factures, avoirs en quelques clics avec vos clients et produits.' : 'Quotes, invoices, credits in a few clicks.' },
-                        { num:'04', icon:'💰', title: lang==='fr' ? 'Encaissez & suivez' : 'Collect & track', desc: lang==='fr' ? 'Recevez les paiements par Mobile Money ou carte et suivez vos KPIs.' : 'Receive payments via Mobile Money or card.' },
-                    ]" :key="i" class="relative rounded-2xl border border-gray-100 p-6 shadow-sm">
-                        <div class="mb-3 flex items-center gap-3">
-                            <span class="text-2xl">{{ step.icon }}</span>
-                            <span class="text-4xl font-black" style="color:#e8f0fe">{{ step.num }}</span>
-                        </div>
-                        <h3 class="mb-2 font-bold text-gray-900">{{ step.title }}</h3>
-                        <p class="text-sm text-gray-500 leading-relaxed">{{ step.desc }}</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ═══════════════════════════════ PUBLICS CONCERNÉS ═══════════════════════════════ -->
-        <section class="px-6 py-20" style="background:#f8faff">
-            <div class="mx-auto max-w-6xl">
-                <h2 class="mb-12 text-center text-3xl font-extrabold text-gray-900">{{ lang === 'fr' ? 'Fait pour vous, quel que soit votre secteur' : 'Built for you, whatever your sector' }}</h2>
-                <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-                    <div v-for="p in [
-                        { icon:'🛍️', label: lang==='fr' ? 'Commerce' : 'Retail' },
-                        { icon:'🍽️', label: lang==='fr' ? 'Restauration' : 'Food' },
-                        { icon:'💻', label: lang==='fr' ? 'IT & Tech' : 'IT & Tech' },
-                        { icon:'⚕️', label: lang==='fr' ? 'Santé' : 'Health' },
-                        { icon:'🏗️', label: lang==='fr' ? 'BTP' : 'Construction' },
-                        { icon:'✂️', label: lang==='fr' ? 'Beauté' : 'Beauty' },
-                        { icon:'📚', label: lang==='fr' ? 'Formation' : 'Education' },
-                        { icon:'🚚', label: lang==='fr' ? 'Transport' : 'Transport' },
-                        { icon:'⚖️', label: lang==='fr' ? 'Conseil / Avocat' : 'Consulting' },
-                        { icon:'🏠', label: lang==='fr' ? 'Immobilier' : 'Real Estate' },
-                        { icon:'🎨', label: lang==='fr' ? 'Créatif' : 'Creative' },
-                        { icon:'🌾', label: lang==='fr' ? 'Agriculture' : 'Agriculture' },
-                    ]" :key="p.label" class="flex flex-col items-center gap-2 rounded-xl bg-white p-4 text-center shadow-sm">
-                        <span class="text-3xl">{{ p.icon }}</span>
-                        <span class="text-xs font-semibold text-gray-700">{{ p.label }}</span>
                     </div>
                 </div>
             </div>
