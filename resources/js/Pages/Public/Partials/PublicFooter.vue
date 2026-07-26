@@ -55,7 +55,7 @@ const year = new Date().getFullYear();
                         </a>
                     </div>
                     <div class="text-xs space-y-1">
-                        <div><a href="mailto:factpro@ibigsoft.com" class="hover:text-white transition">📧 factpro@ibigsoft.com</a></div>
+                        <div><a href="mailto:support@ibigsoft.com" class="hover:text-white transition">📧 support@ibigsoft.com</a></div>
                         <div><a href="tel:+2252722276014" class="hover:text-white transition">📞 +225 27 22 27 60 14</a></div>
                         <div><a href="tel:+2250555059901" class="hover:text-white transition">📱 +225 05 55 05 99 01</a></div>
                         <div><a href="https://wa.me/2250778882592" target="_blank" rel="noopener" class="hover:text-white transition">💬 WhatsApp +225 07 78 88 25 92</a></div>

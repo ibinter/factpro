@@ -119,11 +119,12 @@ const staticRows = [
 </script>
 
 <template>
-    <Head title="Tarifs — IBIG FactPro">
-        <meta name="description" content="Plans et tarifs FactPro : Gratuit, Starter 4 900 FCFA/mois, Pro, Business. Essai 14 jours sans carte bancaire.">
-        <meta property="og:title" content="Tarifs FactPro — Plans adaptés à chaque entreprise">
-        <meta property="og:description" content="Plans et tarifs FactPro : Gratuit, Starter 4 900 FCFA/mois, Pro, Business. Essai 14 jours sans carte bancaire.">
+    <Head title="Tarifs IBIG FactPro — Offres et licences">
+        <meta name="description" content="Comparez les offres IBIG FactPro : Starter, Pro, Business, Enterprise. Essai gratuit 7 jours. Paiement par Mobile Money, virement, carte." />
+        <meta property="og:title" content="Tarifs IBIG FactPro" />
+        <meta property="og:description" content="Comparez les offres IBIG FactPro : Starter, Pro, Business, Enterprise. Essai gratuit 7 jours. Paiement par Mobile Money, virement, carte." />
         <meta property="og:type" content="website">
+        <meta property="og:url" content="https://factpro.ibigsoft.com/pricing" />
         <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Tarifs FactPro","description":"Plans et tarifs FactPro pour PME africaines"}</script>
     </Head>
 

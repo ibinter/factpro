@@ -5,7 +5,7 @@ use App\Http\Controllers\TeamController;
 use App\Http\Controllers\TeamInvitationController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     // Gestion de l'équipe de la société courante (owner/admin).
     Route::get('/team', [TeamController::class, 'index'])->name('team.index');
     Route::post('/team/invitations', [TeamController::class, 'invite'])->name('team.invite');

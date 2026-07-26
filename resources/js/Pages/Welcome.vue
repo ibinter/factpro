@@ -414,17 +414,20 @@ const howSteps = [
 </script>
 
 <template>
-    <Head title="IBIG FactPro — Logiciel de facturation pour PME africaines">
-        <meta name="description" content="Créez vos factures, devis et bons de livraison en quelques secondes. Logiciel de gestion commerciale OHADA pour les PME d'Afrique francophone.">
-        <meta property="og:title" content="IBIG FactPro — Logiciel de facturation pour PME africaines">
-        <meta property="og:description" content="Créez vos factures, devis et bons de livraison en quelques secondes. Logiciel de gestion commerciale OHADA pour les PME d'Afrique francophone.">
-        <meta property="og:type" content="website">
-        <meta property="og:url" content="https://factpro.ibigsoft.com">
+    <Head title="IBIG FactPro — Logiciel de facturation professionnel pour l'Afrique">
+        <meta name="description" content="IBIG FactPro est la solution de facturation SaaS conçue pour les PME africaines. Factures, devis, paiements Mobile Money, Multi-devises, conforme OHADA. Essai gratuit 7 jours." />
+        <meta name="keywords" content="facturation Afrique, logiciel facturation Côte d'Ivoire, OHADA, Mobile Money, PME Afrique, devis, factures, SaaS Afrique" />
+        <meta property="og:title" content="IBIG FactPro — Facturation professionnelle pour l'Afrique" />
+        <meta property="og:description" content="Gérez vos factures, devis et paiements Mobile Money depuis n'importe quel appareil. Conforme OHADA. Essai gratuit 7 jours." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://factpro.ibigsoft.com" />
+        <meta property="og:image" content="https://factpro.ibigsoft.com/og-image.jpg" />
         <meta property="og:site_name" content="IBIG FactPro">
         <meta property="og:locale" content="fr_FR">
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="IBIG FactPro — Logiciel de facturation PME Afrique">
-        <meta name="twitter:description" content="Facturation, devis, stocks, caisse POS. Conforme OHADA. Essai gratuit 14 jours.">
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="IBIG FactPro — Facturation professionnelle pour l'Afrique" />
+        <meta name="twitter:description" content="Gérez vos factures, devis et paiements Mobile Money depuis n'importe quel appareil. Conforme OHADA. Essai gratuit 7 jours." />
+        <link rel="canonical" href="https://factpro.ibigsoft.com" />
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -1235,13 +1238,119 @@ const howSteps = [
                             </select>
                         </div>
                     </div>
-                    <a href="https://wa.me/2250555059901?text=Bonjour%2C%20je%20souhaite%20une%20d%C3%A9monstration%20d%27IBIG%20FactPro." target="_blank" rel="noopener"
+                    <a href="https://wa.me/2250778882592?text=Bonjour%2C%20je%20souhaite%20une%20d%C3%A9monstration%20d%27IBIG%20FactPro." target="_blank" rel="noopener"
                        class="block w-full rounded-xl py-3.5 text-center text-sm font-bold shadow-lg transition hover:scale-105 hover:shadow-xl"
                        style="background:linear-gradient(90deg,#001d3d,#0062CC);color:#fff">
                         {{ lang === 'fr' ? '📅 Demander une démo gratuite via WhatsApp' : '📅 Request a free demo via WhatsApp' }}
                     </a>
                     <p class="text-center text-xs text-gray-400">{{ lang === 'fr' ? 'Réponse sous 24h · Démo personnalisée · Gratuit et sans engagement' : 'Reply within 24h · Personalised demo · Free & no commitment' }}</p>
                 </form>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ §7.20 — INSTALLER L'APPLICATION PWA ═══════════════════════════════ -->
+        <section class="px-6 py-20" style="background:#f8faff">
+            <div class="mx-auto max-w-5xl text-center">
+                <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#eff6ff;color:#0062CC">PWA</span>
+                <h2 class="mt-4 text-3xl font-extrabold text-brand-900 sm:text-4xl">
+                    {{ lang === 'fr' ? 'Installez IBIG FactPro sur votre appareil' : 'Install IBIG FactPro on your device' }}
+                </h2>
+                <p class="mx-auto mt-3 max-w-2xl text-gray-500">
+                    {{ lang === 'fr'
+                        ? 'Accédez plus rapidement à votre espace, depuis votre ordinateur, votre tablette ou votre smartphone.'
+                        : 'Access your workspace faster, from your computer, tablet or smartphone.' }}
+                </p>
+
+                <!-- 6 avantages PWA -->
+                <div class="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                    <div v-for="perk in (lang === 'fr' ? [
+                        { icon: '📱', label: 'Icône sur l\'écran d\'accueil' },
+                        { icon: '⚡', label: 'Ouverture instantanée' },
+                        { icon: '🔄', label: 'Mises à jour automatiques' },
+                        { icon: '📡', label: 'Mode hors ligne disponible' },
+                        { icon: '🖥️', label: 'Compatible tous appareils' },
+                        { icon: '🔒', label: 'Sécurisé et chiffré' },
+                    ] : [
+                        { icon: '📱', label: 'Home screen icon' },
+                        { icon: '⚡', label: 'Instant launch' },
+                        { icon: '🔄', label: 'Automatic updates' },
+                        { icon: '📡', label: 'Offline mode available' },
+                        { icon: '🖥️', label: 'All devices compatible' },
+                        { icon: '🔒', label: 'Secured & encrypted' },
+                    ])" :key="perk.label"
+                         class="flex flex-col items-center gap-2 rounded-2xl border border-gray-100 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-md">
+                        <span class="text-3xl">{{ perk.icon }}</span>
+                        <span class="text-xs font-semibold text-gray-600 text-center leading-snug">{{ perk.label }}</span>
+                    </div>
+                </div>
+
+                <!-- CTA -->
+                <div class="mt-10 flex flex-col items-center gap-3">
+                    <a href="/register"
+                       class="inline-flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-extrabold shadow-lg transition hover:scale-105 active:scale-95"
+                       style="background:linear-gradient(135deg,#0062CC,#0099ff);color:#fff">
+                        📲 {{ lang === 'fr' ? 'Installer l\'application' : 'Install the app' }}
+                    </a>
+                    <p class="text-xs text-gray-400">
+                        {{ lang === 'fr'
+                            ? 'Disponible sur Android, iOS et ordinateur · Installation sans boutique d\'applications'
+                            : 'Available on Android, iOS and desktop · No app store needed' }}
+                    </p>
+                    <p class="text-xs text-gray-400 italic">
+                        {{ lang === 'fr'
+                            ? 'Sur iPhone : Appuyez sur Partager → Ajouter à l\'écran d\'accueil'
+                            : 'On iPhone: tap Share → Add to Home Screen' }}
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════ §7.29 — CENTRE D'AIDE ═══════════════════════════════ -->
+        <section class="px-6 py-20 bg-white">
+            <div class="mx-auto max-w-5xl">
+                <div class="text-center mb-12">
+                    <span class="inline-block rounded-full px-4 py-1 text-xs font-bold uppercase tracking-widest" style="background:#eff6ff;color:#0062CC">{{ lang === 'fr' ? 'Support' : 'Help Center' }}</span>
+                    <h2 class="mt-4 text-3xl font-extrabold text-brand-900 sm:text-4xl">
+                        {{ lang === 'fr' ? 'Besoin d\'aide ? Nous sommes là.' : 'Need help? We\'re here.' }}
+                    </h2>
+                    <p class="mx-auto mt-3 max-w-2xl text-gray-500">
+                        {{ lang === 'fr'
+                            ? 'Guide utilisateur, FAQ, vidéos, tickets et assistance humaine — tout au même endroit.'
+                            : 'User guide, FAQ, videos, tickets and human support — all in one place.' }}
+                    </p>
+                </div>
+
+                <div class="grid gap-6 sm:grid-cols-3">
+                    <!-- Card 1 : Guide utilisateur -->
+                    <div class="flex flex-col items-center rounded-2xl border border-gray-100 bg-white p-8 shadow-sm text-center transition hover:-translate-y-1 hover:shadow-md">
+                        <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-3xl" style="background:#eff6ff">📖</div>
+                        <h3 class="font-bold text-brand-900 text-lg">{{ lang === 'fr' ? 'Guide utilisateur' : 'User guide' }}</h3>
+                        <p class="mt-2 text-sm text-gray-500 leading-relaxed">{{ lang === 'fr' ? 'Procédures pas à pas, captures, cas pratiques.' : 'Step-by-step procedures, screenshots, practical cases.' }}</p>
+                        <a href="/help/guide" class="mt-6 inline-block rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-105" style="background:#eff6ff;color:#0062CC">
+                            {{ lang === 'fr' ? 'Consulter le guide →' : 'Read the guide →' }}
+                        </a>
+                    </div>
+
+                    <!-- Card 2 : Ouvrir un ticket -->
+                    <div class="flex flex-col items-center rounded-2xl border border-gray-100 bg-white p-8 shadow-sm text-center transition hover:-translate-y-1 hover:shadow-md">
+                        <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-3xl" style="background:#fef3c7">🎫</div>
+                        <h3 class="font-bold text-brand-900 text-lg">{{ lang === 'fr' ? 'Ouvrir un ticket' : 'Open a ticket' }}</h3>
+                        <p class="mt-2 text-sm text-gray-500 leading-relaxed">{{ lang === 'fr' ? 'Notre équipe répond sous 24h ouvrables.' : 'Our team responds within 24 business hours.' }}</p>
+                        <a href="/contact" class="mt-6 inline-block rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-105" style="background:#fef3c7;color:#b45309">
+                            {{ lang === 'fr' ? 'Envoyer un ticket →' : 'Send a ticket →' }}
+                        </a>
+                    </div>
+
+                    <!-- Card 3 : Parler à SARA -->
+                    <div class="flex flex-col items-center rounded-2xl border border-gray-100 bg-white p-8 shadow-sm text-center transition hover:-translate-y-1 hover:shadow-md">
+                        <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl text-3xl" style="background:#f0fdf4">💬</div>
+                        <h3 class="font-bold text-brand-900 text-lg">{{ lang === 'fr' ? 'Parler à SARA' : 'Chat with SARA' }}</h3>
+                        <p class="mt-2 text-sm text-gray-500 leading-relaxed">{{ lang === 'fr' ? 'L\'assistante IA répond instantanément 24h/24.' : 'The AI assistant responds instantly 24/7.' }}</p>
+                        <button @click="window.openSara?.()" class="mt-6 inline-block rounded-xl px-5 py-2.5 text-sm font-bold transition hover:scale-105 cursor-pointer" style="background:#f0fdf4;color:#16a34a">
+                            {{ lang === 'fr' ? 'Démarrer la conversation →' : 'Start chatting →' }}
+                        </button>
+                    </div>
+                </div>
             </div>
         </section>
 

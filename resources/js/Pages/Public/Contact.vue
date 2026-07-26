@@ -38,8 +38,8 @@ function submit() {
 </script>
 
 <template>
-    <Head title="Contactez-nous — IBIG FactPro">
-        <meta name="description" content="Contactez l'équipe IBIG Soft pour une démo, du support ou un partenariat. Réponse sous 24h.">
+    <Head title="Contacter IBIG Soft — Support IBIG FactPro">
+        <meta name="description" content="Contactez l'équipe IBIG Soft pour votre logiciel FactPro. Support par téléphone, email, WhatsApp et tickets." />
         <meta property="og:title" content="Contact IBIG FactPro — Support &amp; Démo">
     </Head>
 

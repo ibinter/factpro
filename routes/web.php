@@ -48,6 +48,13 @@ Route::get('/verify/{uuid}', VerifyController::class)->name('verify');
 
 /*
 |--------------------------------------------------------------------------
+| Pages légales publiques
+|--------------------------------------------------------------------------
+*/
+Route::get('/legal/{slug}', [\App\Http\Controllers\LegalController::class, 'show'])->name('legal.show');
+
+/*
+|--------------------------------------------------------------------------
 | Espace authentifiÃ©
 |--------------------------------------------------------------------------
 */
@@ -306,7 +313,7 @@ require __DIR__.'/status.php';
 // Module D — Visites terrain & Signature tablette
 use App\Http\Controllers\VisitController;
 use App\Http\Controllers\SignatureController;
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::get('/visits', [VisitController::class, 'index'])->name('visits.index');
     Route::post('/visits', [VisitController::class, 'store'])->name('visits.store');
     Route::patch('/visits/{visit}', [VisitController::class, 'update'])->name('visits.update');
@@ -321,27 +328,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 use App\Http\Controllers\AiReminderController;
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::post('/ai/reminder/{customer}', [AiReminderController::class, 'generate'])->name('ai.reminder');
     Route::get('/ai/suggest-price-v2', [AiReminderController::class, 'suggestPrice'])->name('ai.suggest-price-v2');
 });
 
 // Phase 14 — Immobilisations
 use App\Http\Controllers\AssetController;
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::resource('assets', AssetController::class);
 });
 
 // Phase 15B — Contrats commerciaux
 use App\Http\Controllers\ContractController;
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::resource('contracts', ContractController::class)->except(['create', 'edit']);
     Route::post('/contracts/{contract}/upload-version', [ContractController::class, 'uploadVersion'])->name('contracts.upload-version');
 });
 
 // Phase 15B — GED (Gestion Électronique de Documents)
 use App\Http\Controllers\GedController;
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::get('/ged', [GedController::class, 'index'])->name('ged.index');
     Route::post('/ged/documents', [GedController::class, 'store'])->name('ged.store');
     Route::put('/ged/documents/{gedDocument}', [GedController::class, 'update'])->name('ged.update');
@@ -360,7 +367,7 @@ Route::get('/supplier/portal/{token}', [SupplierPortalController::class, 'show']
 Route::post('/supplier/portal/{token}/respond', [SupplierPortalController::class, 'respond'])->name('supplier.portal.respond');
 
 // Phase 14 — Portail Fournisseur (pages internes)
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::post('/documents/{document}/invite-supplier', [SupplierPortalController::class, 'invite'])->name('supplier.invite');
     Route::get('/documents/{document}/supplier-compare', [SupplierPortalController::class, 'compare'])->name('supplier.compare');
     Route::post('/supplier-offers/{offer}/select', [SupplierPortalController::class, 'select'])->name('supplier.select');
@@ -369,7 +376,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Phase 16C — Politique de sécurité & sessions
 use App\Http\Controllers\SecurityPolicyController;
-Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->group(function () {
+Route::middleware(['auth', 'license'])->prefix('security')->name('security.')->group(function () {
     Route::get('/policy', [SecurityPolicyController::class, 'show'])->name('policy');
     Route::put('/policy', [SecurityPolicyController::class, 'update'])->name('policy.update');
     Route::get('/access-logs', [SecurityPolicyController::class, 'accessLogs'])->name('access-logs');
@@ -380,7 +387,7 @@ Route::middleware(['auth', 'verified'])->prefix('security')->name('security.')->
 
 // Phase 16D — Conformité RGPD
 use App\Http\Controllers\GdprComplianceController;
-Route::middleware(['auth', 'verified'])->prefix('gdpr')->name('gdpr.')->group(function () {
+Route::middleware(['auth', 'license'])->prefix('gdpr')->name('gdpr.')->group(function () {
     Route::get('/', [GdprComplianceController::class, 'dashboard'])->name('dashboard');
     Route::get('/requests', [GdprComplianceController::class, 'requests'])->name('requests');
     Route::post('/requests', [GdprComplianceController::class, 'createRequest'])->name('requests.store');
