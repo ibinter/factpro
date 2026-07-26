@@ -446,8 +446,6 @@ class DocumentController extends Controller
     /** Télécharge le PDF (avec QR anti-falsification + filigrane essai le cas échéant). */
     public function pdf(Request $request, Document $document, QrCodeService $qr)
     {
-        abort_if($request->user()?->isDemoAccount(), 403, '⛔ Export PDF désactivé en mode démo.');
-
         $this->authorizeDocument($request, $document);
 
         $document->load(['lines', 'customer', 'company']);

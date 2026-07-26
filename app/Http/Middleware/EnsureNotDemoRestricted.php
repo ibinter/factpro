@@ -25,14 +25,14 @@ class EnsureNotDemoRestricted
      * Un visiteur ne doit pas pouvoir récupérer un fichier utilisable.
      */
     private const BLOCKED_DOWNLOADS = [
-        '#^/documents/[^/]+/docx#',       // Word .docx
-        '#^/documents/[^/]+/pdf#',         // PDF
-        '#^/documents/[^/]+/download#',    // téléchargement générique
-        '#^/excel/#',                       // exports Excel
-        '#^/[^/]+/export#',                // exports CSV/Excel partout
-        '#^/fec/#',                         // export FEC comptable
-        '#^/payslips?/[^/]+/pdf#',         // bulletins de paie
-        '#^/labels?/[^/]+/download#',      // étiquettes
+        '#^/documents/[^/]+/docx#',       // Word .docx — interdit en démo
+        '#^/documents/[^/]+/download#',   // téléchargement générique
+        '#^/excel/#',                      // exports Excel
+        '#^/[^/]+/export#',               // exports CSV/Excel partout
+        '#^/fec/#',                        // export FEC comptable
+        '#^/labels?/[^/]+/download#',     // étiquettes
+        // NOTE: /documents/*/pdf autorisé en démo (aperçu avec filigrane)
+        // NOTE: /payslips/*/pdf autorisé en démo (aperçu)
     ];
 
     /**
