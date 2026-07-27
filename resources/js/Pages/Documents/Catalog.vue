@@ -616,8 +616,181 @@ ${headerHTML(doc)}
 </div>`)
 }
 
-// ── Routeur principal
+// ── Avoir / Note de crédit
+function previewAvoir(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px">
+  <div style="font-size:28px">↩️</div>
+  <div>
+    <div style="font-size:12px;font-weight:700;color:#991b1b">DOCUMENT D'AVOIR / CRÉDIT</div>
+    <div style="font-size:11px;color:#b91c1c;margin-top:2px">En référence à la facture N° <b>FAC-2026-0038</b> du 15/07/2026 — Montant initial : 1 200 000 XOF</div>
+  </div>
+</div>
+<div class="two-col">
+  <div class="box"><div class="box-label">Émetteur</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Plateau, Abidjan · RCCM CI-ABJ-2024-B-12345</div></div>
+  <div class="box"><div class="box-label">Bénéficiaire du crédit</div><div class="box-name">CLIENT EXEMPLE & ASSOCIÉS</div><div class="box-info">Cocody Riviera 3, Abidjan · +225 05 00 11 22 33</div></div>
+</div>
+<div class="section-title">Motif de l'avoir</div>
+<div class="text-block">Retour partiel de marchandises défectueuses (lot N° LOT-2026-041). 3 unités sur 10 retournées après constat contradictoire du 20/07/2026.</div>
+<table><thead><tr><th>Désignation</th><th>Qté retournée</th><th>P.U.</th><th>Montant crédit</th></tr></thead>
+<tbody>
+<tr><td>Climatiseur split 1,5 CV — Réf. AC-150</td><td>3</td><td>185 000 XOF</td><td style="color:#16a34a;font-weight:700">- 555 000 XOF</td></tr>
+<tr><td>Frais de transport retour</td><td>1 fft</td><td>15 000 XOF</td><td style="color:#16a34a;font-weight:700">- 15 000 XOF</td></tr>
+</tbody></table>
+<div class="totals-wrap"><div class="totals">
+  <div class="tot-row"><span style="color:#64748b">Sous-total HT</span><span style="color:#16a34a">- 570 000 XOF</span></div>
+  <div class="tot-row"><span style="color:#64748b">TVA 18 %</span><span style="color:#16a34a">- 102 600 XOF</span></div>
+  <div class="tot-final" style="background:#15803d"><span>TOTAL AVOIR TTC</span><span>- 672 600 XOF</span></div>
+</div></div>
+<p style="font-size:11px;color:#64748b;margin-bottom:16px">Ce montant sera déduit de votre prochaine facture ou remboursé par virement sous 5 jours ouvrés.</p>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Visa Responsable Commercial</div>
+  <div class="sig"><div class="sig-space"></div>Accusé de réception Client</div>
+</div>`)
+}
+
+// ── Bon de commande (achat fournisseur)
+function previewCommande(doc) {
+  const isFournisseur = doc.catId === 'achat'
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div style="background:${doc.catColor}10;border-left:4px solid ${doc.catColor};border-radius:8px;padding:12px 16px;margin-bottom:18px">
+  <div style="font-size:11px;font-weight:700;color:${doc.catColor};text-transform:uppercase;letter-spacing:.06em">Commande officielle — Veuillez préparer et livrer les articles ci-dessous</div>
+</div>
+<div class="two-col">
+  <div class="box"><div class="box-label">${isFournisseur ? 'Acheteur' : 'Client'}</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Service Achats · Plateau, Abidjan<br>Contact : Mme BAMBA — 07 11 22 33 00</div></div>
+  <div class="box"><div class="box-label">${isFournisseur ? 'Fournisseur' : 'Nous'}</div><div class="box-name">${isFournisseur ? 'MATÉRIAUX DU GOLF SARL' : 'CLIENT EXEMPLE & ASSOCIÉS'}</div><div class="box-info">${isFournisseur ? 'Zone Industrielle, Abidjan · Tél. +225 27 22 88 99 00' : 'Cocody Riviera 3 · +225 05 00 11 22 33'}</div></div>
+</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">N° bon de commande</div><div class="info-cell-val">BC-2026-0089</div></div>
+  <div class="info-cell"><div class="info-cell-label">Date commande</div><div class="info-cell-val">27/07/2026</div></div>
+  <div class="info-cell"><div class="info-cell-label">Livraison souhaitée</div><div class="info-cell-val">03/08/2026 avant 12h</div></div>
+  <div class="info-cell"><div class="info-cell-label">Lieu de livraison</div><div class="info-cell-val">Entrepôt Yopougon — Porte B</div></div>
+</div>
+<table><thead><tr><th>#</th><th>Désignation</th><th>Qté</th><th>Unité</th><th>P.U. HT</th><th>Total HT</th></tr></thead>
+<tbody>
+<tr><td>01</td><td>Ciment Portland CPA 42.5</td><td>100</td><td>Sac 50 kg</td><td>9 500 XOF</td><td>950 000 XOF</td></tr>
+<tr><td>02</td><td>Sable fin de rivière lavé</td><td>15</td><td>m³</td><td>22 000 XOF</td><td>330 000 XOF</td></tr>
+<tr><td>03</td><td>Fers à béton Ø12 — 6 m</td><td>50</td><td>Barre</td><td>8 200 XOF</td><td>410 000 XOF</td></tr>
+</tbody></table>
+<div class="totals-wrap"><div class="totals">
+  <div class="tot-row"><span style="color:#64748b">Sous-total HT</span><span>1 690 000 XOF</span></div>
+  <div class="tot-row"><span style="color:#64748b">TVA 18 %</span><span>304 200 XOF</span></div>
+  <div class="tot-final"><span>TOTAL TTC</span><span>1 994 200 XOF</span></div>
+</div></div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Visa Responsable Achats<br><em>VOTRE SOCIÉTÉ SARL</em></div>
+  <div class="sig"><div class="sig-space"></div>Confirmation Fournisseur<br><em>Accusé de réception</em></div>
+</div>`)
+}
+
+// ── Demande / formulaire interne (demande achat, demande congé, autorisation)
+function previewDemande(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:18px">
+  <div style="font-size:11px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">📋 Informations du demandeur</div>
+  <div class="info-grid" style="margin-bottom:0">
+    <div class="info-cell"><div class="info-cell-label">Nom complet</div><div class="info-cell-val">KONÉ Aminata</div></div>
+    <div class="info-cell"><div class="info-cell-label">Département</div><div class="info-cell-val">Commercial & Marketing</div></div>
+    <div class="info-cell"><div class="info-cell-label">Poste</div><div class="info-cell-val">Responsable Commerciale</div></div>
+    <div class="info-cell"><div class="info-cell-label">Date de la demande</div><div class="info-cell-val">27/07/2026</div></div>
+  </div>
+</div>
+<div class="section-title">Objet de la demande</div>
+<div class="text-block">${doc.name} — ${doc.desc}.</div>
+<div class="section-title">Détails et justification</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Urgence</div><div class="info-cell-val">🟡 Normale</div></div>
+  <div class="info-cell"><div class="info-cell-label">Délai souhaité</div><div class="info-cell-val">Avant le 31/07/2026</div></div>
+  <div class="info-cell"><div class="info-cell-label">Budget estimé</div><div class="info-cell-val">450 000 XOF</div></div>
+  <div class="info-cell"><div class="info-cell-label">Imputation</div><div class="info-cell-val">Centre coût : CC-COMM-01</div></div>
+</div>
+<div class="text-block">Achat nécessaire pour assurer la continuité des opérations commerciales. Sans cette acquisition, le projet CLIENT-2026-042 sera retardé de 2 semaines.</div>
+<div class="section-title">Circuit de validation</div>
+<table><thead><tr><th>Niveau</th><th>Validateur</th><th>Statut</th><th>Date</th></tr></thead>
+<tbody>
+<tr><td>N+1 — Manager</td><td>DIALLO Moussa</td><td><span class="status-badge" style="background:#dcfce7;color:#166534">✅ Approuvé</span></td><td>27/07/2026</td></tr>
+<tr><td>N+2 — Direction</td><td>M. KOUASSI DG</td><td><span class="status-badge" style="background:#fef9c3;color:#854d0e">⏳ En attente</span></td><td>—</td></tr>
+<tr><td>Finance</td><td>Mme BAMBA CFO</td><td><span class="status-badge" style="background:#f1f5f9;color:#64748b">⬜ Pending</span></td><td>—</td></tr>
+</tbody></table>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Demandeur</div>
+  <div class="sig"><div class="sig-space"></div>Visa Direction Générale</div>
+</div>`)
+}
+
+// ── Reçu / quittance (simple, centré)
+function previewRecu(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div style="text-align:center;padding:24px 16px;border:2px solid ${doc.catColor}30;border-radius:14px;margin-bottom:20px;background:${doc.catColor}06">
+  <div style="font-size:40px;margin-bottom:8px">✅</div>
+  <div style="font-size:13px;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Paiement reçu</div>
+  <div style="font-size:36px;font-weight:900;color:${doc.catColor};margin:8px 0">750 000 XOF</div>
+  <div style="font-size:12px;color:#64748b">Sept cent cinquante mille francs CFA</div>
+</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Reçu de</div><div class="info-cell-val">CLIENT EXEMPLE & ASSOCIÉS</div></div>
+  <div class="info-cell"><div class="info-cell-label">Date de paiement</div><div class="info-cell-val">27/07/2026 — 14h30</div></div>
+  <div class="info-cell"><div class="info-cell-label">Mode de paiement</div><div class="info-cell-val">🏦 Virement bancaire</div></div>
+  <div class="info-cell"><div class="info-cell-label">Référence virement</div><div class="info-cell-val">VIR-BICICI-20260727-004</div></div>
+  <div class="info-cell"><div class="info-cell-label">En règlement de</div><div class="info-cell-val">Facture FAC-2026-0041</div></div>
+  <div class="info-cell"><div class="info-cell-label">Solde restant dû</div><div class="info-cell-val" style="color:#16a34a;font-weight:700">0 XOF — Soldé ✅</div></div>
+</div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Cachet & Signature<br><em>VOTRE SOCIÉTÉ SARL</em></div>
+  <div class="sig"><div class="sig-space"></div>Signature du Payeur<br><em>CLIENT EXEMPLE</em></div>
+</div>`)
+}
+
+// ── Lettre / relance / mise en demeure
+function previewLettre(doc) {
+  const isMed = doc.id === 'mise_dem'
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Expéditeur</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Plateau, Abidjan 01<br>RCCM CI-ABJ-2024-B-12345</div></div>
+  <div class="box"><div class="box-label">Destinataire</div><div class="box-name">M. TRAORÉ Issouf, Gérant</div><div class="box-info">TRAORÉ & FILS SARL<br>Adjamé, Abidjan</div></div>
+</div>
+<div style="margin-bottom:16px">
+  <div style="font-size:11px;color:#64748b">Abidjan, le <b>27 juillet 2026</b></div>
+  <div style="font-size:13px;font-weight:700;margin:10px 0 6px;color:${doc.catColor}">Objet : ${doc.name} — Facture N° FAC-2026-0021 du 01/06/2026</div>
+  ${isMed ? `<div style="display:inline-flex;align-items:center;gap:6px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;color:#991b1b;margin-bottom:10px">⚠️ MISE EN DEMEURE — Recommandé avec AR</div>` : ''}
+</div>
+<div class="text-block">
+Monsieur le Gérant,<br><br>
+${isMed
+  ? `Par la présente, et faute d'avoir reçu le règlement de notre facture N° <b>FAC-2026-0021</b> d'un montant de <b>985 000 XOF TTC</b>, malgré nos relances des 15/06 et 30/06/2026, nous vous mettons formellement en demeure de vous acquitter de cette somme dans un délai de <b>8 jours calendaires</b> à compter de la réception de ce courrier.<br><br>
+À défaut de règlement dans ce délai, nous nous réservons le droit d'engager toute procédure contentieuse à votre encontre, avec frais et dépens à votre charge.`
+  : `Sauf erreur ou omission de notre part, nous constatons que notre facture N° <b>FAC-2026-0021</b> d'un montant de <b>985 000 XOF TTC</b>, arrivée à échéance le <b>01/07/2026</b>, n'a pas encore été réglée.<br><br>
+Nous vous remercions de bien vouloir procéder au règlement de cette somme dans les meilleurs délais, ou de nous contacter si vous rencontrez une difficulté.`
+}
+<br><br>
+Veuillez agréer, Monsieur le Gérant, l'expression de nos salutations distinguées.
+</div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Direction Générale<br><em>VOTRE SOCIÉTÉ SARL</em></div>
+</div>`)
+}
+
+// ── Routeur principal — doc.id en priorité, catId en fallback
 function previewHTML(doc) {
+  // Par doc.id (cas spécifiques multi-catégories)
+  const avoirIds = ['avoir', 'avoir_f', 'note_credit_f', 'fac_rect']
+  const commandeIds = ['bc_client', 'bc_f']
+  const demandeIds = ['dem_achat', 'dem_prix', 'consult_f', 'dem_conge', 'auto_abs', 'autoris']
+  const recuIds = ['recu', 'ticket', 'quittance_l', 'attest_paie', 'recu_scol']
+  const lettreIds = ['relance', 'mise_dem', 'accuse']
+
+  if (avoirIds.includes(doc.id))   return previewAvoir(doc)
+  if (commandeIds.includes(doc.id)) return previewCommande(doc)
+  if (demandeIds.includes(doc.id)) return previewDemande(doc)
+  if (recuIds.includes(doc.id))    return previewRecu(doc)
+  if (lettreIds.includes(doc.id))  return previewLettre(doc)
+
+  // Par catégorie
   switch (doc.catId) {
     case 'rh':         return previewHR(doc)
     case 'admin':      return previewAdmin(doc)
@@ -631,10 +804,10 @@ function previewHTML(doc) {
     case 'finance':    return previewFinance(doc)
     case 'logistique': return previewDelivery(doc)
     case 'achat':
-      return doc.id === 'br_f' || doc.id === 'retour_f'
+      return ['br_f', 'retour_f', 'bon_emb'].includes(doc.id)
         ? previewDelivery(doc)
         : previewInvoice(doc)
-    default:           return previewInvoice(doc)  // vente
+    default:           return previewInvoice(doc)
   }
 }
 </script>
