@@ -213,54 +213,14 @@ const newDocGroups = [
                         <h1 class="text-xl font-bold text-gray-900">Documents commerciaux</h1>
                         <p class="text-xs text-gray-400 mt-0.5">{{ documents.total }} document{{ documents.total > 1 ? 's' : '' }} au total</p>
                     </div>
-                    <!-- Bouton catalogue -->
+                    <!-- Bouton unique — passe par le catalogue -->
                     <Link :href="route('documents.catalog')"
-                        class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
-                        🗂️ Catalogue
+                        class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition-colors">
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        Nouveau document
                     </Link>
-
-                    <!-- Bouton nouveau document -->
-                    <div class="relative">
-                        <button type="button" @click="newDocMenu = !newDocMenu"
-                            class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition-colors">
-                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
-                            Nouveau document
-                            <svg class="h-3.5 w-3.5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                            </svg>
-                        </button>
-
-                        <!-- Dropdown menu -->
-                        <Transition name="menu-drop">
-                            <div v-if="newDocMenu" class="absolute right-0 top-full z-30 mt-2 w-80 rounded-xl bg-white shadow-xl ring-1 ring-black/5 overflow-hidden">
-                                <div v-for="group in newDocGroups" :key="group.label">
-                                    <p class="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-wider text-gray-400">{{ group.label }}</p>
-                                    <Link v-for="item in group.items" :key="item.type"
-                                        :href="route('documents.create', { type: item.type })"
-                                        @click="newDocMenu = false"
-                                        class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors">
-                                        <span class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg border text-base"
-                                            :class="item.color">{{ item.icon }}</span>
-                                        <div>
-                                            <p class="text-sm font-semibold text-gray-800">{{ item.label }}</p>
-                                            <p class="text-xs text-gray-400">{{ item.desc }}</p>
-                                        </div>
-                                    </Link>
-                                </div>
-                                <div class="border-t border-gray-50 px-4 py-2">
-                                    <button @click="drawerOpen = true; newDocMenu = false"
-                                        class="text-xs text-gray-400 hover:text-brand-600 transition-colors">
-                                        Voir tous les types de documents →
-                                    </button>
-                                </div>
-                            </div>
-                        </Transition>
-
-                        <!-- Fermer au clic extérieur -->
-                        <div v-if="newDocMenu" class="fixed inset-0 z-20" @click="newDocMenu = false" />
-                    </div>
                 </div>
             </div>
 
