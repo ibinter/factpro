@@ -345,6 +345,8 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                         <DropdownLink :href="route('referral.index')">🎁 Parrainage</DropdownLink>
                                         <DropdownLink :href="route('labels.index')">Étiquettes & codes-barres</DropdownLink>
                                         <DropdownLink :href="route('api-tokens.index')">API & Intégrations</DropdownLink>
+                                        <DropdownLink :href="route('help.guide')">📖 Guide utilisateur</DropdownLink>
+                                        <DropdownLink href="/help/guide/pdf" target="_blank">⬇ Télécharger le guide PDF</DropdownLink>
                                         <DropdownLink :href="route('support.index')">🎫 Support & Aide</DropdownLink>
                                         <DropdownLink :href="route('gdpr.index')">Mes données & RGPD</DropdownLink>
                                         <DropdownLink :href="route('logout')" method="post" as="button">
@@ -449,6 +451,9 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
 
                         <div class="mt-3 space-y-1">
                             <ResponsiveNavLink :href="route('profile.edit')">Mon profil</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('help.guide')">📖 Guide utilisateur</ResponsiveNavLink>
+                            <ResponsiveNavLink href="/help/guide/pdf" target="_blank">⬇ Télécharger le guide PDF</ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('support.index')">🎫 Support & Aide</ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Déconnexion
                             </ResponsiveNavLink>
