@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>{{ $document->number }}</title>
 <style>
-    @@page { margin: 110px 45px 90px 45px; }
+    @@page { margin: 145px 45px 110px 45px; }
 
     * { box-sizing: border-box; }
     body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #1a2332; margin: 0; }
@@ -16,8 +16,8 @@
     }
 
     header {
-        position: fixed; top: -90px; left: 0; right: 0; height: 80px;
-        border-bottom: 3px solid {{ $primaryColor }}; padding-bottom: 6px;
+        position: fixed; top: -125px; left: 0; right: 0; height: 110px;
+        border-bottom: 3px solid {{ $primaryColor }}; padding-bottom: 8px;
     }
     .company-name { font-size: 17px; font-weight: bold; color: #002D5B; }
     .company-meta { font-size: 8.5px; color: #6B7C93; line-height: 1.6; margin-top: 3px; }
@@ -25,14 +25,14 @@
     .doc-number { font-size: 10px; color: #6B7C93; text-align: right; margin-top: 2px; }
 
     footer {
-        position: fixed; bottom: -70px; left: 0; right: 0; height: 58px;
-        font-size: 8px; color: #6B7C93; border-top: 2px solid {{ $accentColor }}; padding-top: 7px;
+        position: fixed; bottom: -92px; left: 0; right: 0; height: 78px;
+        font-size: 8px; color: #6B7C93; border-top: 2px solid {{ $accentColor }}; padding-top: 8px;
     }
 
-    main { margin-top: 14px; }
+    main { margin-top: 22px; }
 
     .header-accent {
-        background: {{ $primaryColor }}; height: 4px; margin-bottom: 18px; border-radius: 2px;
+        background: {{ $primaryColor }}; height: 4px; margin-bottom: 22px; border-radius: 2px;
     }
 
     .addresses { width: 100%; margin-bottom: 18px; border-collapse: collapse; }
@@ -92,6 +92,30 @@
 
     .notes-block { margin-top: 14px; font-size: 9px; color: #4a5568; }
     .notes-block .title { font-weight: bold; color: #002D5B; margin-bottom: 4px; }
+
+    /* Zone de signatures */
+    .sig-section { margin-top: 28px; }
+    .sig-section .sig-heading {
+        font-size: 7.5px; text-transform: uppercase; color: #6B7C93;
+        letter-spacing: 1px; margin-bottom: 10px;
+        border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;
+    }
+    .sig-row { width: 100%; border-collapse: collapse; }
+    .sig-row td { width: 50%; vertical-align: top; padding: 0 8px; }
+    .sig-row td:first-child { padding-left: 0; border-right: 1px solid #e2e8f0; }
+    .sig-row td:last-child { padding-right: 0; }
+    .sig-label { font-size: 8px; color: #6B7C93; text-align: center; margin-bottom: 6px; }
+    .sig-box {
+        border: 1px solid #c8d3e0; border-radius: 4px;
+        height: 55px; background: #fafbfc;
+        position: relative;
+    }
+    .sig-box-inner { padding: 4px 8px; }
+    .sig-name-line {
+        border-bottom: 1px dashed #c8d3e0; margin: 0 8px;
+        position: absolute; bottom: 16px; left: 0; right: 0;
+    }
+    .sig-name-label { font-size: 6.5px; color: #aaa; position: absolute; bottom: 4px; left: 8px; }
 </style>
 </head>
 <body>
@@ -292,7 +316,39 @@
     </div>
     @endif
 
-    @include('pdf.partials.signature')
+    {{-- Zone de signatures --}}
+    <div class="sig-section">
+        <div class="sig-heading">Signatures</div>
+        <table class="sig-row">
+            <tr>
+                <td>
+                    <div class="sig-label">{{ $signatureLabels[0] ?? 'Signature et cachet de l\'émetteur' }}</div>
+                    <div class="sig-box">
+                        @if(!empty($document->signature_path))
+                        <div class="sig-box-inner">
+                            <img src="{{ $signatureBase64 ?? '' }}" style="max-height:40px; max-width:90%; display:block; margin:0 auto;" alt="Signature">
+                        </div>
+                        @endif
+                        <div class="sig-name-line"></div>
+                        <div class="sig-name-label">Nom, date et cachet</div>
+                    </div>
+                </td>
+                <td>
+                    <div class="sig-label">{{ $signatureLabels[1] ?? 'Bon pour accord — Signature du client' }}</div>
+                    <div class="sig-box">
+                        <div class="sig-name-line"></div>
+                        <div class="sig-name-label">Nom, date et cachet</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {{-- Mention légale --}}
+    <div style="margin-top:16px; font-size:7px; color:#9aa7b8; border-top:1px solid #e2e8f0; padding-top:6px; text-align:center;">
+        Tout retard de paiement entraîne des pénalités de retard au taux légal en vigueur.
+        Document généré et certifié par <strong>IBIG FactPro</strong>.
+    </div>
 
 </main>
 </body>
