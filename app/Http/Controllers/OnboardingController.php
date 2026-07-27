@@ -2,30 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class OnboardingController extends Controller
 {
-    public function complete(Request $request): JsonResponse
+    public function complete(Request $request): RedirectResponse
     {
-        $user = $request->user();
-        $user->update([
+        $request->user()->update([
             'onboarding_completed'    => true,
             'onboarding_completed_at' => now(),
         ]);
 
-        return response()->json(['success' => true]);
+        return back();
     }
 
-    public function skip(Request $request): JsonResponse
+    public function skip(Request $request): RedirectResponse
     {
-        $user = $request->user();
-        $user->update([
+        $request->user()->update([
             'onboarding_completed'    => true,
             'onboarding_completed_at' => now(),
         ]);
 
-        return response()->json(['success' => true]);
+        return back();
     }
 }
