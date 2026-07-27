@@ -1925,22 +1925,230 @@ ${isMed ? '<div class="med-badge">⚠️ MISE EN DEMEURE — Recommandé avec Ac
 </div>`)
 }
 
-// ── Routeur principal — doc.id en priorité, catId en fallback
+// ── TEMPLATE : Restauration / Ticket caisse
+function previewResto(doc) {
+  const c = doc.catColor || '#F97316'
+  const css = `
+body{background:#f5f0eb;font-family:'Courier New',monospace}
+.page{max-width:340px;margin:0 auto}
+.receipt{background:#fff;border-radius:4px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.12)}
+.header{background:${c};color:#fff;text-align:center;padding:18px 16px}
+.rest-name{font-size:18px;font-weight:900;letter-spacing:.05em}
+.rest-sub{font-size:9px;opacity:.85;margin-top:3px;letter-spacing:.08em}
+.doc-badge{background:rgba(255,255,255,.2);border-radius:4px;padding:4px 10px;font-size:10px;font-weight:700;display:inline-block;margin-top:8px}
+.ticket-info{display:flex;justify-content:space-between;background:#FFF7ED;padding:8px 14px;font-size:9.5px;color:#92400E;border-bottom:2px dashed #FCD34D}
+.items{padding:12px 14px}
+.item{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px dotted #E5E7EB;font-size:11.5px}
+.item:last-child{border:none}
+.iname{flex:1;color:#111}
+.iqty{color:#6B7280;font-size:10px;margin:0 8px}
+.iprice{font-weight:700;color:#111}
+.divider{border:none;border-top:2px dashed #D1D5DB;margin:4px 14px}
+.total-section{padding:8px 14px 4px}
+.subtotal{display:flex;justify-content:space-between;font-size:11px;color:#6B7280;padding:3px 0}
+.total-line{display:flex;justify-content:space-between;font-size:15px;font-weight:900;color:#111;padding:7px 0;border-top:2px solid #111}
+.payment-badge{background:${c};color:#fff;text-align:center;padding:8px;font-size:10px;font-weight:700;letter-spacing:.05em}
+.merci{text-align:center;padding:12px;font-size:10px;color:#9CA3AF;letter-spacing:.03em}
+.table-info{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 10px}
+.tinfo-chip{background:#FFF7ED;border:1px solid #FCD34D;border-radius:12px;padding:3px 9px;font-size:9.5px;color:#92400E;font-weight:600}`
+  return wrap(css, `<div class="page"><div class="receipt">
+<div class="header">
+  <div class="rest-name">${doc.icon} RESTAURANT EXCELLENCE</div>
+  <div class="rest-sub">Avenue du Commerce, Abidjan · +225 27 22 44 55 66</div>
+  <div class="doc-badge">${doc.name.toUpperCase()}</div>
+</div>
+<div class="ticket-info">
+  <span>N° T-2026-0847</span><span>Table 05 · Couverts: 4</span><span>27/07/2026 13:42</span>
+</div>
+<div class="table-info">
+  <span class="tinfo-chip">Serveur: Ali</span>
+  <span class="tinfo-chip">Duree: 1h15</span>
+  <span class="tinfo-chip">Salle VIP</span>
+</div>
+<div class="items">
+  <div class="item"><span class="iname">Thiebu Royal</span><span class="iqty">x2</span><span class="iprice">14 000</span></div>
+  <div class="item"><span class="iname">Poulet Yassa Grille</span><span class="iqty">x1</span><span class="iprice">8 500</span></div>
+  <div class="item"><span class="iname">Jus Bissap</span><span class="iqty">x4</span><span class="iprice">6 000</span></div>
+  <div class="item"><span class="iname">Salade Fraicheur</span><span class="iqty">x2</span><span class="iprice">3 200</span></div>
+  <div class="item"><span class="iname">Dessert Maison</span><span class="iqty">x4</span><span class="iprice">7 600</span></div>
+</div>
+<hr class="divider">
+<div class="total-section">
+  <div class="subtotal"><span>Sous-total HT</span><span>33 390 XOF</span></div>
+  <div class="subtotal"><span>TVA 18%</span><span>6 010 XOF</span></div>
+  <div class="subtotal"><span>Service (5%)</span><span>1 670 XOF</span></div>
+  <div class="total-line"><span>TOTAL</span><span>39 300 XOF</span></div>
+</div>
+<div class="payment-badge">PAYE PAR MOBILE MONEY</div>
+<div class="merci">Merci de votre visite · A tres bientot !<br>Conservez ce recu pour tout remboursement</div>
+</div></div>`)
+}
+
+// ── TEMPLATE : Garage / Atelier automobile
+function previewGarage(doc) {
+  const c = doc.catColor || '#6366F1'
+  const css = `
+.page{max-width:680px;margin:0 auto;font-family:Arial,sans-serif}
+.topbar{background:#1C1C2E;color:#fff;padding:16px 24px;display:flex;justify-content:space-between;align-items:center}
+.garage-brand{display:flex;align-items:center;gap:12px}
+.garage-icon{width:44px;height:44px;background:${c};border-radius:8px;display:grid;place-items:center;font-size:20px}
+.garage-name{font-size:15px;font-weight:900;color:#fff}
+.garage-sub{font-size:9.5px;color:#94A3B8;margin-top:2px}
+.doc-ref{text-align:right}
+.doc-type{font-size:14px;font-weight:900;color:${c};text-transform:uppercase;letter-spacing:.05em}
+.doc-num{font-size:10px;color:#94A3B8;margin-top:3px}
+.vehicle-card{background:#F8FAFC;border-left:4px solid ${c};margin:16px;padding:12px 16px;border-radius:0 8px 8px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.vc-item label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;display:block;margin-bottom:3px}
+.vc-item span{font-size:12px;font-weight:700;color:#1C1C2E}
+.section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin:0 16px 8px;padding-top:8px}
+table{width:calc(100% - 32px);margin:0 16px 16px;border-collapse:collapse}
+th{background:#1C1C2E;color:#fff;padding:8px 10px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase}
+th:last-child,td:last-child{text-align:right}
+td{padding:8px 10px;border-bottom:1px solid #F1F5F9;font-size:11px;color:#374151}
+tr:nth-child(even) td{background:#F8FAFC}
+.diag-box{margin:0 16px 12px;background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:10px 14px}
+.diag-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#92400E;margin-bottom:6px}
+.diag-items{display:flex;flex-wrap:wrap;gap:6px}
+.diag-chip{background:#fff;border:1px solid #FCD34D;border-radius:12px;padding:3px 8px;font-size:9.5px;color:#78350F}
+.total-bar{background:#1C1C2E;margin:0 16px 16px;border-radius:8px;padding:10px 16px;display:flex;justify-content:space-between;align-items:center}
+.total-label{font-size:11px;color:#94A3B8}
+.total-amount{font-size:18px;font-weight:900;color:#fff}
+.total-sub{font-size:9px;color:${c};text-align:right;margin-top:2px}`
+  return wrap(css, `<div class="page">
+<div class="topbar">
+  <div class="garage-brand">
+    <div class="garage-icon">&#128295;</div>
+    <div><div class="garage-name">GARAGE AUTO EXCELLENCE</div><div class="garage-sub">Zone Industrielle, Abidjan · Agree constructeur · RCC CI-ABJ-2018-B-9412</div></div>
+  </div>
+  <div class="doc-ref"><div class="doc-type">${doc.name}</div><div class="doc-num">N° OS-2026-00312<br>27/07/2026</div></div>
+</div>
+<div class="vehicle-card">
+  <div class="vc-item"><label>Marque/Modele</label><span>Toyota Hilux</span></div>
+  <div class="vc-item"><label>Immatriculation</label><span>4587 AB 01</span></div>
+  <div class="vc-item"><label>Kilometrage</label><span>87 420 km</span></div>
+  <div class="vc-item"><label>Client</label><span>KONE Marcel</span></div>
+</div>
+<div class="diag-box">
+  <div class="diag-title">Diagnostic effectue</div>
+  <div class="diag-items">
+    <span class="diag-chip">OK Vidange huile moteur</span>
+    <span class="diag-chip">! Plaquettes de frein usees</span>
+    <span class="diag-chip">OK Filtres air/huile/carburant</span>
+    <span class="diag-chip">!! Courroie distribution</span>
+  </div>
+</div>
+<div class="section-title">Prestations &amp; Pieces</div>
+<table>
+  <thead><tr><th>Designation</th><th>Ref.</th><th>Qte</th><th>P.U.</th><th>Total</th></tr></thead>
+  <tbody>
+    <tr><td>Main d oeuvre vidange complete</td><td>MO-001</td><td>1h</td><td>15 000</td><td>15 000</td></tr>
+    <tr><td>Huile moteur 5W40 (5L)</td><td>HM-5W40</td><td>5</td><td>4 500</td><td>22 500</td></tr>
+    <tr><td>Kit filtres complet</td><td>KF-TOY-H</td><td>1</td><td>18 000</td><td>18 000</td></tr>
+    <tr><td>Plaquettes frein avant (jeu)</td><td>PF-TOY-H</td><td>1</td><td>35 000</td><td>35 000</td></tr>
+    <tr><td>Main d oeuvre pose freins</td><td>MO-FRN</td><td>2h</td><td>15 000</td><td>30 000</td></tr>
+  </tbody>
+</table>
+<div class="total-bar">
+  <div><div class="total-label">Total HT · TVA 18% incl.</div><div style="font-size:9px;color:#6B7280;margin-top:2px">Garantie pieces : 6 mois · Main oeuvre : 3 mois</div></div>
+  <div style="text-align:right"><div class="total-amount">141 800 XOF</div><div class="total-sub">Paiement: OM / CM / Especes</div></div>
+</div>
+</div>`)
+}
+
+// ── TEMPLATE : IT / Informatique & Telecoms
+function previewIT(doc) {
+  const c = doc.catColor || '#0EA5E9'
+  const css = `
+.page{max-width:680px;margin:0 auto;font-family:'Segoe UI',Arial,sans-serif;background:#fff}
+.topbar{background:linear-gradient(135deg,#0F172A 0%,#1E3A5F 100%);padding:20px 28px;display:flex;justify-content:space-between;align-items:center}
+.it-brand{display:flex;align-items:center;gap:12px}
+.it-logo{width:44px;height:44px;background:${c};border-radius:10px;display:grid;place-items:center;font-size:20px}
+.it-name{font-size:15px;font-weight:800;color:#fff}
+.it-sub{font-size:9px;color:#94A3B8;margin-top:2px;font-family:monospace}
+.doc-box{text-align:right}
+.doc-type{font-size:13px;font-weight:900;color:${c};text-transform:uppercase;letter-spacing:.06em}
+.doc-meta{font-size:9px;color:#94A3B8;margin-top:4px;line-height:1.7}
+.contract-banner{background:#F0F9FF;border-bottom:3px solid ${c};padding:10px 28px;display:flex;gap:24px;align-items:center}
+.cb-item{display:flex;align-items:center;gap:6px;font-size:10.5px;color:#0369A1}
+.cb-icon{width:24px;height:24px;background:${c};border-radius:6px;display:grid;place-items:center;font-size:11px;color:#fff}
+.body{padding:18px 28px}
+.client-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.cg-box{border:1px solid #E2E8F0;border-radius:10px;padding:12px 14px;background:#F8FAFC}
+.cg-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin-bottom:4px}
+.cg-name{font-size:13px;font-weight:700;color:#0F172A;margin-bottom:2px}
+.cg-info{font-size:10px;color:#64748B;line-height:1.6;font-family:monospace}
+.scope-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin-bottom:8px}
+table{width:100%;border-collapse:collapse;margin-bottom:16px}
+thead{background:#0F172A}
+th{color:#fff;padding:8px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:left}
+th:last-child,td:last-child{text-align:right}
+td{padding:9px 10px;border-bottom:1px solid #F1F5F9;font-size:11px;color:#374151}
+tr:nth-child(even) td{background:#F8FAFC}
+.tag{display:inline-block;background:#EFF6FF;color:#3B82F6;border-radius:4px;padding:1px 6px;font-size:9px;font-weight:600;margin-left:4px;font-family:monospace}
+.sla-box{background:#F0FDF4;border:1px solid #86EFAC;border-radius:8px;padding:10px 14px;margin-bottom:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.sla-val{font-size:15px;font-weight:900;color:#15803D}
+.sla-lbl{font-size:8.5px;color:#16A34A;margin-top:2px}
+.total-bar{background:#0F172A;border-radius:10px;padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
+.tl-label{font-size:10.5px;color:#94A3B8}
+.tl-amount{font-size:17px;font-weight:900;color:#fff}
+.tl-period{font-size:9px;color:${c};margin-top:2px;text-align:right}`
+  return wrap(css, `<div class="page">
+<div class="topbar">
+  <div class="it-brand">
+    <div class="it-logo">&#128187;</div>
+    <div><div class="it-name">IBIG TECH SOLUTIONS SARL</div><div class="it-sub">www.ibigtech.ci · RCCM CI-ABJ-2020-B-5541 · NIF 2104567B</div></div>
+  </div>
+  <div class="doc-box"><div class="doc-type">${doc.name}</div><div class="doc-meta">Ref: IT-2026-0094<br>Date: 27/07/2026<br>Validite: 30 jours</div></div>
+</div>
+<div class="contract-banner">
+  <div class="cb-item"><div class="cb-icon">S</div>SLA Garanti</div>
+  <div class="cb-item"><div class="cb-icon">!</div>Support 24/7</div>
+  <div class="cb-item"><div class="cb-icon">C</div>Cloud Herberge</div>
+  <div class="cb-item"><div class="cb-icon">K</div>ISO 27001</div>
+</div>
+<div class="body">
+<div class="client-grid">
+  <div class="cg-box"><div class="cg-label">Prestataire</div><div class="cg-name">IBIG Tech Solutions</div><div class="cg-info">Plateau, Abidjan 01<br>+225 27 22 11 55 00<br>contact@ibigtech.ci</div></div>
+  <div class="cg-box"><div class="cg-label">Client</div><div class="cg-name">SOCIETE COMMERCIALE SA</div><div class="cg-info">Cocody, Abidjan<br>+225 07 55 66 77 88<br>dsi@socom.ci</div></div>
+</div>
+<div class="sla-box">
+  <div><div class="sla-val">99.9%</div><div class="sla-lbl">Disponibilite</div></div>
+  <div><div class="sla-val">&lt;4h</div><div class="sla-lbl">Tps reponse</div></div>
+  <div><div class="sla-val">12 mois</div><div class="sla-lbl">Duree contrat</div></div>
+</div>
+<div class="scope-title">Prestations &amp; Licences</div>
+<table>
+  <thead><tr><th>Designation</th><th>Type</th><th>Qte</th><th>P.U./mois</th><th>Total/an</th></tr></thead>
+  <tbody>
+    <tr><td>Infogerance serveurs <span class="tag">Cloud</span></td><td>Service</td><td>3</td><td>85 000</td><td>3 060 000</td></tr>
+    <tr><td>Licences Microsoft 365 <span class="tag">SaaS</span></td><td>Licence</td><td>25</td><td>12 000</td><td>3 600 000</td></tr>
+    <tr><td>Securite EDR/SOC <span class="tag">Cybersec</span></td><td>Service</td><td>1</td><td>120 000</td><td>1 440 000</td></tr>
+    <tr><td>Support N1/N2/N3 illimite <span class="tag">Helpdesk</span></td><td>Forfait</td><td>1</td><td>65 000</td><td>780 000</td></tr>
+  </tbody>
+</table>
+<div class="total-bar">
+  <div><div class="tl-label">Total annuel TTC (TVA 18%)</div><div style="font-size:9px;color:#475569;margin-top:2px">Facturation trimestrielle · Prelevement automatique</div></div>
+  <div><div class="tl-amount">10 449 000 XOF</div><div class="tl-period">874 250 XOF / mois</div></div>
+</div>
+</div></div>`)
+}
+
+// ── Routeur principal — doc.id en priorite, catId en fallback
 function previewHTML(doc) {
-  // Par doc.id (cas spécifiques multi-catégories)
+  // Par doc.id (cas specifiques multi-categories)
   const avoirIds = ['avoir', 'avoir_f', 'note_credit_f', 'fac_rect']
   const commandeIds = ['bc_client', 'bc_f']
   const demandeIds = ['dem_achat', 'dem_prix', 'consult_f', 'dem_conge', 'auto_abs', 'autoris']
   const recuIds = ['recu', 'ticket', 'quittance_l', 'attest_paie', 'recu_scol']
   const lettreIds = ['relance', 'mise_dem', 'accuse']
 
-  if (avoirIds.includes(doc.id))   return previewAvoir(doc)
+  if (avoirIds.includes(doc.id))    return previewAvoir(doc)
   if (commandeIds.includes(doc.id)) return previewCommande(doc)
-  if (demandeIds.includes(doc.id)) return previewDemande(doc)
-  if (recuIds.includes(doc.id))    return previewRecu(doc)
-  if (lettreIds.includes(doc.id))  return previewLettre(doc)
+  if (demandeIds.includes(doc.id))  return previewDemande(doc)
+  if (recuIds.includes(doc.id))     return previewRecu(doc)
+  if (lettreIds.includes(doc.id))   return previewLettre(doc)
 
-  // Par catégorie
+  // Par categorie
   switch (doc.catId) {
     case 'rh':         return previewHR(doc)
     case 'admin':      return previewAdmin(doc)
@@ -1953,6 +2161,17 @@ function previewHTML(doc) {
     case 'education':  return previewEducation(doc)
     case 'finance':    return previewFinance(doc)
     case 'logistique': return previewDelivery(doc)
+    case 'resto':      return previewResto(doc)
+    case 'garage':     return previewGarage(doc)
+    case 'it':         return previewIT(doc)
+    case 'agri':       return previewDelivery(doc)
+    case 'enrg':       return previewFinance(doc)
+    case 'banq':       return previewFinance(doc)
+    case 'ong':        return previewAdmin(doc)
+    case 'cons':       return previewHR(doc)
+    case 'tour':       return previewImmobilier(doc)
+    case 'pharm':      return previewSante(doc)
+    case 'mine':       return previewExport(doc)
     case 'achat':
       return ['br_f', 'retour_f', 'bon_emb'].includes(doc.id)
         ? previewDelivery(doc)
