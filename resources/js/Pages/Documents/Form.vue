@@ -42,6 +42,9 @@ const NOUVEAU_PREFIX = {
     delivery_note:        null,       // pas de préfixe
     dispatch_order:       null,
     picking_order:        null,
+    rent_notice:          'Nouvelle',
+    deposit_receipt:      'Nouveau',
+    work_order:           'Nouveau',
 };
 const createPrefix = computed(() => {
     const t = props.document?.type ?? props.documentType;
@@ -125,7 +128,7 @@ const TYPE_SCHEMAS = {
     maintenance_contract: { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: true,  clientLabel: 'Client',                    extraSection: 'sav' },
 
     // BTP & Travaux
-    work_order:           { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
+    work_order:           { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'work_order' },
     service_order:        { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
     progress_statement:   { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
     provisional_account:  { showLines: true,  showPrices: true,  showTax: true,  showDiscount: false, showDueDate: false, clientLabel: "Maître d'ouvrage",          extraSection: 'btp' },
@@ -326,14 +329,16 @@ const saveQuickCustomer = async () => {
 
 // ── Templates ─────────────────────────────────────────────────────────────────
 const COSMETIC_TEMPLATE_TYPES = [
-    'invoice','credit_note','proforma','advance_invoice','deposit_invoice','balance_invoice',
+    'invoice','simple_invoice','export_invoice','tax_exempt_invoice','rectification_invoice',
+    'credit_note','proforma','deposit_invoice','balance_invoice',
     'recurring_invoice','final_invoice','corrective_invoice','tax_invoice','commercial_invoice',
     'quote','price_offer','service_quote','work_quote','repair_estimate',
+    'sales_order','dispatch_order','supplier_invoice',
     'delivery_note','packing_list','shipping_order','picking_list',
     'transfer_note','goods_receipt','return_note','goods_return',
     'purchase_order','supplier_order','rfq',
     'payment_receipt','cash_receipt','petty_cash_receipt','advance_receipt','refund_receipt',
-    'contract','service_contract','lease_agreement','maintenance_contract',
+    'contract','service_contract','lease_agreement','maintenance_contract','work_order',
     'partnership_agreement','nda','framework_agreement','subcontracting_contract',
     'meeting_minutes','pv_reception','pv_handover','acceptance_report',
     'conflict_pv','general_assembly_pv',

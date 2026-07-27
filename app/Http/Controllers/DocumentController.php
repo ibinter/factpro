@@ -123,23 +123,19 @@ class DocumentController extends Controller
         $typeDefaults = [
             'delivery_note'    => 'transport-01',
             'packing_list'     => 'transport-01',
-            'shipping_order'   => 'transport-02',
-            'transfer_note'    => 'transport-02',
+            'shipping_note'    => 'transport-02',
+            'stock_transfer'   => 'transport-02',
             'purchase_order'   => 'corporate-02',
-            'supplier_order'   => 'corporate-02',
-            'rfq'              => 'corporate-03',
             'goods_receipt'    => 'transport-03',
             'expense_report'   => 'corporate-04',
             'mission_order'    => 'corporate-03',
             'travel_request'   => 'corporate-03',
             'payslip'          => 'corporate-03',
             'contract'         => 'legal-01',
-            'service_contract' => 'legal-01',
-            'lease_agreement'  => 'legal-02',
-            'nda'              => 'legal-03',
+            'lease_contract'   => 'legal-02',
             'credit_note'      => 'corporate-01',
             'quote'            => 'corporate-01',
-            'proforma_invoice' => 'corporate-01',
+            'proforma'         => 'corporate-01',
         ];
         if (isset($typeDefaults[$type]) && in_array($typeDefaults[$type], $allowed, true)) {
             return $typeDefaults[$type];
@@ -572,10 +568,11 @@ class DocumentController extends Controller
      * et doivent toujours utiliser leur vue engine — jamais un layout facture.
      */
     private const COSMETIC_TEMPLATE_TYPES = [
-        'invoice', 'credit_note', 'proforma', 'advance_invoice', 'deposit_invoice', 'balance_invoice',
+        'invoice', 'simple_invoice', 'credit_note', 'proforma', 'deposit_invoice', 'balance_invoice',
         'recurring_invoice', 'final_invoice', 'corrective_invoice', 'tax_invoice',
-        'commercial_invoice',
+        'commercial_invoice', 'supplier_invoice',
         'quote', 'price_offer', 'service_quote', 'work_quote', 'repair_estimate',
+        'sales_order', 'dispatch_order',
         'delivery_note', 'packing_list', 'shipping_order', 'picking_list',
         'transfer_note', 'goods_receipt', 'return_note', 'goods_return',
         'purchase_order', 'supplier_order', 'rfq',
@@ -1025,7 +1022,7 @@ class DocumentController extends Controller
         ]);
 
         // Types sans lignes : injecter une ligne synthétique depuis meta
-        $noLinesTypes = ['quittance', 'payment_receipt'];
+        $noLinesTypes = ['quittance', 'payment_receipt', 'rent_notice', 'deposit_receipt'];
         if (in_array($data['type'] ?? '', $noLinesTypes) || empty($data['lines'])) {
             $data['lines'] = $this->syntheticLines($data);
         }
@@ -1046,7 +1043,7 @@ class DocumentController extends Controller
             $charges = (float) ($meta['charges_amount'] ?? 0);
             $lines   = [];
             if ($loyer > 0) {
-                $lines[] = ['description' => 'Loyer — ' . ($meta['rental_period'] ?? ''), 'quantity' => 1, 'unit_price' => $loyer, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent'];
+                $lines[] = ['description' => 'Loyer — ' . (($meta['rental_month'] ?? '') . ' ' . ($meta['rental_year'] ?? '')), 'quantity' => 1, 'unit_price' => $loyer, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent'];
             }
             if ($charges > 0) {
                 $lines[] = ['description' => 'Charges locatives', 'quantity' => 1, 'unit_price' => $charges, 'tax_rate' => 0, 'discount_percent' => 0, 'line_discount_type' => 'percent'];

@@ -206,6 +206,42 @@ return [
         'secondary' => '#5C6BC0',
         'accent' => '#E8EAF6',
     ],
+    'futuristic-02' => [
+        'name'        => 'Matrix Terminal',
+        'family'      => 'Futuriste & Tech',
+        'description' => 'Style terminal Matrix : vert néon phosphorescent sur fond noir absolu, typographie monospace et prompt CLI.',
+        'plan_min'    => 'pro',
+        'primary'     => '#00FF41',
+        'secondary'   => '#0A0A0A',
+        'accent'      => '#007A1F',
+    ],
+    'futuristic-03' => [
+        'name'        => 'Galaxy Cyan',
+        'family'      => 'Futuriste & Tech',
+        'description' => 'Fond navy profond, cyan électrique et violet aurora : esthétique spatiale haut de gamme pour startups tech.',
+        'plan_min'    => 'pro',
+        'primary'     => '#00D4FF',
+        'secondary'   => '#0D1B2A',
+        'accent'      => '#A855F7',
+    ],
+    'tech-03' => [
+        'name'        => 'Corporate Cyan',
+        'family'      => 'Futuriste & Tech',
+        'description' => 'Navy institutionnel et cyan vif sur fond blanc : rigueur corporate avec touche tech moderne.',
+        'plan_min'    => 'pro',
+        'primary'     => '#1E3A5F',
+        'secondary'   => '#06B6D4',
+        'accent'      => '#F0FDFE',
+    ],
+    'tech-04' => [
+        'name'        => 'Emerald Dark',
+        'family'      => 'Futuriste & Tech',
+        'description' => 'Fond anthracite sombre et vert émeraude lumineux : style dev/ops pour agences digitales et ESN.',
+        'plan_min'    => 'pro',
+        'primary'     => '#10B981',
+        'secondary'   => '#1F2937',
+        'accent'      => '#111827',
+    ],
 
     // ── Famille CORPORATE B2B (suite) ────────────────────────────────────
     'corporate-03' => [

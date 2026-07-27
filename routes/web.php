@@ -141,6 +141,9 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::get('/documents/ai-generate', [DocumentCatalogController::class, 'aiGenerateForm'])->name('documents.ai-generate');
     Route::post('/documents/ai-generate', [AiDocumentController::class, 'store'])->name('documents.ai-generate.store');
 
+    // Routes statiques /documents/* déclarées AVANT le resource pour éviter le conflit avec {document}
+    Route::get('/documents/export/excel', [DocumentController::class, 'exportExcel'])->name('documents.export.excel');
+
     Route::resource('documents', DocumentController::class);
     Route::post('/documents/{document}/finalize', [DocumentController::class, 'finalize'])->name('documents.finalize');
     Route::post('/documents/{document}/status', [DocumentController::class, 'changeStatus'])->name('documents.status');
@@ -149,7 +152,6 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::post('/documents/{document}/payments', [DocumentController::class, 'registerPayment'])->name('documents.payments');
     Route::get('/documents/{document}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');
     Route::get('/documents/{document}/docx', [DocumentController::class, 'docx'])->name('documents.docx');
-    Route::get('/documents/export/excel', [DocumentController::class, 'exportExcel'])->name('documents.export.excel');
     Route::post('/documents/{document}/send', DocumentSendController::class)->name('documents.send');
     Route::post('/documents/{document}/clone', [DocumentController::class, 'clone'])->name('documents.clone');
 
