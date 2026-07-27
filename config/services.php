@@ -36,6 +36,7 @@ return [
     ],
 
     'anthropic' => [
+        'key'     => env('ANTHROPIC_API_KEY'),
         'api_key' => env('ANTHROPIC_API_KEY', ''),
     ],
 

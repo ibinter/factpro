@@ -23,6 +23,8 @@ use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentCatalogController;
+use App\Http\Controllers\AiDocumentController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DocumentSendController;
 use App\Http\Controllers\ProductController;
@@ -133,6 +135,11 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::resource('customers', CustomerController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::post('/customers/quick', [CustomerController::class, 'quickStore'])->name('customers.quick');
     Route::resource('products', ProductController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    // Catalogue de documents & Génération IA
+    Route::get('/documents/catalog', [DocumentCatalogController::class, 'index'])->name('documents.catalog');
+    Route::get('/documents/ai-generate', [DocumentCatalogController::class, 'aiGenerateForm'])->name('documents.ai-generate');
+    Route::post('/documents/ai-generate', [AiDocumentController::class, 'store'])->name('documents.ai-generate.store');
 
     Route::resource('documents', DocumentController::class);
     Route::post('/documents/{document}/finalize', [DocumentController::class, 'finalize'])->name('documents.finalize');

@@ -213,6 +213,12 @@ const newDocGroups = [
                         <h1 class="text-xl font-bold text-gray-900">Documents commerciaux</h1>
                         <p class="text-xs text-gray-400 mt-0.5">{{ documents.total }} document{{ documents.total > 1 ? 's' : '' }} au total</p>
                     </div>
+                    <!-- Bouton catalogue -->
+                    <Link :href="route('documents.catalog')"
+                        class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors">
+                        🗂️ Catalogue
+                    </Link>
+
                     <!-- Bouton nouveau document -->
                     <div class="relative">
                         <button type="button" @click="newDocMenu = !newDocMenu"
