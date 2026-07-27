@@ -110,13 +110,42 @@ class DocumentController extends Controller
 
     private function resolveDefaultTemplate(Request $request, $company): ?string
     {
+        $allowed = array_keys($this->allowedTemplates($request->user()));
+
+        // 1. Template explicitement passé depuis le catalogue (?template=xxx)
         $suggested = $request->query('template');
-        if ($suggested) {
-            $allowed = array_keys($this->allowedTemplates($request->user()));
-            if (in_array($suggested, $allowed, true)) {
-                return $suggested;
-            }
+        if ($suggested && in_array($suggested, $allowed, true)) {
+            return $suggested;
         }
+
+        // 2. Recommandation par type de document
+        $type = $request->query('type', 'invoice');
+        $typeDefaults = [
+            'delivery_note'    => 'transport-01',
+            'packing_list'     => 'transport-01',
+            'shipping_order'   => 'transport-02',
+            'transfer_note'    => 'transport-02',
+            'purchase_order'   => 'corporate-02',
+            'supplier_order'   => 'corporate-02',
+            'rfq'              => 'corporate-03',
+            'goods_receipt'    => 'transport-03',
+            'expense_report'   => 'corporate-04',
+            'mission_order'    => 'corporate-03',
+            'travel_request'   => 'corporate-03',
+            'payslip'          => 'corporate-03',
+            'contract'         => 'legal-01',
+            'service_contract' => 'legal-01',
+            'lease_agreement'  => 'legal-02',
+            'nda'              => 'legal-03',
+            'credit_note'      => 'corporate-01',
+            'quote'            => 'corporate-01',
+            'proforma_invoice' => 'corporate-01',
+        ];
+        if (isset($typeDefaults[$type]) && in_array($typeDefaults[$type], $allowed, true)) {
+            return $typeDefaults[$type];
+        }
+
+        // 3. Défaut société
         return $company->default_template;
     }
 

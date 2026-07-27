@@ -351,8 +351,8 @@ const compatibleTemplates = computed(() => {
 const typeAcceptsCosmeticTemplate = computed(() => compatibleTemplates.value.length > 0);
 const activeFamily      = ref(null);
 const families          = computed(() => [...new Set(compatibleTemplates.value.map(t => t.family))]);
-// Galerie réduite par défaut si un template est pré-sélectionné (venant du catalogue)
-const templateGalleryOpen = ref(!props.defaultTemplate);
+// Galerie réduite par défaut dès qu'un template est sélectionné (catalogue ou recommandation par type)
+const templateGalleryOpen = ref(!form.template_key);
 const filteredTemplates = computed(() => {
     if (!typeAcceptsCosmeticTemplate.value) return [];
     return activeFamily.value
