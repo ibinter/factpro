@@ -580,71 +580,101 @@ const RESET = `*{box-sizing:border-box;margin:0;padding:0}body{font-family:'Sego
 const FTR = `<div style="border-top:1px solid #e2e8f0;margin-top:18px;padding:10px 0;text-align:center;font-size:9.5px;color:#94a3b8">Document généré par <b style="color:#1E3A5F">IBIG FactPro</b> · ibigsoft.com · Conforme OHADA &nbsp;·&nbsp; Aperçu de démonstration</div>`
 function wrap(css, body) { return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${RESET}${css}</style></head><body>${body}${FTR}</body></html>` }
 
-// ── TEMPLATE 1 : Facture / Devis / Proforma — gradient header moderne
+// ── TEMPLATE 1 : Facture / Devis — contenu adaptatif par secteur
 function previewInvoice(doc) {
   const c = doc.catColor || '#2563EB'
-  const isDevis = ['devis','offre','proposition','proforma','bon_resa'].includes(doc.id)
+  const isDevis = doc.factproType === 'quote' || doc.factproType === 'proforma_invoice' || ['devis','offre','proposition','proforma','bon_resa','devis_modif','offre_promo'].includes(doc.id)
+
+  // Lignes de facturation adaptees au secteur
+  const sectorRows = {
+    vente:      [['Produits electroniques — ref. LOT-2026-088','50 u.','25 000','1 250 000'],['Textiles et confection (tailles S/M/L)','30 pcs','12 500','375 000'],['Accessoires et emballages','1 lot','18 000','18 000'],['Frais de port et manutention','1 fft','8 500','8 500']],
+    achat:      [['Matieres premieres — commande mensuelle','200 kg','3 500','700 000'],['Fournitures de bureau et consommables','5 rlx','8 500','42 500'],['Emballages et conditionnement','500 u.','150','75 000'],['Frais de douane et transit','1 fft','45 000','45 000']],
+    btp:        [['Gros oeuvre — fondations et murs porteurs','1 fft','3 500 000','3 500 000'],['Charpente metallique et couverture','1 fft','1 200 000','1 200 000'],['Electricite HTA/BT et plomberie','1 fft','800 000','800 000'],['Finitions, peintures et revetements','1 fft','450 000','450 000']],
+    logistique: [['Fret routier Abidjan - Bamako (5 tonnes)','1 trajet','450 000','450 000'],['Transit douanier et dedouanement','1 fft','85 000','85 000'],['Manutention et stockage (3 jours)','3 j','30 000','90 000'],['Assurance transport tout risque','1 fft','22 000','22 000']],
+    immobilier: [['Loyer mensuel — bureaux 120 m²','1 mois','350 000','350 000'],['Charges locatives et copropriete','1 mois','45 000','45 000'],['Gardiennage et securite 24h/24','1 mois','30 000','30 000'],['Internet fibres optiques et telephonie','1 mois','25 000','25 000']],
+    sante:      [['Consultation medicale specialisee','1 acte','25 000','25 000'],['Analyses biologiques — bilan complet','1 panel','35 000','35 000'],['Medicaments prescrits et consommables','1 ord.','18 500','18 500'],['Frais de dossier et administratifs','1 fft','2 000','2 000']],
+    education:  [['Frais de scolarite — 3e trimestre 2025-2026','1 trim.','150 000','150 000'],['Manuels scolaires et fournitures','1 lot','25 000','25 000'],['Activites parascolaires et sorties','1 fft','15 000','15 000'],['Assurance scolaire annuelle','1 an','8 000','8 000']],
+    resto:      [['Repas — buffet gala 120 couverts','120 couv.','12 500','1 500 000'],['Boissons et cocktails de bienvenue','120 pers.','4 500','540 000'],['Service traiteur VIP et personnalise','1 fft','85 000','85 000'],['Location salle et decoration florale','1 eve.','150 000','150 000']],
+    garage:     [['Main oeuvre — revision complete 50 000km','4 h','18 000','72 000'],['Pieces detachees certifiees OEM','1 lot','95 000','95 000'],['Vidange huile 5W40 et filtres','5 L','4 200','21 000'],['Nettoyage et controle technique CT','1 fft','12 000','12 000']],
+    it:         [['Developpement application mobile iOS/Android','40 j','95 000','3 800 000'],['Hebergement cloud haute disponibilite (12 mois)','1 an','85 000','85 000'],['Licences logicielles — pack PME (10 postes)','10 u.','25 000','250 000'],['Support technique mensuel prioritaire','1 fft','65 000','65 000']],
+    agri:       [['Semences certifiees mais hybride DK-8031','50 kg','8 500','425 000'],['Engrais NPK 20-10-10 sacs 50kg','200 sacs','18 000','3 600 000'],['Pesticides homologues (traitement preventif)','20 L','12 000','240 000'],['Materiel et outillage agricole','1 lot','85 000','85 000']],
+    enrg:       [['Consommation electrique juillet 2026','2 450 kWh','120','294 000'],['Location compteur intelligent AMR','1 mois','8 500','8 500'],['Frais de raccordement reseau electrique','1 fft','45 000','45 000'],['Prime fixe abonnement BT mensuel','1 mois','12 000','12 000']],
+    banq:       [['Commission gestion compte professionnel','1 mois','15 000','15 000'],['Frais virements internationaux SWIFT','3 op.','8 500','25 500'],['Location coffre-fort securise annuel','1 an','45 000','45 000'],['Primes assurance compte et CBE','12 mois','5 000','60 000']],
+    pharm:      [['Medicaments prescription — lot B (DCI)','500 u.','2 500','1 250 000'],['Materiels medicaux et consommables','1 lot','85 000','85 000'],['Frais de livraison temperature controlee','1 fft','15 000','15 000'],['Controle qualite et certification ISO','1 cert.','25 000','25 000']],
+    mine:       [['Extraction minerai de fer calibre 0-10mm','150 T','45 000','6 750 000'],['Transport vers port en vrac','150 T','8 500','1 275 000'],['Traitement, purification et criblage','150 T','12 000','1 800 000'],['Certification, analyses et conformite','1 cert.','85 000','85 000']],
+    ong:        [['Programme aide alimentaire — beneficiaires','1 fft','2 500 000','2 500 000'],['Frais logistiques et distribution terrain','1 mois','180 000','180 000'],['Sensibilisation et formations communautes','5 sess.','45 000','225 000'],['Frais administratifs et gestion (10%)','1 fft','272 500','272 500']],
+    cons:       [['Audit organisationnel et diagnostic','10 j','250 000','2 500 000'],['Elaboration plan strategique 3 ans','5 j','250 000','1 250 000'],['Ateliers et formations dirigeants','3 j','300 000','900 000'],['Rapport final, livrables et suivi','1 fft','150 000','150 000']],
+    tour:       [['Circuit touristique 7 jours / 6 nuits','2 pers.','550 000','1 100 000'],['Hebergement hotel 4 etoiles petit-dejeuner inclus','6 nuits','120 000','720 000'],['Transferts aeroport et transports inclus','1 fft','85 000','85 000'],['Guide local, excursions et entrees sites','1 fft','75 000','75 000']],
+    finance:    [['Commission gestion portefeuille (1,5%)','1 trim.','125 000','125 000'],['Frais transactions boursieres et courtage','15 op.','3 500','52 500'],['Droits de garde titres annuels','1 an','45 000','45 000'],['Abonnement reporting et analyse financiere','12 mois','8 500','102 000']],
+    sav:        [['Diagnostic et expertise technique approfondie','1 acte','15 000','15 000'],['Reparation — main oeuvre specialisee','3 h','25 000','75 000'],['Pieces de rechange certifiees constructeur','1 lot','65 000','65 000'],['Essais finaux et recette client','1 acte','12 000','12 000']],
+    export:     [['Marchandises export — lot 2026-EXP-044','1 conte.','1 850 000','1 850 000'],['Assurance maritime tous risques','1 fft','65 000','65 000'],['Fret maritime CIF Le Havre','1 fft','280 000','280 000'],['Certificat origine et documents export','1 lot','45 000','45 000']],
+  }
+  const rows = sectorRows[doc.catId] || sectorRows.vente
+  const subHT = rows.reduce((s,r) => s + parseInt(r[3].replace(/ /g,'')), 0)
+  const tva = Math.round(subHT * 0.18)
+  const ttc = subHT + tva
+  const fmt = n => n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+
   const css = `
-.page{max-width:680px;margin:0 auto}
-.top{background:linear-gradient(135deg,#0f1f4b 0%,${c} 100%);color:#fff;padding:24px 28px;display:flex;justify-content:space-between;align-items:flex-start}
-.logo-sq{width:42px;height:42px;background:rgba(255,255,255,.18);border-radius:9px;display:grid;place-items:center;font-size:15px;font-weight:900;margin-bottom:7px}
+.page{max-width:680px;margin:0 auto;font-family:Arial,sans-serif;background:#fff}
+.top{background:linear-gradient(135deg,#0f1f4b 0%,${c} 100%);color:#fff;padding:22px 28px;display:flex;justify-content:space-between;align-items:flex-start}
+.logo-area{display:flex;align-items:center;gap:12px}
+.logo-sq{width:44px;height:44px;background:rgba(255,255,255,.2);border-radius:10px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
 .co{font-size:14px;font-weight:800;letter-spacing:.01em}
-.co-sub{font-size:10px;opacity:.8;margin-top:3px;line-height:1.7}
+.co-sub{font-size:9.5px;opacity:.8;margin-top:3px;line-height:1.8}
 .doc-r{text-align:right}
-.dtype{font-size:20px;font-weight:900;text-transform:uppercase;letter-spacing:.05em;line-height:1}
-.dref{font-size:10.5px;opacity:.85;margin-top:6px;line-height:1.8}
-.vbar{background:#FFF8E1;border-left:4px solid #F59E0B;padding:7px 20px;font-size:10.5px;font-weight:700;color:#78350F}
-.body{padding:20px 28px}
-.parties{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
-.party{padding:12px 14px;border-radius:9px;background:#F8FAFC}
+.dtype{font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:.04em;line-height:1.2}
+.dsector{font-size:9px;opacity:.75;font-weight:600;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.dref{font-size:10px;opacity:.85;margin-top:5px;line-height:1.9}
+.vbar{background:#FFF8E1;border-left:4px solid #F59E0B;padding:8px 22px;font-size:10.5px;font-weight:700;color:#78350F;display:flex;align-items:center;gap:8px}
+.body{padding:18px 28px}
+.parties{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.party{padding:12px 14px;border-radius:10px;background:#F8FAFC}
 .party.em{border-top:3px solid ${c}}
 .party.dest{border-top:3px solid #10B981}
-.plbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;margin-bottom:5px}
-.pname{font-size:13px;font-weight:800;color:#0F172A;margin-bottom:2px}
+.plbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;margin-bottom:4px}
+.pname{font-size:13px;font-weight:800;color:#0F172A;margin-bottom:3px}
 .pinfo{font-size:10.5px;color:#64748B;line-height:1.65}
-table{width:100%;border-collapse:collapse;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;margin-bottom:12px}
 thead tr{background:#0F1F4B}
-th{color:#fff;padding:8px 10px;text-align:left;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+th{color:#fff;padding:8px 10px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
 th:last-child,td:last-child{text-align:right}
-td{padding:8px 10px;border-bottom:1px solid #F1F5F9;font-size:11.5px}
+td{padding:8px 10px;border-bottom:1px solid #F1F5F9;font-size:11.5px;color:#374151}
 tr:nth-child(even) td{background:#F8FAFC}
-.tw{display:flex;justify-content:flex-end;margin-bottom:14px}
-.tb{width:264px}
+.tw{display:flex;justify-content:flex-end;margin-bottom:12px}
+.tb{width:270px}
 .tl{display:flex;justify-content:space-between;padding:6px 12px;font-size:11.5px;border-bottom:1px solid #F1F5F9;color:#475569}
-.tf{display:flex;justify-content:space-between;padding:11px 12px;font-size:14px;font-weight:900;background:${c};color:#fff;border-radius:0 0 8px 8px}
-.paybar{background:#EFF6FF;border-radius:8px;padding:11px 14px;font-size:10.5px;color:#1E40AF;line-height:1.7;margin-bottom:12px}
+.tf{display:flex;justify-content:space-between;padding:12px;font-size:14px;font-weight:900;background:${c};color:#fff;border-radius:0 0 8px 8px}
+.paybar{background:#EFF6FF;border-radius:8px;padding:10px 14px;font-size:10.5px;color:#1E40AF;line-height:1.7;margin-bottom:12px}
 .sigs{display:flex;gap:12px;margin-top:6px}
 .sig{flex:1;border:1.5px dashed #CBD5E1;border-radius:8px;padding:10px;text-align:center;font-size:10px;color:#94A3B8}
-.ss{height:40px}`
+.ss{height:38px}`
   return wrap(css, `<div class="page">
 <div class="top">
-  <div><div class="logo-sq">VS</div><div class="co">VOTRE SOCIÉTÉ SARL</div><div class="co-sub">📍 Plateau, Abidjan 01 · Côte d'Ivoire<br>📞 +225 27 22 33 44 55 · RCCM CI-ABJ-2024-B-12345</div></div>
-  <div class="doc-r"><div class="dtype">${doc.name}</div><div class="dref">N° <b>2026-0042</b><br>Date : <b>27/07/2026</b><br>${isDevis ? 'Valable : <b>26/08/2026</b>' : 'Échéance : <b>27/08/2026</b>'}</div></div>
+  <div class="logo-area"><div class="logo-sq">${doc.icon}</div><div><div class="co">VOTRE SOCIETE SARL</div><div class="co-sub">Plateau, Abidjan 01 · Cote d'Ivoire<br>+225 27 22 33 44 55 · RCCM CI-ABJ-2024-B-12345</div></div></div>
+  <div class="doc-r"><div class="dsector">${doc.catLabel || ''}</div><div class="dtype">${doc.name}</div><div class="dref">N° <b>2026-0042</b> · 27/07/2026<br>${isDevis ? 'Valable jusqu\'au <b>26/08/2026</b>' : 'Echeance : <b>27/08/2026</b>'}</div></div>
 </div>
-${isDevis ? '<div class="vbar">⏳ Devis valable 30 jours — La signature vaut acceptation ferme</div>' : ''}
+${isDevis ? '<div class="vbar">&#9203; Devis valable 30 jours — La signature vaut acceptation ferme</div>' : ''}
 <div class="body">
 <div class="parties">
-  <div class="party em"><div class="plbl">Émetteur</div><div class="pname">VOTRE SOCIÉTÉ SARL</div><div class="pinfo">Plateau, Abidjan 01<br>NIF 2405812 A · CNPS 123-456-789</div></div>
-  <div class="party dest"><div class="plbl">Client / Destinataire</div><div class="pname">CLIENT EXEMPLE & ASSOCIÉS</div><div class="pinfo">Cocody Riviera 3, Abidjan<br>+225 05 00 11 22 33 · RCCM CI-ABJ-2020-B-44521</div></div>
+  <div class="party em"><div class="plbl">Emetteur</div><div class="pname">VOTRE SOCIETE SARL</div><div class="pinfo">Plateau, Abidjan 01<br>NIF 2405812 A · CNPS 123-456-789</div></div>
+  <div class="party dest"><div class="plbl">Client / Destinataire</div><div class="pname">CLIENT EXEMPLE &amp; ASSOCIES</div><div class="pinfo">Cocody Riviera 3, Abidjan<br>+225 05 00 11 22 33 · RCCM CI-ABJ-2020-B-44521</div></div>
 </div>
 <table>
-<thead><tr><th>#</th><th>Désignation</th><th>Qté</th><th>P.U. HT</th><th>Total HT</th></tr></thead>
+<thead><tr><th>#</th><th>Designation</th><th>Qte</th><th>P.U. HT</th><th>Total HT</th></tr></thead>
 <tbody>
-<tr><td>01</td><td>Audit & conseil en transformation digitale</td><td>1 fft</td><td>350 000</td><td>350 000 XOF</td></tr>
-<tr><td>02</td><td>Formation équipe dirigeante (3 sessions)</td><td>3 j</td><td>180 000</td><td>540 000 XOF</td></tr>
-<tr><td>03</td><td>Développement module logiciel sur-mesure</td><td>20 j</td><td>95 000</td><td>1 900 000 XOF</td></tr>
-<tr><td>04</td><td>Support & maintenance (3 mois)</td><td>1 fft</td><td>120 000</td><td>120 000 XOF</td></tr>
+${rows.map((r,i) => `<tr><td>0${i+1}</td><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]} XOF</td><td>${r[3]} XOF</td></tr>`).join('')}
 </tbody>
 </table>
 <div class="tw"><div class="tb">
-  <div class="tl"><span>Sous-total HT</span><span>2 910 000 XOF</span></div>
-  <div class="tl" style="background:#FFFBEB"><span>TVA 18 %</span><span>523 800 XOF</span></div>
-  <div class="tf"><span>TOTAL TTC</span><span>3 433 800 XOF</span></div>
+  <div class="tl"><span>Sous-total HT</span><span>${fmt(subHT)} XOF</span></div>
+  <div class="tl" style="background:#FFFBEB"><span>TVA 18 %</span><span>${fmt(tva)} XOF</span></div>
+  <div class="tf"><span>TOTAL TTC</span><span>${fmt(ttc)} XOF</span></div>
 </div></div>
-<div class="paybar">🏦 Virement BICICI · IBAN CI61 0123 4567 8901 2345 6789 00 · Délai : 30 jours nets</div>
+<div class="paybar">&#127974; Virement BICICI · IBAN CI61 0123 4567 8901 2345 6789 00 · Delai : 30 jours nets</div>
 <div class="sigs">
   <div class="sig"><div class="ss"></div>Signature Client — Bon pour accord</div>
-  <div class="sig"><div class="ss"></div>Cachet & Signature Émetteur</div>
+  <div class="sig"><div class="ss"></div>Cachet &amp; Signature Emetteur</div>
 </div>
 </div></div>`)
 }
@@ -1925,106 +1955,106 @@ ${isMed ? '<div class="med-badge">⚠️ MISE EN DEMEURE — Recommandé avec Ac
 </div>`)
 }
 
-// ── TEMPLATE : Rapport / Document technique (service_report — 249 docs)
+// ── TEMPLATE : Rapport / Document officiel — adaptatif par secteur (249 docs)
 function previewServiceReport(doc) {
   const c = doc.catColor || '#7C3AED'
+
+  // Contenu specifique par secteur
+  const sectorContent = {
+    garage:  { who: 'Chef mecanicien — KONE Brice', objet: 'Vehicule Toyota Hilux · Immat. 4587 AB 01', champs: [['Kilometrage','87 420 km'],['Prochaine revision','100 000 km'],['Etat general','Bon — Reserve freins']], checks: [['ok','Vidange et filtres effectues'],['ok','Freins avant remplaces'],['warn','Pneus arriere a surveiller'],['info','Prochain CT dans 3 mois']], obs: 'Vehicule en bon etat general apres intervention. Surveillance pneus arriere recommandee dans 5 000 km.' },
+    it:      { who: 'Ingenieur systeme — ASSI Franck', objet: 'Parc informatique SOCIETE EXEMPLE SA', champs: [['Nb. postes',  '24 stations'],['Serveur','Dell PowerEdge R740'],['OS','Windows Server 2022']], checks: [['ok','Mises a jour securite appliquees'],['ok','Sauvegarde verifiee (99,9%)'],['warn','Antivirus — 2 licences a renouveler'],['info','Migration cloud planifiee Q4 2026']], obs: 'Infrastructure stable. Renouvellement de 2 licences antivirus a prevoir avant fin septembre 2026.' },
+    agri:    { who: 'Agronome — Dr. COULIBALY Mamadou', objet: 'Parcelle P-042 · Secteur Yamoussoukro', champs: [['Superficie','12,5 ha'],['Culture','Mais hybride DK-8031'],['Pluviometrie','1 240 mm/an']], checks: [['ok','Sol fertilise — NPK applique'],['ok','Semis effectue (densite 65 000 pl/ha)'],['warn','Risque chenille legionnaire — surveillance'],['info','Recolte estimee : octobre 2026']], obs: 'Parcelle en bon etat vegetatif. Traitement preventif contre la chenille legionnaire recommande dans 15 jours.' },
+    enrg:    { who: 'Technicien reseau — TRAORE Oumar', objet: 'Site IBIG-POSTE-CI-0094 · Plateau', champs: [['Puissance','125 kVA'],['Tension','BT 380V / 220V'],['Indice Q','0,92 — Conforme']], checks: [['ok','Compteur AMR operationnel'],['ok','Protections differentielles OK'],['warn','Condensateur C3 — vieillissement detecte'],['info','Audit quinquennal prevu 2027']], obs: 'Installation conforme aux normes CI-CIGRE. Remplacement du condensateur C3 recommande avant fin 2026.' },
+    banq:    { who: 'Charge de clientele — Mme BAMBA Aida', objet: 'Compte Pro N° 01234-567890-CI · SARL', champs: [['Solde moyen','4 850 000 XOF'],['Mouvements','127 op/mois'],['Notation','A+ — Excellent']], checks: [['ok','KYC a jour — Documents conformes'],['ok','Aucun incident de paiement'],['ok','Plafonds adaptes au profil'],['info','Offre Premium disponible — voir conseiller']], obs: 'Compte en bonne standing. Eligibilite au credit professionnel confirmee. Rendez-vous conseiller recommande.' },
+    ong:     { who: 'Coordinateur terrain — DIALLO Ibrahim', objet: 'Programme FEED-CI 2026 · Region Savane', champs: [['Beneficiaires','1 842 personnes'],['Zones ciblees','8 villages'],['Budget execute','94,2 %']], checks: [['ok','Distribution alimentaire effectuee'],['ok','Formation hygiene et sante (450 pers.)'],['ok','Puits rehabilites (3 sur 3)'],['info','Rapport bailleur a soumettre avant 15/08']], obs: 'Programme en avance sur les objectifs initiaux. Impact positif mesure sur la securite alimentaire de la zone. ' },
+    cons:    { who: 'Consultant Senior — Dr. KOFFI Jean-Marc', objet: 'Mission strategie 2026-2028 · Client X', champs: [['Phase','Phase 2 / 3 — Recommandations'],['Livrables','12 sur 14 fournis'],['Satisfaction','4,7 / 5']], checks: [['ok','Diagnostic organisationnel finalise'],['ok','Plan strategique valide en CODIR'],['warn','Formation dirigeants — 1 session restante'],['info','Rapport final a livrer le 15/08/2026']], obs: 'Mission en bonne voie. Derniere session de formation dirigeants a planifier. Rapport final en cours de redaction.' },
+    pharm:   { who: 'Pharmacien responsable — Dr. OSEI Grace', objet: 'Lot de medicaments N° LOT-2026-0447', champs: [['DCI','Amoxicilline 500mg'],['Peremption','08/2028'],['Conformite','ISO 9001:2015']], checks: [['ok','Test dissolution conforme Ph. Eur.'],['ok','Conditionnement hermetique verifie'],['ok','Etiquetage reglementaire conforme'],['info','Conserver a temperature 15-25 C']], obs: 'Lot certifie conforme aux specifications de la pharmacopee europeenne. Stockage en zone temperee obligatoire.' },
+    tour:    { who: 'Responsable sejour — ADOU Sandrine', objet: 'Circuit "Forets du Benin" · Ref. VG-2026-088', champs: [['Voyageurs','2 adultes + 1 enfant'],['Duree','8 jours / 7 nuits'],['Categorie','Luxe 4 etoiles']], checks: [['ok','Hotels confirmes et pre-payes'],['ok','Visas et assurances OK'],['ok','Guide certifie bilingue reserve'],['info','Vol retour — escale Accra 2h45']], obs: 'Sejour entierement confirme. Dossier de voyage transmis par email. Contact urgence: +225 07 88 99 00.' },
+    mine:    { who: 'Geologue senior — M. ANOUMA Roger', objet: 'Concession MINE-CI-2026-044 · Zone Nord', champs: [['Minerai','Minerai de fer — Fe 62%'],['Tonnage estime','450 000 T'],['Profondeur','0-45 metres']], checks: [['ok','Permis exploitation en vigueur'],['ok','Etude impact environnemental validee'],['warn','Zone de securite perimetrale a renforcer'],['info','Audit environmental annuel prevu nov. 2026']], obs: 'Gisement en phase de production optimale. Renforcement securite perimetre recommande avant augmentation cadences.' },
+  }
+
+  const sc = sectorContent[doc.catId] || {
+    who: 'Responsable service — M. KOUASSI Emmanuel',
+    objet: `${doc.catLabel || 'Document officiel'} — SOCIETE EXEMPLE SA`,
+    champs: [['Reference','RPT-2026-0089'],['Service',doc.catLabel || 'Direction Generale'],['Statut','En vigueur']],
+    checks: [['ok','Conformite aux normes applicables'],['ok','Validation responsable habilite'],['info','Archivage requis — Conservation 5 ans'],['warn','Diffusion restreinte — Usage interne']],
+    obs: 'Document etabli en bonne et due forme. Toute modification ulterieure devra faire l\'objet d\'un avenant signe.'
+  }
+
   const css = `
 .page{max-width:680px;margin:0 auto;font-family:Arial,sans-serif;background:#fff}
-.rpt-top{background:linear-gradient(135deg,#1E1B4B 0%,#312E81 60%,${c} 100%);padding:24px 28px;color:#fff}
-.rpt-header{display:flex;justify-content:space-between;align-items:flex-start}
+.rpt-top{background:linear-gradient(135deg,#1E1B4B 0%,${c} 100%);padding:22px 28px;color:#fff}
+.rpt-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
 .rpt-logo{display:flex;align-items:center;gap:10px}
-.rpt-icon{width:42px;height:42px;background:rgba(255,255,255,.2);border-radius:10px;display:grid;place-items:center;font-size:18px}
+.rpt-icon{width:42px;height:42px;background:rgba(255,255,255,.2);border-radius:10px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
 .rpt-co{font-size:14px;font-weight:800}
-.rpt-co-sub{font-size:9.5px;opacity:.75;margin-top:3px}
+.rpt-co-sub{font-size:9px;opacity:.75;margin-top:2px}
 .rpt-ref{text-align:right}
-.rpt-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;background:rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;display:inline-block;margin-bottom:6px}
-.rpt-title{font-size:19px;font-weight:900;line-height:1.2}
-.rpt-num{font-size:9.5px;opacity:.8;margin-top:4px}
-.rpt-meta{display:flex;gap:0;margin-top:18px}
-.rpt-meta-item{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,.15);padding:0 12px}
-.rpt-meta-item:first-child{padding-left:0}
-.rpt-meta-item:last-child{border:none}
-.rpt-meta-val{font-size:12px;font-weight:700}
-.rpt-meta-lbl{font-size:8.5px;opacity:.7;margin-top:2px;text-transform:uppercase;letter-spacing:.08em}
-.rpt-body{padding:20px 28px}
-.rpt-section{margin-bottom:16px}
-.rpt-section-title{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${c};margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid ${c}20}
-.rpt-section-icon{width:22px;height:22px;background:${c}15;border-radius:6px;display:grid;place-items:center;font-size:10px}
-.rpt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.rpt-field{background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${c}}
-.rpt-field-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin-bottom:3px}
-.rpt-field-value{font-size:12px;font-weight:600;color:#1E293B}
-.rpt-content{background:#F8FAFC;border-radius:10px;padding:14px 16px;font-size:11.5px;color:#374151;line-height:1.7;margin-bottom:12px}
-.rpt-obs{background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 14px;font-size:11px;color:#78350F;line-height:1.6}
-.rpt-obs-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#92400E;margin-bottom:6px}
-.rpt-checklist{list-style:none;padding:0;margin:0}
-.rpt-checklist li{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid #F1F5F9;font-size:11px;color:#374151}
-.rpt-checklist li:last-child{border:none}
-.rpt-chk{width:16px;height:16px;border-radius:4px;display:grid;place-items:center;font-size:10px;flex-shrink:0;margin-top:1px}
+.rpt-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;background:rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;display:inline-block;margin-bottom:5px}
+.rpt-title{font-size:18px;font-weight:900;line-height:1.2}
+.rpt-num{font-size:9px;opacity:.8;margin-top:4px}
+.rpt-pills{display:flex;gap:6px;flex-wrap:wrap}
+.rpt-pill{background:rgba(255,255,255,.15);border-radius:20px;padding:4px 10px;font-size:9.5px}
+.rpt-pill strong{font-weight:800}
+.rpt-body{padding:18px 28px}
+.rpt-objet{background:${c}10;border-left:4px solid ${c};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:14px}
+.rpt-objet-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${c};margin-bottom:3px}
+.rpt-objet-val{font-size:13px;font-weight:700;color:#1E293B}
+.rpt-who{font-size:10.5px;color:#64748B;margin-top:2px}
+.rpt-meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.rpt-meta-box{background:#F8FAFC;border-radius:8px;padding:10px 12px;border-top:2px solid ${c}}
+.rpt-meta-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin-bottom:3px}
+.rpt-meta-val{font-size:12px;font-weight:700;color:#1E293B}
+.rpt-checks{margin-bottom:14px}
+.rpt-check-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#64748B;margin-bottom:8px}
+.rpt-check-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F8FAFC;font-size:11.5px;color:#374151}
+.rpt-check-item:last-child{border:none}
+.rpt-chk{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:10px;font-weight:800;flex-shrink:0}
 .rpt-chk.ok{background:#DCFCE7;color:#16A34A}
-.rpt-chk.warn{background:#FFFBEB;color:#D97706}
-.rpt-chk.info{background:#EFF6FF;color:#2563EB}
-.rpt-footer{background:#F1F5F9;padding:12px 28px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#64748B}
-.rpt-sig{display:flex;gap:16px}
-.rpt-sig-box{border:1.5px dashed #CBD5E1;border-radius:8px;padding:8px 14px;text-align:center;font-size:9.5px;color:#94A3B8;min-width:100px}
-.rpt-sig-line{height:28px}`
+.rpt-chk.warn{background:#FEF3C7;color:#D97706}
+.rpt-chk.info{background:#DBEAFE;color:#2563EB}
+.rpt-obs{background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:12px 14px;font-size:11px;color:#78350F;line-height:1.7}
+.rpt-obs-title{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#92400E;margin-bottom:5px}
+.rpt-footer{background:#F1F5F9;padding:10px 28px;display:flex;justify-content:space-between;align-items:center;font-size:9.5px;color:#64748B;margin-top:14px}
+.rpt-sigs{display:flex;gap:12px}
+.rpt-sig{border:1.5px dashed #CBD5E1;border-radius:8px;padding:8px 14px;text-align:center;font-size:9px;color:#94A3B8;min-width:100px}
+.rpt-sig-line{height:26px}`
   return wrap(css, `<div class="page">
 <div class="rpt-top">
   <div class="rpt-header">
-    <div class="rpt-logo">
-      <div class="rpt-icon">${doc.icon}</div>
-      <div><div class="rpt-co">VOTRE SOCIETE SARL</div><div class="rpt-co-sub">Plateau, Abidjan 01 · NIF 2405812 A</div></div>
-    </div>
-    <div class="rpt-ref">
-      <div class="rpt-type">Document Officiel</div>
-      <div class="rpt-title">${doc.name}</div>
-      <div class="rpt-num">Ref: RPT-2026-0089 · 27/07/2026</div>
-    </div>
+    <div class="rpt-logo"><div class="rpt-icon">${doc.icon}</div><div><div class="rpt-co">VOTRE SOCIETE SARL</div><div class="rpt-co-sub">Plateau, Abidjan 01 · NIF 2405812 A · RCCM CI-ABJ-2024-B-12345</div></div></div>
+    <div class="rpt-ref"><div class="rpt-badge">${doc.catLabel || 'Document'}</div><div class="rpt-title">${doc.name}</div><div class="rpt-num">Ref: RPT-2026-0089 · 27/07/2026</div></div>
   </div>
-  <div class="rpt-meta">
-    <div class="rpt-meta-item"><div class="rpt-meta-val">27/07/2026</div><div class="rpt-meta-lbl">Date emission</div></div>
-    <div class="rpt-meta-item"><div class="rpt-meta-val">CLIENT EXEMPLE SA</div><div class="rpt-meta-lbl">Concerne</div></div>
-    <div class="rpt-meta-item"><div class="rpt-meta-val">${doc.catLabel || 'Document'}</div><div class="rpt-meta-lbl">Categorie</div></div>
-    <div class="rpt-meta-item"><div class="rpt-meta-val">En vigueur</div><div class="rpt-meta-lbl">Statut</div></div>
+  <div class="rpt-pills">
+    <div class="rpt-pill">Emis le <strong>27/07/2026</strong></div>
+    <div class="rpt-pill">Par: <strong>${sc.who.split(' — ')[0]}</strong></div>
+    <div class="rpt-pill">Statut: <strong>Valide</strong></div>
+    <div class="rpt-pill">Version: <strong>v1.0 Final</strong></div>
   </div>
 </div>
 <div class="rpt-body">
-  <div class="rpt-section">
-    <div class="rpt-section-title"><div class="rpt-section-icon">&#9432;</div>Informations generales</div>
-    <div class="rpt-grid">
-      <div class="rpt-field"><div class="rpt-field-label">Reference</div><div class="rpt-field-value">RPT-2026-0089</div></div>
-      <div class="rpt-field"><div class="rpt-field-label">Redige par</div><div class="rpt-field-value">M. KOUASSI Emmanuel</div></div>
-      <div class="rpt-field"><div class="rpt-field-label">Service</div><div class="rpt-field-value">${doc.catLabel || 'Direction Generale'}</div></div>
-      <div class="rpt-field"><div class="rpt-field-label">Version</div><div class="rpt-field-value">v1.0 — Final</div></div>
-    </div>
+  <div class="rpt-objet">
+    <div class="rpt-objet-lbl">Objet du document</div>
+    <div class="rpt-objet-val">${sc.objet}</div>
+    <div class="rpt-who">Redige par: ${sc.who}</div>
   </div>
-  <div class="rpt-section">
-    <div class="rpt-section-title"><div class="rpt-section-icon">&#128203;</div>Contenu du document</div>
-    <div class="rpt-content">
-      Ce document constitue <strong>${doc.name.toLowerCase()}</strong> etabli conformement aux procedures internes en vigueur.
-      Il recapitule l'ensemble des elements pertinents et constitue une reference officielle pour les parties concernees.
-      <br><br>${doc.desc || 'Document professionnel etabli dans le cadre de vos activites.'}
-    </div>
+  <div class="rpt-meta-grid">
+    ${sc.champs.map(([l,v]) => `<div class="rpt-meta-box"><div class="rpt-meta-lbl">${l}</div><div class="rpt-meta-val">${v}</div></div>`).join('')}
   </div>
-  <div class="rpt-section">
-    <div class="rpt-section-title"><div class="rpt-section-icon">&#10003;</div>Points verifies</div>
-    <ul class="rpt-checklist">
-      <li><div class="rpt-chk ok">&#10003;</div>Conformite aux normes applicables</li>
-      <li><div class="rpt-chk ok">&#10003;</div>Validation par le responsable habilite</li>
-      <li><div class="rpt-chk info">i</div>Archivage requis — Conservation 5 ans</li>
-      <li><div class="rpt-chk warn">!</div>Diffusion restreinte — Usage interne</li>
-    </ul>
+  <div class="rpt-checks">
+    <div class="rpt-check-title">Points de controle &amp; constatations</div>
+    ${sc.checks.map(([t,txt]) => `<div class="rpt-check-item"><div class="rpt-chk ${t}">${t==='ok'?'&#10003;':t==='warn'?'!':'i'}</div>${txt}</div>`).join('')}
   </div>
   <div class="rpt-obs">
     <div class="rpt-obs-title">Observations &amp; Recommandations</div>
-    Document etabli en bonne et due forme. Toute modification ulterieure devra faire l'objet d'un avenant signe par les deux parties.
+    ${sc.obs}
   </div>
 </div>
 <div class="rpt-footer">
-  <span>Document genere le 27/07/2026 via IBIG FactPro</span>
-  <div class="rpt-sig">
-    <div class="rpt-sig-box"><div class="rpt-sig-line"></div>Redacteur</div>
-    <div class="rpt-sig-box"><div class="rpt-sig-line"></div>Approbateur</div>
+  <span>Document genere le 27/07/2026 via IBIG FactPro · Conservation 5 ans</span>
+  <div class="rpt-sigs">
+    <div class="rpt-sig"><div class="rpt-sig-line"></div>Redacteur</div>
+    <div class="rpt-sig"><div class="rpt-sig-line"></div>Approbateur</div>
   </div>
 </div>
 </div>`)
