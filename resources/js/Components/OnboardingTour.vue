@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { router } from '@inertiajs/vue3';
 
 const props = defineProps({
     show: {
@@ -74,20 +75,25 @@ function prev() {
     }
 }
 
+function markDone(endpoint) {
+    // Persist locally immediately so the modal won't reappear even if the server call fails
+    try { localStorage.setItem('onboarding_done', '1'); } catch (_) {}
+    // Persist on the server via Inertia (handles CSRF automatically)
+    router.post(endpoint, {}, {
+        preserveState: true,
+        preserveScroll: true,
+        onError: () => {},
+    });
+}
+
 function complete() {
     emit('complete');
-    fetch('/onboarding/complete', {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '', 'Content-Type': 'application/json' },
-    }).catch(() => {});
+    markDone('/onboarding/complete');
 }
 
 function skip() {
     emit('skip');
-    fetch('/onboarding/skip', {
-        method: 'POST',
-        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content ?? '', 'Content-Type': 'application/json' },
-    }).catch(() => {});
+    markDone('/onboarding/skip');
 }
 
 // Reset step when tour re-opens

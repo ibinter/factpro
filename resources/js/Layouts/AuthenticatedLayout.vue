@@ -44,13 +44,15 @@ const upgradeModal = useUpgradeModal();
 const isDemoAccount = computed(() => page.props.isDemoAccount ?? false);
 
 // Onboarding tour (§11.1)
-// onboarding_completed vient d'Inertia ; onboardingDone permet de fermer le tour
-// localement sans attendre un rechargement de page (le POST retourne du JSON,
-// preserveState:true empêche la mise à jour des props dans la même navigation).
+// onboarding_completed : serveur (Inertia) OU localStorage (filet de sécurité si le POST échoue)
+const localDone = ref(typeof localStorage !== 'undefined' && !!localStorage.getItem('onboarding_done'));
 const onboardingCompleted = computed(() => page.props.onboarding_completed ?? true);
 const onboardingDone = ref(false);
-const showOnboarding = computed(() => !onboardingCompleted.value && !onboardingDone.value);
-function handleOnboardingDone() { onboardingDone.value = true; }
+const showOnboarding = computed(() => !onboardingCompleted.value && !onboardingDone.value && !localDone.value);
+function handleOnboardingDone() {
+    onboardingDone.value = true;
+    try { localStorage.setItem('onboarding_done', '1'); } catch (_) {}
+}
 
 // Multi-sociétés : société courante + liste des sociétés du compte
 const currentCompany = computed(() => page.props.company);
