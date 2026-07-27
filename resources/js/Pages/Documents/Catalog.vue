@@ -2969,11 +2969,21 @@ function previewHTML(doc) {
               </div>
             </div>
 
+            <!-- Bandeau aperçu -->
+            <div class="flex items-center gap-2 bg-amber-50 border-y border-amber-200 px-4 py-2">
+              <svg class="h-4 w-4 flex-shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              <p class="text-xs text-amber-700 font-medium">
+                Aperçu indicatif avec données fictives — le document réel sera personnalisé avec vos informations.
+              </p>
+            </div>
+
             <!-- Iframe -->
             <div class="flex-1 overflow-hidden">
               <iframe
                 class="h-full w-full border-none"
-                style="min-height:500px"
+                style="min-height:480px"
                 sandbox="allow-same-origin"
                 :srcdoc="previewHTML(preview)"
               />
