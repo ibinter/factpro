@@ -154,66 +154,488 @@ function closePreview()   { preview.value = null }
 function createDoc(doc)   { router.visit(route('documents.create', { type: doc.factproType })) }
 function selectCat(id)    { selCat.value = id; sidebarOpen.value = false }
 
-function previewHTML(doc) {
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+// ─── Aperçus distincts par catégorie ──────────────────────────────
+const BASE_CSS = (color) => `
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',sans-serif;color:#1e293b;background:#fff;font-size:13px;padding:32px}
-.h{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:18px;border-bottom:3px solid ${doc.catColor};margin-bottom:24px}
-.log{width:46px;height:46px;background:linear-gradient(135deg,#1E3A5F,#2563EB);border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:17px;margin-bottom:8px}
-.cn{font-size:16px;font-weight:800;color:#1E3A5F}.ci{font-size:11px;color:#64748b;margin-top:5px;line-height:1.7}
-.dt{font-size:22px;font-weight:800;color:${doc.catColor};text-align:right;text-transform:uppercase}
-.dr{text-align:right;font-size:11px;color:#64748b;margin-top:5px;line-height:1.7}
-.bdg{display:inline-block;padding:3px 11px;border-radius:20px;font-size:9px;font-weight:700;background:${doc.catColor}22;color:${doc.catColor};margin-top:6px}
-.pts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px}
-.pt{background:#f8fafc;border-radius:8px;padding:13px;border-left:3px solid #3b82f6}.pt.r{border-left-color:#10b981}
-.pl{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;font-weight:700;margin-bottom:5px}
-.pn{font-size:14px;font-weight:700}.pi{font-size:11px;color:#64748b;margin-top:3px;line-height:1.5}
-table{width:100%;border-collapse:collapse;margin-bottom:14px}
-th{background:#1E3A5F;color:#fff;padding:9px 11px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase}
+body{font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;background:#fff;font-size:13px;padding:28px}
+.hdr{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:16px;border-bottom:3px solid ${color};margin-bottom:20px}
+.logo{width:44px;height:44px;background:linear-gradient(135deg,#1E3A5F,#2563EB);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;margin-bottom:6px}
+.co-name{font-size:15px;font-weight:800;color:#1E3A5F}
+.co-info{font-size:11px;color:#64748b;margin-top:4px;line-height:1.6}
+.doc-title{font-size:20px;font-weight:900;color:${color};text-align:right;text-transform:uppercase;letter-spacing:.03em}
+.doc-ref{text-align:right;font-size:11px;color:#64748b;margin-top:4px;line-height:1.6}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:9px;font-weight:700;background:${color}20;color:${color};margin-top:5px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px}
+.box{background:#f8fafc;border-radius:8px;padding:12px;border-left:3px solid ${color}}
+.box-label{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;font-weight:700;margin-bottom:4px}
+.box-name{font-size:13px;font-weight:700}
+.box-info{font-size:11px;color:#64748b;margin-top:2px;line-height:1.5}
+table{width:100%;border-collapse:collapse;margin-bottom:12px}
+th{background:${color};color:#fff;padding:8px 10px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase}
 th:last-child,td:last-child{text-align:right}
-td{padding:9px 11px;border-bottom:1px solid #e2e8f0;font-size:12px}
-tr:nth-child(even) td{background:#f8fafc}
-.tw{display:flex;justify-content:flex-end;margin-bottom:14px}
-.tots{width:270px}.tr-{display:flex;justify-content:space-between;padding:7px 13px;font-size:12px;border-bottom:1px solid #e2e8f0}
-.tf{display:flex;justify-content:space-between;padding:11px 13px;font-size:15px;font-weight:800;color:#fff;background:#1E3A5F;border-radius:0 0 7px 7px}
-.sg{display:flex;justify-content:space-between;margin-top:30px;gap:16px}
-.s{flex:1;border:1px dashed #cbd5e1;border-radius:7px;padding:10px 14px;text-align:center;font-size:10px;color:#94a3b8}
-.sp{height:46px}
-.ft{margin-top:24px;padding-top:12px;border-top:1px solid #e2e8f0;text-align:center;font-size:10px;color:#94a3b8}
-</style></head><body>
-<div class="h">
+td{padding:8px 10px;border-bottom:1px solid #e2e8f0;font-size:12px}
+tr:nth-child(even)>td{background:#f8fafc}
+.totals-wrap{display:flex;justify-content:flex-end;margin-bottom:12px}
+.totals{width:260px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden}
+.tot-row{display:flex;justify-content:space-between;padding:6px 12px;font-size:12px;border-bottom:1px solid #e2e8f0}
+.tot-final{display:flex;justify-content:space-between;padding:10px 12px;font-size:14px;font-weight:800;color:#fff;background:${color}}
+.sigs{display:flex;gap:14px;margin-top:24px}
+.sig{flex:1;border:1px dashed #cbd5e1;border-radius:6px;padding:8px 12px;text-align:center;font-size:10px;color:#94a3b8}
+.sig-space{height:44px}
+.field-row{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:12px}
+.field-label{color:#94a3b8;font-size:11px}
+.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:${color};margin:14px 0 6px}
+.text-block{background:#f8fafc;border-radius:8px;padding:14px;font-size:12px;line-height:1.8;color:#374151;border-left:3px solid ${color};margin-bottom:14px}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.info-cell{background:#f8fafc;border-radius:6px;padding:10px}
+.info-cell-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;font-weight:700;margin-bottom:3px}
+.info-cell-val{font-size:12px;font-weight:600;color:#1e293b}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700}
+.footer{margin-top:20px;padding-top:10px;border-top:1px solid #e2e8f0;text-align:center;font-size:10px;color:#94a3b8}
+`
+
+function headerHTML(doc) {
+  return `<div class="hdr">
 <div>
-  <div class="log">VS</div>
-  <div class="cn">VOTRE SOCIÉTÉ SARL</div>
-  <div class="ci">📍 Plateau, Abidjan 01, Côte d'Ivoire<br>📞 +225 27 22 33 44 55<br>✉️ contact@votresociete.ci · RCCM: CI-ABJ-2024-B-12345</div>
+  <div class="logo">VS</div>
+  <div class="co-name">VOTRE SOCIÉTÉ SARL</div>
+  <div class="co-info">📍 Plateau, Abidjan 01 · Côte d'Ivoire<br>📞 +225 27 22 33 44 55 · ✉️ contact@vs.ci<br>RCCM CI-ABJ-2024-B-12345 · CC 2405812 A</div>
 </div>
 <div>
-  <div class="dt">${doc.name}</div>
-  <div class="dr">Réf. N° <b>2026-0001</b><br>Date: <b>${new Date().toLocaleDateString('fr-FR')}</b><br>Échéance: <b>30 jours</b></div>
-  <div class="bdg">Aperçu modèle</div>
+  <div class="doc-title">${doc.name}</div>
+  <div class="doc-ref">N° <b>2026-0042</b><br>Date : <b>27/07/2026</b></div>
+  <div class="badge">Aperçu de démonstration</div>
 </div>
+</div>`
+}
+
+function footerHTML() {
+  return `<div class="footer">Document généré par <b style="color:#1E3A5F">IBIG FactPro</b> · ibigsoft.com · Conforme OHADA</div>`
+}
+
+function wrapHTML(color, body) {
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><style>${BASE_CSS(color)}</style></head><body>${body}${footerHTML()}</body></html>`
+}
+
+// ── Aperçu : facture / devis / proforma (vente, achat, finance)
+function previewInvoice(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Émetteur</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Plateau, Abidjan<br>RCCM CI-ABJ-2024-B-12345</div></div>
+  <div class="box"><div class="box-label">Client / Destinataire</div><div class="box-name">CLIENT EXEMPLE & ASSOCIÉS</div><div class="box-info">Cocody Riviera 3, Abidjan<br>+225 05 00 11 22 33</div></div>
 </div>
-<div class="pts">
-<div class="pt"><div class="pl">Émetteur</div><div class="pn">VOTRE SOCIÉTÉ SARL</div><div class="pi">Plateau, Abidjan<br>RCCM: CI-ABJ-2024-B-12345</div></div>
-<div class="pt r"><div class="pl">Client / Destinataire</div><div class="pn">CLIENT EXEMPLE & ASSOCIÉS</div><div class="pi">Cocody Riviera 3, Abidjan<br>+225 05 00 11 22 33</div></div>
-</div>
-<table><thead><tr><th>#</th><th>Description</th><th>Qté</th><th>P.U. HT</th><th>Total HT</th></tr></thead>
+<table><thead><tr><th>#</th><th>Désignation</th><th>Qté</th><th>P.U. HT</th><th>Total HT</th></tr></thead>
 <tbody>
-<tr><td>01</td><td>Prestation de conseil et expertise professionnelle</td><td>5 j</td><td>200 000 XOF</td><td>1 000 000 XOF</td></tr>
+<tr><td>01</td><td>Prestation de conseil professionnel</td><td>5 j</td><td>200 000 XOF</td><td>1 000 000 XOF</td></tr>
 <tr><td>02</td><td>Fournitures et matériaux</td><td>10 u</td><td>35 000 XOF</td><td>350 000 XOF</td></tr>
-<tr><td>03</td><td>Transport et logistique — forfait</td><td>1</td><td>85 000 XOF</td><td>85 000 XOF</td></tr>
+<tr><td>03</td><td>Transport et logistique</td><td>1 fft</td><td>85 000 XOF</td><td>85 000 XOF</td></tr>
 </tbody></table>
-<div class="tw"><div class="tots">
-<div class="tr-"><span style="color:#64748b">Sous-total HT</span><span>1 435 000 XOF</span></div>
-<div class="tr-"><span style="color:#64748b">TVA 18%</span><span>258 300 XOF</span></div>
-<div class="tf"><span>TOTAL TTC</span><span>1 693 300 XOF</span></div>
+<div class="totals-wrap"><div class="totals">
+  <div class="tot-row"><span style="color:#64748b">Sous-total HT</span><span>1 435 000 XOF</span></div>
+  <div class="tot-row"><span style="color:#64748b">TVA 18 %</span><span>258 300 XOF</span></div>
+  <div class="tot-final"><span>TOTAL TTC</span><span>1 693 300 XOF</span></div>
 </div></div>
-<div class="sg">
-<div class="s"><div class="sp"></div>Signature du Client<br><em>Bon pour accord</em></div>
-<div class="s"><div class="sp"></div>Cachet & Signature<br><em>Émetteur</em></div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Client<br><em>Bon pour accord</em></div>
+  <div class="sig"><div class="sig-space"></div>Cachet & Signature<br><em>Émetteur</em></div>
+</div>`)
+}
+
+// ── Aperçu : bon de livraison / expédition / transport
+function previewDelivery(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Expéditeur</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Plateau, Abidjan · Entrepôt principal</div></div>
+  <div class="box"><div class="box-label">Destinataire</div><div class="box-name">CLIENT EXEMPLE & ASSOCIÉS</div><div class="box-info">Cocody Riviera 3, Abidjan<br>Contact : M. Kouassi — 07 11 22 33</div></div>
 </div>
-<div class="ft">Généré par <b style="color:#1E3A5F">IBIG FactPro</b> · ibigsoft.com · Aperçu de démonstration</div>
-</body></html>`
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Bon de commande lié</div><div class="info-cell-val">BC-2026-0018</div></div>
+  <div class="info-cell"><div class="info-cell-label">Date de livraison</div><div class="info-cell-val">27/07/2026</div></div>
+  <div class="info-cell"><div class="info-cell-label">Transporteur</div><div class="info-cell-val">LOGIS EXPRESS CI</div></div>
+  <div class="info-cell"><div class="info-cell-label">Mode de transport</div><div class="info-cell-val">🚚 Camion — Réfrigéré</div></div>
+</div>
+<table><thead><tr><th>#</th><th>Désignation</th><th>Qté commandée</th><th>Qté livrée</th><th>Unité</th><th>Obs.</th></tr></thead>
+<tbody>
+<tr><td>01</td><td>Ciment Portland CPA 42.5</td><td>50</td><td>50</td><td>Sac 50 kg</td><td>✅ Conforme</td></tr>
+<tr><td>02</td><td>Fers à béton Ø12</td><td>20</td><td>18</td><td>Barre 6m</td><td>⚠️ 2 manquants</td></tr>
+<tr><td>03</td><td>Parpaings creux 15×20×40</td><td>500</td><td>500</td><td>Unité</td><td>✅ Conforme</td></tr>
+</tbody></table>
+<p style="font-size:11px;color:#64748b;margin-bottom:16px">Observations : 2 barres de fer manquantes — livraison complémentaire prévue le 30/07/2026</p>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Livreur<br><em>Nom & Date</em></div>
+  <div class="sig"><div class="sig-space"></div>Signature Réceptionnaire<br><em>Bon pour réception</em></div>
+</div>`)
+}
+
+// ── Aperçu : RH (contrat, congé, bulletin, mission)
+function previewHR(doc) {
+  const isBulletin = doc.id === 'bulletin'
+  if (isBulletin) {
+    return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Employeur</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Plateau, Abidjan · CNPS : 123456789</div></div>
+  <div class="box"><div class="box-label">Employé</div><div class="box-name">KONÉ Aminata</div><div class="box-info">Poste : Responsable Commerciale<br>Mat. : EMP-2024-0042 · Embauche : 01/03/2022</div></div>
+</div>
+<div class="section-title">Éléments de rémunération — Juillet 2026</div>
+<table><thead><tr><th>Libellé</th><th>Base</th><th>Taux</th><th>Montant</th></tr></thead>
+<tbody>
+<tr><td>Salaire de base</td><td>—</td><td>—</td><td>350 000 XOF</td></tr>
+<tr><td>Prime de transport</td><td>—</td><td>—</td><td>30 000 XOF</td></tr>
+<tr><td>Prime de rendement</td><td>350 000</td><td>10 %</td><td>35 000 XOF</td></tr>
+<tr><td style="color:#dc2626">CNPS salarié</td><td>415 000</td><td>3.2 %</td><td style="color:#dc2626">-13 280 XOF</td></tr>
+<tr><td style="color:#dc2626">Impôt sur Salaire (ITS)</td><td>415 000</td><td>—</td><td style="color:#dc2626">-18 500 XOF</td></tr>
+</tbody></table>
+<div class="totals-wrap"><div class="totals">
+  <div class="tot-row"><span style="color:#64748b">Brut imposable</span><span>415 000 XOF</span></div>
+  <div class="tot-row"><span style="color:#64748b">Total retenues</span><span style="color:#dc2626">-31 780 XOF</span></div>
+  <div class="tot-final"><span>NET À PAYER</span><span>383 220 XOF</span></div>
+</div></div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Employé<br><em>Reçu le ___________</em></div>
+  <div class="sig"><div class="sig-space"></div>Cachet & Signature DRH</div>
+</div>`)
+  }
+  if (doc.id === 'ordre_miss') {
+    return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Agent en mission</div><div class="info-cell-val">KONÉ Aminata</div></div>
+  <div class="info-cell"><div class="info-cell-label">Poste</div><div class="info-cell-val">Responsable Commerciale</div></div>
+  <div class="info-cell"><div class="info-cell-label">Destination</div><div class="info-cell-val">Bouaké, Côte d'Ivoire</div></div>
+  <div class="info-cell"><div class="info-cell-label">Durée</div><div class="info-cell-val">28/07 → 30/07/2026 (3 jours)</div></div>
+  <div class="info-cell"><div class="info-cell-label">Objet de la mission</div><div class="info-cell-val">Prospection commerciale région Centre</div></div>
+  <div class="info-cell"><div class="info-cell-label">Moyen de transport</div><div class="info-cell-val">✈️ Avion / 🚗 Véhicule société</div></div>
+</div>
+<div class="section-title">Frais prévisionnels autorisés</div>
+<table><thead><tr><th>Poste</th><th>Montant alloué</th></tr></thead>
+<tbody>
+<tr><td>Hébergement (2 nuits × 40 000)</td><td>80 000 XOF</td></tr>
+<tr><td>Perdiem repas (3 jours × 15 000)</td><td>45 000 XOF</td></tr>
+<tr><td>Transport local</td><td>25 000 XOF</td></tr>
+</tbody></table>
+<div class="totals-wrap"><div class="totals">
+  <div class="tot-final"><span>TOTAL AVANCE</span><span>150 000 XOF</span></div>
+</div></div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Agent<br><em>Lu et approuvé</em></div>
+  <div class="sig"><div class="sig-space"></div>Cachet & Visa Direction</div>
+</div>`)
+  }
+  // Demande de congé, note de service, etc.
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Employeur</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Département RH · Plateau, Abidjan</div></div>
+  <div class="box"><div class="box-label">Concernant</div><div class="box-name">KONÉ Aminata</div><div class="box-info">Responsable Commerciale<br>Matricule : EMP-2024-0042</div></div>
+</div>
+<div class="section-title">Détails de la demande</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Type</div><div class="info-cell-val">${doc.name}</div></div>
+  <div class="info-cell"><div class="info-cell-label">Date de la demande</div><div class="info-cell-val">27/07/2026</div></div>
+  <div class="info-cell"><div class="info-cell-label">Période concernée</div><div class="info-cell-val">01/08/2026 → 15/08/2026</div></div>
+  <div class="info-cell"><div class="info-cell-label">Durée</div><div class="info-cell-val">15 jours ouvrables</div></div>
+  <div class="info-cell"><div class="info-cell-label">Solde congés avant</div><div class="info-cell-val">28 jours</div></div>
+  <div class="info-cell"><div class="info-cell-label">Solde après déduction</div><div class="info-cell-val">13 jours</div></div>
+</div>
+<div class="section-title">Motif</div>
+<div class="text-block">Congé annuel — repos et raisons familiales.</div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Employé</div>
+  <div class="sig"><div class="sig-space"></div>✅ Approuvé par Direction<br><em>Date : ___________</em></div>
+</div>`)
+}
+
+// ── Aperçu : administratif / juridique / contrats
+function previewAdmin(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Partie A (Émetteur)</div><div class="info-cell-val">VOTRE SOCIÉTÉ SARL</div></div>
+  <div class="info-cell"><div class="info-cell-label">Partie B (Destinataire)</div><div class="info-cell-val">CLIENT EXEMPLE & ASSOCIÉS</div></div>
+  <div class="info-cell"><div class="info-cell-label">Date de signature</div><div class="info-cell-val">27/07/2026</div></div>
+  <div class="info-cell"><div class="info-cell-label">Lieu de signature</div><div class="info-cell-val">Abidjan, Côte d'Ivoire</div></div>
+  <div class="info-cell"><div class="info-cell-label">Référence</div><div class="info-cell-val">DOC-2026-ADM-0042</div></div>
+  <div class="info-cell"><div class="info-cell-label">Durée / Validité</div><div class="info-cell-val">12 mois à compter de la signature</div></div>
+</div>
+<div class="section-title">Objet</div>
+<div class="text-block">${doc.desc}.<br><br>Les parties sus-nommées conviennent et s'engagent mutuellement à respecter les termes et conditions énoncés dans le présent document, conformément aux dispositions du droit OHADA et aux lois en vigueur en République de Côte d'Ivoire.</div>
+<div class="section-title">Clauses principales</div>
+<div class="text-block">
+  <b>Article 1 — Objet :</b> Le présent ${doc.name.toLowerCase()} a pour objet de définir les modalités de la relation entre les parties.<br><br>
+  <b>Article 2 — Durée :</b> Il prend effet à compter de sa date de signature pour une durée de 12 mois, renouvelable par accord tacite.<br><br>
+  <b>Article 3 — Obligations des parties :</b> Chaque partie s'engage à respecter ses obligations dans les délais convenus.
+</div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Partie A<br><em>Nom, Qualité & Cachet</em></div>
+  <div class="sig"><div class="sig-space"></div>Signature Partie B<br><em>Nom, Qualité & Cachet</em></div>
+</div>`)
+}
+
+// ── Aperçu : SAV / maintenance / rapport d'intervention
+function previewSAV(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Prestataire</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Service Après-Vente · Abidjan</div></div>
+  <div class="box"><div class="box-label">Client</div><div class="box-name">ENTREPRISE KABORÉ SAS</div><div class="box-info">Zone Industrielle, Abidjan<br>Contact technique : M. Bamba — 07 11 22 33</div></div>
+</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Équipement</div><div class="info-cell-val">Groupe électrogène 250 KVA</div></div>
+  <div class="info-cell"><div class="info-cell-label">N° de série</div><div class="info-cell-val">GE-2021-AB-00931</div></div>
+  <div class="info-cell"><div class="info-cell-label">Date d'intervention</div><div class="info-cell-val">27/07/2026 — 09h00 → 14h30</div></div>
+  <div class="info-cell"><div class="info-cell-label">Type d'intervention</div><div class="info-cell-val">🔧 Curative — Panne moteur</div></div>
+  <div class="info-cell"><div class="info-cell-label">Technicien</div><div class="info-cell-val">DIALLO Moussa — Tech. N3</div></div>
+  <div class="info-cell"><div class="info-cell-label">Statut</div><div class="info-cell-val"><span class="status-badge" style="background:#dcfce7;color:#166534">✅ Résolu</span></div></div>
+</div>
+<div class="section-title">Diagnostic & travaux réalisés</div>
+<div class="text-block">Remplacement du démarreur défectueux et nettoyage complet du circuit de carburant. Vérification et réétalonnage des capteurs de pression. Test de charge à 80 % pendant 2 h — résultat nominal.</div>
+<div class="section-title">Pièces remplacées</div>
+<table><thead><tr><th>Désignation</th><th>Qté</th><th>P.U.</th><th>Total</th></tr></thead>
+<tbody>
+<tr><td>Démarreur 24V — Réf. ST-24-093</td><td>1</td><td>85 000 XOF</td><td>85 000 XOF</td></tr>
+<tr><td>Filtre à carburant double</td><td>2</td><td>12 500 XOF</td><td>25 000 XOF</td></tr>
+<tr><td>Joint d'étanchéité</td><td>4</td><td>3 500 XOF</td><td>14 000 XOF</td></tr>
+</tbody></table>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Visa Technicien</div>
+  <div class="sig"><div class="sig-space"></div>Bon pour accord Client<br><em>Date : ___________</em></div>
+</div>`)
+}
+
+// ── Aperçu : BTP / travaux
+function previewBTP(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Maître d'œuvre</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">BTP & Génie Civil · Abidjan</div></div>
+  <div class="box"><div class="box-label">Maître d'ouvrage</div><div class="box-name">RÉSIDENCE LES BOUGAINVILLIERS SCI</div><div class="box-info">Cocody Angré, Abidjan<br>M. ADJOUA Pierre — 05 04 03 02 01</div></div>
+</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Chantier</div><div class="info-cell-val">Construction R+3 — Lot A</div></div>
+  <div class="info-cell"><div class="info-cell-label">Adresse chantier</div><div class="info-cell-val">Angré 8ème Tranche, Abidjan</div></div>
+  <div class="info-cell"><div class="info-cell-label">Période concernée</div><div class="info-cell-val">01/07/2026 → 31/07/2026</div></div>
+  <div class="info-cell"><div class="info-cell-label">Avancement global</div><div class="info-cell-val">▓▓▓▓▓▓░░░░ 62 %</div></div>
+</div>
+<div class="section-title">Travaux exécutés ce mois</div>
+<table><thead><tr><th>Poste</th><th>Unité</th><th>Prévu</th><th>Réalisé</th><th>%</th><th>Montant</th></tr></thead>
+<tbody>
+<tr><td>Terrassement</td><td>m³</td><td>450</td><td>450</td><td>100%</td><td>2 250 000</td></tr>
+<tr><td>Fondations béton armé</td><td>m³</td><td>120</td><td>98</td><td>82%</td><td>4 900 000</td></tr>
+<tr><td>Maçonnerie parpaings</td><td>m²</td><td>600</td><td>370</td><td>62%</td><td>2 590 000</td></tr>
+</tbody></table>
+<div class="totals-wrap"><div class="totals">
+  <div class="tot-row"><span style="color:#64748b">Situation ce mois</span><span>9 740 000 XOF</span></div>
+  <div class="tot-row"><span style="color:#64748b">Situations précédentes</span><span>14 200 000 XOF</span></div>
+  <div class="tot-final"><span>CUMUL FACTURABLE</span><span>23 940 000 XOF</span></div>
+</div></div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Visa Maître d'Œuvre</div>
+  <div class="sig"><div class="sig-space"></div>Visa Maître d'Ouvrage</div>
+</div>`)
+}
+
+// ── Aperçu : stock / inventaire
+function previewStock(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Entrepôt</div><div class="info-cell-val">Dépôt Principal — Yopougon</div></div>
+  <div class="info-cell"><div class="info-cell-label">Date d'opération</div><div class="info-cell-val">27/07/2026 — 08h30</div></div>
+  <div class="info-cell"><div class="info-cell-label">Responsable stock</div><div class="info-cell-val">COULIBALY Seydou</div></div>
+  <div class="info-cell"><div class="info-cell-label">Type de mouvement</div><div class="info-cell-val">${doc.icon} ${doc.name}</div></div>
+</div>
+<table><thead><tr><th>Réf.</th><th>Désignation</th><th>Unité</th><th>Qté avant</th><th>Mouvement</th><th>Qté après</th></tr></thead>
+<tbody>
+<tr><td>ART-001</td><td>Ciment Portland CPA 42.5</td><td>Sac</td><td>248</td><td style="color:#16a34a;font-weight:700">+50</td><td>298</td></tr>
+<tr><td>ART-002</td><td>Sable fin de rivière</td><td>m³</td><td>32</td><td style="color:#dc2626;font-weight:700">-8</td><td>24</td></tr>
+<tr><td>ART-003</td><td>Fers à béton Ø12 — 6m</td><td>Barre</td><td>120</td><td style="color:#16a34a;font-weight:700">+30</td><td>150</td></tr>
+<tr><td>ART-004</td><td>Parpaings creux 15×20×40</td><td>Unité</td><td>2400</td><td style="color:#dc2626;font-weight:700">-500</td><td>1900</td></tr>
+</tbody></table>
+<div class="section-title">Observations</div>
+<div class="text-block">Mouvement validé suite à réception BL N° 2026-BL-0089 — Fournisseur : MATÉRIAUX DU GOLF SARL.</div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Magasinier</div>
+  <div class="sig"><div class="sig-space"></div>Signature Responsable<br><em>Visa & Date</em></div>
+</div>`)
+}
+
+// ── Aperçu : immobilier / bail / loyer
+function previewImmobilier(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Bailleur / Propriétaire</div><div class="box-name">IMMOBILIÈRE DU PLATEAU SA</div><div class="box-info">Plateau, Abidjan · Tél. +225 27 22 11 00 00</div></div>
+  <div class="box"><div class="box-label">Locataire</div><div class="box-name">KONÉ Aminata</div><div class="box-info">CIN : CI0123456789<br>Contact : +225 07 11 22 33 44</div></div>
+</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Bien loué</div><div class="info-cell-val">Villa F4 — Cocody Riviera 3</div></div>
+  <div class="info-cell"><div class="info-cell-label">Superficie</div><div class="info-cell-val">180 m² habitables</div></div>
+  <div class="info-cell"><div class="info-cell-label">Durée du bail</div><div class="info-cell-val">24 mois — 01/08/2026 → 31/07/2028</div></div>
+  <div class="info-cell"><div class="info-cell-label">Loyer mensuel</div><div class="info-cell-val"><b>450 000 XOF</b> / mois TTC</div></div>
+  <div class="info-cell"><div class="info-cell-label">Charges incluses</div><div class="info-cell-val">Eau, gardiennage, entretien communs</div></div>
+  <div class="info-cell"><div class="info-cell-label">Caution versée</div><div class="info-cell-val">900 000 XOF (2 mois)</div></div>
+</div>
+<div class="section-title">Conditions de paiement</div>
+<div class="text-block">Loyer payable le 1er de chaque mois par virement bancaire ou chèque certifié. Tout retard de paiement entraîne une pénalité de 5 % par mois de retard.</div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Bailleur<br><em>Cachet & Date</em></div>
+  <div class="sig"><div class="sig-space"></div>Signature Locataire<br><em>Lu & approuvé</em></div>
+</div>`)
+}
+
+// ── Aperçu : export / douane
+function previewExport(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Exportateur</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Plateau, Abidjan · CI<br>RCCM CI-ABJ-2024-B-12345 · NIF 2405812A</div></div>
+  <div class="box"><div class="box-label">Importateur / Destinataire</div><div class="box-name">SAHEL TRADING SA</div><div class="box-info">Bamako, Mali<br>REG. COM. : ML-BKO-2019-B-4521</div></div>
+</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Port / Aéroport d'embarquement</div><div class="info-cell-val">Port Autonome d'Abidjan</div></div>
+  <div class="info-cell"><div class="info-cell-label">Port de destination</div><div class="info-cell-val">Bamako — Mali (voie terrestre)</div></div>
+  <div class="info-cell"><div class="info-cell-label">Incoterm</div><div class="info-cell-val">CIF Bamako</div></div>
+  <div class="info-cell"><div class="info-cell-label">N° déclaration douane</div><div class="info-cell-val">CI-EXP-2026-00891</div></div>
+</div>
+<table><thead><tr><th>Désignation</th><th>Quantité</th><th>Poids net</th><th>Valeur FOB</th><th>Pays d'origine</th></tr></thead>
+<tbody>
+<tr><td>Café robusta grade A</td><td>200 sacs</td><td>10 000 kg</td><td>8 500 000 XOF</td><td>🇨🇮 Côte d'Ivoire</td></tr>
+<tr><td>Cacao en fèves brut</td><td>150 sacs</td><td>7 500 kg</td><td>11 250 000 XOF</td><td>🇨🇮 Côte d'Ivoire</td></tr>
+</tbody></table>
+<div class="totals-wrap"><div class="totals">
+  <div class="tot-row"><span style="color:#64748b">Valeur FOB totale</span><span>19 750 000 XOF</span></div>
+  <div class="tot-row"><span style="color:#64748b">Fret maritime</span><span>1 200 000 XOF</span></div>
+  <div class="tot-final"><span>VALEUR CIF TOTAL</span><span>20 950 000 XOF</span></div>
+</div></div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Exportateur<br><em>Cachet officiel</em></div>
+  <div class="sig"><div class="sig-space"></div>Visa Bureau des Douanes<br><em>Cachet & Réf.</em></div>
+</div>`)
+}
+
+// ── Aperçu : santé / médical
+function previewSante(doc) {
+  if (doc.id === 'ordo') {
+    return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Praticien</div><div class="box-name">Dr. KOUASSI Emmanuel</div><div class="box-info">Médecin généraliste — Ordre N° CI-MED-4521<br>Clinique Saint-Luc, Cocody, Abidjan</div></div>
+  <div class="box"><div class="box-label">Patient</div><div class="box-name">DIALLO Mariama</div><div class="box-info">Née le : 12/03/1988 · F<br>Poids : 62 kg · Allergie : Pénicilline</div></div>
+</div>
+<div class="section-title">💊 Médicaments prescrits</div>
+<table><thead><tr><th>Médicament</th><th>Dosage</th><th>Posologie</th><th>Durée</th></tr></thead>
+<tbody>
+<tr><td>Amoxicilline 500 mg</td><td>500 mg</td><td>1 cp × 3/jour</td><td>7 jours</td></tr>
+<tr><td>Paracétamol 1000 mg</td><td>1000 mg</td><td>1 cp × 3/jour si douleur</td><td>5 jours</td></tr>
+<tr><td>Ibuprofène 400 mg</td><td>400 mg</td><td>1 cp × 2/jour après repas</td><td>5 jours</td></tr>
+</tbody></table>
+<div class="text-block">⚠️ <b>Ne pas dépasser les doses prescrites.</b> En cas de réaction allergique, arrêter immédiatement et consulter en urgence.<br><br>Repos recommandé pendant 3 jours. Revoir dans 7 jours si pas d'amélioration.</div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature & Cachet Médecin<br>Dr. KOUASSI Emmanuel</div>
+  <div class="sig"><div class="sig-space"></div>Date : 27/07/2026<br>Abidjan, Côte d'Ivoire</div>
+</div>`)
+  }
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Établissement</div><div class="box-name">CLINIQUE SAINT-LUC</div><div class="box-info">Cocody, Abidjan · Tél. +225 27 22 44 55 00<br>Agrément : MS-CI-2018-CL-0042</div></div>
+  <div class="box"><div class="box-label">Patient</div><div class="box-name">DIALLO Mariama</div><div class="box-info">Née le : 12/03/1988<br>Dossier N° : PAT-2026-0781</div></div>
+</div>
+<div class="section-title">Actes et soins réalisés</div>
+<table><thead><tr><th>Désignation</th><th>Qté</th><th>P.U.</th><th>Montant</th></tr></thead>
+<tbody>
+<tr><td>Consultation médecin généraliste</td><td>1</td><td>15 000 XOF</td><td>15 000 XOF</td></tr>
+<tr><td>Prise de sang complète (NFS)</td><td>1</td><td>12 500 XOF</td><td>12 500 XOF</td></tr>
+<tr><td>Radiographie thorax F+P</td><td>1</td><td>18 000 XOF</td><td>18 000 XOF</td></tr>
+<tr><td>Perfusion + produits</td><td>2</td><td>8 500 XOF</td><td>17 000 XOF</td></tr>
+</tbody></table>
+<div class="totals-wrap"><div class="totals">
+  <div class="tot-row"><span style="color:#64748b">Sous-total</span><span>62 500 XOF</span></div>
+  <div class="tot-row"><span style="color:#64748b">Prise en charge assurance</span><span style="color:#16a34a">-37 500 XOF</span></div>
+  <div class="tot-final"><span>RESTE À CHARGE</span><span>25 000 XOF</span></div>
+</div></div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Caissier</div>
+  <div class="sig"><div class="sig-space"></div>Signature Patient<br><em>Reçu le ___________</em></div>
+</div>`)
+}
+
+// ── Aperçu : éducation / formation
+function previewEducation(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Établissement</div><div class="box-name">ÉCOLE SUPÉRIEURE DE COMMERCE D'ABIDJAN</div><div class="box-info">Cocody, Abidjan · Tél. +225 27 22 55 66 77<br>Agrément MEN N° 2015-0042</div></div>
+  <div class="box"><div class="box-label">Apprenant / Élève</div><div class="box-name">TRAORÉ Ibrahim</div><div class="box-info">Matricule : ETU-2025-1842<br>Filière : BTS Commerce International — L2</div></div>
+</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Année scolaire</div><div class="info-cell-val">2025 / 2026</div></div>
+  <div class="info-cell"><div class="info-cell-label">Trimestre / Semestre</div><div class="info-cell-val">3ème trimestre — T3</div></div>
+  <div class="info-cell"><div class="info-cell-label">Frais de scolarité annuels</div><div class="info-cell-val">850 000 XOF</div></div>
+  <div class="info-cell"><div class="info-cell-label">Mode de paiement</div><div class="info-cell-val">Tranche — 3 × 283 333 XOF</div></div>
+</div>
+<div class="section-title">Détail du règlement</div>
+<table><thead><tr><th>Tranche</th><th>Échéance</th><th>Montant</th><th>Statut</th></tr></thead>
+<tbody>
+<tr><td>1ère tranche</td><td>01/10/2025</td><td>283 333 XOF</td><td><span class="status-badge" style="background:#dcfce7;color:#166534">✅ Payée</span></td></tr>
+<tr><td>2ème tranche</td><td>10/01/2026</td><td>283 333 XOF</td><td><span class="status-badge" style="background:#dcfce7;color:#166534">✅ Payée</span></td></tr>
+<tr><td>3ème tranche</td><td>10/04/2026</td><td>283 334 XOF</td><td><span class="status-badge" style="background:#fef9c3;color:#854d0e">⏳ En attente</span></td></tr>
+</tbody></table>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature Scolarité</div>
+  <div class="sig"><div class="sig-space"></div>Signature Parent / Étudiant</div>
+</div>`)
+}
+
+// ── Aperçu finance / caisse / trésorerie
+function previewFinance(doc) {
+  return wrapHTML(doc.catColor, `
+${headerHTML(doc)}
+<div class="two-col">
+  <div class="box"><div class="box-label">Émetteur / Caisse</div><div class="box-name">VOTRE SOCIÉTÉ SARL</div><div class="box-info">Caisse principale · Plateau, Abidjan<br>Responsable caisse : BAMBA Adjoua</div></div>
+  <div class="box"><div class="box-label">Bénéficiaire / Débiteur</div><div class="box-name">KONÉ Aminata</div><div class="box-info">Responsable Commerciale<br>Matricule : EMP-2024-0042</div></div>
+</div>
+<div class="info-grid">
+  <div class="info-cell"><div class="info-cell-label">Type de mouvement</div><div class="info-cell-val">${doc.name}</div></div>
+  <div class="info-cell"><div class="info-cell-label">Date</div><div class="info-cell-val">27/07/2026 — 10h45</div></div>
+  <div class="info-cell"><div class="info-cell-label">Motif</div><div class="info-cell-val">Avance frais mission Bouaké</div></div>
+  <div class="info-cell"><div class="info-cell-label">Mode de paiement</div><div class="info-cell-val">💵 Espèces</div></div>
+</div>
+<div class="section-title">Montant de l'opération</div>
+<div style="text-align:center;padding:20px;background:${doc.catColor}10;border-radius:12px;margin-bottom:16px">
+  <div style="font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Montant</div>
+  <div style="font-size:32px;font-weight:900;color:${doc.catColor}">150 000 XOF</div>
+  <div style="font-size:11px;color:#64748b;margin-top:4px">Cent cinquante mille francs CFA</div>
+</div>
+<div class="sigs">
+  <div class="sig"><div class="sig-space"></div>Signature du Caissier<br><em>BAMBA Adjoua</em></div>
+  <div class="sig"><div class="sig-space"></div>Signature du Bénéficiaire<br><em>Reçu le ___________</em></div>
+</div>`)
+}
+
+// ── Routeur principal
+function previewHTML(doc) {
+  switch (doc.catId) {
+    case 'rh':         return previewHR(doc)
+    case 'admin':      return previewAdmin(doc)
+    case 'sav':        return previewSAV(doc)
+    case 'btp':        return previewBTP(doc)
+    case 'stock':      return previewStock(doc)
+    case 'immobilier': return previewImmobilier(doc)
+    case 'export':     return previewExport(doc)
+    case 'sante':      return previewSante(doc)
+    case 'education':  return previewEducation(doc)
+    case 'finance':    return previewFinance(doc)
+    case 'logistique': return previewDelivery(doc)
+    case 'achat':
+      return doc.id === 'br_f' || doc.id === 'retour_f'
+        ? previewDelivery(doc)
+        : previewInvoice(doc)
+    default:           return previewInvoice(doc)  // vente
+  }
 }
 </script>
 
