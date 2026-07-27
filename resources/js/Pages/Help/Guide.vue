@@ -651,6 +651,10 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                       <li class="flex gap-2"><span class="text-green-600 font-bold">2.</span> Saisissez le <strong>fond de caisse initial</strong> (montant en espèces disponible au départ).</li>
                       <li class="flex gap-2"><span class="text-green-600 font-bold">3.</span> Cliquez <em>Ouvrir la session</em> — l'interface de vente s'affiche.</li>
                     </ol>
+                    <div class="mt-3 flex gap-2 items-start rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 p-3 text-xs text-amber-800 dark:text-amber-200">
+                      <span class="shrink-0 font-bold">💡 Conseil Pro</span>
+                      <span>Définissez un fonds de caisse de départ réaliste — il sera déduit lors du calcul de l'écart en clôture.</span>
+                    </div>
                   </div>
 
                   <div>
@@ -702,6 +706,23 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                       <li class="flex gap-2"><span class="text-green-600 font-bold">4.</span> Le <strong>rapport Z</strong> est généré automatiquement (total par mode, écarts, CA de la journée).</li>
                       <li class="flex gap-2"><span class="text-green-600 font-bold">5.</span> Imprimez ou exportez le rapport pour votre comptabilité.</li>
                     </ol>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-bold flex items-center justify-center">6</span>
+                      Rapport de clôture de caisse (Rapport X)
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-green-600 font-bold">1.</span> En fin de journée, allez dans <strong>Caisse → Session en cours → Clôturer</strong>.</li>
+                      <li class="flex gap-2"><span class="text-green-600 font-bold">2.</span> Vérifiez l'argent en caisse et saisissez le montant réel.</li>
+                      <li class="flex gap-2"><span class="text-green-600 font-bold">3.</span> Le Rapport X est généré automatiquement : total des ventes, par mode de paiement, écart caisse.</li>
+                      <li class="flex gap-2"><span class="text-green-600 font-bold">4.</span> Imprimez ou exportez le rapport pour la comptabilité.</li>
+                    </ol>
+                    <div class="mt-3 flex gap-2 items-start rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 p-3 text-xs text-amber-800 dark:text-amber-200">
+                      <span class="shrink-0 font-bold">💡 Conseil Pro</span>
+                      <span>En mode restauration, activez les 'Tables' dans Paramètres &gt; POS pour gérer les commandes par table et fusionner plusieurs additions.</span>
+                    </div>
                   </div>
 
                 </div>
@@ -791,6 +812,22 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                       <li class="flex gap-2"><span class="text-purple-600 font-bold">2.</span> Choisissez le format : PDF (mise en page) ou Excel (.xlsx pour manipulation).</li>
                       <li class="flex gap-2"><span class="text-purple-600 font-bold">3.</span> Le fichier est téléchargé immédiatement.</li>
                     </ol>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs font-bold flex items-center justify-center">6</span>
+                      Exporter la comptabilité (FEC / Excel / CSV OHADA)
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-purple-600 font-bold">1.</span> Allez dans <strong>Rapports → Export comptable</strong>.</li>
+                      <li class="flex gap-2"><span class="text-purple-600 font-bold">2.</span> Sélectionnez la période et le format : FEC (France), Excel, CSV OHADA.</li>
+                      <li class="flex gap-2"><span class="text-purple-600 font-bold">3.</span> Le fichier est téléchargé — importez-le directement dans votre logiciel comptable.</li>
+                    </ol>
+                    <div class="mt-3 flex gap-2 items-start rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 p-3 text-xs text-amber-800 dark:text-amber-200">
+                      <span class="shrink-0 font-bold">💡 Conseil Pro</span>
+                      <span>Programmez un export mensuel automatique en activant les Rappels dans Paramètres → Rapports.</span>
+                    </div>
                   </div>
 
                 </div>
@@ -886,6 +923,47 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                     </ol>
                   </div>
 
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-bold flex items-center justify-center">5</span>
+                      Permissions par rôle — tableau récapitulatif
+                    </h3>
+                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                      <table class="w-full text-xs text-left">
+                        <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                          <tr>
+                            <th class="px-4 py-2 font-semibold">Fonctionnalité</th>
+                            <th class="px-4 py-2 font-semibold">Admin</th>
+                            <th class="px-4 py-2 font-semibold">Comptable</th>
+                            <th class="px-4 py-2 font-semibold">Commercial</th>
+                            <th class="px-4 py-2 font-semibold">Caissier</th>
+                            <th class="px-4 py-2 font-semibold">Lecture seule</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700 text-gray-600 dark:text-gray-300">
+                          <tr><td class="px-4 py-2">Créer factures</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">—</td><td class="px-4 py-2">—</td></tr>
+                          <tr class="bg-gray-50 dark:bg-gray-750"><td class="px-4 py-2">Valider paiements</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">—</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">—</td></tr>
+                          <tr><td class="px-4 py-2">Accéder rapports</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">Limité</td><td class="px-4 py-2">Caisse</td><td class="px-4 py-2">✓</td></tr>
+                          <tr class="bg-gray-50 dark:bg-gray-750"><td class="px-4 py-2">Gérer produits</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">—</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">—</td><td class="px-4 py-2">—</td></tr>
+                          <tr><td class="px-4 py-2">Gérer utilisateurs</td><td class="px-4 py-2">✓</td><td class="px-4 py-2">—</td><td class="px-4 py-2">—</td><td class="px-4 py-2">—</td><td class="px-4 py-2">—</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 text-xs font-bold flex items-center justify-center">6</span>
+                      Réinitialiser le mot de passe d'un membre
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-gray-500 font-bold">1.</span> Allez dans <strong>Paramètres → Équipe</strong>.</li>
+                      <li class="flex gap-2"><span class="text-gray-500 font-bold">2.</span> Cliquez sur les 3 points (⋯) à côté du membre.</li>
+                      <li class="flex gap-2"><span class="text-gray-500 font-bold">3.</span> Sélectionnez <em>Réinitialiser le mot de passe</em>.</li>
+                      <li class="flex gap-2"><span class="text-gray-500 font-bold">4.</span> Un email est envoyé automatiquement au membre avec un lien de réinitialisation.</li>
+                    </ol>
+                  </div>
+
                 </div>
                 <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
                   <button @click="scrollTo('module-7')" class="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-700">
@@ -973,6 +1051,35 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                       <li class="flex gap-2"><span class="text-teal-600 font-bold">3.</span> Entrez le code à 6 chiffres pour confirmer l'activation.</li>
                       <li class="flex gap-2"><span class="text-teal-600 font-bold">4.</span> À chaque connexion, le code de l'application sera demandé en plus du mot de passe.</li>
                     </ol>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 text-xs font-bold flex items-center justify-center">6</span>
+                      Configurer la numérotation des documents
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">1.</span> Allez dans <strong>Paramètres → Numérotation</strong>.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">2.</span> Pour chaque type de document (Facture, Devis, BL, etc.), définissez : préfixe, inclusion année/mois, longueur.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">3.</span> Exemple : FACT-2026-0001, BL-0001, DEV-2026-0001.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">4.</span> Enregistrez — la numérotation est indépendante par type.</li>
+                    </ol>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 text-xs font-bold flex items-center justify-center">7</span>
+                      Configurer les mentions légales et pied de page
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">1.</span> Allez dans <strong>Paramètres → Société → Pied de page</strong>.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">2.</span> Saisissez vos mentions légales (RIB, conditions de paiement, pénalités de retard).</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">3.</span> Ces mentions apparaissent automatiquement sur tous vos documents.</li>
+                    </ol>
+                    <div class="mt-3 flex gap-2 items-start rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 p-3 text-xs text-amber-800 dark:text-amber-200">
+                      <span class="shrink-0 font-bold">💡 Conseil Pro</span>
+                      <span>Les mentions OHADA obligatoires (RCCM, NIF, capital social) sont insérées automatiquement si renseignées dans la fiche société.</span>
+                    </div>
                   </div>
 
                 </div>
@@ -1063,6 +1170,34 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                       <li class="flex gap-2"><span class="text-pink-600 font-bold">2.</span> Chaque paiement affiche un bouton <em>Télécharger la facture</em>.</li>
                       <li class="flex gap-2"><span class="text-pink-600 font-bold">3.</span> Le PDF est téléchargé immédiatement, prêt pour votre comptabilité.</li>
                     </ol>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-pink-100 dark:bg-pink-900 text-pink-700 dark:text-pink-300 text-xs font-bold flex items-center justify-center">6</span>
+                      Comprendre les limites par forfait
+                    </h3>
+                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                      <table class="w-full text-xs text-left">
+                        <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                          <tr>
+                            <th class="px-4 py-2 font-semibold">Limite</th>
+                            <th class="px-4 py-2 font-semibold">Starter</th>
+                            <th class="px-4 py-2 font-semibold">Pro</th>
+                            <th class="px-4 py-2 font-semibold">Business</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700 text-gray-600 dark:text-gray-300">
+                          <tr><td class="px-4 py-2">Utilisateurs</td><td class="px-4 py-2">1</td><td class="px-4 py-2">5</td><td class="px-4 py-2">Illimité</td></tr>
+                          <tr class="bg-gray-50 dark:bg-gray-750"><td class="px-4 py-2">Documents / mois</td><td class="px-4 py-2">50</td><td class="px-4 py-2">500</td><td class="px-4 py-2">Illimité</td></tr>
+                          <tr><td class="px-4 py-2">Templates</td><td class="px-4 py-2">5</td><td class="px-4 py-2">30</td><td class="px-4 py-2">Illimité</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="mt-3 flex gap-2 items-start rounded-lg bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 p-3 text-xs text-amber-800 dark:text-amber-200">
+                      <span class="shrink-0 font-bold">💡 Conseil Pro</span>
+                      <span>Avant d'atteindre votre limite mensuelle, FactPro vous envoie une notification à 80% d'utilisation pour vous laisser le temps de passer au forfait supérieur.</span>
+                    </div>
                   </div>
 
                 </div>
