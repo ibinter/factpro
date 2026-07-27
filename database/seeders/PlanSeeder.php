@@ -20,7 +20,7 @@ class PlanSeeder extends Seeder
                 'price_monthly' => 4900,
                 'sort_order' => 1,
                 'features' => [
-                    'Devis & Factures (10/mois)',
+                    'Devis & Factures (50/mois)',
                     'QR Anti-Falsification',
                     'Export PDF professionnel',
                     'Gestion des clients (25 max)',
@@ -30,7 +30,7 @@ class PlanSeeder extends Seeder
                     'Support email 72h',
                 ],
                 'limits' => [
-                    'documents_per_month' => 10,
+                    'documents_per_month' => 50,
                     'users' => 1,
                     'companies' => 1,
                     'customers' => 25,
@@ -60,8 +60,8 @@ class PlanSeeder extends Seeder
                     'Support email 48h',
                 ],
                 'limits' => [
-                    'documents_per_month' => 'unlimited',
-                    'users' => 3,
+                    'documents_per_month' => 500,
+                    'users' => 5,
                     'companies' => 1,
                     'customers' => 'unlimited',
                     'products' => 'unlimited',
@@ -91,11 +91,11 @@ class PlanSeeder extends Seeder
                 ],
                 'limits' => [
                     'documents_per_month' => 'unlimited',
-                    'users' => 10,
+                    'users' => 'unlimited',
                     'companies' => 3,
                     'customers' => 'unlimited',
                     'products' => 'unlimited',
-                    'templates' => 100,
+                    'templates' => 'unlimited',
                     'storage_mb' => 5120,
                 ],
             ],
