@@ -212,6 +212,8 @@ const FR = {
         { icon: '🌐', title: 'Portail client', text: 'Vos clients consultent, téléchargent et paient leurs factures 24h/24.' },
         { icon: '📊', title: 'Comptabilité', text: 'Export FEC, Sage 100, QuickBooks, Pennylane. Conformité OHADA incluse.' },
         { icon: '⚡', title: 'API REST', text: 'Connectez vos outils : Zapier, Make, vos propres apps. 100% documentée.' },
+        { icon: '📂', title: '498+ modèles de documents', text: 'Catalogue sectoriel couvrant 24 secteurs d\'activité : BTP, commerce, santé, restauration, services, ONG et plus encore.' },
+        { icon: '🎨', title: 'Templates PDF intelligents', text: 'Sélection automatique du style visuel selon votre secteur. Vos documents reflètent votre métier dès la première impression.' },
     ],
     whyTitle: 'Pourquoi IBIG FactPro ?',
     why: [
@@ -274,6 +276,8 @@ const EN = {
         { icon: '🌐', title: 'Client portal', text: 'Your clients view, download and pay their invoices 24/7.' },
         { icon: '📊', title: 'Accounting', text: 'FEC, Sage 100, QuickBooks, Pennylane export. OHADA compliance included.' },
         { icon: '⚡', title: 'REST API', text: 'Connect your tools: Zapier, Make, your own apps. Fully documented.' },
+        { icon: '📂', title: '498+ document templates', text: 'Sector catalog covering 24 industries: construction, retail, healthcare, restaurants, services, NGOs and more.' },
+        { icon: '🎨', title: 'Smart PDF templates', text: 'Automatic visual style selection based on your industry. Your documents reflect your trade from the very first print.' },
     ],
     whyTitle: 'Why IBIG FactPro?',
     why: [

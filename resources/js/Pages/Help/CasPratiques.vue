@@ -171,6 +171,88 @@ const scenarios = [
     ],
   },
   {
+    id: 'catalogue-bl',
+    initials: 'BL',
+    bgColor: '#0891b2',
+    badge: 'Catalogue documents',
+    badgeColor: '#0891b2',
+    title: 'Créer un Bon de Livraison depuis le catalogue',
+    persona: 'Comment utiliser le catalogue de documents pour créer un Bon de Livraison adapté à votre secteur, étape par étape.',
+    steps: [
+      {
+        num: 1,
+        title: 'Accéder au catalogue de documents',
+        detail: 'Allez dans Documents puis cliquez sur "Nouveau document". Le catalogue s\'ouvre avec l\'ensemble des types de documents disponibles pour votre activité.',
+      },
+      {
+        num: 2,
+        title: 'Rechercher "Bon de livraison" dans le catalogue',
+        detail: 'Dans la barre de recherche du catalogue, tapez "Bon de livraison". Les résultats s\'affichent instantanément, filtrés par pertinence et par secteur d\'activité.',
+      },
+      {
+        num: 3,
+        title: 'Visualiser le document avec vos données sectorielles',
+        detail: 'Cliquez sur l\'icône d\'aperçu (œil) pour prévisualiser le Bon de Livraison avec vos données réelles (logo, RCCM, secteur). Vous voyez exactement le rendu final avant de créer le document.',
+      },
+      {
+        num: 4,
+        title: 'Prendre note du modèle PDF recommandé',
+        detail: 'Une barre amber s\'affiche dans l\'aperçu, indiquant le modèle PDF recommandé pour votre secteur (ex. : template Transport, template Commerce). Ce modèle optimise la mise en page pour votre activité.',
+      },
+      {
+        num: 5,
+        title: 'Créer le document depuis l\'aperçu',
+        detail: 'Cliquez sur "Créer ce document". Le formulaire de création s\'ouvre avec le type "Bon de Livraison" et le template sectoriel pré-sélectionné automatiquement, vous évitant toute configuration manuelle.',
+      },
+      {
+        num: 6,
+        title: 'Renseigner le client et les articles livrés',
+        detail: 'Dans le formulaire, sélectionnez le client destinataire, puis ajoutez les articles livrés avec leurs quantités. Le Bon de Livraison ne comporte pas de prix — seulement les désignations et quantités, conformément à l\'usage commercial.',
+      },
+      {
+        num: 7,
+        title: 'Valider et générer le Bon de Livraison',
+        detail: 'Cliquez sur "Créer le document". Le Bon de Livraison est généré avec votre numérotation automatique, prêt à être imprimé ou envoyé au transporteur et au client. Il est automatiquement lié au dossier client pour le suivi.',
+      },
+    ],
+  },
+  {
+    id: 'workflow-devis-facture',
+    initials: 'WF',
+    bgColor: '#7c3aed',
+    badge: 'Workflow commercial',
+    badgeColor: '#7c3aed',
+    title: 'Comprendre le workflow Devis → Facture',
+    persona: 'Maîtrisez le cycle complet d\'une vente : du devis initial jusqu\'à l\'encaissement de la facture, en passant par le bon de commande et la livraison.',
+    steps: [
+      {
+        num: 1,
+        title: 'Étape 1 — Créer le Devis avec prix et conditions',
+        detail: 'Commencez par créer un Devis (Documents > Nouveau > Devis). Renseignez le client, les articles ou services avec leurs prix unitaires, la remise éventuelle, les conditions de paiement et la durée de validité. Envoyez le devis au client pour acceptation.',
+      },
+      {
+        num: 2,
+        title: 'Étape 2 — Bon de Commande après acceptation client',
+        detail: 'Une fois le client d\'accord, créez un Bon de Commande depuis le catalogue (catégorie Vente & Facturation). Ce document confirme formellement la commande du client avec les quantités et les prix convenus. Il engage les deux parties avant la livraison effective.',
+      },
+      {
+        num: 3,
+        title: 'Étape 3 — Bon de Livraison à la remise des marchandises',
+        detail: 'Au moment de la livraison, créez un Bon de Livraison (sans prix, uniquement les désignations et quantités livrées). Ce document accompagne physiquement la marchandise et doit être signé par le client à la réception. Il constitue la preuve de livraison.',
+      },
+      {
+        num: 4,
+        title: 'Étape 4 — Facture définitive après livraison',
+        detail: 'Après confirmation de la livraison, créez la Facture définitive avec les prix. Vous pouvez la générer directement depuis le Bon de Commande ou le Devis pour éviter de ressaisir les lignes. La facture déclenche l\'obligation de paiement et la comptabilisation de la vente.',
+      },
+      {
+        num: 5,
+        title: 'Étape 5 — Envoi et suivi du paiement',
+        detail: 'Envoyez la facture par email depuis FactPro (avec lien de paiement en ligne si activé). Suivez l\'état de paiement depuis le tableau de bord : en attente, partiellement réglée, soldée. Les relances automatiques sont déclenchées selon l\'échéance configurée dans Paramètres > Relances.',
+      },
+    ],
+  },
+  {
     id: 'ong',
     initials: 'SM',
     bgColor: '#d97706',
@@ -235,7 +317,7 @@ function isStepOpen(scenarioId, stepIndex) {
             Cas pratiques
           </h2>
           <p class="text-sm text-gray-500 dark:text-gray-400">
-            5 scénarios sectoriels réalistes — étape par étape
+            7 scénarios sectoriels réalistes — étape par étape
           </p>
         </div>
       </div>

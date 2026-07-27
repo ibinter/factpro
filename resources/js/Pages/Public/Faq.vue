@@ -199,6 +199,22 @@ const categories = [
         q: "Comment créer des factures récurrentes automatiques ?",
         a: "Dans Documents > Récurrences, créez un modèle de facture et définissez la fréquence (mensuelle, trimestrielle, annuelle, ou personnalisée), la date de début et de fin, et l'action à l'échéance (brouillon, finalisation auto, envoi auto). FactPro génère et envoie les factures sans intervention.",
       },
+      {
+        q: "À quoi sert le catalogue de modèles de documents ?",
+        a: "Le catalogue regroupe 498 modèles de documents organisés par secteur d'activité (BTP, Santé, Agriculture, Restauration, IT, Finance, etc.). Il vous permet de découvrir tous les types de documents disponibles, de les prévisualiser avec des données représentatives de votre secteur, et de lancer la création en un clic avec le bon type de document et le style visuel adapté pré-sélectionné.",
+      },
+      {
+        q: "Puis-je changer le style visuel de mon document ?",
+        a: "Oui. Lors de la création d'un document, FactPro recommande automatiquement un style visuel adapté à votre type de document et votre secteur. Vous pouvez le modifier en cliquant sur 'Modifier' dans la barre de style. La galerie complète des styles disponibles s'ouvre selon votre forfait (Starter : 5 styles, Pro : 30, Business : 94+).",
+      },
+      {
+        q: "Pourquoi mon bon de livraison n'affiche pas de prix ?",
+        a: "C'est normal et conforme à la norme OHADA. Un bon de livraison est un document de transport qui liste les articles livrés et leurs quantités, mais pas les montants. Les prix figurent sur la facture correspondante. Si votre activité nécessite des bons de livraison avec prix, contactez notre support pour activer cette option.",
+      },
+      {
+        q: "Quelle est la différence entre Facture d'Acompte et Facture de Solde ?",
+        a: "La Facture d'Acompte permet de facturer un pourcentage ou montant forfaitaire avant la livraison complète (ex: 30% à la commande). La Facture de Solde clôture la transaction en déduisant les acomptes déjà versés pour ne facturer que le reste à payer. FactPro calcule automatiquement le solde restant.",
+      },
     ],
   },
   {

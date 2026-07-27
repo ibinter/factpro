@@ -17,6 +17,9 @@ const modules = [
   { id: 'module-8',  icon: '👤', title: 'Utilisateurs & Rôles' },
   { id: 'module-9',  icon: '⚙️', title: 'Paramètres' },
   { id: 'module-10', icon: '💳', title: 'Abonnement & Licence' },
+  { id: 'module-11', icon: '📋', title: 'Catalogue de modèles' },
+  { id: 'module-12', icon: '🎨', title: 'Styles visuels PDF' },
+  { id: 'module-13', icon: '📑', title: 'Types de documents' },
 ];
 
 function scrollTo(id) {
@@ -62,7 +65,7 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
               Guide utilisateur IBIG FactPro
             </h2>
             <p class="text-sm text-gray-500 dark:text-gray-400">
-              10 modules · Procédures étape par étape
+              13 modules · Procédures étape par étape
             </p>
           </div>
         </div>
@@ -1065,6 +1068,241 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                 </div>
                 <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
                   <button @click="scrollTo('module-9')" class="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-700">
+                    <span>←</span> Module précédent
+                  </button>
+                  <button @click="scrollTo('module-11')" class="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700">
+                    Module suivant : Catalogue de modèles <span>→</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 MODULE 11 — CATALOGUE DE MODÈLES DE DOCUMENTS
+            ════════════════════════════════════════════════════════════ -->
+            <section id="module-11" class="scroll-mt-6">
+              <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700" style="border-left: 4px solid #0062CC">
+                  <div class="flex items-center gap-3">
+                    <span class="text-3xl">📋</span>
+                    <div>
+                      <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Module 11 — Catalogue de modèles de documents</h2>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">498 modèles organisés en 24 catégories sectorielles</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="px-6 py-6 space-y-8">
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold flex items-center justify-center">1</span>
+                      Présentation du catalogue
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                      FactPro propose <strong>498 modèles de documents</strong> prêts à l'emploi, organisés en <strong>24 catégories sectorielles</strong> (BTP, Transport, Commerce, Juridique, Santé, etc.). Chaque modèle est conçu pour un type d'activité précis et intègre les mentions obligatoires et la structure adaptée.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold flex items-center justify-center">2</span>
+                      Accéder au catalogue
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">1.</span> Allez dans <strong>Documents</strong> et cliquez sur le bouton <em>Nouveau document</em>.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">2.</span> Dans la fenêtre de création, cliquez sur l'onglet <strong>Catalogue</strong>.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">3.</span> Parcourez les catégories ou utilisez la recherche pour trouver le modèle adapté à votre activité.</li>
+                    </ol>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold flex items-center justify-center">3</span>
+                      Utiliser l'aperçu interactif
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">1.</span> Cliquez sur un modèle pour afficher son <strong>aperçu interactif</strong> avec des données fictives représentatives de votre secteur.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">2.</span> L'aperçu indique le <strong>style visuel PDF</strong> (template) qui sera pré-sélectionné lors de la création du document.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">3.</span> Les données fictives affichées dans l'aperçu sont indicatives — le document réel sera personnalisé avec vos propres informations et celles de votre client.</li>
+                    </ol>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-bold flex items-center justify-center">4</span>
+                      Créer un document depuis le catalogue
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">1.</span> Après avoir consulté l'aperçu du modèle, cliquez le bouton <em>Créer ce document</em>.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">2.</span> FactPro lance automatiquement la création avec le <strong>bon type de document</strong> ET le <strong>bon style visuel</strong> pré-sélectionné — plus besoin de les choisir manuellement.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">3.</span> Complétez ensuite les champs du document (client, lignes, montants) comme d'habitude.</li>
+                    </ol>
+                  </div>
+
+                </div>
+                <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
+                  <button @click="scrollTo('module-10')" class="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-700">
+                    <span>←</span> Module précédent
+                  </button>
+                  <button @click="scrollTo('module-12')" class="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700">
+                    Module suivant : Styles visuels PDF <span>→</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 MODULE 12 — STYLES VISUELS PDF (TEMPLATES)
+            ════════════════════════════════════════════════════════════ -->
+            <section id="module-12" class="scroll-mt-6">
+              <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700" style="border-left: 4px solid #7c3aed">
+                  <div class="flex items-center gap-3">
+                    <span class="text-3xl">🎨</span>
+                    <div>
+                      <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Module 12 — Styles visuels PDF (templates)</h2>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Recommandation automatique et galerie de styles</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="px-6 py-6 space-y-8">
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs font-bold flex items-center justify-center">1</span>
+                      Style recommandé automatiquement
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                      Lors de la création d'un document, FactPro recommande automatiquement un style visuel PDF adapté au type de document choisi. Exemples de recommandations :
+                    </p>
+                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                      <table class="w-full text-xs text-left">
+                        <thead class="bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                          <tr>
+                            <th class="px-4 py-2 font-semibold">Type de document</th>
+                            <th class="px-4 py-2 font-semibold">Style recommandé</th>
+                          </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700 text-gray-600 dark:text-gray-300">
+                          <tr><td class="px-4 py-2">Bon de livraison</td><td class="px-4 py-2 font-semibold">Template Transport</td></tr>
+                          <tr class="bg-gray-50 dark:bg-gray-750"><td class="px-4 py-2">Contrat</td><td class="px-4 py-2 font-semibold">Template Juridique</td></tr>
+                          <tr><td class="px-4 py-2">Facture BTP</td><td class="px-4 py-2 font-semibold">Template BTP</td></tr>
+                          <tr class="bg-gray-50 dark:bg-gray-750"><td class="px-4 py-2">Facture standard</td><td class="px-4 py-2 font-semibold">Template Commerce</td></tr>
+                          <tr><td class="px-4 py-2">Devis</td><td class="px-4 py-2 font-semibold">Template selon votre secteur</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs font-bold flex items-center justify-center">2</span>
+                      Accéder à la galerie complète de styles
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-purple-500 font-bold">1.</span> Lors de la création ou de l'édition d'un document, la galerie de styles est <strong>réduite par défaut</strong> afin de ne pas surcharger l'interface.</li>
+                      <li class="flex gap-2"><span class="text-purple-500 font-bold">2.</span> Cliquez sur le bouton <em>Modifier</em> situé à côté du style recommandé pour ouvrir la <strong>galerie complète</strong> des styles disponibles selon votre forfait.</li>
+                      <li class="flex gap-2"><span class="text-purple-500 font-bold">3.</span> Cliquez sur un style pour voir un aperçu en temps réel.</li>
+                      <li class="flex gap-2"><span class="text-purple-500 font-bold">4.</span> Sélectionnez le style souhaité et confirmez.</li>
+                    </ol>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-xs font-bold flex items-center justify-center">3</span>
+                      Changer le style à tout moment
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-purple-500 font-bold">1.</span> Le style visuel peut être modifié <strong>avant ou après la création</strong> du document, tant que celui-ci n'est pas finalisé.</li>
+                      <li class="flex gap-2"><span class="text-purple-500 font-bold">2.</span> Sur un document en brouillon, cliquez <em>Modifier le style</em> dans le panneau latéral pour accéder à nouveau à la galerie.</li>
+                      <li class="flex gap-2"><span class="text-purple-500 font-bold">3.</span> Le changement de style n'affecte pas le contenu du document (lignes, montants, client) — uniquement la mise en page visuelle du PDF généré.</li>
+                    </ol>
+                  </div>
+
+                </div>
+                <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
+                  <button @click="scrollTo('module-11')" class="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-700">
+                    <span>←</span> Module précédent
+                  </button>
+                  <button @click="scrollTo('module-13')" class="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700">
+                    Module suivant : Types de documents <span>→</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <!-- ═══════════════════════════════════════════════════════
+                 MODULE 13 — COMPRENDRE LES TYPES DE DOCUMENTS
+            ════════════════════════════════════════════════════════════ -->
+            <section id="module-13" class="scroll-mt-6">
+              <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
+                <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700" style="border-left: 4px solid #059669">
+                  <div class="flex items-center gap-3">
+                    <span class="text-3xl">📑</span>
+                    <div>
+                      <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Module 13 — Comprendre les types de documents</h2>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">Workflow recommandé et rôle de chaque document</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="px-6 py-6 space-y-8">
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-bold flex items-center justify-center">1</span>
+                      Workflow recommandé
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                      Pour une gestion commerciale complète et tracée, FactPro recommande de suivre ce cycle documentaire :
+                    </p>
+                    <div class="flex flex-wrap items-center gap-2 text-sm font-semibold mb-4">
+                      <span class="px-3 py-1.5 rounded-lg bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300">Devis</span>
+                      <span class="text-gray-400">→</span>
+                      <span class="px-3 py-1.5 rounded-lg bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300">Bon de commande</span>
+                      <span class="text-gray-400">→</span>
+                      <span class="px-3 py-1.5 rounded-lg bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300">Bon de livraison</span>
+                      <span class="text-gray-400">→</span>
+                      <span class="px-3 py-1.5 rounded-lg bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300">Facture</span>
+                    </div>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                      Chaque étape peut être générée en un clic depuis le document précédent. Ce workflow est recommandé mais non obligatoire — vous pouvez créer une facture directe sans passer par les étapes précédentes.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-bold flex items-center justify-center">2</span>
+                      Bon de livraison — pourquoi sans prix ?
+                    </h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                      Le Bon de livraison (BL) <strong>n'affiche pas de prix</strong> — c'est un comportement normal et voulu. Le BL est un <strong>document de transport et de réception</strong>, pas un document commercial. Il sert à :
+                    </p>
+                    <ul class="space-y-1.5 text-sm text-gray-600 dark:text-gray-300 list-none pl-2">
+                      <li class="flex gap-2"><span class="text-green-600">•</span> Confirmer les quantités et références livrées</li>
+                      <li class="flex gap-2"><span class="text-green-600">•</span> Obtenir la signature de réception du client ou du livreur</li>
+                      <li class="flex gap-2"><span class="text-green-600">•</span> Servir de preuve de livraison en cas de litige</li>
+                    </ul>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-3">
+                      Les prix figurent sur la facture associée, pas sur le bon de livraison.
+                    </p>
+                  </div>
+
+                  <div>
+                    <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-xs font-bold flex items-center justify-center">3</span>
+                      Facture d'acompte et facture de solde
+                    </h3>
+                    <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                      <li class="flex gap-2"><span class="text-green-600 font-bold">1.</span> La <strong>Facture d'acompte</strong> permet de facturer un pourcentage du montant total <strong>avant la livraison</strong> (ex : 30% à la commande, 30% à mi-parcours). Elle est liée au devis ou bon de commande d'origine.</li>
+                      <li class="flex gap-2"><span class="text-green-600 font-bold">2.</span> Vous pouvez émettre <strong>plusieurs factures d'acompte</strong> successives pour le même projet.</li>
+                      <li class="flex gap-2"><span class="text-green-600 font-bold">3.</span> La <strong>Facture de solde</strong> clôture le cycle commercial : elle déduit automatiquement tous les acomptes déjà perçus et affiche uniquement le montant restant dû par le client.</li>
+                      <li class="flex gap-2"><span class="text-green-600 font-bold">4.</span> Pour créer une facture de solde, ouvrez le devis ou le bon de commande et cliquez <em>Générer la facture de solde</em> — les acomptes sont repris automatiquement.</li>
+                    </ol>
+                  </div>
+
+                </div>
+                <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex justify-between">
+                  <button @click="scrollTo('module-12')" class="inline-flex items-center gap-1 text-sm font-semibold text-gray-500 hover:text-gray-700">
                     <span>←</span> Module précédent
                   </button>
                   <button @click="scrollTo('module-1')" class="inline-flex items-center gap-1 text-sm font-semibold text-blue-600 hover:text-blue-700">

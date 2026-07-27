@@ -30,9 +30,29 @@ const filterOptions = [
 // Fallback static data if no server data provided
 const staticEntries = [
     {
+        version: '2.5.0',
+        date: '27 juillet 2026',
+        isNew: true,
+        type: 'major',
+        changes: [
+            { type: 'feature', text: 'Catalogue de 498 modèles de documents organisés par secteur (Vente, BTP, Santé, Agriculture, IT, Restauration, Finance, etc.)' },
+            { type: 'feature', text: 'Sélection automatique du modèle PDF selon le type de document (Bon de livraison → Transport, Contrat → Juridique, etc.)' },
+            { type: 'feature', text: 'Aperçu interactif de chaque modèle avec données fictives représentatives par secteur' },
+            { type: 'feature', text: 'Bandeau informatif "Aperçu indicatif" dans la prévisualisation des modèles' },
+            { type: 'feature', text: 'Galerie de styles PDF réduite par défaut pour un parcours de création simplifié' },
+            { type: 'feature', text: 'Modèle visuel recommandé visible dans la prévisualisation catalogue avant création' },
+            { type: 'fix', text: 'Correction de 6 incohérences critiques entre le catalogue et les types de documents (factproType)' },
+            { type: 'fix', text: 'La Facture Proforma, Facture d\'Acompte, Reçu de paiement et Bon de Commande Client sont maintenant correctement routés' },
+            { type: 'fix', text: 'Correction du montant à 0 sur les Avis de loyer et Reçus de caution' },
+            { type: 'fix', text: 'Correction de la description manquante (mois/année) sur les quittances de loyer' },
+            { type: 'fix', text: '4 nouveaux templates PDF enregistrés (Futuriste Dark, Tech Modern, etc.)' },
+            { type: 'fix', text: 'Ordre des routes corrigé pour éviter le conflit sur l\'export Excel' },
+        ],
+    },
+    {
         version: '2.4.0',
         date: '23 juillet 2026',
-        isNew: true,
+        isNew: false,
         type: 'major',
         changes: [
             { type: 'feature', text: 'Centre d\'aide avec 100 questions-réponses organisées en 10 catégories' },
