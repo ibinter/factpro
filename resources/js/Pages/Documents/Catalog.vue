@@ -572,7 +572,45 @@ const popularDocs = computed(() => ALL_DOCS.filter(d => d.pop).slice(0, 8))
 
 function openPreview(doc) { preview.value = doc }
 function closePreview()   { preview.value = null }
-function createDoc(doc)   { router.visit(route('documents.create', { type: doc.factproType })) }
+// Mapping catId → { key, name } du vrai template PDF Blade recommandé
+const CAT_TEMPLATE = {
+  vente:      { key: 'corporate-01', name: 'Corporate Marine' },
+  achat:      { key: 'corporate-02', name: 'Acier' },
+  btp:        { key: 'btp-01',       name: 'Entreprise BTP' },
+  garage:     { key: 'auto-01',      name: 'Garage Auto' },
+  sante:      { key: 'medical-01',   name: 'Clinique' },
+  pharm:      { key: 'medical-02',   name: 'Pharmacie' },
+  it:         { key: 'tech-saas-01', name: 'Startup SaaS' },
+  agri:       { key: 'agri-01',      name: 'Exploitation Agricole' },
+  transport:  { key: 'transport-01', name: 'Transporteur Routier' },
+  rh:         { key: 'corporate-03', name: 'Slate Premium' },
+  finance:    { key: 'finance-01',   name: 'Banque Classique' },
+  banq:       { key: 'finance-02',   name: 'Fintech' },
+  immobilier: { key: 'immo-01',      name: 'Agence Prestige' },
+  resto:      { key: 'resto-01',     name: 'Gastronome' },
+  export:     { key: 'africa-01',    name: 'Panafricain' },
+  admin:      { key: 'legal-01',     name: "Cabinet d'Avocats" },
+  sav:        { key: 'corporate-04', name: 'Bordeaux Executive' },
+  stock:      { key: 'corporate-05', name: 'Vert Institution' },
+  education:  { key: 'education-01', name: 'École Privée' },
+  tour:       { key: 'hotel-01',     name: 'Hôtel Luxe' },
+  ong:        { key: 'ong-01',       name: 'Association Caritative' },
+  cons:       { key: 'corporate-03', name: 'Slate Premium' },
+  mine:       { key: 'africa-02',    name: 'Sahel Terre' },
+  enrg:       { key: 'corporate-05', name: 'Vert Institution' },
+}
+
+function recommendedTemplate(doc) {
+  return CAT_TEMPLATE[doc.catId] || { key: 'corporate-01', name: 'Corporate Marine' }
+}
+
+function createDoc(doc) {
+  const tpl = recommendedTemplate(doc)
+  router.visit(route('documents.create', {
+    type: doc.factproType,
+    template: tpl.key,
+  }))
+}
 function selectCat(id)    { selCat.value = id; sidebarOpen.value = false }
 
 // ─── Aperçus — CSS commun minimal + helpers ─────────────────────
@@ -2969,14 +3007,23 @@ function previewHTML(doc) {
               </div>
             </div>
 
-            <!-- Bandeau aperçu -->
-            <div class="flex items-center gap-2 bg-amber-50 border-y border-amber-200 px-4 py-2">
-              <svg class="h-4 w-4 flex-shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-              </svg>
-              <p class="text-xs text-amber-700 font-medium">
-                Aperçu indicatif avec données fictives — le document réel sera personnalisé avec vos informations.
-              </p>
+            <!-- Bandeau aperçu + modèle recommandé -->
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-amber-50 border-y border-amber-200 px-4 py-2.5">
+              <div class="flex items-center gap-2 flex-1">
+                <svg class="h-4 w-4 flex-shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <p class="text-xs text-amber-700 font-medium">
+                  Aperçu indicatif — le document réel sera personnalisé avec vos données.
+                </p>
+              </div>
+              <div class="flex items-center gap-1.5 bg-white border border-amber-200 rounded-lg px-2.5 py-1 shrink-0">
+                <svg class="h-3.5 w-3.5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                <span class="text-xs text-gray-500">Modèle PDF :</span>
+                <span class="text-xs font-bold text-blue-700">{{ recommendedTemplate(preview).name }}</span>
+              </div>
             </div>
 
             <!-- Iframe -->

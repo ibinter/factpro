@@ -104,8 +104,20 @@ class DocumentController extends Controller
             'types'           => $this->typesForFront(),
             'categories'      => Document::CATEGORIES,
             'templates'       => $this->templatesForFront($request->user()),
-            'defaultTemplate' => $company->default_template,
+            'defaultTemplate' => $this->resolveDefaultTemplate($request, $company),
         ]);
+    }
+
+    private function resolveDefaultTemplate(Request $request, $company): ?string
+    {
+        $suggested = $request->query('template');
+        if ($suggested) {
+            $allowed = array_keys($this->allowedTemplates($request->user()));
+            if (in_array($suggested, $allowed, true)) {
+                return $suggested;
+            }
+        }
+        return $company->default_template;
     }
 
     public function store(Request $request): RedirectResponse
