@@ -831,7 +831,7 @@ function previewHTML(doc) {
               <div class="flex gap-1.5">
                 <button
                   class="flex-none rounded-xl border border-gray-200 px-3 py-1.5 text-[10px] font-semibold text-gray-600 transition hover:border-gray-300 hover:bg-gray-50"
-                  @click="openPreview(doc)"
+                  @click="openPreview({...doc, catId: cat.id, catLabel: cat.label, catColor: cat.color, catIcon: cat.icon})"
                 >👁️ Aperçu</button>
                 <button
                   class="flex-1 rounded-xl py-1.5 text-[10px] font-bold text-white transition hover:brightness-110 hover:shadow-md"
