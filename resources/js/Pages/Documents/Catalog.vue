@@ -237,10 +237,6 @@ tr:nth-child(even) td{background:#f8fafc}
           <p class="text-sm text-gray-500 mt-0.5">{{ ALL_DOCS.length }} modèles · 13 catégories · OHADA</p>
         </div>
         <div class="flex items-center gap-2">
-          <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold"
-                style="background:#EFF6FF;color:#2563EB">
-            ✨ Génération IA disponible
-          </span>
           <Link :href="route('documents.create')"
                 class="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white"
                 style="background:linear-gradient(135deg,#1E3A5F 0%,#2563EB 100%)">
@@ -346,17 +342,9 @@ tr:nth-child(even) td{background:#f8fafc}
                 :style="`background:${doc.catColor}`"
                 @click="createDoc(doc)"
               >
-                ✏️ Créer
+                Créer le document
               </button>
             </div>
-            <!-- Bouton IA -->
-            <button
-              class="mt-1.5 w-full rounded-lg py-1.5 text-[11px] font-semibold transition"
-              style="background:#EFF6FF;color:#2563EB;border:1px solid #BFDBFE"
-              @click="aiGenerate(doc)"
-            >
-              ✨ Générer avec l'IA
-            </button>
           </div>
 
           <!-- Aucun résultat -->
@@ -393,12 +381,6 @@ tr:nth-child(even) td{background:#f8fafc}
                 @click="createDoc(preview); closePreview()"
               >
                 ✏️ Créer ce document
-              </button>
-              <button
-                class="rounded-lg bg-blue-50 px-4 py-2 text-sm font-semibold text-blue-600 transition hover:bg-blue-100 border border-blue-200"
-                @click="aiGenerate(preview); closePreview()"
-              >
-                ✨ Générer avec l'IA
               </button>
               <button
                 class="rounded-lg bg-gray-100 px-3 py-2 text-sm font-bold text-gray-700 transition hover:bg-gray-200"
