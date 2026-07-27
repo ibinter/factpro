@@ -1925,6 +1925,404 @@ ${isMed ? '<div class="med-badge">⚠️ MISE EN DEMEURE — Recommandé avec Ac
 </div>`)
 }
 
+// ── TEMPLATE : Rapport / Document technique (service_report — 249 docs)
+function previewServiceReport(doc) {
+  const c = doc.catColor || '#7C3AED'
+  const css = `
+.page{max-width:680px;margin:0 auto;font-family:Arial,sans-serif;background:#fff}
+.rpt-top{background:linear-gradient(135deg,#1E1B4B 0%,#312E81 60%,${c} 100%);padding:24px 28px;color:#fff}
+.rpt-header{display:flex;justify-content:space-between;align-items:flex-start}
+.rpt-logo{display:flex;align-items:center;gap:10px}
+.rpt-icon{width:42px;height:42px;background:rgba(255,255,255,.2);border-radius:10px;display:grid;place-items:center;font-size:18px}
+.rpt-co{font-size:14px;font-weight:800}
+.rpt-co-sub{font-size:9.5px;opacity:.75;margin-top:3px}
+.rpt-ref{text-align:right}
+.rpt-type{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;background:rgba(255,255,255,.2);border-radius:20px;padding:3px 10px;display:inline-block;margin-bottom:6px}
+.rpt-title{font-size:19px;font-weight:900;line-height:1.2}
+.rpt-num{font-size:9.5px;opacity:.8;margin-top:4px}
+.rpt-meta{display:flex;gap:0;margin-top:18px}
+.rpt-meta-item{flex:1;text-align:center;border-right:1px solid rgba(255,255,255,.15);padding:0 12px}
+.rpt-meta-item:first-child{padding-left:0}
+.rpt-meta-item:last-child{border:none}
+.rpt-meta-val{font-size:12px;font-weight:700}
+.rpt-meta-lbl{font-size:8.5px;opacity:.7;margin-top:2px;text-transform:uppercase;letter-spacing:.08em}
+.rpt-body{padding:20px 28px}
+.rpt-section{margin-bottom:16px}
+.rpt-section-title{display:flex;align-items:center;gap:8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:${c};margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid ${c}20}
+.rpt-section-icon{width:22px;height:22px;background:${c}15;border-radius:6px;display:grid;place-items:center;font-size:10px}
+.rpt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.rpt-field{background:#F8FAFC;border-radius:8px;padding:10px 12px;border-left:3px solid ${c}}
+.rpt-field-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin-bottom:3px}
+.rpt-field-value{font-size:12px;font-weight:600;color:#1E293B}
+.rpt-content{background:#F8FAFC;border-radius:10px;padding:14px 16px;font-size:11.5px;color:#374151;line-height:1.7;margin-bottom:12px}
+.rpt-obs{background:#FFFBEB;border:1px solid #FCD34D;border-radius:8px;padding:12px 14px;font-size:11px;color:#78350F;line-height:1.6}
+.rpt-obs-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#92400E;margin-bottom:6px}
+.rpt-checklist{list-style:none;padding:0;margin:0}
+.rpt-checklist li{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid #F1F5F9;font-size:11px;color:#374151}
+.rpt-checklist li:last-child{border:none}
+.rpt-chk{width:16px;height:16px;border-radius:4px;display:grid;place-items:center;font-size:10px;flex-shrink:0;margin-top:1px}
+.rpt-chk.ok{background:#DCFCE7;color:#16A34A}
+.rpt-chk.warn{background:#FFFBEB;color:#D97706}
+.rpt-chk.info{background:#EFF6FF;color:#2563EB}
+.rpt-footer{background:#F1F5F9;padding:12px 28px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#64748B}
+.rpt-sig{display:flex;gap:16px}
+.rpt-sig-box{border:1.5px dashed #CBD5E1;border-radius:8px;padding:8px 14px;text-align:center;font-size:9.5px;color:#94A3B8;min-width:100px}
+.rpt-sig-line{height:28px}`
+  return wrap(css, `<div class="page">
+<div class="rpt-top">
+  <div class="rpt-header">
+    <div class="rpt-logo">
+      <div class="rpt-icon">${doc.icon}</div>
+      <div><div class="rpt-co">VOTRE SOCIETE SARL</div><div class="rpt-co-sub">Plateau, Abidjan 01 · NIF 2405812 A</div></div>
+    </div>
+    <div class="rpt-ref">
+      <div class="rpt-type">Document Officiel</div>
+      <div class="rpt-title">${doc.name}</div>
+      <div class="rpt-num">Ref: RPT-2026-0089 · 27/07/2026</div>
+    </div>
+  </div>
+  <div class="rpt-meta">
+    <div class="rpt-meta-item"><div class="rpt-meta-val">27/07/2026</div><div class="rpt-meta-lbl">Date emission</div></div>
+    <div class="rpt-meta-item"><div class="rpt-meta-val">CLIENT EXEMPLE SA</div><div class="rpt-meta-lbl">Concerne</div></div>
+    <div class="rpt-meta-item"><div class="rpt-meta-val">${doc.catLabel || 'Document'}</div><div class="rpt-meta-lbl">Categorie</div></div>
+    <div class="rpt-meta-item"><div class="rpt-meta-val">En vigueur</div><div class="rpt-meta-lbl">Statut</div></div>
+  </div>
+</div>
+<div class="rpt-body">
+  <div class="rpt-section">
+    <div class="rpt-section-title"><div class="rpt-section-icon">&#9432;</div>Informations generales</div>
+    <div class="rpt-grid">
+      <div class="rpt-field"><div class="rpt-field-label">Reference</div><div class="rpt-field-value">RPT-2026-0089</div></div>
+      <div class="rpt-field"><div class="rpt-field-label">Redige par</div><div class="rpt-field-value">M. KOUASSI Emmanuel</div></div>
+      <div class="rpt-field"><div class="rpt-field-label">Service</div><div class="rpt-field-value">${doc.catLabel || 'Direction Generale'}</div></div>
+      <div class="rpt-field"><div class="rpt-field-label">Version</div><div class="rpt-field-value">v1.0 — Final</div></div>
+    </div>
+  </div>
+  <div class="rpt-section">
+    <div class="rpt-section-title"><div class="rpt-section-icon">&#128203;</div>Contenu du document</div>
+    <div class="rpt-content">
+      Ce document constitue <strong>${doc.name.toLowerCase()}</strong> etabli conformement aux procedures internes en vigueur.
+      Il recapitule l'ensemble des elements pertinents et constitue une reference officielle pour les parties concernees.
+      <br><br>${doc.desc || 'Document professionnel etabli dans le cadre de vos activites.'}
+    </div>
+  </div>
+  <div class="rpt-section">
+    <div class="rpt-section-title"><div class="rpt-section-icon">&#10003;</div>Points verifies</div>
+    <ul class="rpt-checklist">
+      <li><div class="rpt-chk ok">&#10003;</div>Conformite aux normes applicables</li>
+      <li><div class="rpt-chk ok">&#10003;</div>Validation par le responsable habilite</li>
+      <li><div class="rpt-chk info">i</div>Archivage requis — Conservation 5 ans</li>
+      <li><div class="rpt-chk warn">!</div>Diffusion restreinte — Usage interne</li>
+    </ul>
+  </div>
+  <div class="rpt-obs">
+    <div class="rpt-obs-title">Observations &amp; Recommandations</div>
+    Document etabli en bonne et due forme. Toute modification ulterieure devra faire l'objet d'un avenant signe par les deux parties.
+  </div>
+</div>
+<div class="rpt-footer">
+  <span>Document genere le 27/07/2026 via IBIG FactPro</span>
+  <div class="rpt-sig">
+    <div class="rpt-sig-box"><div class="rpt-sig-line"></div>Redacteur</div>
+    <div class="rpt-sig-box"><div class="rpt-sig-line"></div>Approbateur</div>
+  </div>
+</div>
+</div>`)
+}
+
+// ── TEMPLATE : Bon de caisse / Voucher (cash_voucher — 14 docs)
+function previewVoucher(doc) {
+  const c = doc.catColor || '#0891B2'
+  const css = `
+.page{max-width:520px;margin:0 auto;font-family:Arial,sans-serif}
+.voucher{background:#fff;border:2px solid ${c};border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.12)}
+.v-header{background:${c};color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.v-brand{font-size:14px;font-weight:900}
+.v-brand-sub{font-size:9px;opacity:.8;margin-top:2px}
+.v-badge{background:rgba(255,255,255,.25);border-radius:8px;padding:6px 12px;text-align:right}
+.v-badge-type{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.v-badge-num{font-size:9px;opacity:.85;margin-top:2px}
+.v-perforation{height:0;border-top:2px dashed rgba(0,0,0,.15);margin:0 20px;position:relative}
+.v-perforation::before,.v-perforation::after{content:"";position:absolute;top:-8px;width:16px;height:16px;background:#F3F4F6;border-radius:50%;border:2px solid ${c}}
+.v-perforation::before{left:-28px}
+.v-perforation::after{right:-28px}
+.v-body{padding:20px}
+.v-amount-section{text-align:center;padding:16px 0;margin-bottom:16px}
+.v-amount-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#94A3B8;margin-bottom:6px}
+.v-amount{font-size:32px;font-weight:900;color:${c}}
+.v-amount-words{font-size:10.5px;color:#64748B;margin-top:4px;font-style:italic}
+.v-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.v-info-item{background:#F8FAFC;border-radius:8px;padding:10px 12px}
+.v-info-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin-bottom:3px}
+.v-info-value{font-size:12px;font-weight:700;color:#1E293B}
+.v-purpose{background:#F0F9FF;border-left:3px solid ${c};border-radius:0 8px 8px 0;padding:10px 14px;margin-bottom:14px}
+.v-purpose-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0369A1;margin-bottom:4px}
+.v-purpose-text{font-size:12px;color:#0F172A;font-weight:600}
+.v-sigs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.v-sig{border:1.5px dashed #CBD5E1;border-radius:8px;padding:10px;text-align:center}
+.v-sig-line{height:32px}
+.v-sig-label{font-size:9px;color:#94A3B8;margin-top:4px}
+.v-footer{background:#F8FAFC;padding:10px 20px;text-align:center;font-size:9px;color:#94A3B8;border-top:1px dashed #E2E8F0}`
+  return wrap(css, `<div class="page"><div class="voucher">
+<div class="v-header">
+  <div><div class="v-brand">${doc.icon} VOTRE SOCIETE SARL</div><div class="v-brand-sub">Plateau, Abidjan 01 · +225 27 22 33 44 55</div></div>
+  <div class="v-badge"><div class="v-badge-type">${doc.name}</div><div class="v-badge-num">N° BC-2026-0094</div></div>
+</div>
+<div class="v-perforation"></div>
+<div class="v-body">
+  <div class="v-amount-section">
+    <div class="v-amount-label">Montant du bon</div>
+    <div class="v-amount">85 000 XOF</div>
+    <div class="v-amount-words">Quatre-vingt-cinq mille francs CFA</div>
+  </div>
+  <div class="v-info-grid">
+    <div class="v-info-item"><div class="v-info-label">Beneficiaire</div><div class="v-info-value">KONE Albert</div></div>
+    <div class="v-info-item"><div class="v-info-label">Date</div><div class="v-info-value">27/07/2026</div></div>
+    <div class="v-info-item"><div class="v-info-label">Reference</div><div class="v-info-value">BC-2026-0094</div></div>
+    <div class="v-info-item"><div class="v-info-label">Mode paiement</div><div class="v-info-value">Mobile Money</div></div>
+  </div>
+  <div class="v-purpose">
+    <div class="v-purpose-label">Motif / Objet</div>
+    <div class="v-purpose-text">${doc.desc ? doc.desc.substring(0,80) : 'Reglement selon accord commercial en vigueur'}</div>
+  </div>
+  <div class="v-sigs">
+    <div class="v-sig"><div class="v-sig-line"></div><div class="v-sig-label">Signature Emetteur</div></div>
+    <div class="v-sig"><div class="v-sig-line"></div><div class="v-sig-label">Signature Beneficiaire</div></div>
+  </div>
+</div>
+<div class="v-footer">Bon valable 30 jours · IBIG FactPro · Document officiel</div>
+</div></div>`)
+}
+
+// ── TEMPLATE : Note de frais (expense_report — 12 docs)
+function previewExpenseReport(doc) {
+  const c = doc.catColor || '#0D9488'
+  const css = `
+.page{max-width:680px;margin:0 auto;font-family:Arial,sans-serif;background:#fff}
+.exp-top{background:#0F172A;padding:20px 28px;display:flex;justify-content:space-between;align-items:center}
+.exp-brand{display:flex;align-items:center;gap:10px}
+.exp-icon{width:40px;height:40px;background:${c};border-radius:8px;display:grid;place-items:center;font-size:18px;color:#fff}
+.exp-co{font-size:14px;font-weight:800;color:#fff}
+.exp-co-sub{font-size:9px;color:#94A3B8;margin-top:2px}
+.exp-doc{text-align:right}
+.exp-title{font-size:14px;font-weight:900;color:${c};text-transform:uppercase;letter-spacing:.04em}
+.exp-num{font-size:9.5px;color:#94A3B8;margin-top:3px}
+.exp-employee{background:#F0FDFA;border-bottom:2px solid ${c};padding:12px 28px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.emp-item label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#0D9488;display:block;margin-bottom:3px}
+.emp-item span{font-size:12px;font-weight:700;color:#0F172A}
+.exp-body{padding:16px 28px}
+table{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:11px}
+thead{background:#0F172A}
+th{color:#fff;padding:8px 10px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+th:last-child,td:last-child{text-align:right}
+td{padding:8px 10px;border-bottom:1px solid #F1F5F9;color:#374151}
+tr:nth-child(even) td{background:#F8FAFC}
+.cat-chip{display:inline-block;border-radius:12px;padding:2px 8px;font-size:9px;font-weight:700}
+.cat-transport{background:#EFF6FF;color:#2563EB}
+.cat-repas{background:#FFF7ED;color:#C2410C}
+.cat-hebergement{background:#F0FDF4;color:#15803D}
+.cat-divers{background:#F5F3FF;color:#7C3AED}
+.exp-summary{display:flex;justify-content:flex-end;margin-bottom:14px}
+.exp-totals{width:260px}
+.exp-tl{display:flex;justify-content:space-between;padding:5px 12px;font-size:11px;border-bottom:1px solid #F1F5F9;color:#475569}
+.exp-tf{display:flex;justify-content:space-between;padding:10px 12px;font-size:14px;font-weight:900;background:${c};color:#fff;border-radius:0 0 8px 8px}
+.exp-justif{background:#FFF7ED;border:1px solid #FCD34D;border-radius:8px;padding:10px 14px;font-size:10.5px;color:#78350F;margin-bottom:12px}
+.exp-sigs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.sig{border:1.5px dashed #CBD5E1;border-radius:8px;padding:10px;text-align:center;font-size:9.5px;color:#94A3B8}
+.sig-line{height:28px}`
+  return wrap(css, `<div class="page">
+<div class="exp-top">
+  <div class="exp-brand">
+    <div class="exp-icon">&#128176;</div>
+    <div><div class="exp-co">VOTRE SOCIETE SARL</div><div class="exp-co-sub">Plateau, Abidjan 01 · NIF 2405812 A</div></div>
+  </div>
+  <div class="exp-doc"><div class="exp-title">${doc.name}</div><div class="exp-num">N° NDF-2026-0047 · Mois: Juillet 2026</div></div>
+</div>
+<div class="exp-employee">
+  <div class="emp-item"><label>Employe</label><span>DIALLO Fatou</span></div>
+  <div class="emp-item"><label>Service</label><span>Commercial</span></div>
+  <div class="emp-item"><label>Periode</label><span>Juil. 2026</span></div>
+  <div class="emp-item"><label>Mission</label><span>Prospection Nord</span></div>
+</div>
+<div class="exp-body">
+<table>
+  <thead><tr><th>Date</th><th>Nature</th><th>Categorie</th><th>Justificatif</th><th>Montant</th></tr></thead>
+  <tbody>
+    <tr><td>03/07</td><td>Taxi aeroport A-B</td><td><span class="cat-chip cat-transport">Transport</span></td><td>Ticket taxi</td><td>12 000</td></tr>
+    <tr><td>03/07</td><td>Dejeuner client KONE SA</td><td><span class="cat-chip cat-repas">Repas</span></td><td>Facture hotel</td><td>28 500</td></tr>
+    <tr><td>04/07</td><td>Hotel Sofitel 2 nuits</td><td><span class="cat-chip cat-hebergement">Hebergement</span></td><td>Facture hotel</td><td>95 000</td></tr>
+    <tr><td>05/07</td><td>Location vehicule</td><td><span class="cat-chip cat-transport">Transport</span></td><td>Contrat loc.</td><td>45 000</td></tr>
+    <tr><td>06/07</td><td>Fournitures reunion</td><td><span class="cat-chip cat-divers">Divers</span></td><td>Facture</td><td>8 200</td></tr>
+  </tbody>
+</table>
+<div class="exp-summary"><div class="exp-totals">
+  <div class="exp-tl"><span>Transport</span><span>57 000 XOF</span></div>
+  <div class="exp-tl"><span>Repas</span><span>28 500 XOF</span></div>
+  <div class="exp-tl"><span>Hebergement</span><span>95 000 XOF</span></div>
+  <div class="exp-tl"><span>Divers</span><span>8 200 XOF</span></div>
+  <div class="exp-tf"><span>TOTAL A REMBOURSER</span><span>188 700 XOF</span></div>
+</div></div>
+<div class="exp-justif">&#128204; Tous les justificatifs originaux sont joints au present etat de frais. Conformite avec la politique voyages en vigueur.</div>
+<div class="exp-sigs">
+  <div class="sig"><div class="sig-line"></div>Employe</div>
+  <div class="sig"><div class="sig-line"></div>Responsable N+1</div>
+  <div class="sig"><div class="sig-line"></div>Direction / DAF</div>
+</div>
+</div></div>`)
+}
+
+// ── TEMPLATE : Bon de reception / Entree marchandises (goods_receipt — 11 docs)
+function previewGoodsReceipt(doc) {
+  const c = doc.catColor || '#B45309'
+  const css = `
+.page{max-width:680px;margin:0 auto;font-family:Arial,sans-serif;background:#fff}
+.gr-top{background:linear-gradient(90deg,#1C1917 0%,#292524 100%);padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
+.gr-brand{display:flex;align-items:center;gap:10px}
+.gr-icon{width:42px;height:42px;background:${c};border-radius:8px;display:grid;place-items:center;font-size:18px}
+.gr-co{font-size:14px;font-weight:800;color:#fff}
+.gr-co-sub{font-size:9px;color:#A8A29E;margin-top:2px}
+.gr-doc{text-align:right}
+.gr-doctype{font-size:14px;font-weight:900;color:${c};text-transform:uppercase;letter-spacing:.04em}
+.gr-docnum{font-size:9px;color:#A8A29E;margin-top:3px}
+.gr-info{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#FAFAF9;border-bottom:2px solid ${c}}
+.gr-info-item{padding:10px 14px;border-right:1px solid #E7E5E4}
+.gr-info-item:last-child{border:none}
+.gr-info-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#A8A29E;margin-bottom:3px}
+.gr-info-value{font-size:11.5px;font-weight:700;color:#1C1917}
+.gr-body{padding:16px 24px}
+.gr-parties{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.gr-party{background:#FAFAF9;border-radius:8px;padding:10px 14px;border-top:3px solid ${c}}
+.gr-party-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#A8A29E;margin-bottom:4px}
+.gr-party-name{font-size:13px;font-weight:800;color:#1C1917;margin-bottom:2px}
+.gr-party-info{font-size:10.5px;color:#78716C;line-height:1.6}
+table{width:100%;border-collapse:collapse;margin-bottom:12px}
+thead{background:#1C1917}
+th{color:#fff;padding:8px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:left}
+th:last-child,td:last-child{text-align:right}
+td{padding:8px 10px;border-bottom:1px solid #F5F5F4;font-size:11px;color:#374151}
+tr:nth-child(even) td{background:#FAFAF9}
+.status-badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:9px;font-weight:700}
+.s-ok{background:#DCFCE7;color:#15803D}
+.s-diff{background:#FFFBEB;color:#B45309}
+.s-ko{background:#FEE2E2;color:#DC2626}
+.gr-diff-box{background:#FFFBEB;border:1px solid ${c};border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:11px;color:#78350F}
+.gr-diff-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#92400E;margin-bottom:6px}
+.gr-sig-bar{background:#1C1917;border-radius:8px;padding:12px 16px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.gr-sig{text-align:center}
+.gr-sig-line{height:28px;border-bottom:1px solid rgba(255,255,255,.2);margin-bottom:6px}
+.gr-sig-lbl{font-size:9px;color:#A8A29E}`
+  return wrap(css, `<div class="page">
+<div class="gr-top">
+  <div class="gr-brand">
+    <div class="gr-icon">&#128230;</div>
+    <div><div class="gr-co">VOTRE SOCIETE SARL</div><div class="gr-co-sub">Zone Industrielle, Abidjan · RCCM CI-ABJ-2024-B-12345</div></div>
+  </div>
+  <div class="gr-doc"><div class="gr-doctype">${doc.name}</div><div class="gr-docnum">N° REC-2026-0215 · 27/07/2026</div></div>
+</div>
+<div class="gr-info">
+  <div class="gr-info-item"><div class="gr-info-label">Bon de Commande ref.</div><div class="gr-info-value">BC-2026-0198</div></div>
+  <div class="gr-info-item"><div class="gr-info-label">Date reception</div><div class="gr-info-value">27/07/2026 09:30</div></div>
+  <div class="gr-info-item"><div class="gr-info-label">Quai / Zone</div><div class="gr-info-value">Quai 3 — Entrepot A</div></div>
+  <div class="gr-info-item"><div class="gr-info-label">Statut</div><div class="gr-info-value" style="color:#D97706">&#9888; Ecart detecte</div></div>
+</div>
+<div class="gr-body">
+<div class="gr-parties">
+  <div class="gr-party"><div class="gr-party-lbl">Fournisseur</div><div class="gr-party-name">DISTRIBUTEUR CENTRAL SA</div><div class="gr-party-info">Zone Ind. Port-Bouet · +225 27 21 00 11 22<br>Ref fournisseur: FAC-DC-2026-4412</div></div>
+  <div class="gr-party"><div class="gr-party-lbl">Receptionnaire</div><div class="gr-party-name">TRAORE Moussa</div><div class="gr-party-info">Responsable Magasin<br>Badge: MGS-0042 · Tel: +225 05 77 88 99</div></div>
+</div>
+<table>
+  <thead><tr><th>Ref.</th><th>Designation</th><th>Qte commandee</th><th>Qte recue</th><th>Ecart</th><th>Etat</th></tr></thead>
+  <tbody>
+    <tr><td>REF-001</td><td>Ciment Portland 50kg</td><td>200 sacs</td><td>200 sacs</td><td>0</td><td><span class="status-badge s-ok">Conforme</span></td></tr>
+    <tr><td>REF-002</td><td>Fer a beton 10mm</td><td>50 barres</td><td>48 barres</td><td>-2</td><td><span class="status-badge s-diff">Ecart</span></td></tr>
+    <tr><td>REF-003</td><td>Cable electrique 2.5mm</td><td>10 rlx</td><td>10 rlx</td><td>0</td><td><span class="status-badge s-ok">Conforme</span></td></tr>
+    <tr><td>REF-004</td><td>Peinture ext. blanc 20L</td><td>30 bidons</td><td>0</td><td>-30</td><td><span class="status-badge s-ko">Manquant</span></td></tr>
+  </tbody>
+</table>
+<div class="gr-diff-box">
+  <div class="gr-diff-title">&#9888; Reserves emises</div>
+  2 barres de fer manquantes (REF-002) · 30 bidons peinture non livres (REF-004). Litige ouvert aupres du fournisseur. Reference: LIT-2026-0089.
+</div>
+<div class="gr-sig-bar">
+  <div class="gr-sig"><div class="gr-sig-line"></div><div class="gr-sig-lbl">Chauffeur / Livreur</div></div>
+  <div class="gr-sig"><div class="gr-sig-line"></div><div class="gr-sig-lbl">Magasinier</div></div>
+  <div class="gr-sig"><div class="gr-sig-line"></div><div class="gr-sig-lbl">Responsable Magasin</div></div>
+</div>
+</div></div>`)
+}
+
+// ── TEMPLATE : Bon de commande fournisseur (supplier_order — 6 docs)
+function previewSupplierOrder(doc) {
+  const c = doc.catColor || '#0369A1'
+  const css = `
+.page{max-width:680px;margin:0 auto;font-family:Arial,sans-serif;background:#fff}
+.so-top{background:linear-gradient(135deg,#0C4A6E 0%,${c} 100%);padding:22px 28px;display:flex;justify-content:space-between;align-items:flex-start;color:#fff}
+.so-left .co{font-size:15px;font-weight:900}
+.so-left .co-sub{font-size:9.5px;opacity:.75;margin-top:3px}
+.so-right{text-align:right}
+.so-doctype{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;background:rgba(255,255,255,.2);border-radius:16px;padding:3px 12px;display:inline-block;margin-bottom:6px}
+.so-num{font-size:22px;font-weight:900}
+.so-date{font-size:9.5px;opacity:.8;margin-top:4px}
+.so-urgency{background:#FFFBEB;border-left:4px solid #F59E0B;padding:8px 20px;font-size:10.5px;font-weight:700;color:#78350F}
+.so-body{padding:18px 28px}
+.so-parties{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.so-party{border:1px solid #E2E8F0;border-radius:10px;padding:12px 14px}
+.so-party.buyer{border-top:3px solid ${c}}
+.so-party.seller{border-top:3px solid #10B981}
+.so-plbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin-bottom:5px}
+.so-pname{font-size:13px;font-weight:800;color:#0F172A;margin-bottom:3px}
+.so-pinfo{font-size:10.5px;color:#64748B;line-height:1.65}
+table{width:100%;border-collapse:collapse;margin-bottom:14px}
+thead{background:#0C4A6E}
+th{color:#fff;padding:8px 10px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;text-align:left}
+th:last-child,td:last-child{text-align:right}
+td{padding:8px 10px;border-bottom:1px solid #F1F5F9;font-size:11px;color:#374151}
+tr:nth-child(even) td{background:#F8FAFC}
+.so-totals{display:flex;justify-content:flex-end;margin-bottom:14px}
+.so-tb{width:270px}
+.so-tl{display:flex;justify-content:space-between;padding:6px 12px;font-size:11.5px;border-bottom:1px solid #F1F5F9;color:#475569}
+.so-tf{display:flex;justify-content:space-between;padding:11px 12px;font-size:14px;font-weight:900;background:${c};color:#fff;border-radius:0 0 8px 8px}
+.so-terms{background:#F0F9FF;border-radius:8px;padding:10px 14px;font-size:10.5px;color:#0369A1;margin-bottom:12px;line-height:1.7}
+.so-sigs{display:flex;gap:12px}
+.so-sig{flex:1;border:1.5px dashed #CBD5E1;border-radius:8px;padding:10px;text-align:center;font-size:10px;color:#94A3B8}
+.so-sig-line{height:36px}`
+  return wrap(css, `<div class="page">
+<div class="so-top">
+  <div class="so-left"><div class="co">VOTRE SOCIETE SARL</div><div class="co-sub">Plateau, Abidjan 01 · NIF 2405812 A · RCCM CI-ABJ-2024-B-12345<br>Acheteur agree · Compte BICICI: CI61 0123 4567 8901 2345 6789 00</div></div>
+  <div class="so-right">
+    <div class="so-doctype">${doc.name}</div>
+    <div class="so-num">BCF-2026-0094</div>
+    <div class="so-date">Emis le 27/07/2026 · Livraison souhaitee: 10/08/2026</div>
+  </div>
+</div>
+<div class="so-urgency">&#128343; Livraison souhaitee avant le <strong>10/08/2026</strong> — Priorite NORMALE</div>
+<div class="so-body">
+<div class="so-parties">
+  <div class="so-party buyer"><div class="so-plbl">Acheteur</div><div class="so-pname">VOTRE SOCIETE SARL</div><div class="so-pinfo">Plateau, Abidjan 01<br>NIF 2405812 A · CNPS 123-456<br>service.achat@votresociete.ci</div></div>
+  <div class="so-party seller"><div class="so-plbl">Fournisseur</div><div class="so-pname">GROSSISTE NATIONAL SA</div><div class="so-pinfo">Zone Portuaire, Abidjan<br>+225 27 21 55 66 77<br>commandes@grossiste.ci</div></div>
+</div>
+<table>
+  <thead><tr><th>#</th><th>Ref. article</th><th>Designation</th><th>Qte</th><th>P.U. HT</th><th>Total HT</th></tr></thead>
+  <tbody>
+    <tr><td>01</td><td>ART-0042</td><td>Fournitures bureau — lot standard</td><td>10 boites</td><td>25 000</td><td>250 000</td></tr>
+    <tr><td>02</td><td>MAT-0118</td><td>Materiel informatique (accessoires)</td><td>5 u.</td><td>85 000</td><td>425 000</td></tr>
+    <tr><td>03</td><td>CON-0024</td><td>Consommables impression (toners)</td><td>12 u.</td><td>18 500</td><td>222 000</td></tr>
+  </tbody>
+</table>
+<div class="so-totals"><div class="so-tb">
+  <div class="so-tl"><span>Sous-total HT</span><span>897 000 XOF</span></div>
+  <div class="so-tl"><span>TVA 18%</span><span>161 460 XOF</span></div>
+  <div class="so-tf"><span>TOTAL TTC</span><span>1 058 460 XOF</span></div>
+</div></div>
+<div class="so-terms">&#128221; Conditions: Paiement 30 jours net · Livraison franco de port · En cas de rupture, informer sous 48h · Tout article non conforme sera retourne aux frais du fournisseur.</div>
+<div class="so-sigs">
+  <div class="so-sig"><div class="so-sig-line"></div>Service Achats</div>
+  <div class="so-sig"><div class="so-sig-line"></div>Direction</div>
+  <div class="so-sig"><div class="so-sig-line"></div>Fournisseur — Bon pour accord</div>
+</div>
+</div></div>`)
+}
+
 // ── TEMPLATE : Restauration / Ticket caisse
 function previewResto(doc) {
   const c = doc.catColor || '#F97316'
@@ -2133,50 +2531,121 @@ tr:nth-child(even) td{background:#F8FAFC}
 </div></div>`)
 }
 
-// ── Routeur principal — doc.id en priorite, catId en fallback
+// ── Routeur principal — factproType en priorite, catId en fallback pour invoices
 function previewHTML(doc) {
-  // Par doc.id (cas specifiques multi-categories)
-  const avoirIds = ['avoir', 'avoir_f', 'note_credit_f', 'fac_rect']
-  const commandeIds = ['bc_client', 'bc_f']
-  const demandeIds = ['dem_achat', 'dem_prix', 'consult_f', 'dem_conge', 'auto_abs', 'autoris']
-  const recuIds = ['recu', 'ticket', 'quittance_l', 'attest_paie', 'recu_scol']
+  // Lettres/relances — override total
   const lettreIds = ['relance', 'mise_dem', 'accuse']
+  if (lettreIds.includes(doc.id)) return previewLettre(doc)
 
-  if (avoirIds.includes(doc.id))    return previewAvoir(doc)
-  if (commandeIds.includes(doc.id)) return previewCommande(doc)
-  if (demandeIds.includes(doc.id))  return previewDemande(doc)
-  if (recuIds.includes(doc.id))     return previewRecu(doc)
-  if (lettreIds.includes(doc.id))   return previewLettre(doc)
+  // Routage par factproType (type metier du document)
+  switch (doc.factproType) {
 
-  // Par categorie
-  switch (doc.catId) {
-    case 'rh':         return previewHR(doc)
-    case 'admin':      return previewAdmin(doc)
-    case 'sav':        return previewSAV(doc)
-    case 'btp':        return previewBTP(doc)
-    case 'stock':      return previewStock(doc)
-    case 'immobilier': return previewImmobilier(doc)
-    case 'export':     return previewExport(doc)
-    case 'sante':      return previewSante(doc)
-    case 'education':  return previewEducation(doc)
-    case 'finance':    return previewFinance(doc)
-    case 'logistique': return previewDelivery(doc)
-    case 'resto':      return previewResto(doc)
-    case 'garage':     return previewGarage(doc)
-    case 'it':         return previewIT(doc)
-    case 'agri':       return previewDelivery(doc)
-    case 'enrg':       return previewFinance(doc)
-    case 'banq':       return previewFinance(doc)
-    case 'ong':        return previewAdmin(doc)
-    case 'cons':       return previewHR(doc)
-    case 'tour':       return previewImmobilier(doc)
-    case 'pharm':      return previewSante(doc)
-    case 'mine':       return previewExport(doc)
-    case 'achat':
-      return ['br_f', 'retour_f', 'bon_emb'].includes(doc.id)
-        ? previewDelivery(doc)
-        : previewInvoice(doc)
-    default:           return previewInvoice(doc)
+    // Rapports, fiches, etudes, attestations, certificats (249 docs)
+    case 'service_report':
+      // Exceptions : categories ayant leurs propres templates specialises
+      switch (doc.catId) {
+        case 'rh':        return previewHR(doc)
+        case 'admin':     return previewAdmin(doc)
+        case 'sav':       return previewSAV(doc)
+        case 'btp':       return previewBTP(doc)
+        case 'stock':     return previewStock(doc)
+        case 'immobilier':return previewImmobilier(doc)
+        case 'export':    return previewExport(doc)
+        case 'sante':     return previewSante(doc)
+        case 'education': return previewEducation(doc)
+        default:          return previewServiceReport(doc)
+      }
+
+    // Bons de caisse, vouchers, bons divers
+    case 'cash_voucher':
+      return previewVoucher(doc)
+
+    // Notes de frais, etats de depenses
+    case 'expense_report':
+      return previewExpenseReport(doc)
+
+    // Reception de marchandises, entree stock
+    case 'goods_receipt':
+      return previewGoodsReceipt(doc)
+
+    // Bons de commande fournisseur
+    case 'supplier_order':
+      return previewSupplierOrder(doc)
+
+    // Bons de commande client
+    case 'purchase_order':
+      return previewCommande(doc)
+
+    // Bons de livraison, expeditions, transferts
+    case 'delivery_note':
+      return previewDelivery(doc)
+
+    // Reçus, tickets, quittances
+    case 'receipt':
+      if (doc.catId === 'resto') return previewResto(doc)
+      return previewRecu(doc)
+
+    // Avoirs, notes de credit, retours
+    case 'credit_note':
+      return previewAvoir(doc)
+
+    // Bulletins de paie
+    case 'payslip':
+      return previewHR(doc)
+
+    // Devis, offres, propositions, proformas
+    case 'quote':
+    case 'proforma_invoice':
+      return previewInvoice(doc)  // isDevis=true logique interne
+
+    // Factures (invoice, advance_invoice, balance_invoice)
+    case 'invoice':
+    case 'advance_invoice':
+    case 'balance_invoice':
+      switch (doc.catId) {
+        case 'rh':         return previewHR(doc)
+        case 'admin':      return previewAdmin(doc)
+        case 'finance':    return previewFinance(doc)
+        case 'banq':       return previewFinance(doc)
+        case 'enrg':       return previewFinance(doc)
+        case 'sav':        return previewSAV(doc)
+        case 'btp':        return previewBTP(doc)
+        case 'immobilier': return previewImmobilier(doc)
+        case 'resto':      return previewResto(doc)
+        case 'garage':     return previewGarage(doc)
+        case 'it':         return previewIT(doc)
+        case 'sante':      return previewSante(doc)
+        case 'education':  return previewEducation(doc)
+        default:           return previewInvoice(doc)
+      }
+
+    default:
+      // Fallback par catId
+      switch (doc.catId) {
+        case 'rh':         return previewHR(doc)
+        case 'admin':      return previewAdmin(doc)
+        case 'sav':        return previewSAV(doc)
+        case 'btp':        return previewBTP(doc)
+        case 'stock':      return previewStock(doc)
+        case 'immobilier': return previewImmobilier(doc)
+        case 'export':     return previewExport(doc)
+        case 'sante':      return previewSante(doc)
+        case 'education':  return previewEducation(doc)
+        case 'finance':    return previewFinance(doc)
+        case 'logistique': return previewDelivery(doc)
+        case 'resto':      return previewResto(doc)
+        case 'garage':     return previewGarage(doc)
+        case 'it':         return previewIT(doc)
+        case 'agri':       return previewServiceReport(doc)
+        case 'enrg':       return previewFinance(doc)
+        case 'banq':       return previewFinance(doc)
+        case 'ong':        return previewServiceReport(doc)
+        case 'cons':       return previewServiceReport(doc)
+        case 'tour':       return previewVoucher(doc)
+        case 'pharm':      return previewSante(doc)
+        case 'mine':       return previewExport(doc)
+        default:           return previewInvoice(doc)
+      }
   }
 }
 </script>
