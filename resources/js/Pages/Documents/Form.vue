@@ -351,6 +351,8 @@ const compatibleTemplates = computed(() => {
 const typeAcceptsCosmeticTemplate = computed(() => compatibleTemplates.value.length > 0);
 const activeFamily      = ref(null);
 const families          = computed(() => [...new Set(compatibleTemplates.value.map(t => t.family))]);
+// Galerie réduite par défaut si un template est pré-sélectionné (venant du catalogue)
+const templateGalleryOpen = ref(!props.defaultTemplate);
 const filteredTemplates = computed(() => {
     if (!typeAcceptsCosmeticTemplate.value) return [];
     return activeFamily.value
@@ -517,107 +519,128 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
                     </div>
 
                     <!-- ═══════════════════════════════════════════════════════ -->
-                    <!-- ── GALERIE DE MODÈLES PDF avec aperçu ─────────────── -->
+                    <!-- ── STYLE VISUEL DU PDF ────────────────────────────── -->
                     <!-- ═══════════════════════════════════════════════════════ -->
                     <div v-if="templates.length && typeAcceptsCosmeticTemplate" class="pt-3 border-t border-gray-100">
-                        <div class="flex items-center justify-between mb-3">
-                            <div>
-                                <InputLabel value="Modèle visuel du document" class="!mb-0" />
-                                <p class="text-xs text-gray-400 mt-0.5">Cliquez sur 👁 pour voir l'aperçu complet avant de valider</p>
+
+                        <!-- Barre compacte (mode réduit) -->
+                        <div v-if="!templateGalleryOpen" class="flex items-center gap-3 rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5">
+                            <svg class="h-4 w-4 flex-shrink-0 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <div class="flex-1 min-w-0">
+                                <span class="text-xs text-gray-500">Style visuel PDF : </span>
+                                <span class="text-xs font-bold text-brand-700">
+                                    {{ templates.find(t => t.key === form.template_key)?.name || 'Modèle par défaut' }}
+                                </span>
                             </div>
-                            <span class="text-xs font-medium text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full">{{ templates.length }} modèles</span>
-                        </div>
-
-                        <!-- Filtres par famille -->
-                        <div class="mb-3 flex flex-wrap gap-1.5">
-                            <button type="button" @click="activeFamily = null"
-                                class="rounded-full px-3 py-1 text-xs font-medium transition-colors"
-                                :class="!activeFamily ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
-                                Tous ({{ templates.length }})
-                            </button>
-                            <button v-for="fam in families" :key="fam" type="button" @click="activeFamily = fam"
-                                class="rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize"
-                                :class="activeFamily === fam ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
-                                {{ fam }}
+                            <div v-if="form.template_key" class="flex items-center gap-1.5 flex-shrink-0">
+                                <span class="h-3 w-3 rounded-full border border-white shadow-sm" :style="{ backgroundColor: templates.find(t=>t.key===form.template_key)?.primary }"></span>
+                                <span class="h-3 w-3 rounded-full border border-white shadow-sm" :style="{ backgroundColor: templates.find(t=>t.key===form.template_key)?.accent }"></span>
+                            </div>
+                            <button type="button"
+                                class="text-xs text-brand-600 font-semibold hover:text-brand-800 flex-shrink-0 underline underline-offset-2"
+                                @click="templateGalleryOpen = true">
+                                Modifier
                             </button>
                         </div>
 
-                        <!-- Grille de cartes -->
-                        <div class="max-h-72 overflow-y-auto rounded-xl border border-gray-100 bg-gray-50 p-2.5">
-                            <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                                <div v-for="t in filteredTemplates" :key="t.key"
-                                    class="group relative rounded-xl border-2 overflow-hidden cursor-pointer transition-all duration-150"
-                                    :class="form.template_key === t.key
-                                        ? 'border-brand-500 shadow-md ring-1 ring-brand-400'
-                                        : 'border-gray-200 bg-white hover:border-brand-300 hover:shadow-sm'"
-                                    @click="form.template_key = t.key">
+                        <!-- Galerie complète (mode développé) -->
+                        <template v-else>
+                            <div class="flex items-center justify-between mb-3">
+                                <div>
+                                    <InputLabel value="Style visuel du PDF" class="!mb-0" />
+                                    <p class="text-xs text-gray-400 mt-0.5">Choisissez l'habillage graphique — le contenu reste identique</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-medium text-brand-600 bg-brand-50 px-2 py-0.5 rounded-full">{{ templates.length }} styles</span>
+                                    <button v-if="form.template_key" type="button"
+                                        class="text-xs text-gray-400 hover:text-gray-600"
+                                        @click="templateGalleryOpen = false">
+                                        ✕ Réduire
+                                    </button>
+                                </div>
+                            </div>
 
-                                    <!-- Mini aperçu document -->
-                                    <div class="relative h-24 w-full overflow-hidden" :style="{ background: t.secondary || '#f8fafc' }">
-                                        <!-- Bande header -->
-                                        <div class="absolute inset-x-0 top-0 h-5 flex items-center px-2 gap-1.5"
-                                            :style="{ backgroundColor: t.primary }">
-                                            <div class="h-2.5 w-2.5 rounded-full bg-white/30 flex-shrink-0"></div>
-                                            <div class="h-1.5 rounded bg-white/50 flex-grow"></div>
-                                            <div class="h-1.5 w-6 rounded bg-white/70"></div>
-                                        </div>
-                                        <!-- Corps simulé -->
-                                        <div class="absolute inset-x-2 top-7 space-y-1">
-                                            <div class="h-1 rounded" :style="{ backgroundColor: t.primary, opacity: 0.15, width: '70%' }"></div>
-                                            <div class="h-px rounded bg-gray-300 w-full"></div>
-                                            <div v-for="i in 3" :key="i" class="flex gap-1">
-                                                <div class="h-1 rounded bg-gray-300 flex-grow"></div>
-                                                <div class="h-1 w-6 rounded bg-gray-300"></div>
-                                                <div class="h-1 w-7 rounded bg-gray-300"></div>
-                                            </div>
-                                            <div class="h-px rounded bg-gray-300 w-full"></div>
-                                        </div>
-                                        <!-- Total bar -->
-                                        <div class="absolute inset-x-2 bottom-3 h-3 rounded flex items-center justify-end px-2"
-                                            :style="{ backgroundColor: t.primary }">
-                                            <div class="h-1 w-10 rounded bg-white/70"></div>
-                                        </div>
-                                        <!-- Bouton aperçu au survol -->
-                                        <button type="button"
-                                            class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all opacity-0 group-hover:opacity-100"
-                                            @click.stop="openPreview(t)">
-                                            <span class="bg-white text-gray-800 text-xs font-semibold rounded-full px-3 py-1 shadow flex items-center gap-1">
-                                                👁 Aperçu
-                                            </span>
-                                        </button>
-                                        <!-- Badge sélectionné -->
-                                        <div v-if="form.template_key === t.key"
-                                            class="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-white flex items-center justify-center shadow">
-                                            <svg class="h-2.5 w-2.5 text-brand-600" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                                            </svg>
-                                        </div>
-                                    </div>
+                            <!-- Filtres par famille -->
+                            <div class="mb-3 flex flex-wrap gap-1.5">
+                                <button type="button" @click="activeFamily = null"
+                                    class="rounded-full px-3 py-1 text-xs font-medium transition-colors"
+                                    :class="!activeFamily ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                                    Tous ({{ templates.length }})
+                                </button>
+                                <button v-for="fam in families" :key="fam" type="button" @click="activeFamily = fam"
+                                    class="rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize"
+                                    :class="activeFamily === fam ? 'bg-brand-600 text-white shadow-sm' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                                    {{ fam }}
+                                </button>
+                            </div>
 
-                                    <!-- Nom & famille -->
-                                    <div class="px-2 py-1.5 bg-white">
-                                        <div class="text-[10px] font-semibold leading-tight truncate"
-                                            :class="form.template_key === t.key ? 'text-brand-700' : 'text-gray-700'">
-                                            {{ t.name }}
-                                        </div>
-                                        <div class="flex items-center gap-1 mt-0.5">
-                                            <div class="flex -space-x-0.5">
-                                                <span class="h-2 w-2 rounded-full border border-white" :style="{ backgroundColor: t.primary }"></span>
-                                                <span class="h-2 w-2 rounded-full border border-white" :style="{ backgroundColor: t.accent }"></span>
+                            <!-- Grille de cartes -->
+                            <div class="max-h-72 overflow-y-auto rounded-xl border border-gray-100 bg-gray-50 p-2.5">
+                                <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                                    <div v-for="t in filteredTemplates" :key="t.key"
+                                        class="group relative rounded-xl border-2 overflow-hidden cursor-pointer transition-all duration-150"
+                                        :class="form.template_key === t.key
+                                            ? 'border-brand-500 shadow-md ring-1 ring-brand-400'
+                                            : 'border-gray-200 bg-white hover:border-brand-300 hover:shadow-sm'"
+                                        @click="form.template_key = t.key; templateGalleryOpen = false">
+
+                                        <!-- Mini aperçu document -->
+                                        <div class="relative h-24 w-full overflow-hidden" :style="{ background: t.secondary || '#f8fafc' }">
+                                            <div class="absolute inset-x-0 top-0 h-5 flex items-center px-2 gap-1.5"
+                                                :style="{ backgroundColor: t.primary }">
+                                                <div class="h-2.5 w-2.5 rounded-full bg-white/30 flex-shrink-0"></div>
+                                                <div class="h-1.5 rounded bg-white/50 flex-grow"></div>
+                                                <div class="h-1.5 w-6 rounded bg-white/70"></div>
                                             </div>
-                                            <span class="text-[9px] text-gray-400 capitalize truncate">{{ t.family }}</span>
+                                            <div class="absolute inset-x-2 top-7 space-y-1">
+                                                <div class="h-1 rounded" :style="{ backgroundColor: t.primary, opacity: 0.15, width: '70%' }"></div>
+                                                <div class="h-px rounded bg-gray-300 w-full"></div>
+                                                <div v-for="i in 3" :key="i" class="flex gap-1">
+                                                    <div class="h-1 rounded bg-gray-300 flex-grow"></div>
+                                                    <div class="h-1 w-6 rounded bg-gray-300"></div>
+                                                    <div class="h-1 w-7 rounded bg-gray-300"></div>
+                                                </div>
+                                                <div class="h-px rounded bg-gray-300 w-full"></div>
+                                            </div>
+                                            <div class="absolute inset-x-2 bottom-3 h-3 rounded flex items-center justify-end px-2"
+                                                :style="{ backgroundColor: t.primary }">
+                                                <div class="h-1 w-10 rounded bg-white/70"></div>
+                                            </div>
+                                            <button type="button"
+                                                class="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all opacity-0 group-hover:opacity-100"
+                                                @click.stop="openPreview(t)">
+                                                <span class="bg-white text-gray-800 text-xs font-semibold rounded-full px-3 py-1 shadow flex items-center gap-1">
+                                                    👁 Aperçu
+                                                </span>
+                                            </button>
+                                            <div v-if="form.template_key === t.key"
+                                                class="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-white flex items-center justify-center shadow">
+                                                <svg class="h-2.5 w-2.5 text-brand-600" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                                </svg>
+                                            </div>
+                                        </div>
+
+                                        <!-- Nom & famille -->
+                                        <div class="px-2 py-1.5 bg-white">
+                                            <div class="text-[10px] font-semibold leading-tight truncate"
+                                                :class="form.template_key === t.key ? 'text-brand-700' : 'text-gray-700'">
+                                                {{ t.name }}
+                                            </div>
+                                            <div class="flex items-center gap-1 mt-0.5">
+                                                <div class="flex -space-x-0.5">
+                                                    <span class="h-2 w-2 rounded-full border border-white" :style="{ backgroundColor: t.primary }"></span>
+                                                    <span class="h-2 w-2 rounded-full border border-white" :style="{ backgroundColor: t.accent }"></span>
+                                                </div>
+                                                <span class="text-[9px] text-gray-400 capitalize truncate">{{ t.family }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Modèle sélectionné -->
-                        <div v-if="form.template_key" class="mt-2 flex items-center gap-2 text-xs text-brand-700 bg-brand-50 rounded-lg px-3 py-2">
-                            <svg class="h-3.5 w-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-                            Modèle sélectionné : <strong>{{ templates.find(t => t.key === form.template_key)?.name }}</strong>
-                            <button type="button" @click="form.template_key = ''" class="ml-auto text-gray-400 hover:text-red-500 text-xs">✕</button>
-                        </div>
+                        </template>
                     </div>
 
                     <!-- ═══════════════════════════════════════════════════════ -->
