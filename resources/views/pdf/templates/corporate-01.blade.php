@@ -94,28 +94,33 @@
     .notes-block .title { font-weight: bold; color: #002D5B; margin-bottom: 4px; }
 
     /* Zone de signatures */
-    .sig-section { margin-top: 28px; }
+    .sig-section { margin-top: 30px; }
     .sig-section .sig-heading {
         font-size: 7.5px; text-transform: uppercase; color: #6B7C93;
-        letter-spacing: 1px; margin-bottom: 10px;
-        border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;
+        letter-spacing: 1px; margin-bottom: 12px;
+        border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;
     }
     .sig-row { width: 100%; border-collapse: collapse; }
-    .sig-row td { width: 50%; vertical-align: top; padding: 0 8px; }
-    .sig-row td:first-child { padding-left: 0; border-right: 1px solid #e2e8f0; }
+    .sig-row td { width: 50%; vertical-align: top; padding: 0 10px; }
+    .sig-row td:first-child { padding-left: 0; border-right: 1px solid #e5eaf1; }
     .sig-row td:last-child { padding-right: 0; }
-    .sig-label { font-size: 8px; color: #6B7C93; text-align: center; margin-bottom: 6px; }
+    .sig-label { font-size: 8.5px; color: #4a5568; text-align: center; margin-bottom: 8px; font-weight: bold; }
     .sig-box {
-        border: 1px solid #c8d3e0; border-radius: 4px;
-        height: 55px; background: #fafbfc;
+        border: 1px solid #c8d3e0; border-radius: 5px;
+        height: 110px; background: #fafbfc;
         position: relative;
     }
-    .sig-box-inner { padding: 4px 8px; }
-    .sig-name-line {
-        border-bottom: 1px dashed #c8d3e0; margin: 0 8px;
-        position: absolute; bottom: 16px; left: 0; right: 0;
+    .sig-photo-zone {
+        position: absolute; top: 8px; left: 0; right: 0;
+        min-height: 55px; text-align: center;
     }
-    .sig-name-label { font-size: 6.5px; color: #aaa; position: absolute; bottom: 4px; left: 8px; }
+    .sig-photo-zone img { max-height: 50px; max-width: 80%; display: block; margin: 0 auto; }
+    .sig-name-line {
+        border-bottom: 1px dashed #c8d3e0;
+        position: absolute; bottom: 26px; left: 10px; right: 10px;
+    }
+    .sig-date-label { font-size: 6.5px; color: #9aa7b8; position: absolute; bottom: 14px; left: 10px; }
+    .sig-name-label { font-size: 6.5px; color: #9aa7b8; position: absolute; bottom: 4px; left: 10px; }
 </style>
 </head>
 <body>
@@ -316,38 +321,65 @@
     </div>
     @endif
 
+    @php
+        $sigShowEmitter = $sigConfig['show_emitter'] ?? true;
+        $sigShowClient  = $sigConfig['show_client']  ?? true;
+        $sigMode        = $sigConfig['mode']          ?? 'manual';
+        $sigMention     = $sigConfig['mention']       ?? null;
+        $emitterLabel   = $sigConfig['emitter_label'] ?? 'Signature et cachet de l\'émetteur';
+        $clientLabel    = $sigConfig['client_label']  ?? 'Bon pour accord — Signature du client';
+        $showSigSection = $sigShowEmitter || $sigShowClient;
+    @endphp
+
+    @if($showSigSection)
     {{-- Zone de signatures --}}
     <div class="sig-section">
         <div class="sig-heading">Signatures</div>
         <table class="sig-row">
             <tr>
-                <td>
-                    <div class="sig-label">{{ $signatureLabels[0] ?? 'Signature et cachet de l\'émetteur' }}</div>
+                @if($sigShowEmitter)
+                <td @if(!$sigShowClient) style="padding-right:0; border-right:none;" @endif>
+                    <div class="sig-label">{{ $emitterLabel }}</div>
                     <div class="sig-box">
-                        @if(!empty($document->signature_path))
-                        <div class="sig-box-inner">
-                            <img src="{{ $signatureBase64 ?? '' }}" style="max-height:40px; max-width:90%; display:block; margin:0 auto;" alt="Signature">
+                        @if(in_array($sigMode, ['digital','both']) && !empty($sigDigitalBase64))
+                        <div class="sig-photo-zone">
+                            <img src="{{ $sigDigitalBase64 }}" alt="Signature">
+                        </div>
+                        @endif
+                        @if(!empty($sigStampBase64))
+                        <div style="position:absolute; top:8px; right:8px;">
+                            <img src="{{ $sigStampBase64 }}" style="height:45px; width:45px; opacity:0.8;" alt="Cachet">
                         </div>
                         @endif
                         <div class="sig-name-line"></div>
-                        <div class="sig-name-label">Nom, date et cachet</div>
+                        <div class="sig-date-label">Date :</div>
+                        <div class="sig-name-label">Nom et cachet</div>
                     </div>
                 </td>
-                <td>
-                    <div class="sig-label">{{ $signatureLabels[1] ?? 'Bon pour accord — Signature du client' }}</div>
+                @endif
+                @if($sigShowClient)
+                <td @if(!$sigShowEmitter) style="padding-left:0; border-right:none;" @endif>
+                    <div class="sig-label">{{ $clientLabel }}</div>
                     <div class="sig-box">
                         <div class="sig-name-line"></div>
-                        <div class="sig-name-label">Nom, date et cachet</div>
+                        <div class="sig-date-label">Date :</div>
+                        <div class="sig-name-label">Nom et cachet</div>
                     </div>
                 </td>
+                @endif
             </tr>
         </table>
     </div>
+    @endif
 
     {{-- Mention légale --}}
-    <div style="margin-top:16px; font-size:7px; color:#9aa7b8; border-top:1px solid #e2e8f0; padding-top:6px; text-align:center;">
-        Tout retard de paiement entraîne des pénalités de retard au taux légal en vigueur.
-        Document généré et certifié par <strong>IBIG FactPro</strong>.
+    <div style="margin-top:14px; font-size:7px; color:#9aa7b8; border-top:1px solid #e2e8f0; padding-top:6px; text-align:center;">
+        @if($sigMention)
+            {!! nl2br(e($sigMention)) !!}
+        @else
+            Tout retard de paiement entraîne des pénalités de retard au taux légal en vigueur.
+            Document généré et certifié par <strong>IBIG FactPro</strong>.
+        @endif
     </div>
 
 </main>

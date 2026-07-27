@@ -326,7 +326,7 @@ const saveQuickCustomer = async () => {
 
 // ── Templates ─────────────────────────────────────────────────────────────────
 const COSMETIC_TEMPLATE_TYPES = [
-    'invoice','credit_note','proforma','advance_invoice','deposit_invoice',
+    'invoice','credit_note','proforma','advance_invoice','deposit_invoice','balance_invoice',
     'recurring_invoice','final_invoice','corrective_invoice','tax_invoice','commercial_invoice',
     'quote','price_offer','service_quote','work_quote','repair_estimate',
     'delivery_note','packing_list','shipping_order','picking_list',

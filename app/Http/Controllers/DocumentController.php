@@ -474,6 +474,33 @@ class DocumentController extends Controller
             }
         }
 
+        // Signature & cachet en base64
+        $sigDigitalBase64 = null;
+        $sigStampBase64   = null;
+        $company = $document->company;
+        if ($company->signature_path) {
+            $p = Storage::disk('public')->path($company->signature_path);
+            if (file_exists($p)) {
+                $sigDigitalBase64 = 'data:' . (mime_content_type($p) ?: 'image/png') . ';base64,' . base64_encode(file_get_contents($p));
+            }
+        }
+        if ($company->stamp_path) {
+            $p = Storage::disk('public')->path($company->stamp_path);
+            if (file_exists($p)) {
+                $sigStampBase64 = 'data:' . (mime_content_type($p) ?: 'image/png') . ';base64,' . base64_encode(file_get_contents($p));
+            }
+        }
+
+        // Config signature (paramètres société)
+        $sigConfig = [
+            'show_emitter'  => (bool) ($company->sig_show_emitter  ?? true),
+            'show_client'   => (bool) ($company->sig_show_client   ?? true),
+            'mode'          => $company->sig_mode           ?? 'manual',
+            'mention'       => $company->sig_custom_mention ?? null,
+            'emitter_label' => $company->sig_emitter_label  ?: 'Signature et cachet de l\'émetteur',
+            'client_label'  => $company->sig_client_label   ?: 'Bon pour accord — Signature du client',
+        ];
+
         // Couleurs dynamiques : custom sur le document > défaut du template > défaut moteur
         $templateConfig = config("pdf_templates.{$document->template_key}", []);
         $primaryColor   = $document->template_color_primary   ?: ($templateConfig['primary']   ?? $engineConfig['primary_color']);
@@ -481,15 +508,18 @@ class DocumentController extends Controller
         $accentColor    = $document->template_color_accent    ?: ($templateConfig['accent']    ?? '#f0c040');
 
         $pdf = Pdf::loadView($viewName, [
-            'document'        => $document,
-            'company'         => $document->company,
-            'logoBase64'      => $logoBase64,
-            'qrDataUri'       => $qr->forDocument($document),
-            'watermark'       => $document->trial_watermark ? config('factpro.trial.watermark_text') : null,
-            'primaryColor'    => $primaryColor,
-            'secondaryColor'  => $secondaryColor,
-            'accentColor'     => $accentColor,
-            'signatureLabels' => $engineConfig['signature_labels'] ?? [],
+            'document'          => $document,
+            'company'           => $company,
+            'logoBase64'        => $logoBase64,
+            'sigDigitalBase64'  => $sigDigitalBase64,
+            'sigStampBase64'    => $sigStampBase64,
+            'sigConfig'         => $sigConfig,
+            'qrDataUri'         => $qr->forDocument($document),
+            'watermark'         => $document->trial_watermark ? config('factpro.trial.watermark_text') : null,
+            'primaryColor'      => $primaryColor,
+            'secondaryColor'    => $secondaryColor,
+            'accentColor'       => $accentColor,
+            'signatureLabels'   => $engineConfig['signature_labels'] ?? [],
         ])->setPaper($engineConfig['format'], $engineConfig['orientation']);
 
         return $pdf->stream($document->number.'.pdf');
@@ -501,7 +531,7 @@ class DocumentController extends Controller
      * et doivent toujours utiliser leur vue engine — jamais un layout facture.
      */
     private const COSMETIC_TEMPLATE_TYPES = [
-        'invoice', 'credit_note', 'proforma', 'advance_invoice', 'deposit_invoice',
+        'invoice', 'credit_note', 'proforma', 'advance_invoice', 'deposit_invoice', 'balance_invoice',
         'recurring_invoice', 'final_invoice', 'corrective_invoice', 'tax_invoice',
         'commercial_invoice',
         'quote', 'price_offer', 'service_quote', 'work_quote', 'repair_estimate',

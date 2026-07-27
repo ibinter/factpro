@@ -223,9 +223,15 @@ class CompanyController extends Controller
         $this->authorizeManage($user, $company);
 
         $data = $request->validate([
-            'show_signature'   => 'boolean',
-            'show_stamp'       => 'boolean',
-            'signature_label'  => 'nullable|string|max:100',
+            'show_signature'      => 'boolean',
+            'show_stamp'          => 'boolean',
+            'signature_label'     => 'nullable|string|max:100',
+            'sig_show_emitter'    => 'boolean',
+            'sig_show_client'     => 'boolean',
+            'sig_mode'            => 'nullable|in:manual,digital,both',
+            'sig_custom_mention'  => 'nullable|string|max:500',
+            'sig_emitter_label'   => 'nullable|string|max:150',
+            'sig_client_label'    => 'nullable|string|max:150',
         ]);
 
         $company->update($data);

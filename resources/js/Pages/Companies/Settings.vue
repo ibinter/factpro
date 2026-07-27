@@ -102,9 +102,15 @@ const submitStamp = () => {
 
 // Paramètres signature/cachet
 const sigSettings = useForm({
-    show_signature:  props.company.show_signature  ?? false,
-    show_stamp:      props.company.show_stamp      ?? false,
-    signature_label: props.company.signature_label ?? '',
+    show_signature:     props.company.show_signature     ?? false,
+    show_stamp:         props.company.show_stamp         ?? false,
+    signature_label:    props.company.signature_label    ?? '',
+    sig_show_emitter:   props.company.sig_show_emitter   ?? true,
+    sig_show_client:    props.company.sig_show_client    ?? true,
+    sig_mode:           props.company.sig_mode           ?? 'manual',
+    sig_custom_mention: props.company.sig_custom_mention ?? '',
+    sig_emitter_label:  props.company.sig_emitter_label  ?? '',
+    sig_client_label:   props.company.sig_client_label   ?? '',
 });
 const saveSigSettings = () => {
     sigSettings.patch(route('companies.signature-settings'), { preserveScroll: true });
@@ -281,30 +287,136 @@ const saveSigSettings = () => {
                         Ajoutez votre signature numérique et votre tampon d'entreprise. Ils apparaîtront automatiquement sur les PDF générés si l'option est activée.
                     </p>
 
-                    <!-- Activation + libellé -->
-                    <div class="mt-5 rounded-lg bg-gray-50 p-4 space-y-3">
-                        <div class="flex items-center gap-3">
+                    <!-- Zones de signature sur les PDF -->
+                    <div class="mt-5 rounded-lg bg-gray-50 p-4 space-y-4">
+                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Zones de signature sur les PDF</p>
+
+                        <!-- Emetteur / Client -->
+                        <div class="grid sm:grid-cols-2 gap-4">
+                            <div class="rounded-md border border-gray-200 bg-white p-3">
+                                <label class="flex items-center gap-2 cursor-pointer mb-2">
+                                    <input type="checkbox" v-model="sigSettings.sig_show_emitter" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+                                    <span class="text-sm text-gray-700 font-medium">Zone signature émetteur</span>
+                                </label>
+                                <div v-if="sigSettings.sig_show_emitter">
+                                    <label class="block text-xs text-gray-500 mb-1">Libellé (facultatif)</label>
+                                    <input v-model="sigSettings.sig_emitter_label" type="text"
+                                        placeholder="Ex : Signature et cachet du Directeur"
+                                        class="block w-full rounded border-gray-300 text-xs shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                </div>
+                            </div>
+                            <div class="rounded-md border border-gray-200 bg-white p-3">
+                                <label class="flex items-center gap-2 cursor-pointer mb-2">
+                                    <input type="checkbox" v-model="sigSettings.sig_show_client" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+                                    <span class="text-sm text-gray-700 font-medium">Zone signature client</span>
+                                </label>
+                                <div v-if="sigSettings.sig_show_client">
+                                    <label class="block text-xs text-gray-500 mb-1">Libellé (facultatif)</label>
+                                    <input v-model="sigSettings.sig_client_label" type="text"
+                                        placeholder="Ex : Bon pour accord — Signature client"
+                                        class="block w-full rounded border-gray-300 text-xs shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Mode de signature -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-2">Type de signature accepté</label>
+                            <div class="flex flex-wrap gap-3">
+                                <label class="flex items-center gap-1.5 cursor-pointer text-sm text-gray-700">
+                                    <input type="radio" v-model="sigSettings.sig_mode" value="manual" class="text-brand-600 focus:ring-brand-500" />
+                                    Manuelle uniquement
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer text-sm text-gray-700">
+                                    <input type="radio" v-model="sigSettings.sig_mode" value="digital" class="text-brand-600 focus:ring-brand-500" />
+                                    Numérique uniquement
+                                </label>
+                                <label class="flex items-center gap-1.5 cursor-pointer text-sm text-gray-700">
+                                    <input type="radio" v-model="sigSettings.sig_mode" value="both" class="text-brand-600 focus:ring-brand-500" />
+                                    Manuelle ou numérique
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Signature numérique sur PDF (ancienne option) -->
+                        <div class="flex items-center gap-3 pt-1 border-t border-gray-200">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="checkbox" v-model="sigSettings.show_signature" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
-                                <span class="text-sm text-gray-700 font-medium">Afficher la signature sur les PDF</span>
+                                <span class="text-sm text-gray-700">Imprimer ma signature numérique sur les PDF</span>
                             </label>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <label class="flex items-center gap-2 cursor-pointer">
+                            <label class="flex items-center gap-2 cursor-pointer ml-4">
                                 <input type="checkbox" v-model="sigSettings.show_stamp" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
-                                <span class="text-sm text-gray-700 font-medium">Afficher le cachet sur les PDF</span>
+                                <span class="text-sm text-gray-700">Imprimer mon cachet sur les PDF</span>
                             </label>
                         </div>
                         <div v-if="sigSettings.show_signature">
-                            <label class="block text-xs font-medium text-gray-700 mb-1">Libellé signataire</label>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Libellé signataire (signature numérique)</label>
                             <input v-model="sigSettings.signature_label" type="text"
-                                placeholder="Ex : Le Directeur Général, Signé par..."
+                                placeholder="Ex : Le Directeur Général"
                                 class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500 max-w-xs" />
                         </div>
+                    </div>
+
+                    <!-- Zone signatures sur PDF -->
+                    <div class="mt-5 rounded-lg border border-brand-100 bg-brand-50/60 p-4 space-y-4">
+                        <h4 class="text-sm font-bold text-brand-800">⚙️ Paramètres zone signature (PDF)</h4>
+
+                        <!-- Zones à afficher -->
+                        <div>
+                            <p class="text-xs font-semibold text-gray-600 mb-2">Zones à afficher sur le document</p>
+                            <div class="flex flex-wrap gap-4">
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" v-model="sigSettings.sig_show_emitter" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+                                    <span class="text-sm text-gray-700">Zone signature émetteur</span>
+                                </label>
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" v-model="sigSettings.sig_show_client" class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+                                    <span class="text-sm text-gray-700">Zone signature client</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Mode signature -->
+                        <div>
+                            <p class="text-xs font-semibold text-gray-600 mb-2">Mode de signature</p>
+                            <div class="flex flex-wrap gap-4">
+                                <label v-for="opt in [{v:'manual',l:'Manuelle (zone vide)'},{v:'digital',l:'Numérique (image uploadée)'},{v:'both',l:'Les deux'}]"
+                                    :key="opt.v" class="flex items-center gap-1.5 cursor-pointer">
+                                    <input type="radio" :value="opt.v" v-model="sigSettings.sig_mode" class="text-brand-600 focus:ring-brand-500" />
+                                    <span class="text-sm text-gray-700">{{ opt.l }}</span>
+                                </label>
+                            </div>
+                            <p class="text-[11px] text-gray-400 mt-1">En mode numérique, votre signature uploadée s'affiche automatiquement dans la zone émetteur.</p>
+                        </div>
+
+                        <!-- Libellés personnalisés -->
+                        <div class="grid gap-3 sm:grid-cols-2">
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Libellé de la zone émetteur</label>
+                                <input v-model="sigSettings.sig_emitter_label" type="text"
+                                    placeholder="Signature et cachet de l'émetteur"
+                                    class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-gray-700 mb-1">Libellé de la zone client</label>
+                                <input v-model="sigSettings.sig_client_label" type="text"
+                                    placeholder="Bon pour accord — Signature du client"
+                                    class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                            </div>
+                        </div>
+
+                        <!-- Mention légale personnalisée -->
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Mention légale personnalisée <span class="text-gray-400 font-normal">(laisser vide = mention par défaut)</span></label>
+                            <textarea v-model="sigSettings.sig_custom_mention" rows="2"
+                                placeholder="Ex : Tout retard de paiement entraîne des pénalités au taux légal en vigueur..."
+                                class="block w-full rounded-md border-gray-300 text-xs shadow-sm focus:border-brand-500 focus:ring-brand-500"></textarea>
+                        </div>
+
                         <div class="flex justify-end">
                             <PrimaryButton @click="saveSigSettings" :disabled="sigSettings.processing" class="text-xs py-1.5 px-3">
                                 <span v-if="sigSettings.recentlySuccessful" class="text-green-300 mr-1">✓</span>
-                                Sauvegarder les réglages
+                                Sauvegarder les réglages de signature
                             </PrimaryButton>
                         </div>
                     </div>
