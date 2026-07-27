@@ -142,14 +142,11 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                 <NavLink :href="route('documents.index')" :active="route().current('documents.*')">
                                     Documents
                                 </NavLink>
-                                <NavLink :href="route('documents.catalog')" :active="route().current('documents.catalog')">
-                                    🗂️ Catalogue
-                                </NavLink>
                                 <NavLink :href="route('customers.index')" :active="route().current('customers.*')">
                                     Clients
                                 </NavLink>
                                 <NavLink :href="route('products.index')" :active="route().current('products.*')">
-                                    Catalogue
+                                    Produits
                                 </NavLink>
                                 <!-- Menu Plus : mega-menu 2 colonnes -->
                                 <div class="inline-flex items-center">
@@ -386,9 +383,6 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('documents.index')" :active="route().current('documents.*')">
                             Documents
-                        </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('documents.catalog')" :active="route().current('documents.catalog')">
-                            🗂️ Catalogue
                         </ResponsiveNavLink>
                         <ResponsiveNavLink :href="route('customers.index')" :active="route().current('customers.*')">
                             Clients
