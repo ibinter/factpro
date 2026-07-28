@@ -237,7 +237,7 @@ function sortIcon(key) {
 // ── Sélection multiple ─────────────────────────────────────────────────────
 const selected   = ref(new Set());
 const allChecked = computed(() =>
-    documents.data.length > 0 && documents.data.every(d => selected.value.has(d.id))
+    props.documents.data.length > 0 && props.documents.data.every(d => selected.value.has(d.id))
 );
 
 function toggleAll() {
@@ -254,23 +254,24 @@ function toggleSelect(id) {
     selected.value = s;
 }
 
-async function bulkMarkPaid() {
+function bulkMarkPaid() {
     if (!selected.value.size) return;
     if (!confirm(`Marquer ${selected.value.size} document(s) comme payé(s) ?`)) return;
-    await router.post(route('documents.bulk-status'), {
-        ids: [...selected.value],
-        status: 'paid',
+    router.post(route('documents.bulk-status'), { ids: [...selected.value], status: 'paid' }, {
+        onSuccess: () => { selected.value = new Set(); }
     });
-    selected.value = new Set();
 }
 
-async function bulkDelete() {
+function bulkDelete() {
     if (!selected.value.size) return;
     if (!confirm(`Supprimer ${selected.value.size} document(s) ? Cette action est irréversible.`)) return;
-    await router.post(route('documents.bulk-delete'), {
-        ids: [...selected.value],
+    router.post(route('documents.bulk-delete'), { ids: [...selected.value] }, {
+        onSuccess: () => { selected.value = new Set(); }
     });
-    selected.value = new Set();
+}
+
+function bulkExportUrl() {
+    return route('documents.export.excel') + '?ids=' + [...selected.value].join(',');
 }
 </script>
 
@@ -506,15 +507,15 @@ async function bulkDelete() {
 
                 <!-- ── Toolbar sélection groupée ─────────────────────────── -->
                 <Transition name="menu-drop">
-                    <div v-if="selected.size > 0"
+                    <div v-if="selected.value.size > 0"
                         class="sticky top-0 z-20 flex items-center gap-3 rounded-xl bg-brand-900 px-5 py-3 shadow-lg">
-                        <span class="text-sm font-semibold text-white">{{ selected.size }} sélectionné{{ selected.size > 1 ? 's' : '' }}</span>
+                        <span class="text-sm font-semibold text-white">{{ selected.value.size }} sélectionné{{ selected.value.size > 1 ? 's' : '' }}</span>
                         <div class="ml-auto flex items-center gap-2">
                             <button @click="bulkMarkPaid" type="button"
                                 class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors">
                                 ✅ Marquer payé
                             </button>
-                            <a :href="route('documents.export.excel') + '?ids=' + [...selected].join(',')"
+                            <a :href="bulkExportUrl()"
                                 class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 hover:bg-white/20 px-3 py-1.5 text-xs font-semibold text-white transition-colors">
                                 📊 Exporter
                             </a>
@@ -522,7 +523,7 @@ async function bulkDelete() {
                                 class="inline-flex items-center gap-1.5 rounded-lg bg-red-500 hover:bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors">
                                 🗑 Supprimer
                             </button>
-                            <button @click="selected = new Set()" type="button"
+                            <button @click="selected.value = new Set()" type="button"
                                 class="ml-2 text-white/60 hover:text-white text-xs transition-colors">
                                 Annuler
                             </button>
