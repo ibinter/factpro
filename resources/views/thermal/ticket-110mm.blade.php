@@ -23,19 +23,6 @@
         $taxGroups[$rate]['tax']  += (float) $line->line_total - $base;
     }
 
-    // Calcul de la hauteur côté PHP (Chrome ignore @page auto et les mises à jour JS)
-    $lh110 = 4.5; // ligne en mm sur 110mm
-    $oneTicket110 = 12
-        + 5 * $lh110  // en-tête société
-        + 3 * $lh110  // n° doc + date + client
-        + ($document->lines->count() * 2 * $lh110)
-        + (count($taxGroups) + 3) * $lh110  // TVA détail + totaux
-        + ($document->payments->count() * $lh110)
-        + 32  // QR
-        + 15  // pied
-        + ($watermark ? $lh110 : 0);
-    $ticketH110 = (int) ceil($oneTicket110 * $copies + ($copies - 1) * 10 + 8);
-    $ticketH110 = max(150, $ticketH110);
 @endphp
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -104,16 +91,15 @@
     @media print {
         .no-print { display: none !important; }
         html, body {
-            background: #fff;
-            margin: 0; padding: 0;
-            width: 104mm;
+            background: #fff !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 104mm !important;
         }
-        .ticket { margin: 0; box-shadow: none; page-break-inside: avoid; }
+        .ticket { width: 104mm !important; margin: 0 !important; box-shadow: none !important; page-break-inside: avoid; }
         .cut { margin: 1mm 0; page-break-before: always; }
     }
-</style>
-<style>
-    @page { size: 104mm {{ $ticketH110 }}mm; margin: 0; }
+    @page { size: 104mm auto; margin: 0; }
 </style>
 </head>
 <body>
