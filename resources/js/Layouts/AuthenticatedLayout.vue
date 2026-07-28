@@ -245,7 +245,7 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                                             <span>📋</span><span>RGPD</span>
                                                         </a>
                                                         <p class="mb-1.5 mt-3 px-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Communication</p>
-                                                        <a :href="route('whatsapp.history')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                        <a :href="route('settings.whatsapp')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
                                                             <span>💬</span><span>WhatsApp Business</span>
                                                         </a>
                                                         <a :href="route('settings.catalog')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
