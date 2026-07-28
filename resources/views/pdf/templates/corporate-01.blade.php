@@ -27,14 +27,11 @@
     .doc-status { text-align: right; margin-top: 4px; }
     .doc-status span { font-size: 8px; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: {{ $primaryColor }}; color: #fff; }
 
-    /* cbh (DomPDF) = 650.64pt (page 841.89pt - top 108.75pt - bottom 82.5pt)
-       Formule : y_page = cbh - (H-N)*0.75
-       Pour bas physique (841.89pt) : y + H*0.75 = 841.89
-       => 650.64 - (H-N)*0.75 + H*0.75 = 841.89
-       => N*0.75 = 841.89 - 650.64 = 191.25 => N = 255px
-       => bottom: -255px ; height: 200px => élément de 82.2% à 100% de la page */
+    /* top basé sur le même ancrage que le header (top:-130px fonctionne).
+       top:0 = haut zone contenu. Page physique = 1122.52px CSS, marge haute = 145px.
+       Bas physique depuis zone contenu = 977.52px. Footer 200px : top = 777px. */
     footer {
-        position: fixed; bottom: -255px; left: 0; right: 0; height: 200px;
+        position: fixed; top: 777px; left: 0; right: 0; height: 200px;
         background: #fff;
     }
     footer .sig-section {
