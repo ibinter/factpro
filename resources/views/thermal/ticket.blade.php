@@ -102,7 +102,10 @@
         </select>
     </label>
     <a href="#" onclick="history.back(); return false;">← Retour</a>
-    <span style="font-size:12px;color:#fcd34d;">⚠ Dans la boîte d'impression : sélectionnez votre imprimante thermique {{ $width }}mm</span>
+</div>
+<div class="no-print" style="background:#92400e;color:#fef3c7;text-align:center;padding:8px 16px;font-family:Arial,sans-serif;font-size:13px;font-weight:bold;">
+    ⚠ IMPORTANT — Dans la boîte d'impression : sélectionnez votre imprimante thermique {{ $width }}mm (pas l'imprimante bureautique).
+    Le navigateur ne peut pas pré-sélectionner l'imprimante automatiquement.
 </div>
 
 @for ($copy = 1; $copy <= $copies; $copy++)
