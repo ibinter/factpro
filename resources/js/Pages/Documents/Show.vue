@@ -27,7 +27,21 @@ const props = defineProps({
     hasWorkflows: { type: Boolean, default: false },
     templates: { type: Array, default: () => [] },
     comments: { type: Array, default: () => [] },
+    publicUrl: { type: String, default: null },
 });
+
+/* ── Copier le lien public dans le presse-papiers ──────────────────────── */
+const publicLinkCopied = ref(false);
+const copyPublicUrl = async () => {
+    if (!props.publicUrl) return;
+    try {
+        await navigator.clipboard.writeText(props.publicUrl);
+        publicLinkCopied.value = true;
+        setTimeout(() => { publicLinkCopied.value = false; }, 2500);
+    } catch {
+        window.prompt('Copiez ce lien :', props.publicUrl);
+    }
+};
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
 
@@ -326,6 +340,14 @@ const planProgress = computed(() => {
                     >
                         📄 PDF
                     </a>
+                    <button
+                        v-if="publicUrl"
+                        @click="copyPublicUrl"
+                        class="rounded-md border border-teal-300 bg-teal-50 px-4 py-2 text-sm font-semibold text-teal-700 hover:bg-teal-100"
+                        :title="publicUrl"
+                    >
+                        {{ publicLinkCopied ? '✅ Lien copié !' : '🔗 Lien public' }}
+                    </button>
                     <button
                         v-if="templates.length && acceptsCosmeticTemplate"
                         @click="showTemplatePanel = !showTemplatePanel"

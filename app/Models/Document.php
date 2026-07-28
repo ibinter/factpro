@@ -188,7 +188,8 @@ class Document extends Model
     protected static function booted(): void
     {
         static::creating(function (Document $document) {
-            $document->uuid ??= (string) Str::uuid();
+            $document->uuid         ??= (string) Str::uuid();
+            $document->public_token ??= Str::random(48);
         });
     }
 

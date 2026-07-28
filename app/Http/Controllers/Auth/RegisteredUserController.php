@@ -89,6 +89,6 @@ class RegisteredUserController extends Controller
             app(\App\Services\ReferralService::class)->registerReferral($user, $request->input('ref'));
         }
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('onboarding.welcome', absolute: false));
     }
 }

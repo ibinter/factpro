@@ -11,6 +11,7 @@ use App\Http\Controllers\TestimonialsController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\PublicDocumentController;
 use App\Http\Controllers\PublicVerifyController;
 use App\Http\Controllers\SecurityController;
 use App\Http\Controllers\StatusController;
@@ -62,6 +63,11 @@ Route::get('/pricing', [PublicController::class, 'pricing'])->name('public.prici
 Route::get('/pricing-data', [PublicController::class, 'plansJson'])
     ->middleware('throttle:60,1')
     ->name('public.plans-data');
+
+// ── Lien public d'un document (partage sans authentification) ──────────────────
+Route::get('/doc/{token}', [PublicDocumentController::class, 'show'])
+    ->middleware('throttle:120,1')
+    ->name('doc.public');
 
 // ── Vérification publique de documents (Phase 16 — §verify.factpro.ibigsoft.com) ──
 // Page Inertia multi-langue (FR/EN/AR/PT/ES) — sans authentification.

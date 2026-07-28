@@ -200,6 +200,9 @@ class DocumentController extends Controller
             'document' => $document,
             'typeLabel' => $document->type_label,
             'verificationUrl' => $document->verificationUrl(),
+            'publicUrl' => $document->public_token
+                ? route('doc.public', $document->public_token)
+                : null,
             'convertTargets' => $this->convertTargets($document),
             'paymentPlan' => $paymentPlan ? $this->presentPaymentPlan($paymentPlan) : null,
             'canCreatePlan' => $canCreatePlan,

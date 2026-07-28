@@ -68,6 +68,9 @@ Route::get('/legal/{slug}', [\App\Http\Controllers\LegalController::class, 'show
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth'])->group(function () {
+    // Page de bienvenue post-inscription
+    Route::get('/welcome', fn () => Inertia::render('Onboarding/Welcome'))->name('onboarding.welcome');
+
     // Onboarding checklist
     Route::get('/onboarding/status', [\App\Http\Controllers\OnboardingChecklistController::class, 'status'])->name('onboarding.status');
 
