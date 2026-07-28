@@ -18,7 +18,7 @@ class QualifiedSignatureController extends Controller
 
     public function dashboard(Request $request): Response
     {
-        $company = $request->user()->currentCompany();
+        $company = $request->user()->currentCompany;
 
         $query = QualifiedSignature::where('company_id', $company->id)
             ->with('signable')
@@ -57,7 +57,7 @@ class QualifiedSignatureController extends Controller
             'expires_days'    => 'nullable|integer|min:1|max:90',
         ]);
 
-        $company = $request->user()->currentCompany();
+        $company = $request->user()->currentCompany;
         $signable = $validated['signable_type']::findOrFail($validated['signable_id']);
         $expiresAt = now()->addDays($validated['expires_days'] ?? 7);
         $documentName = $signable->title ?? $signable->number ?? "Document #{$signable->id}";
@@ -218,7 +218,7 @@ class QualifiedSignatureController extends Controller
 
     private function authorizeCompany(Request $request, QualifiedSignature $signature): void
     {
-        $company = $request->user()->currentCompany();
+        $company = $request->user()->currentCompany;
         abort_unless($signature->company_id === $company->id, 403);
     }
 
