@@ -70,8 +70,10 @@ class PaymentLinkController extends Controller
                 'email' => $document->customer->email,
                 'phone' => $document->customer->phone,
             ] : null,
-            'alreadyPaid'  => $document->status === 'paid',
-            'paymentToken' => $token,
+            'alreadyPaid'     => $document->status === 'paid',
+            'paymentToken'    => $token,
+            'uploadProofUrl'  => route('pay.proof', $token),
+            'statusCheckUrl'  => route('pay.status', $token),
         ]);
     }
 
@@ -237,6 +239,46 @@ class PaymentLinkController extends Controller
 
         // FedaPay SDK ou appel API direct — simplifié.
         return ['error' => 'Gateway non configurée'];
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // UPLOAD PREUVE DE PAIEMENT (public)
+    // ──────────────────────────────────────────────────────────────────────────
+
+    public function uploadProof(Request $request, string $token): JsonResponse
+    {
+        $document = Document::where('public_token', $token)->firstOrFail();
+
+        $request->validate([
+            'proof' => ['required', 'image', 'max:5120'],
+        ]);
+
+        $path = $request->file('proof')->store("payment-proofs/{$document->company_id}", 'public');
+
+        \Log::info("Preuve paiement uploadée pour document {$document->number}: {$path}");
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Preuve envoyée. La société vous contactera pour confirmation.',
+        ]);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────────
+    // VÉRIFICATION STATUT (public, polling)
+    // ──────────────────────────────────────────────────────────────────────────
+
+    public function statusCheck(string $token): JsonResponse
+    {
+        $document = Document::where('public_token', $token)
+            ->with('payments')
+            ->firstOrFail();
+
+        return response()->json([
+            'status'      => $document->status,
+            'amount_paid' => $document->amount_paid,
+            'total'       => $document->total,
+            'currency'    => $document->currency,
+        ]);
     }
 
     // ──────────────────────────────────────────────────────────────────────────

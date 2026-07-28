@@ -426,6 +426,14 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::post('/supplier-offers/{offer}/select', [SupplierPortalController::class, 'select'])->name('supplier.select');
 });
 
+// Feature SAV — Module Réparations
+require __DIR__.'/feature_sav.php';
+
+// Feature Rapprochement Bancaire
+require __DIR__.'/feature_banking.php';
+
+// Feature WhatsApp Business API
+require __DIR__.'/feature_whatsapp.php';
 
 // Phase 16C — Politique de sécurité & sessions
 use App\Http\Controllers\SecurityPolicyController;
@@ -476,3 +484,11 @@ Route::middleware(['auth', 'superadmin'])->prefix('admin/announcements')->name('
     Route::patch('/{announcement}/toggle', [\App\Http\Controllers\Admin\AnnouncementController::class, 'toggle'])->name('toggle');
     Route::delete('/{announcement}', [\App\Http\Controllers\Admin\AnnouncementController::class, 'destroy'])->name('destroy');
 });
+
+require __DIR__.'/feature_document_conversion.php';
+require __DIR__.'/feature_catalog.php';
+require __DIR__.'/feature_subscriptions.php';
+require __DIR__.'/feature_warehouses.php';
+require __DIR__.'/feature_accounting.php';
+require __DIR__.'/feature_payment_enhance.php';
+require __DIR__.'/feature_real_estate.php';

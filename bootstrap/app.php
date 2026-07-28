@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
             // Webhooks paiement : chargés hors groupe "web" (pas de session ni CSRF).
             // Les routes internes du fichier déclarent leur propre middleware.
             Route::group([], base_path('routes/webhooks.php'));
+
+            // Feature modules : chaque fichier routes/feature_*.php déclare son propre middleware.
+            foreach (glob(base_path('routes/feature_*.php')) as $featureRoute) {
+                Route::middleware('web')->group($featureRoute);
+            }
         },
     )
     ->withMiddleware(function (Middleware $middleware) {

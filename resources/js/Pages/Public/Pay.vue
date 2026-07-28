@@ -1,55 +1,64 @@
 <template>
   <div class="min-h-screen bg-gray-100 font-sans">
 
-    <!-- Toast annulation -->
-    <transition name="fade">
-      <div v-if="showCancelToast"
-        class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-orange-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
-        <span>⚠️</span>
-        <span>Paiement annulé. Vous pouvez réessayer.</span>
-        <button @click="showCancelToast = false" class="ml-4 text-white/80 hover:text-white">✕</button>
-      </div>
-    </transition>
-
     <!-- Toast copié -->
     <transition name="fade">
       <div v-if="copiedToast"
         class="fixed top-4 right-4 z-50 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm">
-        ✓ Copié !
+        Copié !
+      </div>
+    </transition>
+
+    <!-- Toast annulation -->
+    <transition name="fade">
+      <div v-if="showCancelToast"
+        class="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-orange-500 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+        <span>Paiement annulé. Vous pouvez réessayer.</span>
+        <button @click="showCancelToast = false" class="ml-4 text-white/80 hover:text-white">x</button>
       </div>
     </transition>
 
     <!-- Bandeau PAYÉ -->
-    <div v-if="isPaid"
-      class="bg-green-500 text-white text-center py-4 px-4 shadow-md">
+    <div v-if="isPaid" class="bg-green-500 text-white text-center py-4 px-4 shadow-md">
       <div class="max-w-3xl mx-auto flex items-center justify-center gap-3">
-        <span class="text-2xl">✅</span>
         <div>
-          <p class="font-bold text-lg">Ce document a été payé</p>
-          <p class="text-green-100 text-sm">Merci pour votre paiement. Une confirmation vous a été envoyée.</p>
+          <p class="font-bold text-lg">Paiement confirmé</p>
+          <p class="text-green-100 text-sm">Merci pour votre paiement.</p>
         </div>
       </div>
     </div>
 
-    <!-- Header -->
-    <header class="bg-white shadow-sm">
-      <div class="max-w-3xl mx-auto px-4 py-4 flex items-center gap-4">
-        <img v-if="company.logo_url" :src="company.logo_url" alt="Logo" class="h-12 w-auto object-contain" />
-        <div v-else class="h-12 w-12 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-xl">
-          {{ company.name?.charAt(0) ?? 'C' }}
-        </div>
+    <!-- Bandeau EN ATTENTE + timer polling -->
+    <div v-if="isPending && !isPaid" class="bg-amber-500 text-white text-center py-3 px-4 shadow-md">
+      <div class="max-w-3xl mx-auto flex items-center justify-center gap-3">
+        <div class="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent flex-shrink-0"></div>
         <div>
-          <h1 class="font-bold text-gray-900 text-lg leading-tight">{{ company.name }}</h1>
-          <p v-if="company.city || company.address" class="text-gray-500 text-sm">
-            {{ [company.address, company.city].filter(Boolean).join(', ') }}
-          </p>
+          <p class="font-semibold text-sm">Vérification du paiement en cours...</p>
+          <p class="text-amber-100 text-xs">Nous vérifions votre paiement automatiquement. Restez sur cette page.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header société — fond coloré -->
+    <header class="bg-blue-800 text-white shadow-md">
+      <div class="max-w-3xl mx-auto px-4 py-5 flex items-center gap-4">
+        <img v-if="company.logo_url" :src="company.logo_url" alt="Logo"
+          class="h-14 w-14 rounded-full object-cover border-2 border-white/30 flex-shrink-0" />
+        <div v-else
+          class="h-14 w-14 rounded-full bg-white/20 border-2 border-white/30 flex items-center justify-center text-white font-bold text-2xl flex-shrink-0">
+          {{ company.name?.charAt(0)?.toUpperCase() ?? 'C' }}
+        </div>
+        <div class="min-w-0">
+          <h1 class="font-bold text-white text-xl leading-tight">{{ company.name }}</h1>
+          <p v-if="company.city" class="text-blue-200 text-sm mt-0.5">{{ company.city }}</p>
+          <p v-if="company.phone" class="text-blue-200 text-sm">{{ company.phone }}</p>
         </div>
       </div>
     </header>
 
     <main class="max-w-3xl mx-auto px-4 py-6 space-y-6">
 
-      <!-- Résumé du document -->
+      <!-- Bloc facture -->
       <section class="bg-white rounded-xl shadow-sm p-6">
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
@@ -60,7 +69,7 @@
             </p>
           </div>
           <div class="text-right">
-            <p class="text-3xl font-bold text-indigo-700">{{ formatAmount(document.total) }} {{ document.currency }}</p>
+            <p class="text-3xl font-bold text-blue-800">{{ formatAmount(document.total) }} {{ document.currency }}</p>
             <span :class="statusClass(document.status)"
               class="inline-block mt-1 text-xs font-semibold px-3 py-1 rounded-full">
               {{ document.status }}
@@ -86,7 +95,7 @@
         </div>
 
         <div v-if="document.due_date" class="mt-3 text-sm">
-          <span class="text-gray-400 text-xs uppercase font-semibold">Échéance :</span>
+          <span class="text-gray-400 text-xs uppercase font-semibold">Echéance :</span>
           <span :class="isOverdue ? 'text-red-600 font-semibold' : 'text-gray-700'" class="ml-2">
             {{ formatDate(document.due_date) }}
             <span v-if="isOverdue" class="ml-1 text-red-500">(en retard)</span>
@@ -126,12 +135,9 @@
             </tbody>
           </table>
         </div>
-      </section>
 
-      <!-- Totaux -->
-      <section class="bg-white rounded-xl shadow-sm p-6">
-        <h3 class="font-semibold text-gray-700 text-sm uppercase tracking-wide mb-4">Récapitulatif</h3>
-        <div class="space-y-2 text-sm">
+        <!-- Totaux -->
+        <div class="border-t border-gray-100 px-6 py-4 space-y-2 text-sm">
           <div v-if="document.subtotal != null" class="flex justify-between text-gray-600">
             <span>Sous-total HT</span>
             <span>{{ formatAmount(document.subtotal) }} {{ document.currency }}</span>
@@ -144,54 +150,60 @@
             <span>TVA</span>
             <span>{{ formatAmount(document.tax_amount) }} {{ document.currency }}</span>
           </div>
-          <div class="flex justify-between font-bold text-gray-900 text-base border-t border-gray-100 pt-2 mt-2">
-            <span>Total TTC</span>
-            <span>{{ formatAmount(document.total) }} {{ document.currency }}</span>
+          <div class="flex justify-between font-bold text-gray-900 text-lg border-t border-gray-200 pt-3 mt-2">
+            <span>TOTAL TTC</span>
+            <span class="text-blue-800">{{ formatAmount(document.total) }} {{ document.currency }}</span>
           </div>
           <div v-if="document.amount_paid && document.amount_paid > 0" class="flex justify-between text-green-600">
             <span>Déjà payé</span>
             <span>-{{ formatAmount(document.amount_paid) }} {{ document.currency }}</span>
           </div>
-          <div v-if="remainingAmount > 0" class="flex justify-between font-bold text-indigo-700 text-lg border-t border-indigo-100 pt-2 mt-1">
+          <div v-if="remainingAmount > 0" class="flex justify-between font-bold text-blue-800 text-xl border-t border-blue-100 pt-2 mt-1">
             <span>Reste à payer</span>
             <span>{{ formatAmount(remainingAmount) }} {{ document.currency }}</span>
-          </div>
-          <div v-else-if="!isPaid" class="flex justify-between font-bold text-green-600 text-base border-t pt-2">
-            <span>Solde</span>
-            <span>0 {{ document.currency }}</span>
           </div>
         </div>
       </section>
 
-      <!-- Section paiement -->
+      <!-- Timer paiement en ligne (si initié) -->
+      <section v-if="onlineTimerSeconds > 0 && !isPaid"
+        class="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-4">
+        <div class="text-3xl font-mono font-bold text-amber-700 flex-shrink-0">{{ timerDisplay }}</div>
+        <div>
+          <p class="text-sm font-semibold text-amber-800">Paiement en attente</p>
+          <p class="text-xs text-amber-600 mt-0.5">Finalisez votre paiement sur la page externe avant l'expiration du délai.</p>
+        </div>
+      </section>
+
+      <!-- Section paiement (si non payé) -->
       <section v-if="!isPaid" class="bg-white rounded-xl shadow-sm overflow-hidden">
-        <div class="px-6 py-4 bg-indigo-50 border-b border-indigo-100">
-          <h3 class="font-semibold text-indigo-800 flex items-center gap-2">
-            <span>💳</span> Choisissez votre mode de paiement
+        <div class="px-6 py-4 bg-blue-800 text-white">
+          <h3 class="font-semibold flex items-center gap-2 text-lg">
+            Choisissez votre mode de paiement
           </h3>
         </div>
 
         <!-- Onglets -->
         <div class="flex overflow-x-auto border-b border-gray-100 bg-gray-50">
           <button v-if="hasOnline" @click="activeTab = 'online'"
-            :class="activeTab === 'online' ? 'border-b-2 border-indigo-600 text-indigo-700 bg-white' : 'text-gray-500 hover:text-gray-700'"
-            class="px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1">
-            🌐 En ligne
+            :class="activeTab === 'online' ? 'border-b-2 border-blue-700 text-blue-700 bg-white' : 'text-gray-500 hover:text-gray-700'"
+            class="px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors">
+            En ligne
           </button>
           <button v-if="hasMobileMoney" @click="activeTab = 'mobile'"
-            :class="activeTab === 'mobile' ? 'border-b-2 border-indigo-600 text-indigo-700 bg-white' : 'text-gray-500 hover:text-gray-700'"
-            class="px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1">
-            📱 Mobile Money
+            :class="activeTab === 'mobile' ? 'border-b-2 border-blue-700 text-blue-700 bg-white' : 'text-gray-500 hover:text-gray-700'"
+            class="px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors">
+            Mobile Money
           </button>
           <button v-if="hasClassic" @click="activeTab = 'classic'"
-            :class="activeTab === 'classic' ? 'border-b-2 border-indigo-600 text-indigo-700 bg-white' : 'text-gray-500 hover:text-gray-700'"
-            class="px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1">
-            🏦 Virement / Classique
+            :class="activeTab === 'classic' ? 'border-b-2 border-blue-700 text-blue-700 bg-white' : 'text-gray-500 hover:text-gray-700'"
+            class="px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors">
+            Virement / Classique
           </button>
           <button v-if="hasCrypto" @click="activeTab = 'crypto'"
-            :class="activeTab === 'crypto' ? 'border-b-2 border-indigo-600 text-indigo-700 bg-white' : 'text-gray-500 hover:text-gray-700'"
-            class="px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1">
-            ₿ Crypto
+            :class="activeTab === 'crypto' ? 'border-b-2 border-blue-700 text-blue-700 bg-white' : 'text-gray-500 hover:text-gray-700'"
+            class="px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors">
+            Crypto
           </button>
         </div>
 
@@ -206,14 +218,11 @@
                 :key="gw.key"
                 @click="payOnline(gw.key)"
                 :disabled="loadingGateway === gw.key"
-                class="relative flex flex-col items-center gap-2 border border-gray-200 rounded-xl p-4 hover:border-indigo-400 hover:bg-indigo-50 transition-all disabled:opacity-60 disabled:cursor-not-allowed group">
+                class="relative flex flex-col items-center gap-2 border border-gray-200 rounded-xl p-4 hover:border-blue-400 hover:bg-blue-50 transition-all disabled:opacity-60 disabled:cursor-not-allowed group">
                 <span class="text-2xl">{{ gw.icon }}</span>
-                <span class="text-sm font-medium text-gray-700 group-hover:text-indigo-700">{{ gw.label }}</span>
+                <span class="text-sm font-medium text-gray-700 group-hover:text-blue-700">{{ gw.label }}</span>
                 <div v-if="loadingGateway === gw.key" class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl">
-                  <svg class="animate-spin h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-                  </svg>
+                  <div class="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full"></div>
                 </div>
               </button>
             </div>
@@ -225,24 +234,40 @@
           <!-- B) Mobile Money -->
           <div v-if="activeTab === 'mobile'">
             <p class="text-sm text-gray-500 mb-4">Envoyez le montant au numéro indiqué, puis conservez votre reçu de transaction.</p>
-            <div class="space-y-4">
+            <div class="space-y-5">
               <div v-for="op in activeMobileOperators" :key="op.key"
-                class="border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-4">
-                <div class="flex items-center gap-3 min-w-0">
-                  <span class="text-3xl flex-shrink-0">{{ op.icon }}</span>
-                  <div class="min-w-0">
-                    <p class="font-semibold text-gray-800">{{ op.label }}</p>
-                    <p class="text-xs text-gray-400">{{ op.data.name }}</p>
+                class="border border-gray-200 rounded-xl p-5">
+                <div class="flex items-center gap-3 mb-3">
+                  <span class="text-3xl">{{ op.icon }}</span>
+                  <div>
+                    <p class="font-bold text-gray-800 text-base">{{ op.label }}</p>
+                    <p v-if="op.data.name" class="text-xs text-gray-400">{{ op.data.name }}</p>
                   </div>
                 </div>
-                <div class="flex-1 min-w-0">
-                  <p class="text-xl font-bold text-gray-900 tracking-wide">{{ op.data.phone }}</p>
-                  <p v-if="op.data.instructions" class="text-xs text-gray-500 mt-1">{{ op.data.instructions }}</p>
+                <!-- Numéro en TRÈS GROS -->
+                <div class="flex items-center gap-3 mb-4">
+                  <p class="text-3xl font-bold text-gray-900 tracking-widest">{{ op.data.phone }}</p>
+                  <button @click="copyText(op.data.phone)"
+                    class="flex items-center gap-1 text-sm text-blue-600 border border-blue-200 rounded-lg px-3 py-2 hover:bg-blue-50 transition-colors flex-shrink-0">
+                    Copier
+                  </button>
                 </div>
-                <button @click="copyText(op.data.phone)"
-                  class="flex-shrink-0 flex items-center gap-1 text-sm text-indigo-600 border border-indigo-200 rounded-lg px-3 py-2 hover:bg-indigo-50 transition-colors">
-                  📋 Copier
-                </button>
+                <!-- Lien Wave deep link -->
+                <div v-if="op.key === 'wave' && isMobile" class="mb-3">
+                  <a :href="`wave://pay?phone=${op.data.phone}&amount=${document.total}`"
+                    class="inline-flex items-center gap-2 bg-blue-600 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-blue-700 transition-colors">
+                    Ouvrir Wave
+                  </a>
+                </div>
+                <!-- Instructions pas à pas -->
+                <ol class="text-sm text-gray-600 space-y-1 list-decimal list-inside bg-gray-50 rounded-lg p-3">
+                  <li>Composez le menu USSD ou ouvrez l'application {{ op.label }}</li>
+                  <li>Choisissez "Paiement marchand" ou "Envoyer de l'argent"</li>
+                  <li>Entrez le numéro : <strong>{{ op.data.phone }}</strong></li>
+                  <li>Montant : <strong>{{ formatAmount(document.total) }} {{ document.currency }}</strong></li>
+                  <li>Confirmez avec votre code PIN</li>
+                </ol>
+                <p v-if="op.data.instructions" class="text-xs text-gray-500 mt-2 italic">{{ op.data.instructions }}</p>
               </div>
             </div>
           </div>
@@ -250,56 +275,59 @@
           <!-- C) Classique -->
           <div v-if="activeTab === 'classic'" class="space-y-4">
 
-            <!-- Virement bancaire -->
             <div v-if="pm.classic.bank_transfer?.enabled" class="border border-gray-200 rounded-xl p-4">
-              <h4 class="font-semibold text-gray-800 flex items-center gap-2 mb-3">🏦 Virement bancaire</h4>
-              <div class="space-y-2">
+              <h4 class="font-semibold text-gray-800 flex items-center gap-2 mb-3">Virement bancaire</h4>
+              <div class="space-y-2 text-sm">
                 <div v-if="pm.classic.bank_transfer.bank_name" class="flex items-center justify-between">
-                  <span class="text-sm text-gray-500">Banque</span>
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-medium text-gray-800">{{ pm.classic.bank_transfer.bank_name }}</span>
-                  </div>
+                  <span class="text-gray-500">Banque</span>
+                  <span class="text-sm font-medium text-gray-800">{{ pm.classic.bank_transfer.bank_name }}</span>
                 </div>
                 <div v-if="pm.classic.bank_transfer.account_name" class="flex items-center justify-between">
-                  <span class="text-sm text-gray-500">Titulaire</span>
+                  <span class="text-gray-500">Titulaire</span>
                   <div class="flex items-center gap-2">
                     <span class="text-sm font-medium text-gray-800">{{ pm.classic.bank_transfer.account_name }}</span>
-                    <button @click="copyText(pm.classic.bank_transfer.account_name)" class="text-xs text-indigo-500 hover:text-indigo-700">📋</button>
-                  </div>
-                </div>
-                <div v-if="pm.classic.bank_transfer.rib" class="flex items-center justify-between">
-                  <span class="text-sm text-gray-500">RIB</span>
-                  <div class="flex items-center gap-2">
-                    <span class="text-sm font-mono font-medium text-gray-800">{{ pm.classic.bank_transfer.rib }}</span>
-                    <button @click="copyText(pm.classic.bank_transfer.rib)" class="text-xs text-indigo-500 hover:text-indigo-700">📋</button>
+                    <button @click="copyText(pm.classic.bank_transfer.account_name)" class="text-xs text-blue-500 hover:text-blue-700">Copier</button>
                   </div>
                 </div>
                 <div v-if="pm.classic.bank_transfer.iban" class="flex items-center justify-between">
-                  <span class="text-sm text-gray-500">IBAN</span>
+                  <span class="text-gray-500">IBAN</span>
                   <div class="flex items-center gap-2">
                     <span class="text-sm font-mono font-medium text-gray-800">{{ pm.classic.bank_transfer.iban }}</span>
-                    <button @click="copyText(pm.classic.bank_transfer.iban)" class="text-xs text-indigo-500 hover:text-indigo-700">📋</button>
+                    <button @click="copyText(pm.classic.bank_transfer.iban)" class="text-xs text-blue-500 hover:text-blue-700">Copier</button>
+                  </div>
+                </div>
+                <div v-if="pm.classic.bank_transfer.rib" class="flex items-center justify-between">
+                  <span class="text-gray-500">RIB</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-mono font-medium text-gray-800">{{ pm.classic.bank_transfer.rib }}</span>
+                    <button @click="copyText(pm.classic.bank_transfer.rib)" class="text-xs text-blue-500 hover:text-blue-700">Copier</button>
                   </div>
                 </div>
                 <div v-if="pm.classic.bank_transfer.swift" class="flex items-center justify-between">
-                  <span class="text-sm text-gray-500">SWIFT/BIC</span>
+                  <span class="text-gray-500">BIC / SWIFT</span>
                   <div class="flex items-center gap-2">
                     <span class="text-sm font-mono font-medium text-gray-800">{{ pm.classic.bank_transfer.swift }}</span>
-                    <button @click="copyText(pm.classic.bank_transfer.swift)" class="text-xs text-indigo-500 hover:text-indigo-700">📋</button>
+                    <button @click="copyText(pm.classic.bank_transfer.swift)" class="text-xs text-blue-500 hover:text-blue-700">Copier</button>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                  <span class="text-gray-500">Motif suggéré</span>
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-medium text-gray-800">{{ document.number }}</span>
+                    <button @click="copyText(document.number)" class="text-xs text-blue-500 hover:text-blue-700">Copier</button>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- Chèque -->
             <div v-if="pm.classic.cheque?.enabled" class="border border-gray-200 rounded-xl p-4">
-              <h4 class="font-semibold text-gray-800 flex items-center gap-2 mb-3">📄 Chèque</h4>
+              <h4 class="font-semibold text-gray-800 mb-3">Chèque</h4>
               <div class="space-y-2 text-sm">
                 <div v-if="pm.classic.cheque.payable_to" class="flex justify-between">
-                  <span class="text-gray-500">À l'ordre de</span>
+                  <span class="text-gray-500">A l'ordre de</span>
                   <div class="flex items-center gap-2">
                     <span class="font-medium text-gray-800">{{ pm.classic.cheque.payable_to }}</span>
-                    <button @click="copyText(pm.classic.cheque.payable_to)" class="text-xs text-indigo-500">📋</button>
+                    <button @click="copyText(pm.classic.cheque.payable_to)" class="text-xs text-blue-500">Copier</button>
                   </div>
                 </div>
                 <div v-if="pm.classic.cheque.address" class="flex justify-between">
@@ -309,9 +337,8 @@
               </div>
             </div>
 
-            <!-- Espèces -->
             <div v-if="pm.classic.cash?.enabled" class="border border-gray-200 rounded-xl p-4">
-              <h4 class="font-semibold text-gray-800 flex items-center gap-2 mb-3">💵 Paiement en espèces</h4>
+              <h4 class="font-semibold text-gray-800 mb-3">Paiement en espèces</h4>
               <div class="space-y-2 text-sm">
                 <div v-if="pm.classic.cash.address" class="flex justify-between">
                   <span class="text-gray-500">Adresse</span>
@@ -325,15 +352,14 @@
               </div>
             </div>
 
-            <!-- Western Union -->
             <div v-if="pm.classic.western_union?.enabled" class="border border-gray-200 rounded-xl p-4">
-              <h4 class="font-semibold text-gray-800 flex items-center gap-2 mb-3">🌍 Western Union</h4>
+              <h4 class="font-semibold text-gray-800 mb-3">Western Union</h4>
               <div class="space-y-2 text-sm">
                 <div v-if="pm.classic.western_union.name" class="flex justify-between">
                   <span class="text-gray-500">Bénéficiaire</span>
                   <div class="flex items-center gap-2">
                     <span class="font-medium text-gray-800">{{ pm.classic.western_union.name }}</span>
-                    <button @click="copyText(pm.classic.western_union.name)" class="text-xs text-indigo-500">📋</button>
+                    <button @click="copyText(pm.classic.western_union.name)" class="text-xs text-blue-500">Copier</button>
                   </div>
                 </div>
                 <div v-if="pm.classic.western_union.country" class="flex justify-between">
@@ -347,9 +373,8 @@
               </div>
             </div>
 
-            <!-- SWIFT International -->
             <div v-if="pm.classic.swift_transfer?.enabled" class="border border-gray-200 rounded-xl p-4">
-              <h4 class="font-semibold text-gray-800 flex items-center gap-2 mb-3">🌐 Virement SWIFT international</h4>
+              <h4 class="font-semibold text-gray-800 mb-3">Virement SWIFT international</h4>
               <div class="space-y-2 text-sm">
                 <div v-if="pm.classic.swift_transfer.bank_name" class="flex justify-between">
                   <span class="text-gray-500">Banque</span>
@@ -359,21 +384,21 @@
                   <span class="text-gray-500">Code SWIFT</span>
                   <div class="flex items-center gap-2">
                     <span class="font-mono font-medium text-gray-800">{{ pm.classic.swift_transfer.swift_code }}</span>
-                    <button @click="copyText(pm.classic.swift_transfer.swift_code)" class="text-xs text-indigo-500">📋</button>
+                    <button @click="copyText(pm.classic.swift_transfer.swift_code)" class="text-xs text-blue-500">Copier</button>
                   </div>
                 </div>
                 <div v-if="pm.classic.swift_transfer.iban" class="flex justify-between">
                   <span class="text-gray-500">IBAN</span>
                   <div class="flex items-center gap-2">
                     <span class="font-mono font-medium text-gray-800">{{ pm.classic.swift_transfer.iban }}</span>
-                    <button @click="copyText(pm.classic.swift_transfer.iban)" class="text-xs text-indigo-500">📋</button>
+                    <button @click="copyText(pm.classic.swift_transfer.iban)" class="text-xs text-blue-500">Copier</button>
                   </div>
                 </div>
                 <div v-if="pm.classic.swift_transfer.beneficiary" class="flex justify-between">
                   <span class="text-gray-500">Bénéficiaire</span>
                   <div class="flex items-center gap-2">
                     <span class="font-medium text-gray-800">{{ pm.classic.swift_transfer.beneficiary }}</span>
-                    <button @click="copyText(pm.classic.swift_transfer.beneficiary)" class="text-xs text-indigo-500">📋</button>
+                    <button @click="copyText(pm.classic.swift_transfer.beneficiary)" class="text-xs text-blue-500">Copier</button>
                   </div>
                 </div>
               </div>
@@ -385,58 +410,28 @@
           <div v-if="activeTab === 'crypto'">
             <p class="text-sm text-gray-500 mb-4">Envoyez exactement le montant indiqué à l'adresse du portefeuille correspondant.</p>
             <div class="space-y-4">
-
-              <div v-if="pm.crypto.usdt_trc20?.enabled" class="border border-gray-200 rounded-xl p-4">
+              <div v-if="pm.crypto?.usdt_trc20?.enabled" class="border border-gray-200 rounded-xl p-4">
                 <div class="flex items-center gap-3 mb-3">
-                  <span class="text-2xl">₮</span>
-                  <h4 class="font-semibold text-gray-800">USDT <span class="text-xs text-gray-400 font-normal">({{ pm.crypto.usdt_trc20.network }})</span></h4>
+                  <h4 class="font-semibold text-gray-800">USDT
+                    <span class="text-xs text-gray-400 font-normal">({{ pm.crypto.usdt_trc20.network }})</span>
+                  </h4>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-3 font-mono text-sm text-gray-700 break-all mb-3">
-                  {{ pm.crypto.usdt_trc20.address }}
-                </div>
-                <div class="flex items-center gap-3">
-                  <button @click="copyText(pm.crypto.usdt_trc20.address)"
-                    class="flex items-center gap-1 text-sm text-indigo-600 border border-indigo-200 rounded-lg px-3 py-2 hover:bg-indigo-50 transition-colors">
-                    📋 Copier l'adresse
-                  </button>
-                </div>
-                <!-- QR Code simplifié -->
-                <div class="mt-3 border border-dashed border-gray-300 rounded-lg p-4 text-center">
-                  <div class="inline-block bg-white p-2 border border-gray-200 rounded">
-                    <div class="grid grid-cols-8 gap-px w-24 h-24 mx-auto">
-                      <div v-for="(bit, i) in generateSimpleQR(pm.crypto.usdt_trc20.address)" :key="i"
-                        :class="bit ? 'bg-gray-900' : 'bg-white'" class="aspect-square"></div>
-                    </div>
-                  </div>
-                  <p class="text-xs text-gray-400 mt-2">Scannez pour obtenir l'adresse</p>
-                </div>
+                <div class="bg-gray-50 rounded-lg p-3 font-mono text-sm text-gray-700 break-all mb-3">{{ pm.crypto.usdt_trc20.address }}</div>
+                <button @click="copyText(pm.crypto.usdt_trc20.address)"
+                  class="flex items-center gap-1 text-sm text-blue-600 border border-blue-200 rounded-lg px-3 py-2 hover:bg-blue-50 transition-colors">
+                  Copier l'adresse
+                </button>
               </div>
-
-              <div v-if="pm.crypto.bitcoin?.enabled" class="border border-gray-200 rounded-xl p-4">
+              <div v-if="pm.crypto?.bitcoin?.enabled" class="border border-gray-200 rounded-xl p-4">
                 <div class="flex items-center gap-3 mb-3">
-                  <span class="text-2xl">₿</span>
                   <h4 class="font-semibold text-gray-800">Bitcoin (BTC)</h4>
                 </div>
-                <div class="bg-gray-50 rounded-lg p-3 font-mono text-sm text-gray-700 break-all mb-3">
-                  {{ pm.crypto.bitcoin.address }}
-                </div>
-                <div class="flex items-center gap-3">
-                  <button @click="copyText(pm.crypto.bitcoin.address)"
-                    class="flex items-center gap-1 text-sm text-indigo-600 border border-indigo-200 rounded-lg px-3 py-2 hover:bg-indigo-50 transition-colors">
-                    📋 Copier l'adresse
-                  </button>
-                </div>
-                <div class="mt-3 border border-dashed border-gray-300 rounded-lg p-4 text-center">
-                  <div class="inline-block bg-white p-2 border border-gray-200 rounded">
-                    <div class="grid grid-cols-8 gap-px w-24 h-24 mx-auto">
-                      <div v-for="(bit, i) in generateSimpleQR(pm.crypto.bitcoin.address)" :key="i"
-                        :class="bit ? 'bg-gray-900' : 'bg-white'" class="aspect-square"></div>
-                    </div>
-                  </div>
-                  <p class="text-xs text-gray-400 mt-2">Scannez pour obtenir l'adresse</p>
-                </div>
+                <div class="bg-gray-50 rounded-lg p-3 font-mono text-sm text-gray-700 break-all mb-3">{{ pm.crypto.bitcoin.address }}</div>
+                <button @click="copyText(pm.crypto.bitcoin.address)"
+                  class="flex items-center gap-1 text-sm text-blue-600 border border-blue-200 rounded-lg px-3 py-2 hover:bg-blue-50 transition-colors">
+                  Copier l'adresse
+                </button>
               </div>
-
             </div>
           </div>
 
@@ -445,17 +440,67 @@
 
       <!-- Message si déjà payé -->
       <section v-if="isPaid" class="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-        <p class="text-green-700 font-medium">Ce document est entièrement réglé.</p>
+        <p class="text-green-700 font-medium text-lg">Ce document est entièrement réglé.</p>
         <p class="text-green-600 text-sm mt-1">Merci pour votre confiance.</p>
+      </section>
+
+      <!-- Section : Confirmer paiement manuel -->
+      <section v-if="!isPaid" class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="font-semibold text-gray-800 text-base mb-1">Confirmer un paiement manuel</h3>
+        <p class="text-sm text-gray-500 mb-4">Vous avez effectué un virement ou un paiement mobile ? Envoyez une preuve (capture d'écran, reçu).</p>
+
+        <div v-if="!showProofForm">
+          <button @click="showProofForm = true"
+            class="inline-flex items-center gap-2 bg-blue-700 text-white rounded-lg px-5 py-3 font-medium hover:bg-blue-800 transition-colors text-sm">
+            J'ai effectué le paiement
+          </button>
+        </div>
+
+        <div v-else class="space-y-4">
+          <div v-if="proofSuccess" class="bg-green-50 border border-green-200 rounded-lg px-4 py-3 text-green-700 text-sm font-medium">
+            Preuve envoyée. La société vous contactera pour confirmation.
+          </div>
+          <div v-else>
+            <label class="block text-sm text-gray-600 mb-2">Joindre une image (reçu, capture d'écran) — max 5 Mo :</label>
+            <input type="file" accept="image/*" @change="onProofFileChange"
+              class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors" />
+            <p v-if="proofError" class="text-red-600 text-sm mt-2">{{ proofError }}</p>
+            <div class="flex gap-3 mt-4">
+              <button @click="submitProof"
+                :disabled="!proofFile || proofLoading"
+                class="inline-flex items-center gap-2 bg-blue-700 text-white rounded-lg px-5 py-2.5 font-medium hover:bg-blue-800 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                <span v-if="proofLoading" class="animate-spin inline-block h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                {{ proofLoading ? 'Envoi...' : 'Envoyer la preuve' }}
+              </button>
+              <button @click="showProofForm = false; proofFile = null; proofError = null"
+                class="text-gray-500 text-sm hover:text-gray-700 underline">Annuler</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Partager le lien -->
+      <section class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="font-semibold text-gray-800 text-base mb-3">Partager ce document</h3>
+        <div class="flex flex-wrap gap-3">
+          <button @click="copyPageLink"
+            class="flex items-center gap-2 border border-gray-200 rounded-lg px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+            Copier le lien
+          </button>
+          <a :href="whatsappUrl" target="_blank" rel="noopener"
+            class="flex items-center gap-2 bg-green-500 text-white rounded-lg px-4 py-2 text-sm font-medium hover:bg-green-600 transition-colors">
+            Partager sur WhatsApp
+          </a>
+        </div>
       </section>
 
     </main>
 
     <!-- Footer -->
     <footer class="mt-10 py-6 text-center text-xs text-gray-400 border-t border-gray-200">
-      <p>Propulsé par <span class="font-semibold text-gray-500">IBIG FactPro</span></p>
+      <p>Paiement sécurisé — <span class="font-semibold text-gray-500">IBIG FactPro</span></p>
       <p class="mt-1">
-        <a :href="`/verify/${paymentToken}`" class="text-indigo-400 hover:text-indigo-600 underline transition-colors">
+        <a :href="`/verify/${paymentToken}`" class="text-blue-400 hover:text-blue-600 underline transition-colors">
           Vérifier l'authenticité de ce document
         </a>
       </p>
@@ -465,73 +510,84 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
-  document: Object,
-  lines: Array,
-  company: Object,
-  customer: Object,
-  alreadyPaid: Boolean,
-  paymentToken: String,
+  document:       Object,
+  lines:          Array,
+  company:        Object,
+  customer:       Object,
+  alreadyPaid:    Boolean,
+  paymentToken:   String,
+  uploadProofUrl: String,
+  statusCheckUrl: String,
 })
 
-// --- State ---
-const isPaid = ref(props.alreadyPaid || false)
-const showCancelToast = ref(false)
-const copiedToast = ref(false)
-const activeTab = ref(null)
-const loadingGateway = ref(null)
-const onlineError = ref(null)
+// ── State ────────────────────────────────────────────────────────────────────
+const isPaid            = ref(props.alreadyPaid || false)
+const isPending         = ref(false)
+const showCancelToast   = ref(false)
+const copiedToast       = ref(false)
+const activeTab         = ref(null)
+const loadingGateway    = ref(null)
+const onlineError       = ref(null)
+const isMobile          = ref(false)
 
-// --- Raccourci payment_methods ---
-const pm = computed(() => props.company?.payment_methods ?? {
-  online: {}, mobile_money: {}, classic: {}, crypto: {}
-})
+// Proof upload
+const showProofForm  = ref(false)
+const proofFile      = ref(null)
+const proofLoading   = ref(false)
+const proofError     = ref(null)
+const proofSuccess   = ref(false)
 
-// --- Détection URL params ---
-onMounted(() => {
-  const params = new URLSearchParams(window.location.search)
-  if (params.get('paid') === '1') {
-    isPaid.value = true
+// Timer (15 min = 900s)
+const onlineTimerSeconds = ref(0)
+let timerInterval = null
+
+// Polling
+let pollingInterval = null
+
+// ── Payment methods shortcut ─────────────────────────────────────────────────
+const pm = computed(() => {
+  const methods = props.company?.payment_methods ?? {}
+  // Support tableau ou objet
+  if (Array.isArray(methods)) {
+    // ancien format tableau
+    return { online: {}, mobile_money: {}, classic: {}, crypto: {} }
   }
-  if (params.get('cancelled') === '1') {
-    showCancelToast.value = true
-    setTimeout(() => { showCancelToast.value = false }, 5000)
+  return {
+    online:       methods.online       ?? {},
+    mobile_money: methods.mobile_money ?? {},
+    classic:      methods.classic      ?? {},
+    crypto:       methods.crypto       ?? {},
   }
-
-  // Sélection du premier onglet disponible
-  if (hasOnline.value) activeTab.value = 'online'
-  else if (hasMobileMoney.value) activeTab.value = 'mobile'
-  else if (hasClassic.value) activeTab.value = 'classic'
-  else if (hasCrypto.value) activeTab.value = 'crypto'
 })
 
-// --- Gateways online ---
+// ── Gateways en ligne ────────────────────────────────────────────────────────
 const gatewayMeta = [
-  { key: 'cinetpay', label: 'CinetPay', icon: '🔵' },
-  { key: 'fedapay', label: 'FedaPay', icon: '🟢' },
+  { key: 'cinetpay',    label: 'CinetPay',    icon: '🔵' },
+  { key: 'fedapay',     label: 'FedaPay',     icon: '🟢' },
+  { key: 'wave',        label: 'Wave',         icon: '🌊' },
   { key: 'flutterwave', label: 'Flutterwave', icon: '🟠' },
-  { key: 'moneroo', label: 'Moneroo', icon: '🔷' },
-  { key: 'stripe', label: 'Stripe', icon: '🟣' },
-  { key: 'paypal', label: 'PayPal', icon: '🔵' },
+  { key: 'moneroo',     label: 'Moneroo',     icon: '🔷' },
+  { key: 'stripe',      label: 'Stripe',      icon: '🟣' },
+  { key: 'paypal',      label: 'PayPal',      icon: '🔵' },
 ]
 
 const activeOnlineGateways = computed(() =>
   gatewayMeta.filter(gw => pm.value.online?.[gw.key]?.enabled)
 )
-
 const hasOnline = computed(() => activeOnlineGateways.value.length > 0)
 
-// --- Mobile money ---
+// ── Mobile money ─────────────────────────────────────────────────────────────
 const mobileOperatorMeta = [
   { key: 'orange_money', label: 'Orange Money', icon: '🟠' },
-  { key: 'mtn_momo', label: 'MTN MoMo', icon: '🟡' },
-  { key: 'wave', label: 'Wave', icon: '🔵' },
-  { key: 'moov_money', label: 'Moov Money', icon: '🟢' },
+  { key: 'mtn_momo',     label: 'MTN MoMo',     icon: '🟡' },
+  { key: 'wave',         label: 'Wave',          icon: '🔵' },
+  { key: 'moov_money',   label: 'Moov Money',   icon: '🟢' },
   { key: 'airtel_money', label: 'Airtel Money', icon: '🔴' },
-  { key: 'free_money', label: 'Free Money', icon: '🟤' },
-  { key: 'mpesa', label: 'M-Pesa', icon: '🟩' },
+  { key: 'free_money',   label: 'Free Money',   icon: '🟤' },
+  { key: 'mpesa',        label: 'M-Pesa',       icon: '🟩' },
 ]
 
 const activeMobileOperators = computed(() =>
@@ -539,35 +595,143 @@ const activeMobileOperators = computed(() =>
     .filter(op => pm.value.mobile_money?.[op.key]?.enabled)
     .map(op => ({ ...op, data: pm.value.mobile_money[op.key] }))
 )
-
 const hasMobileMoney = computed(() => activeMobileOperators.value.length > 0)
 
-// --- Classique ---
-const hasClassic = computed(() => {
-  const c = pm.value.classic ?? {}
-  return Object.values(c).some(v => v?.enabled)
-})
+// ── Classique ─────────────────────────────────────────────────────────────────
+const hasClassic = computed(() => Object.values(pm.value.classic ?? {}).some(v => v?.enabled))
 
-// --- Crypto ---
-const hasCrypto = computed(() => {
-  const cr = pm.value.crypto ?? {}
-  return Object.values(cr).some(v => v?.enabled)
-})
+// ── Crypto ───────────────────────────────────────────────────────────────────
+const hasCrypto = computed(() => Object.values(pm.value.crypto ?? {}).some(v => v?.enabled))
 
-// --- Montant restant ---
+// ── Montant restant ───────────────────────────────────────────────────────────
 const remainingAmount = computed(() => {
   const total = parseFloat(props.document?.total ?? 0)
-  const paid = parseFloat(props.document?.amount_paid ?? 0)
+  const paid  = parseFloat(props.document?.amount_paid ?? 0)
   return Math.max(0, total - paid)
 })
 
-// --- Retard ---
+// ── Retard ───────────────────────────────────────────────────────────────────
 const isOverdue = computed(() => {
   if (!props.document?.due_date) return false
   return new Date(props.document.due_date) < new Date()
 })
 
-// --- Paiement en ligne ---
+// ── Timer display ─────────────────────────────────────────────────────────────
+const timerDisplay = computed(() => {
+  const m = Math.floor(onlineTimerSeconds.value / 60).toString().padStart(2, '0')
+  const s = (onlineTimerSeconds.value % 60).toString().padStart(2, '0')
+  return `${m}:${s}`
+})
+
+// ── WhatsApp ─────────────────────────────────────────────────────────────────
+const whatsappUrl = computed(() => {
+  const text = encodeURIComponent(
+    `Voici le lien de paiement pour la facture ${props.document?.number ?? ''} d'un montant de ${formatAmount(props.document?.total)} ${props.document?.currency ?? ''} : ${window.location.href}`
+  )
+  return `https://wa.me/?text=${text}`
+})
+
+// ── onMounted ─────────────────────────────────────────────────────────────────
+onMounted(() => {
+  isMobile.value = /Mobi|Android/i.test(navigator.userAgent)
+
+  const params = new URLSearchParams(window.location.search)
+
+  if (params.get('paid') === '1') {
+    isPaid.value = true
+  }
+
+  if (params.get('cancelled') === '1') {
+    showCancelToast.value = true
+    setTimeout(() => { showCancelToast.value = false }, 5000)
+  }
+
+  // Polling si ?pending=1
+  if (params.get('pending') === '1' && !isPaid.value) {
+    isPending.value = true
+    startPolling()
+  }
+
+  // Timer si paiement online initié (sessionStorage flag)
+  const timerStart = sessionStorage.getItem(`fp_timer_${props.paymentToken}`)
+  if (timerStart) {
+    const elapsed = Math.floor((Date.now() - parseInt(timerStart, 10)) / 1000)
+    const remaining = 900 - elapsed
+    if (remaining > 0) {
+      onlineTimerSeconds.value = remaining
+      startTimer()
+    } else {
+      sessionStorage.removeItem(`fp_timer_${props.paymentToken}`)
+    }
+  }
+
+  // Sélection premier onglet
+  if (hasOnline.value) activeTab.value = 'online'
+  else if (hasMobileMoney.value) activeTab.value = 'mobile'
+  else if (hasClassic.value) activeTab.value = 'classic'
+  else if (hasCrypto.value) activeTab.value = 'crypto'
+})
+
+onUnmounted(() => {
+  stopTimer()
+  stopPolling()
+})
+
+// ── Timer ──────────────────────────────────────────────────────────────────────
+function startTimer() {
+  timerInterval = setInterval(() => {
+    if (onlineTimerSeconds.value > 0) {
+      onlineTimerSeconds.value--
+    } else {
+      stopTimer()
+      sessionStorage.removeItem(`fp_timer_${props.paymentToken}`)
+    }
+  }, 1000)
+}
+
+function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval)
+    timerInterval = null
+  }
+}
+
+// ── Polling statut ────────────────────────────────────────────────────────────
+let pollCount = 0
+const MAX_POLLS = 60 // 5 min à 5s
+
+function startPolling() {
+  pollCount = 0
+  pollingInterval = setInterval(async () => {
+    pollCount++
+    if (pollCount > MAX_POLLS) {
+      stopPolling()
+      isPending.value = false
+      return
+    }
+    try {
+      const res = await fetch(props.statusCheckUrl, { headers: { 'Accept': 'application/json' } })
+      if (!res.ok) return
+      const data = await res.json()
+      if (data.status === 'paid') {
+        isPaid.value = true
+        isPending.value = false
+        stopPolling()
+      }
+    } catch (_) {
+      // silencieux
+    }
+  }, 5000)
+}
+
+function stopPolling() {
+  if (pollingInterval) {
+    clearInterval(pollingInterval)
+    pollingInterval = null
+  }
+}
+
+// ── Paiement en ligne ─────────────────────────────────────────────────────────
 async function payOnline(gateway) {
   if (loadingGateway.value) return
   loadingGateway.value = gateway
@@ -592,6 +756,10 @@ async function payOnline(gateway) {
 
     const data = await response.json()
     if (data.redirect_url) {
+      // Démarrer le timer 15 min
+      sessionStorage.setItem(`fp_timer_${props.paymentToken}`, Date.now().toString())
+      onlineTimerSeconds.value = 900
+      startTimer()
       window.location.href = data.redirect_url
     } else {
       throw new Error('Aucune URL de redirection reçue.')
@@ -602,7 +770,49 @@ async function payOnline(gateway) {
   }
 }
 
-// --- Utilitaires ---
+// ── Upload preuve ──────────────────────────────────────────────────────────────
+function onProofFileChange(e) {
+  proofFile.value = e.target.files[0] ?? null
+  proofError.value = null
+}
+
+async function submitProof() {
+  if (!proofFile.value || proofLoading.value) return
+  proofLoading.value = true
+  proofError.value = null
+
+  try {
+    const formData = new FormData()
+    formData.append('proof', proofFile.value)
+
+    const xsrfToken = getCookie('XSRF-TOKEN')
+    const response = await fetch(props.uploadProofUrl, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-XSRF-TOKEN': xsrfToken ? decodeURIComponent(xsrfToken) : '',
+      },
+      body: formData,
+    })
+
+    const data = await response.json().catch(() => ({}))
+    if (!response.ok) throw new Error(data.message ?? `Erreur ${response.status}`)
+
+    proofSuccess.value = true
+    proofFile.value = null
+  } catch (err) {
+    proofError.value = err.message ?? 'Une erreur est survenue lors de l\'envoi.'
+  } finally {
+    proofLoading.value = false
+  }
+}
+
+// ── Copier lien page ──────────────────────────────────────────────────────────
+async function copyPageLink() {
+  await copyText(window.location.href)
+}
+
+// ── Utilitaires ───────────────────────────────────────────────────────────────
 function getCookie(name) {
   const match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'))
   return match ? match[1] : null
@@ -612,19 +822,16 @@ async function copyText(text) {
   if (!text) return
   try {
     await navigator.clipboard.writeText(text)
-    copiedToast.value = true
-    setTimeout(() => { copiedToast.value = false }, 2000)
   } catch {
-    // fallback
     const el = document.createElement('textarea')
     el.value = text
     document.body.appendChild(el)
     el.select()
     document.execCommand('copy')
     document.body.removeChild(el)
-    copiedToast.value = true
-    setTimeout(() => { copiedToast.value = false }, 2000)
   }
+  copiedToast.value = true
+  setTimeout(() => { copiedToast.value = false }, 2000)
 }
 
 function formatAmount(val) {
@@ -634,38 +841,16 @@ function formatAmount(val) {
 
 function formatDate(dateStr) {
   if (!dateStr) return ''
-  const d = new Date(dateStr)
-  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
+  return new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' })
 }
 
 function statusClass(status) {
   const s = (status ?? '').toLowerCase()
-  if (s.includes('pay') || s === 'paid') return 'bg-green-100 text-green-700'
-  if (s.includes('partiel')) return 'bg-yellow-100 text-yellow-700'
+  if (s === 'paid' || s.includes('pay')) return 'bg-green-100 text-green-700'
+  if (s.includes('partiel') || s === 'partial') return 'bg-yellow-100 text-yellow-700'
   if (s.includes('annul') || s.includes('cancel')) return 'bg-red-100 text-red-700'
-  if (s.includes('retard') || s.includes('overdue')) return 'bg-red-100 text-red-700'
+  if (s.includes('retard') || s === 'overdue') return 'bg-red-100 text-red-700'
   return 'bg-gray-100 text-gray-600'
-}
-
-// QR code simple basé sur le hash de l'adresse (visuel indicatif uniquement)
-function generateSimpleQR(address) {
-  const bits = []
-  let hash = 0
-  for (let i = 0; i < (address?.length ?? 0); i++) {
-    hash = ((hash << 5) - hash + address.charCodeAt(i)) | 0
-  }
-  // Remplissage avec coin marks et données pseudo-aléatoires
-  for (let i = 0; i < 64; i++) {
-    const row = Math.floor(i / 8)
-    const col = i % 8
-    // Coins QR (finder patterns simplifiés)
-    if ((row < 2 && col < 2) || (row < 2 && col > 5) || (row > 5 && col < 2)) {
-      bits.push(true)
-    } else {
-      bits.push(((hash >> (i % 32)) & 1) === 1)
-    }
-  }
-  return bits
 }
 </script>
 
