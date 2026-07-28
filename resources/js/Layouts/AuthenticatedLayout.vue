@@ -168,9 +168,9 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                             </button>
                                         </template>
                                         <template #content>
-                                            <div style="width:480px" class="p-4">
-                                                <div class="grid grid-cols-2 gap-x-4">
-                                                    <!-- Colonne gauche -->
+                                            <div style="width:680px" class="p-4">
+                                                <div class="grid grid-cols-3 gap-x-4">
+                                                    <!-- Colonne 1 : Opérations -->
                                                     <div>
                                                         <p class="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Opérations</p>
                                                         <a :href="route('pos.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
@@ -179,17 +179,28 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                                         <a :href="route('stock.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
                                                             <span>📦</span><span>Stocks</span>
                                                         </a>
+                                                        <a :href="route('warehouses.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🏭</span><span>Multi-entrepôts</span>
+                                                        </a>
+
                                                         <a :href="route('reminders.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
                                                             <span>⏰</span><span>Relances clients</span>
                                                         </a>
                                                         <a :href="route('recurring.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
                                                             <span>🔁</span><span>Factures récurrentes</span>
                                                         </a>
+                                                        <a :href="route('subscriptions.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>📅</span><span>Abonnements clients</span>
+                                                        </a>
+
                                                         <a :href="route('purchases.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
                                                             <span>🛒</span><span>Achats fournisseurs</span>
                                                         </a>
+                                                        <a :href="route('sav.repairs.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🔧</span><span>SAV / Réparations</span>
+                                                        </a>
                                                     </div>
-                                                    <!-- Colonne droite -->
+                                                    <!-- Colonne 2 : Gestion & Analyse -->
                                                     <div>
                                                         <p class="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Gestion & Analyse</p>
                                                         <a :href="route('projects.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
@@ -204,25 +215,43 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                                         <a :href="route('accounting.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
                                                             <span>📚</span><span>Comptabilité</span>
                                                         </a>
+                                                        <a :href="route('accounting.accounts')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🏦</span><span>Plan comptable OHADA</span>
+                                                        </a>
+                                                        <a :href="route('banking.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>⚖️</span><span>Rapprochement bancaire</span>
+                                                        </a>
                                                         <a :href="route('reports.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
                                                             <span>📊</span><span>Rapports & Exports</span>
                                                         </a>
+                                                        <a :href="route('real-estate.properties.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🏠</span><span>Immobilier</span>
+                                                        </a>
+
                                                     </div>
-                                                </div>
-                                                <div class="mt-3 border-t border-gray-100 pt-2">
-                                                    <p class="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Sécurité & Conformité</p>
-                                                    <a href="/vault" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
-                                                        <span>🔐</span><span>Coffre-fort</span>
-                                                    </a>
-                                                    <a :href="route('signatures.dashboard')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors" :class="route().current('signatures.*') ? 'font-semibold text-brand-700' : ''">
-                                                        <span>✍️</span><span>Signatures eIDAS</span>
-                                                    </a>
-                                                    <a href="/security/policy" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
-                                                        <span>🛡️</span><span>Politique sécurité</span>
-                                                    </a>
-                                                    <a :href="route('gdpr.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
-                                                        <span>📋</span><span>RGPD</span>
-                                                    </a>
+                                                    <!-- Colonne 3 : Sécurité & Conformité -->
+                                                    <div>
+                                                        <p class="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Sécurité & Conformité</p>
+                                                        <a href="/vault" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🔐</span><span>Coffre-fort</span>
+                                                        </a>
+                                                        <a :href="route('signatures.dashboard')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors" :class="route().current('signatures.*') ? 'font-semibold text-brand-700' : ''">
+                                                            <span>✍️</span><span>Signatures eIDAS</span>
+                                                        </a>
+                                                        <a href="/security/policy" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🛡️</span><span>Politique sécurité</span>
+                                                        </a>
+                                                        <a :href="route('gdpr.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>📋</span><span>RGPD</span>
+                                                        </a>
+                                                        <p class="mb-1.5 mt-3 px-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Communication</p>
+                                                        <a :href="route('whatsapp.history')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>💬</span><span>WhatsApp Business</span>
+                                                        </a>
+                                                        <a :href="route('settings.catalog')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-gray-700 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                                                            <span>🛍️</span><span>Catalogue public</span>
+                                                        </a>
+                                                    </div>
                                                 </div>
                                                 <div class="mt-2 border-t border-gray-100 pt-2">
                                                     <a :href="route('billing.index')" class="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-semibold text-brand-700 hover:bg-brand-50 transition-colors">
