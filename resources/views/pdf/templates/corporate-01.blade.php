@@ -108,11 +108,15 @@
     .notes-block { margin-top: 14px; font-size: 9px; color: #4a5568; }
     .notes-block .title { font-weight: bold; color: #002D5B; margin-bottom: 4px; }
 
-    /* Zone de signatures */
-    .sig-section { margin-top: 28px; }
+    /* Zone de signatures — fixée en bas de page */
+    .sig-zone {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        background: #fff;
+        padding-top: 8px;
+    }
     .sig-section .sig-heading {
         font-size: 7.5px; text-transform: uppercase; color: #6B7C93;
-        letter-spacing: 1px; margin-bottom: 12px;
+        letter-spacing: 1px; margin-bottom: 10px;
         border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;
     }
     .sig-row td { width: 50%; vertical-align: top; padding: 0 10px; }
@@ -121,19 +125,19 @@
     .sig-label { font-size: 8.5px; color: #4a5568; text-align: center; margin-bottom: 8px; font-weight: bold; }
     .sig-box {
         border: 1px solid #c8d3e0; border-radius: 5px;
-        height: 110px; background: #fafbfc; position: relative;
+        height: 90px; background: #fafbfc; position: relative;
     }
-    .sig-photo-zone { position: absolute; top: 8px; left: 0; right: 0; min-height: 55px; text-align: center; }
-    .sig-photo-zone img { max-height: 50px; max-width: 80%; display: block; margin: 0 auto; }
-    .sig-name-line  { border-bottom: 1px dashed #c8d3e0; position: absolute; bottom: 26px; left: 10px; right: 10px; }
-    .sig-date-label { font-size: 6.5px; color: #9aa7b8; position: absolute; bottom: 14px; left: 10px; }
-    .sig-name-label { font-size: 6.5px; color: #9aa7b8; position: absolute; bottom: 4px; left: 10px; }
+    .sig-photo-zone { position: absolute; top: 8px; left: 0; right: 0; min-height: 45px; text-align: center; }
+    .sig-photo-zone img { max-height: 42px; max-width: 80%; display: block; margin: 0 auto; }
+    .sig-name-line  { border-bottom: 1px dashed #c8d3e0; position: absolute; bottom: 22px; left: 10px; right: 10px; }
+    .sig-date-label { font-size: 6.5px; color: #9aa7b8; position: absolute; bottom: 12px; left: 10px; }
+    .sig-name-label { font-size: 6.5px; color: #9aa7b8; position: absolute; bottom: 3px; left: 10px; }
 
     .legal-foot {
-        margin-top: 16px; background: #f8f9fb; border: 1px solid #e2e8f0;
-        border-radius: 3px; padding: 7px 12px; text-align: center;
+        margin-top: 8px; background: #f8f9fb; border: 1px solid #e2e8f0;
+        border-radius: 3px; padding: 5px 12px; text-align: center;
     }
-    .legal-foot-text { font-size: 7px; color: #9aa7b8; line-height: 1.9; }
+    .legal-foot-text { font-size: 7px; color: #9aa7b8; line-height: 1.8; }
 </style>
 </head>
 <body>
@@ -192,7 +196,7 @@
     </table>
 </footer>
 
-<main>
+<main style="padding-bottom:185px;">
     <div class="header-accent"></div>
 
     {{-- Infos document + client --}}
@@ -398,6 +402,7 @@
         $showSigSection = $sigShowEmitter || $sigShowClient;
     @endphp
 
+    <div class="sig-zone">
     @if($showSigSection)
     <div class="sig-section">
         <div class="sig-heading">Signatures</div>
@@ -439,7 +444,7 @@
     @endif
 
     {{-- Pied légal --}}
-    <div class="legal-foot">
+    <div class="legal-foot" style="margin-top:{{ $showSigSection ? '8px' : '0' }}">
         <div class="legal-foot-text">
             @if($sigMention)
                 {!! nl2br(e($sigMention)) !!}
@@ -454,6 +459,7 @@
             &nbsp;·&nbsp; Généré par <strong>IBIG FactPro</strong> — factpro.ibigsoft.com
         </div>
     </div>
+    </div>{{-- /.sig-zone --}}
 
 </main>
 </body>
