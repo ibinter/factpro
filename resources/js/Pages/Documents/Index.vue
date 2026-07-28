@@ -198,6 +198,80 @@ const newDocGroups = [
         ],
     },
 ];
+
+// ── Raccourcis création rapide ─────────────────────────────────────────────
+const quickCreate = [
+    { type: 'invoice',       icon: '🧾', label: 'Facture',    color: 'bg-blue-600 hover:bg-blue-700 text-white' },
+    { type: 'quote',         icon: '📋', label: 'Devis',      color: 'bg-amber-500 hover:bg-amber-600 text-white' },
+    { type: 'delivery_note', icon: '🚚', label: 'Bon livraison', color: 'bg-teal-600 hover:bg-teal-700 text-white' },
+    { type: 'sales_order',   icon: '📦', label: 'Bon commande', color: 'bg-sky-600 hover:bg-sky-700 text-white' },
+];
+
+// ── Tri ────────────────────────────────────────────────────────────────────
+const sortKey  = ref(props.filters.sort  ?? 'issue_date');
+const sortDir  = ref(props.filters.dir   ?? 'desc');
+
+function toggleSort(key) {
+    if (sortKey.value === key) {
+        sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortKey.value = key;
+        sortDir.value = 'desc';
+    }
+    router.get(route('documents.index'), {
+        search: search.value || undefined,
+        type: type.value || undefined,
+        category: category.value || undefined,
+        status: status.value || undefined,
+        period: period.value || undefined,
+        sort: sortKey.value,
+        dir: sortDir.value,
+    }, { preserveState: true, replace: true });
+}
+
+function sortIcon(key) {
+    if (sortKey.value !== key) return '↕';
+    return sortDir.value === 'asc' ? '↑' : '↓';
+}
+
+// ── Sélection multiple ─────────────────────────────────────────────────────
+const selected   = ref(new Set());
+const allChecked = computed(() =>
+    documents.data.length > 0 && documents.data.every(d => selected.value.has(d.id))
+);
+
+function toggleAll() {
+    if (allChecked.value) {
+        selected.value = new Set();
+    } else {
+        selected.value = new Set(props.documents.data.map(d => d.id));
+    }
+}
+
+function toggleSelect(id) {
+    const s = new Set(selected.value);
+    s.has(id) ? s.delete(id) : s.add(id);
+    selected.value = s;
+}
+
+async function bulkMarkPaid() {
+    if (!selected.value.size) return;
+    if (!confirm(`Marquer ${selected.value.size} document(s) comme payé(s) ?`)) return;
+    await router.post(route('documents.bulk-status'), {
+        ids: [...selected.value],
+        status: 'paid',
+    });
+    selected.value = new Set();
+}
+
+async function bulkDelete() {
+    if (!selected.value.size) return;
+    if (!confirm(`Supprimer ${selected.value.size} document(s) ? Cette action est irréversible.`)) return;
+    await router.post(route('documents.bulk-delete'), {
+        ids: [...selected.value],
+    });
+    selected.value = new Set();
+}
 </script>
 
 <template>
@@ -208,19 +282,38 @@ const newDocGroups = [
 
             <!-- ── Page header ────────────────────────────────────────────── -->
             <div class="bg-white border-b border-gray-100 px-6 py-4">
-                <div class="mx-auto max-w-7xl flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 class="text-xl font-bold text-gray-900">Documents commerciaux</h1>
-                        <p class="text-xs text-gray-400 mt-0.5">{{ documents.total }} document{{ documents.total > 1 ? 's' : '' }} au total</p>
+                <div class="mx-auto max-w-7xl">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-4">
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">Documents commerciaux</h1>
+                            <p class="text-xs text-gray-400 mt-0.5">{{ documents.total }} document{{ documents.total > 1 ? 's' : '' }} au total</p>
+                        </div>
+                        <Link :href="route('documents.catalog')"
+                            class="inline-flex items-center gap-2 rounded-lg border border-brand-200 bg-white px-4 py-2 text-sm font-medium text-brand-700 shadow-sm hover:bg-brand-50 transition-colors">
+                            <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                            </svg>
+                            Tous les types
+                        </Link>
                     </div>
-                    <!-- Bouton unique — passe par le catalogue -->
-                    <Link :href="route('documents.catalog')"
-                        class="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition-colors">
-                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                        </svg>
-                        Nouveau document
-                    </Link>
+                    <!-- Barre de création rapide -->
+                    <div class="flex flex-wrap gap-2">
+                        <Link v-for="q in quickCreate" :key="q.type"
+                            :href="route('documents.create', { type: q.type })"
+                            class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold shadow-sm transition-colors"
+                            :class="q.color">
+                            <span>{{ q.icon }}</span>
+                            <span>{{ q.label }}</span>
+                        </Link>
+                        <Link :href="route('documents.create', { type: 'credit_note' })"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-rose-500 hover:bg-rose-600 text-white px-3 py-1.5 text-sm font-semibold shadow-sm transition-colors">
+                            <span>↩️</span><span>Avoir</span>
+                        </Link>
+                        <Link :href="route('documents.create', { type: 'proforma' })"
+                            class="inline-flex items-center gap-1.5 rounded-lg bg-violet-500 hover:bg-violet-600 text-white px-3 py-1.5 text-sm font-semibold shadow-sm transition-colors">
+                            <span>📄</span><span>Proforma</span>
+                        </Link>
+                    </div>
                 </div>
             </div>
 
@@ -411,6 +504,32 @@ const newDocGroups = [
                     </Transition>
                 </Teleport>
 
+                <!-- ── Toolbar sélection groupée ─────────────────────────── -->
+                <Transition name="menu-drop">
+                    <div v-if="selected.size > 0"
+                        class="sticky top-0 z-20 flex items-center gap-3 rounded-xl bg-brand-900 px-5 py-3 shadow-lg">
+                        <span class="text-sm font-semibold text-white">{{ selected.size }} sélectionné{{ selected.size > 1 ? 's' : '' }}</span>
+                        <div class="ml-auto flex items-center gap-2">
+                            <button @click="bulkMarkPaid" type="button"
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors">
+                                ✅ Marquer payé
+                            </button>
+                            <a :href="route('documents.export.excel') + '?ids=' + [...selected].join(',')"
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-white/10 hover:bg-white/20 px-3 py-1.5 text-xs font-semibold text-white transition-colors">
+                                📊 Exporter
+                            </a>
+                            <button @click="bulkDelete" type="button"
+                                class="inline-flex items-center gap-1.5 rounded-lg bg-red-500 hover:bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors">
+                                🗑 Supprimer
+                            </button>
+                            <button @click="selected = new Set()" type="button"
+                                class="ml-2 text-white/60 hover:text-white text-xs transition-colors">
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </Transition>
+
                 <!-- ── Table ───────────────────────────────────────────────── -->
                 <div class="overflow-hidden rounded-xl bg-white shadow-sm border border-gray-100">
                     <!-- Résultats info -->
@@ -429,12 +548,27 @@ const newDocGroups = [
                         <table class="w-full text-sm">
                             <thead class="border-b border-gray-100 bg-gray-50/60">
                                 <tr>
+                                    <!-- Checkbox tout sélectionner -->
+                                    <th class="px-4 py-3 w-10">
+                                        <input type="checkbox" :checked="allChecked" @change="toggleAll"
+                                            class="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 cursor-pointer" />
+                                    </th>
                                     <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500" style="width:10%">Type</th>
-                                    <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500" style="width:12%">Numéro</th>
-                                    <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500" style="width:20%">Client</th>
-                                    <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500" style="width:12%">Émis le</th>
-                                    <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500" style="width:12%">Échéance</th>
-                                    <th class="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wide text-gray-500" style="width:14%">Montant TTC</th>
+                                    <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:text-gray-800 select-none" style="width:12%" @click="toggleSort('number')">
+                                        Numéro <span class="ml-1 opacity-50">{{ sortIcon('number') }}</span>
+                                    </th>
+                                    <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:text-gray-800 select-none" style="width:18%" @click="toggleSort('customer')">
+                                        Client <span class="ml-1 opacity-50">{{ sortIcon('customer') }}</span>
+                                    </th>
+                                    <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:text-gray-800 select-none" style="width:12%" @click="toggleSort('issue_date')">
+                                        Émis le <span class="ml-1 opacity-50">{{ sortIcon('issue_date') }}</span>
+                                    </th>
+                                    <th class="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:text-gray-800 select-none" style="width:12%" @click="toggleSort('due_date')">
+                                        Échéance <span class="ml-1 opacity-50">{{ sortIcon('due_date') }}</span>
+                                    </th>
+                                    <th class="px-5 py-3 text-right text-[11px] font-semibold uppercase tracking-wide text-gray-500 cursor-pointer hover:text-gray-800 select-none" style="width:13%" @click="toggleSort('total')">
+                                        Montant TTC <span class="ml-1 opacity-50">{{ sortIcon('total') }}</span>
+                                    </th>
                                     <th class="px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-wide text-gray-500" style="width:12%">Statut</th>
                                     <th class="px-4 py-3 text-center text-[11px] font-semibold uppercase tracking-wide text-gray-500" style="width:8%">Actions</th>
                                 </tr>
@@ -442,7 +576,14 @@ const newDocGroups = [
                             <tbody class="divide-y divide-gray-50">
                                 <tr v-for="doc in documents.data" :key="doc.id"
                                     class="group hover:bg-blue-50/40 transition-colors cursor-pointer"
+                                    :class="{ 'bg-brand-50/30': selected.has(doc.id) }"
                                     @click="router.visit(route('documents.show', doc.id))">
+
+                                    <!-- Checkbox -->
+                                    <td class="px-4 py-3.5" @click.stop>
+                                        <input type="checkbox" :checked="selected.has(doc.id)" @change="toggleSelect(doc.id)"
+                                            class="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500 cursor-pointer" />
+                                    </td>
 
                                     <!-- Type badge -->
                                     <td class="px-5 py-3.5">
@@ -552,7 +693,7 @@ const newDocGroups = [
 
                                 <!-- Empty state -->
                                 <tr v-if="!documents.data.length">
-                                    <td colspan="8" class="py-16 text-center">
+                                    <td colspan="9" class="py-16 text-center">
                                         <div class="flex flex-col items-center gap-3">
                                             <span class="text-4xl">📋</span>
                                             <p class="text-base font-semibold text-gray-600">Aucun document trouvé</p>
