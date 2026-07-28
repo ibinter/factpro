@@ -180,6 +180,7 @@ class DocumentController extends Controller
         $this->authorizeDocument($request, $document);
 
         $document->load(['lines', 'customer', 'payments', 'parent:id,type,number', 'children:id,parent_id,type,number']);
+        $comments = $document->comments()->with('user:id,name')->latest()->get();
 
         // Plan de paiement / acomptes (cahier §12) lié à ce document source
         $paymentPlan = PaymentPlan::where('source_document_id', $document->id)
@@ -210,6 +211,7 @@ class DocumentController extends Controller
                 ->where('is_active', true)
                 ->exists(),
             'templates' => $this->templatesForFront($request->user()),
+            'comments' => $comments,
         ]);
     }
 
@@ -557,6 +559,7 @@ class DocumentController extends Controller
             'secondaryColor'    => $secondaryColor,
             'accentColor'       => $accentColor,
             'signatureLabels'   => $engineConfig['signature_labels'] ?? [],
+            'style'             => $company->document_style ?? [],
         ])->setPaper($engineConfig['format'], $engineConfig['orientation']);
 
         return $pdf->stream($document->number.'.pdf');
@@ -660,6 +663,31 @@ class DocumentController extends Controller
             ])
             ->values()
             ->all();
+    }
+
+    /** Partage un document par email (lien vers la page show). */
+    public function share(Request $request, Document $document): RedirectResponse
+    {
+        $this->authorizeDocument($request, $document);
+
+        $data = $request->validate([
+            'to'      => ['required', 'email', 'max:255'],
+            'subject' => ['required', 'string', 'max:255'],
+            'body'    => ['nullable', 'string', 'max:2000'],
+        ]);
+
+        $url = route('documents.show', $document->id);
+
+        \Illuminate\Support\Facades\Mail::to($data['to'])->send(
+            new \App\Mail\DocumentSharedMail(
+                document: $document,
+                subject: $data['subject'],
+                body: $data['body'] ?? '',
+                documentUrl: $url,
+            )
+        );
+
+        return back()->with('success', 'Document partagé par email.');
     }
 
     /** Duplique un document en brouillon avec les mêmes lignes. */
@@ -1031,6 +1059,160 @@ class DocumentController extends Controller
         unset($data['lines']);
 
         return [$data, $lines];
+    }
+
+    /**
+     * Génère un aperçu PDF inline depuis les données POST du formulaire.
+     * Aucune persistance : document temporaire en mémoire uniquement.
+     */
+    public function preview(Request $request)
+    {
+        $user    = $request->user();
+        $company = $user->currentCompany;
+
+        // Validation souple — on ne bloque pas l'aperçu sur des champs vides
+        $data = $request->validate([
+            'type'           => 'required|in:'.implode(',', array_keys(Document::TYPES)),
+            'customer_id'    => 'nullable|integer',
+            'reference'      => 'nullable|string|max:255',
+            'issue_date'     => 'nullable|date',
+            'due_date'       => 'nullable|date',
+            'currency'       => 'nullable|string|size:3',
+            'template_key'   => 'nullable|string|max:40',
+            'discount_type'  => 'nullable|in:percent,fixed',
+            'discount_value' => 'nullable|numeric|min:0',
+            'notes'          => 'nullable|string',
+            'terms'          => 'nullable|string',
+            'meta'           => 'nullable|array',
+            'lines'          => 'nullable|array',
+            'lines.*.description'       => 'nullable|string',
+            'lines.*.quantity'          => 'nullable|numeric|min:0',
+            'lines.*.unit'              => 'nullable|string|max:20',
+            'lines.*.unit_price'        => 'nullable|numeric|min:0',
+            'lines.*.discount_percent'  => 'nullable|numeric|min:0',
+            'lines.*.line_discount_type'=> 'nullable|in:percent,fixed',
+            'lines.*.tax_rate'          => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        // Construire un document Eloquent non persisté
+        $document = new Document();
+        $document->forceFill([
+            'company_id'     => $company->id,
+            'type'           => $data['type'],
+            'number'         => 'APERCU-'.strtoupper(substr($data['type'], 0, 6)).'-'.date('Ymd'),
+            'status'         => 'draft',
+            'customer_id'    => $data['customer_id'] ?? null,
+            'reference'      => $data['reference'] ?? null,
+            'issue_date'     => $data['issue_date'] ?? now()->toDateString(),
+            'due_date'       => $data['due_date'] ?? null,
+            'currency'       => $data['currency'] ?? $company->currency,
+            'template_key'   => $data['template_key'] ?? $company->default_template,
+            'discount_type'  => $data['discount_type'] ?? null,
+            'discount_value' => $data['discount_value'] ?? 0,
+            'notes'          => $data['notes'] ?? null,
+            'terms'          => $data['terms'] ?? null,
+            'meta'           => $data['meta'] ?? [],
+            'subtotal'       => 0,
+            'discount_amount'=> 0,
+            'tax_amount'     => 0,
+            'total'          => 0,
+            'amount_paid'    => 0,
+            'finalized_at'   => null,
+        ]);
+        $document->setRelation('company', $company);
+
+        // Customer (sans requête si absent)
+        if ($document->customer_id) {
+            $customer = $company->customers()->find($document->customer_id);
+            $document->setRelation('customer', $customer);
+        }
+
+        // Lignes
+        $rawLines = $data['lines'] ?? [];
+        $lineModels = collect($rawLines)->map(function ($l) {
+            $qty      = (float) ($l['quantity'] ?? 1);
+            $up       = (float) ($l['unit_price'] ?? 0);
+            $disc     = (float) ($l['discount_percent'] ?? 0);
+            $discType = $l['line_discount_type'] ?? 'percent';
+            $base     = $qty * $up;
+            $lineTotal = $discType === 'fixed'
+                ? max(0, $base - $disc)
+                : $base * (1 - $disc / 100);
+
+            $m = new \App\Models\DocumentLine();
+            $m->forceFill([
+                'description'       => $l['description'] ?? '',
+                'quantity'          => $qty,
+                'unit'              => $l['unit'] ?? 'unité',
+                'unit_price'        => $up,
+                'discount_percent'  => $disc,
+                'line_discount_type'=> $discType,
+                'tax_rate'          => (float) ($l['tax_rate'] ?? 0),
+                'line_total'        => round($lineTotal, 2),
+            ]);
+            return $m;
+        });
+        $document->setRelation('lines', $lineModels);
+
+        // Calcul des totaux
+        $subtotal = $lineModels->sum('line_total');
+        $discountAmount = match ($data['discount_type'] ?? null) {
+            'percent' => $subtotal * (((float) ($data['discount_value'] ?? 0)) / 100),
+            'fixed'   => min((float) ($data['discount_value'] ?? 0), $subtotal),
+            default   => 0,
+        };
+        $taxBase   = $subtotal - $discountAmount;
+        $taxAmount = $subtotal > 0
+            ? $lineModels->reduce(function ($carry, $l) use ($taxBase, $subtotal) {
+                $share = $subtotal > 0 ? $l->line_total / $subtotal : 0;
+                return $carry + $taxBase * $share * ($l->tax_rate / 100);
+            }, 0)
+            : 0;
+        $document->subtotal       = round($subtotal, 2);
+        $document->discount_amount= round($discountAmount, 2);
+        $document->tax_amount     = round($taxAmount, 2);
+        $document->total          = round($subtotal - $discountAmount + $taxAmount, 2);
+
+        // Résolution template & couleurs
+        $engineConfig   = $this->engine->resolve($document);
+        $cosmeticView   = $this->resolveTemplateView($document);
+        $viewName       = $cosmeticView !== 'pdf.document' ? $cosmeticView : $engineConfig['template'];
+        $templateConfig = config("pdf_templates.{$document->template_key}", []);
+        $primaryColor   = $templateConfig['primary']   ?? $engineConfig['primary_color'];
+        $secondaryColor = $templateConfig['secondary'] ?? '#f0f4ff';
+        $accentColor    = $templateConfig['accent']    ?? '#f0c040';
+
+        // Logo base64
+        $logoBase64 = null;
+        $logoPath   = $company->logo_path ?? null;
+        if ($logoPath) {
+            $absPath = Storage::disk('public')->path($logoPath);
+            if (file_exists($absPath)) {
+                $mime       = mime_content_type($absPath) ?: 'image/png';
+                $logoBase64 = 'data:'.$mime.';base64,'.base64_encode(file_get_contents($absPath));
+            }
+        }
+
+        $pdf = Pdf::loadView($viewName, [
+            'document'         => $document,
+            'company'          => $company,
+            'logoBase64'       => $logoBase64,
+            'sigDigitalBase64' => null,
+            'sigStampBase64'   => null,
+            'sigConfig'        => ['show_emitter' => false, 'show_client' => false, 'mode' => 'none', 'mention' => null, 'emitter_label' => '', 'client_label' => ''],
+            'qrDataUri'        => null,
+            'watermark'        => 'APERCU',
+            'primaryColor'     => $primaryColor,
+            'secondaryColor'   => $secondaryColor,
+            'accentColor'      => $accentColor,
+            'signatureLabels'  => $engineConfig['signature_labels'] ?? [],
+            'style'            => $company->document_style ?? [],
+        ])->setPaper($engineConfig['format'], $engineConfig['orientation']);
+
+        return response($pdf->output(), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="apercu.pdf"',
+        ]);
     }
 
     private function syntheticLines(array $data): array

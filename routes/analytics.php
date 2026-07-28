@@ -7,6 +7,9 @@ Route::middleware(['auth', 'license'])->prefix('analytics')->name('analytics.')-
     // Page principale
     Route::get('/', [AnalyticsController::class, 'dashboard'])->name('dashboard');
 
+    // Analytics Documents
+    Route::get('/documents', [AnalyticsController::class, 'documents'])->name('documents');
+
     // Widgets CRUD
     Route::get('/widgets', [AnalyticsController::class, 'widgets'])->name('widgets');
     Route::post('/widgets', [AnalyticsController::class, 'addWidget'])->name('widgets.add');

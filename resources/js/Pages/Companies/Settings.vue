@@ -100,6 +100,61 @@ const submitStamp = () => {
     });
 };
 
+// ─── Moyens de paiement configurables ───────────────────────────────────────
+const METHOD_TYPES = [
+    { type: 'wave',          label: 'Wave',           fields: ['number'] },
+    { type: 'orange_money',  label: 'Orange Money',   fields: ['number'] },
+    { type: 'mtn_momo',      label: 'MTN MoMo',       fields: ['number'] },
+    { type: 'bank_transfer', label: 'Virement bancaire', fields: ['account_name', 'bank_name', 'iban', 'bic'] },
+    { type: 'paypal',        label: 'PayPal',         fields: ['email'] },
+];
+
+const buildDefaultMethod = (type) => ({
+    type,
+    enabled: true,
+    label: '',
+    number: '',
+    account_name: '',
+    bank_name: '',
+    iban: '',
+    bic: '',
+    email: '',
+    note: '',
+});
+
+const pmForm = useForm({
+    payment_methods: (props.company.payment_methods ?? []).map(m => ({ ...buildDefaultMethod(m.type), ...m })),
+});
+
+const addPaymentMethod = (type) => {
+    if (pmForm.payment_methods.some(m => m.type === type)) return;
+    pmForm.payment_methods.push(buildDefaultMethod(type));
+};
+
+const removePaymentMethod = (index) => {
+    pmForm.payment_methods.splice(index, 1);
+};
+
+const savePaymentMethods = () => {
+    pmForm.put(route('companies.payment-methods'), { preserveScroll: true });
+};
+
+const labelFor = (type) => METHOD_TYPES.find(m => m.type === type)?.label ?? type;
+const fieldsFor = (type) => METHOD_TYPES.find(m => m.type === type)?.fields ?? [];
+const availableToAdd = computed(() =>
+    METHOD_TYPES.filter(m => !pmForm.payment_methods.some(p => p.type === m.type))
+);
+
+// Style des documents
+const docStyle = useForm({
+    accent_color:  props.company.document_style?.accent_color  ?? '#1e3a8a',
+    header_style:  props.company.document_style?.header_style  ?? 'modern',
+    font_family:   props.company.document_style?.font_family   ?? 'dejavu_sans',
+});
+const saveDocStyle = () => {
+    docStyle.put(route('companies.document-style'), { preserveScroll: true });
+};
+
 // Paramètres signature/cachet
 const sigSettings = useForm({
     show_signature:     props.company.show_signature     ?? false,
@@ -280,6 +335,71 @@ const saveSigSettings = () => {
                     <PrimaryButton :disabled="form.processing" @click="submit">Enregistrer les paramètres</PrimaryButton>
                 </div>
 
+                <!-- Style des documents -->
+                <section class="rounded-lg bg-white p-6 shadow">
+                    <h3 class="text-lg font-semibold text-gray-800">Style des documents PDF</h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Personnalisez l'apparence visuelle de vos factures, devis et autres documents générés.
+                    </p>
+
+                    <div class="mt-5 space-y-5">
+                        <!-- Couleur accentuation -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Couleur principale</label>
+                            <div class="flex items-center gap-4">
+                                <input
+                                    type="color"
+                                    v-model="docStyle.accent_color"
+                                    class="h-10 w-16 cursor-pointer rounded border border-gray-300 p-0.5"
+                                />
+                                <span class="text-sm font-mono text-gray-500">{{ docStyle.accent_color }}</span>
+                                <button type="button" class="text-xs text-gray-400 hover:text-gray-600 underline" @click="docStyle.accent_color = '#1e3a8a'">Réinitialiser</button>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-400">Utilisée pour le titre du document, l'en-tête du tableau et le total TTC.</p>
+                            <InputError :message="docStyle.errors.accent_color" class="mt-1" />
+                        </div>
+
+                        <!-- Style de bandeau -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Mise en page de l'en-tête</label>
+                            <div class="grid sm:grid-cols-3 gap-3">
+                                <label v-for="opt in [
+                                    { v: 'modern',  l: 'Modern',  d: 'Bandeau coloré plein (défaut)' },
+                                    { v: 'classic', l: 'Classic', d: 'Bordure colorée uniquement' },
+                                    { v: 'minimal', l: 'Minimal', d: 'Sans bandeau, sobre' },
+                                ]" :key="opt.v"
+                                    class="flex items-start gap-3 cursor-pointer rounded-lg border p-3 transition"
+                                    :class="docStyle.header_style === opt.v ? 'border-brand-500 bg-brand-50' : 'border-gray-200 hover:border-gray-300'"
+                                >
+                                    <input type="radio" :value="opt.v" v-model="docStyle.header_style" class="mt-0.5 text-brand-600 focus:ring-brand-500" />
+                                    <div>
+                                        <span class="text-sm font-semibold text-gray-800">{{ opt.l }}</span>
+                                        <p class="text-xs text-gray-500">{{ opt.d }}</p>
+                                    </div>
+                                </label>
+                            </div>
+                            <InputError :message="docStyle.errors.header_style" class="mt-1" />
+                        </div>
+
+                        <!-- Police -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Police de caractères</label>
+                            <select v-model="docStyle.font_family"
+                                class="mt-1 block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-brand-500 focus:ring-brand-500 text-sm">
+                                <option value="dejavu_sans">DejaVu Sans (défaut)</option>
+                                <option value="times_new_roman">Times New Roman (serif)</option>
+                                <option value="courier">Courier (monospace)</option>
+                            </select>
+                            <InputError :message="docStyle.errors.font_family" class="mt-1" />
+                        </div>
+                    </div>
+
+                    <div class="mt-5 flex items-center justify-end gap-3">
+                        <span v-if="docStyle.recentlySuccessful" class="text-sm text-green-600">Style enregistré.</span>
+                        <PrimaryButton :disabled="docStyle.processing" @click="saveDocStyle">Enregistrer le style</PrimaryButton>
+                    </div>
+                </section>
+
                 <!-- Signature & Cachet -->
                 <section class="rounded-lg bg-white p-6 shadow">
                     <h3 class="text-lg font-semibold text-gray-800">Signature & Cachet</h3>
@@ -455,6 +575,129 @@ const saveSigSettings = () => {
                                 Uploader le cachet
                             </PrimaryButton>
                         </div>
+                    </div>
+                </section>
+
+                <!-- Moyens de paiement -->
+                <section class="rounded-lg bg-white p-6 shadow">
+                    <h3 class="text-lg font-semibold text-gray-800">Moyens de paiement</h3>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Configurez vos coordonnées de paiement. Elles s'afficheront sur vos PDFs et votre page publique.
+                    </p>
+
+                    <!-- Méthodes configurées -->
+                    <div v-if="pmForm.payment_methods.length" class="mt-4 space-y-4">
+                        <div
+                            v-for="(method, idx) in pmForm.payment_methods"
+                            :key="method.type"
+                            class="rounded-lg border border-gray-200 bg-gray-50 p-4"
+                        >
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center gap-3">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" v-model="method.enabled"
+                                            class="rounded border-gray-300 text-brand-600 focus:ring-brand-500" />
+                                        <span class="text-sm font-semibold text-gray-800">{{ labelFor(method.type) }}</span>
+                                    </label>
+                                    <span v-if="!method.enabled" class="text-xs text-gray-400 italic">(désactivé — non affiché sur les PDFs)</span>
+                                </div>
+                                <button type="button" @click="removePaymentMethod(idx)"
+                                    class="text-xs text-red-500 hover:text-red-700 font-medium">
+                                    Supprimer
+                                </button>
+                            </div>
+
+                            <div v-if="method.enabled" class="grid gap-3 sm:grid-cols-2">
+                                <!-- Wave / Orange Money / MTN MoMo -->
+                                <template v-if="fieldsFor(method.type).includes('number')">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Numéro</label>
+                                        <input v-model="method.number" type="text"
+                                            placeholder="Ex : 07 XX XX XX"
+                                            class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Libellé personnalisé</label>
+                                        <input v-model="method.label" type="text"
+                                            :placeholder="`Ex : ${labelFor(method.type)} - Nom du compte`"
+                                            class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                    </div>
+                                </template>
+
+                                <!-- Virement bancaire -->
+                                <template v-if="fieldsFor(method.type).includes('bank_name')">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Nom de la banque</label>
+                                        <input v-model="method.bank_name" type="text"
+                                            placeholder="Ex : Ecobank CI"
+                                            class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Nom du titulaire</label>
+                                        <input v-model="method.account_name" type="text"
+                                            placeholder="Ex : SARL Mon Entreprise"
+                                            class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">IBAN / N° de compte</label>
+                                        <input v-model="method.iban" type="text"
+                                            placeholder="CI XX XXXX XXXX XXXX XXXX"
+                                            class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">BIC / Swift</label>
+                                        <input v-model="method.bic" type="text"
+                                            placeholder="Ex : ECOCCIAB"
+                                            class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                    </div>
+                                </template>
+
+                                <!-- PayPal -->
+                                <template v-if="fieldsFor(method.type).includes('email')">
+                                    <div class="sm:col-span-2">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Adresse PayPal</label>
+                                        <input v-model="method.email" type="email"
+                                            placeholder="Ex : paiement@monentreprise.com"
+                                            class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                    </div>
+                                </template>
+
+                                <!-- Note commune -->
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Note (facultatif)</label>
+                                    <input v-model="method.note" type="text"
+                                        placeholder="Ex : Disponible 8h-20h"
+                                        class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-brand-500 focus:ring-brand-500" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ajouter un moyen de paiement -->
+                    <div v-if="availableToAdd.length" class="mt-4">
+                        <p class="text-xs font-medium text-gray-600 mb-2">Ajouter un moyen de paiement :</p>
+                        <div class="flex flex-wrap gap-2">
+                            <button
+                                v-for="m in availableToAdd"
+                                :key="m.type"
+                                type="button"
+                                @click="addPaymentMethod(m.type)"
+                                class="rounded-full border border-brand-300 bg-brand-50 px-3 py-1 text-xs font-medium text-brand-700 hover:bg-brand-100 transition"
+                            >
+                                + {{ m.label }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div v-if="!pmForm.payment_methods.length" class="mt-4 rounded-md bg-gray-50 p-4 text-sm text-gray-400 text-center">
+                        Aucun moyen de paiement configuré. Ajoutez-en un ci-dessus.
+                    </div>
+
+                    <div class="mt-4 flex items-center justify-end gap-3">
+                        <span v-if="pmForm.recentlySuccessful" class="text-sm text-green-600">Enregistré.</span>
+                        <PrimaryButton :disabled="pmForm.processing" @click="savePaymentMethods">
+                            Enregistrer les moyens de paiement
+                        </PrimaryButton>
                     </div>
                 </section>
 

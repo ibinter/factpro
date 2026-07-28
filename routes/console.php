@@ -44,6 +44,9 @@ Schedule::command('invoices:mark-overdue')->dailyAt('07:30');
 // Relances email automatiques : escalade J+3 / J+7 / J+15
 Schedule::command('reminders:send')->dailyAt('08:30');
 
+// Rappels de paiement intelligents configurables par règles (§9)
+Schedule::command('reminders:send-smart')->dailyAt('08:00');
+
 /*
 |--------------------------------------------------------------------------
 | Factures récurrentes — abonnements automatiques (cahier §3)

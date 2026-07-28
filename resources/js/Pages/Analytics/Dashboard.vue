@@ -32,6 +32,10 @@
             </svg>
             <span>✨ Insights IA</span>
           </button>
+          <!-- Analytics Documents -->
+          <a href="/analytics/documents" class="btn-secondary text-sm">
+            📊 Documents
+          </a>
           <!-- Export PDF -->
           <a :href="`/analytics/export/report?period=${period}`" target="_blank" class="btn-secondary text-sm">
             📄 PDF

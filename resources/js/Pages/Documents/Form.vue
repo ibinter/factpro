@@ -5,6 +5,7 @@ import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import DocumentPreview from '@/Components/DocumentPreview.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { computed, ref, onMounted, watch } from 'vue';
 import { useAiAssist } from '@/Composables/useAiAssist';
@@ -391,6 +392,23 @@ const submit = () => {
     if (isEdit.value) form.put(route('documents.update', props.document?.id), opts);
     else              form.post(route('documents.store'), opts);
 };
+
+// ── Payload aperçu PDF ────────────────────────────────────────────────────────
+const previewPayload = computed(() => ({
+    type:           form.type,
+    customer_id:    form.customer_id,
+    reference:      form.reference,
+    issue_date:     form.issue_date,
+    due_date:       form.due_date,
+    currency:       form.currency,
+    template_key:   form.template_key,
+    discount_type:  form.discount_type,
+    discount_value: form.discount_value,
+    notes:          form.notes,
+    terms:          form.terms,
+    meta:           form.meta,
+    lines:          form.lines,
+}));
 
 // ── Mois disponibles pour quittance ──────────────────────────────────────────
 const MOIS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
@@ -1747,7 +1765,8 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
                 </div>
 
                 <!-- ── Actions ────────────────────────────────────────────── -->
-                <div class="flex justify-end gap-3">
+                <div class="flex flex-wrap items-center justify-end gap-3">
+                    <DocumentPreview :form-data="previewPayload" />
                     <Link :href="isEdit ? route('documents.show', document.id) : route('documents.index')">
                         <SecondaryButton type="button">Annuler</SecondaryButton>
                     </Link>

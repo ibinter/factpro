@@ -14,6 +14,8 @@ class RoadmapSeeder extends Seeder {
             ['title'=>'Import automatique relevés bancaires','description'=>'Réconciliation bancaire automatique par import OFX/QIF/CSV depuis toutes les banques africaines majeures.','category'=>'facturation','status'=>'planned','sort_order'=>6,'votes_count'=>16],
             ['title'=>'Gestion multi-entrepôts','description'=>'Suivi des stocks par entrepôt, transferts inter-sites, inventaire par emplacement.','category'=>'stocks','status'=>'planned','sort_order'=>7,'votes_count'=>14],
             ['title'=>'API webhooks entrants (Zapier/Make)','description'=>'Déclencheurs entrants permettant de créer des factures et clients depuis des outils tiers automatiquement.','category'=>'api','status'=>'delivered','sort_order'=>8,'votes_count'=>12,'delivered_at'=>now()->subDays(60)],
+            ['title'=>'Catalogue de 498 modèles de documents sectoriels','description'=>'498 modèles organisés en 24 catégories avec aperçu interactif et sélection automatique du style PDF.','category'=>'facturation','status'=>'delivered','sort_order'=>9,'votes_count'=>0,'delivered_at'=>'2026-07-01'],
+            ['title'=>'Templates PDF intelligents par type de document','description'=>'Recommandation automatique du style visuel selon le type (transport, juridique, BTP, médical, etc.).','category'=>'facturation','status'=>'delivered','sort_order'=>10,'votes_count'=>0,'delivered_at'=>'2026-07-01'],
         ];
         foreach ($features as $f) {
             RoadmapFeature::firstOrCreate(['title' => $f['title']], $f);

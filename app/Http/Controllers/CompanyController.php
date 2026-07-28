@@ -108,6 +108,7 @@ class CompanyController extends Controller
                 'country', 'currency', 'tax_id', 'trade_register', 'logo_path',
                 'invoice_footer', 'default_template', 'default_tax_rate',
                 'signature_path', 'stamp_path', 'signature_label', 'show_signature', 'show_stamp',
+                'payment_methods', 'document_style',
             ]),
             'templates' => collect(config('pdf_templates'))
                 ->map(fn ($t, $key) => ['key' => $key, 'name' => $t['name'], 'family' => $t['family']])
@@ -214,6 +215,34 @@ class CompanyController extends Controller
         return redirect()->route('companies.settings')->with('success', 'Cachet mis à jour.');
     }
 
+    /** Met à jour les moyens de paiement configurables affichés sur les PDFs. */
+    public function updatePaymentMethods(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        $company = $user->currentCompany;
+        abort_unless($company, 404);
+        $this->authorizeManage($user, $company);
+
+        $data = $request->validate([
+            'payment_methods'                => 'nullable|array|max:10',
+            'payment_methods.*.type'         => 'required|string|in:wave,orange_money,mtn_momo,bank_transfer,paypal',
+            'payment_methods.*.enabled'      => 'boolean',
+            'payment_methods.*.label'        => 'nullable|string|max:100',
+            'payment_methods.*.number'       => 'nullable|string|max:100',
+            'payment_methods.*.account_name' => 'nullable|string|max:150',
+            'payment_methods.*.bank_name'    => 'nullable|string|max:150',
+            'payment_methods.*.iban'         => 'nullable|string|max:50',
+            'payment_methods.*.bic'          => 'nullable|string|max:20',
+            'payment_methods.*.email'        => 'nullable|email|max:150',
+            'payment_methods.*.note'         => 'nullable|string|max:255',
+        ]);
+
+        $company->update(['payment_methods' => $data['payment_methods'] ?? []]);
+
+        return redirect()->route('companies.settings')
+            ->with('success', 'Moyens de paiement enregistrés.');
+    }
+
     /** Active/désactive signature et cachet, met à jour le libellé signataire. */
     public function updateSignatureSettings(Request $request): RedirectResponse
     {
@@ -237,6 +266,27 @@ class CompanyController extends Controller
         $company->update($data);
 
         return redirect()->route('companies.settings')->with('success', 'Paramètres de signature enregistrés.');
+    }
+
+    /** Met à jour le style visuel des documents PDF de la société. */
+    public function updateDocumentStyle(Request $request): RedirectResponse
+    {
+        $user = $request->user();
+        $company = $user->currentCompany;
+        abort_unless($company, 404);
+        $this->authorizeManage($user, $company);
+
+        $data = $request->validate([
+            'accent_color'  => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'header_style'  => ['nullable', 'in:modern,classic,minimal'],
+            'font_family'   => ['nullable', 'in:dejavu_sans,times_new_roman,courier'],
+        ]);
+
+        $company->update([
+            'document_style' => array_filter($data, fn ($v) => $v !== null),
+        ]);
+
+        return redirect()->route('companies.settings')->with('success', 'Style des documents enregistré.');
     }
 
     /**

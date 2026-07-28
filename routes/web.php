@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\RevenueController;
 use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\Settings\ReminderRuleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentCatalogController;
 use App\Http\Controllers\AiDocumentController;
@@ -143,6 +144,7 @@ Route::middleware(['auth', 'license'])->group(function () {
 
     // Routes statiques /documents/* déclarées AVANT le resource pour éviter le conflit avec {document}
     Route::get('/documents/export/excel', [DocumentController::class, 'exportExcel'])->name('documents.export.excel');
+    Route::post('/documents/preview', [DocumentController::class, 'preview'])->name('documents.preview');
 
     Route::resource('documents', DocumentController::class);
     Route::post('/documents/{document}/finalize', [DocumentController::class, 'finalize'])->name('documents.finalize');
@@ -154,8 +156,17 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::get('/documents/{document}/docx', [DocumentController::class, 'docx'])->name('documents.docx');
     Route::post('/documents/{document}/send', DocumentSendController::class)->name('documents.send');
     Route::post('/documents/{document}/clone', [DocumentController::class, 'clone'])->name('documents.clone');
+    Route::post('/documents/{document}/share', [DocumentController::class, 'share'])->name('documents.share');
+    // Commentaires internes sur les documents
+    Route::post('/documents/{document}/comments', [\App\Http\Controllers\DocumentCommentController::class, 'store'])->name('documents.comments.store');
+    Route::delete('/documents/{document}/comments/{comment}', [\App\Http\Controllers\DocumentCommentController::class, 'destroy'])->name('documents.comments.destroy');
 
     Route::get('/search', \App\Http\Controllers\GlobalSearchController::class)->name('search.global');
+
+    // Règles de rappel de paiement intelligentes (§9)
+    Route::resource('settings/reminder-rules', ReminderRuleController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->names('reminder-rules');
 
     // NPS
     Route::post('/nps', [\App\Http\Controllers\NpsController::class, 'store'])

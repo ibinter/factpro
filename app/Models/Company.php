@@ -16,6 +16,8 @@ class Company extends Model
 
     protected $casts = [
         'settings' => 'array',
+        'payment_methods' => 'array',
+        'document_style' => 'array',
         'default_tax_rate' => 'decimal:2',
     ];
 
@@ -42,5 +44,10 @@ class Company extends Model
     public function documents(): HasMany
     {
         return $this->hasMany(Document::class);
+    }
+
+    public function reminderRules(): HasMany
+    {
+        return $this->hasMany(ReminderRule::class);
     }
 }

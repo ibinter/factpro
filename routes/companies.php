@@ -25,4 +25,6 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::post('/company/signature', [CompanyController::class, 'uploadSignature'])->name('companies.signature');
     Route::post('/company/stamp', [CompanyController::class, 'uploadStamp'])->name('companies.stamp');
     Route::patch('/company/signature-settings', [CompanyController::class, 'updateSignatureSettings'])->name('companies.signature-settings');
+    Route::put('/company/payment-methods', [CompanyController::class, 'updatePaymentMethods'])->name('companies.payment-methods');
+    Route::put('/company/document-style', [CompanyController::class, 'updateDocumentStyle'])->name('companies.document-style');
 });

@@ -1,6 +1,8 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
+import DocumentShare from '@/Components/DocumentShare.vue';
+import DocumentComments from '@/Components/DocumentComments.vue';
 import QuoteLinkManager from '@/Pages/Documents/QuoteLinkManager.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import TextInput from '@/Components/TextInput.vue';
@@ -24,6 +26,7 @@ const props = defineProps({
     hasApprovalAccess: { type: Boolean, default: true },
     hasWorkflows: { type: Boolean, default: false },
     templates: { type: Array, default: () => [] },
+    comments: { type: Array, default: () => [] },
 });
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
@@ -353,6 +356,7 @@ const planProgress = computed(() => {
                     >
                         ✉ Envoyer
                     </button>
+                    <DocumentShare :document="document" :type-label="typeLabel" />
                     <button
                         v-if="document.finalized_at"
                         @click="showStatusModal = true"
@@ -868,6 +872,9 @@ const planProgress = computed(() => {
                         </Link>
                     </div>
                 </div>
+
+                <!-- Commentaires internes -->
+                <DocumentComments :document="document" :comments="comments" />
             </div>
         </div>
 

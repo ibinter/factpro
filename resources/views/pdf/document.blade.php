@@ -1,3 +1,15 @@
+@php
+    $style       = $style ?? [];
+    $accentColor = $style['accent_color']  ?? '#1e3a8a';
+    $headerStyle = $style['header_style']  ?? 'modern';
+    $fontFamily  = $style['font_family']   ?? 'dejavu_sans';
+
+    $fontCss = match($fontFamily) {
+        'times_new_roman' => 'Times New Roman, serif',
+        'courier'         => 'Courier New, monospace',
+        default           => 'DejaVu Sans, sans-serif',
+    };
+@endphp
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,7 +20,7 @@
 
     * { box-sizing: border-box; }
     body {
-        font-family: DejaVu Sans, sans-serif;
+        font-family: {{ $fontCss }};
         font-size: 10px;
         color: #1a2332;
         margin: 0;
@@ -42,7 +54,7 @@
     .doc-title {
         font-size: 20px;
         font-weight: bold;
-        color: #0062CC;
+        color: {{ $accentColor }};
         text-align: right;
         text-transform: uppercase;
     }
@@ -57,7 +69,7 @@
         height: 60px;
         font-size: 8px;
         color: #6B7C93;
-        border-top: 2px solid #F0C040;
+        border-top: 2px solid {{ $accentColor }};
         padding-top: 6px;
     }
 
@@ -66,7 +78,7 @@
     .addresses td { vertical-align: top; width: 50%; }
     .badge-box {
         background: #f4f7fb;
-        border-left: 3px solid #0062CC;
+        border-left: 3px solid {{ $accentColor }};
         padding: 10px 12px;
         border-radius: 3px;
     }
@@ -80,7 +92,7 @@
     /* ─── Tableau des lignes ─── */
     table.lines { width: 100%; border-collapse: collapse; margin-top: 10px; }
     table.lines thead th {
-        background: #002D5B;
+        background: {{ $accentColor }};
         color: #ffffff;
         padding: 7px 8px;
         font-size: 9px;
@@ -102,7 +114,7 @@
     table.totals .k { color: #6B7C93; }
     table.totals .v { text-align: right; font-weight: bold; }
     table.totals tr.grand td {
-        background: #002D5B;
+        background: {{ $accentColor }};
         color: #ffffff;
         font-size: 12px;
         font-weight: bold;
@@ -119,6 +131,16 @@
     .notes { font-size: 9px; color: #444; padding-right: 20px; }
     .notes .title { font-weight: bold; color: #002D5B; margin-bottom: 3px; font-size: 9px; }
     .hash { font-size: 6.5px; color: #9aa7b8; word-break: break-all; margin-top: 4px; }
+
+    /* ─── Styles par thème ─── */
+    @if ($headerStyle === 'classic')
+    header { border-bottom: 3px solid {{ $accentColor }}; padding-bottom: 6px; }
+    @elseif ($headerStyle === 'minimal')
+    header { border-bottom: none; }
+    .company-name { color: #1a2332; }
+    @else
+    /* modern — comportement par défaut */
+    @endif
 </style>
 </head>
 <body>

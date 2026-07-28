@@ -222,6 +222,11 @@ class Document extends Model
         return $this->hasMany(DocumentPayment::class);
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(DocumentComment::class);
+    }
+
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');

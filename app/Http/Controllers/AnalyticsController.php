@@ -32,6 +32,122 @@ class AnalyticsController extends Controller
     // Pages
     // -------------------------------------------------------------------------
 
+    public function documents(Request $request): Response
+    {
+        $company    = $request->user()->currentCompany;
+        $companyId  = $company->id;
+        $now        = Carbon::now();
+        $monthStart = $now->copy()->startOfMonth();
+        $prevMonthStart = $now->copy()->subMonth()->startOfMonth();
+        $prevMonthEnd   = $now->copy()->subMonth()->endOfMonth();
+
+        // CA mensuel sur 12 mois (factures payées)
+        $monthlyRevenue = [];
+        for ($i = 11; $i >= 0; $i--) {
+            $mStart = $now->copy()->subMonths($i)->startOfMonth();
+            $mEnd   = $now->copy()->subMonths($i)->endOfMonth();
+            $total  = Document::where('company_id', $companyId)
+                ->where('type', 'invoice')
+                ->where('status', 'paid')
+                ->whereBetween('issue_date', [$mStart, $mEnd])
+                ->sum('total');
+            $monthlyRevenue[] = [
+                'label'  => $mStart->translatedFormat('M Y'),
+                'month'  => $mStart->format('Y-m'),
+                'total'  => (float) $total,
+            ];
+        }
+
+        // Taux conversion devis → facture ce mois
+        $quotesThisMonth = Document::where('company_id', $companyId)
+            ->where('type', 'quote')
+            ->where('issue_date', '>=', $monthStart)
+            ->count();
+
+        $convertedThisMonth = Document::where('company_id', $companyId)
+            ->where('type', 'quote')
+            ->where('status', 'converted')
+            ->where('issue_date', '>=', $monthStart)
+            ->count();
+
+        $conversionRate = $quotesThisMonth > 0
+            ? round($convertedThisMonth / $quotesThisMonth * 100, 1)
+            : 0;
+
+        // Documents par statut (factures uniquement)
+        $statusColors = [
+            'draft'     => '#94a3b8',
+            'sent'      => '#3b82f6',
+            'viewed'    => '#8b5cf6',
+            'accepted'  => '#06b6d4',
+            'rejected'  => '#f97316',
+            'partial'   => '#f59e0b',
+            'paid'      => '#22c55e',
+            'overdue'   => '#ef4444',
+            'cancelled' => '#6b7280',
+            'converted' => '#10b981',
+        ];
+
+        $rawStatuses = Document::where('company_id', $companyId)
+            ->where('type', 'invoice')
+            ->selectRaw('status, COUNT(*) as cnt')
+            ->groupBy('status')
+            ->pluck('cnt', 'status');
+
+        $byStatus = [];
+        foreach ($rawStatuses as $status => $cnt) {
+            $byStatus[] = [
+                'status' => $status,
+                'count'  => (int) $cnt,
+                'color'  => $statusColors[$status] ?? '#94a3b8',
+            ];
+        }
+
+        // Top 5 clients par CA (tous temps)
+        $topClients = Document::where('company_id', $companyId)
+            ->where('type', 'invoice')
+            ->whereNotIn('status', ['draft', 'cancelled'])
+            ->whereNotNull('customer_id')
+            ->selectRaw('customer_id, customer_name, SUM(total) as total, COUNT(*) as invoice_count')
+            ->groupBy('customer_id', 'customer_name')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get()
+            ->map(fn ($r) => [
+                'id'            => $r->customer_id,
+                'name'          => $r->customer_name,
+                'total'         => (float) $r->total,
+                'invoice_count' => (int) $r->invoice_count,
+            ])
+            ->toArray();
+
+        // CA mois courant
+        $caCurrentMonth = Document::where('company_id', $companyId)
+            ->where('type', 'invoice')
+            ->where('status', 'paid')
+            ->where('issue_date', '>=', $monthStart)
+            ->sum('total');
+
+        // Délai moyen paiement (jours entre issue_date et updated_at pour les factures payées)
+        $avgPaymentDelay = Document::where('company_id', $companyId)
+            ->where('type', 'invoice')
+            ->where('status', 'paid')
+            ->where('issue_date', '>=', $now->copy()->subMonths(3))
+            ->selectRaw('AVG(DATEDIFF(updated_at, issue_date)) as avg_days')
+            ->value('avg_days');
+
+        return Inertia::render('Analytics/Documents', [
+            'monthlyRevenue'     => $monthlyRevenue,
+            'conversionRate'     => $conversionRate,
+            'quotesThisMonth'    => $quotesThisMonth,
+            'convertedThisMonth' => $convertedThisMonth,
+            'byStatus'           => $byStatus,
+            'topClients'         => $topClients,
+            'caCurrentMonth'     => (float) $caCurrentMonth,
+            'avgPaymentDelay'    => round((float) $avgPaymentDelay, 1),
+        ]);
+    }
+
     public function dashboard(Request $request): Response
     {
         $company = $request->user()->currentCompany;
