@@ -4,24 +4,39 @@
 <meta charset="UTF-8">
 <title>{{ $document->number }}</title>
 <style>
-  @@page { margin: 15mm; }
+  @@page { margin: 14mm 13mm 18mm 13mm; }
   * { box-sizing: border-box; }
   body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #1a2332; margin: 0; padding: 0; }
   table { border-collapse: collapse; }
+
+  /* Bande couleur supérieure — visible sur chaque page */
+  .page-header-band {
+    position: fixed;
+    top: -14mm;
+    left: -13mm;
+    right: -13mm;
+    height: 6px;
+    background: {{ $primaryColor }};
+  }
+
+  /* Pied de page paginé */
   .page-footer {
     position: fixed;
-    bottom: -10mm;
-    left: 0; right: 0;
-    font-size: 7.5px;
+    bottom: -15mm;
+    left: -13mm;
+    right: -13mm;
+    font-size: 7px;
     color: #9ca3af;
     border-top: 1px solid #e5e7eb;
-    padding-top: 4px;
+    padding: 4px 13mm 0;
     text-align: center;
   }
   .page-footer .page-num:after { content: " — Page " counter(page) " / " counter(pages); }
 </style>
 </head>
 <body>
+
+<div class="page-header-band"></div>
 
 @include('pdf.engine.blocks._watermark', ['watermark' => $watermark ?? null])
 
@@ -44,7 +59,7 @@
 
 <hr style="border:none;border-top:2px solid {{ $primaryColor }};margin-bottom:14px;">
 
-{{-- Bloc client --}}
+{{-- Bloc client + métadonnées --}}
 @include('pdf.engine.blocks._client', ['document' => $document, 'primaryColor' => $primaryColor])
 
 {{-- Tableau lignes --}}
@@ -62,7 +77,7 @@
 {{-- Signatures --}}
 @include('pdf.engine.blocks._signature', ['document' => $document, 'signatureLabels' => $signatureLabels ?? ['Émetteur', 'Destinataire']])
 
-{{-- Conditions --}}
+{{-- Conditions + mentions légales --}}
 @include('pdf.engine.blocks._legal', ['company' => $company, 'document' => $document])
 
 </body>
