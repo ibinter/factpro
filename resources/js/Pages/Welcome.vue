@@ -754,7 +754,7 @@ const howSteps = [
                     { icon: '🔒', label_fr: 'SSL/TLS Sécurisé',          label_en: 'SSL/TLS Secured' },
                     { icon: '🏦', label_fr: 'Paiement Mobile Money',      label_en: 'Mobile Money Payment' },
                     { icon: '⭐', label_fr: 'Note 4.8/5*',                label_en: 'Rated 4.8/5*' },
-                    { icon: '🌍', label_fr: '9 Pays Afrique',             label_en: '9 African Countries' },
+                    { icon: '🌍', label_fr: '15+ Pays Afrique',            label_en: '15+ African Countries' },
                     { icon: '📋', label_fr: 'Conforme OHADA',             label_en: 'OHADA Compliant' },
                     { icon: '🔄', label_fr: 'Synchronisation temps réel', label_en: 'Real-time Sync' },
                 ]" :key="badge.label_fr"
