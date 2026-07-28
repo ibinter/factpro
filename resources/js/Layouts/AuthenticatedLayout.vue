@@ -268,32 +268,37 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                             </div>
                         </div>
 
-                        <div class="hidden sm:ms-6 sm:flex sm:items-center">
-                            <!-- Recherche globale (Ctrl+K) -->
+                        <div class="hidden sm:ms-4 sm:flex sm:items-center sm:gap-1">
+                            <!-- Recherche globale (Ctrl+K) — icône uniquement -->
                             <button
                                 type="button"
                                 @click="document.dispatchEvent(new KeyboardEvent('keydown', {key:'k',ctrlKey:true,bubbles:true}))"
-                                class="mr-3 inline-flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-1.5 text-sm text-gray-500 transition hover:border-brand-300 hover:text-gray-700 focus:outline-none"
+                                class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition hover:bg-gray-100 hover:text-gray-600 focus:outline-none"
+                                title="Rechercher (Ctrl+K)"
                             >
-                                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35"/></svg>
-                                <span class="hidden lg:inline">Rechercher</span>
-                                <kbd class="hidden lg:inline rounded bg-gray-200 px-1.5 py-0.5 text-xs font-mono text-gray-400">Ctrl+K</kbd>
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35"/></svg>
                             </button>
-                            <!-- Sélecteur de langue (Phase 11 i18n) -->
-                            <div class="relative mr-3">
+
+                            <!-- Sélecteur de langue -->
+                            <div class="relative">
                                 <LanguageSelector />
                             </div>
-                            <!-- Cloche de notifications (Phase 11) -->
-                            <div class="relative mr-3">
+
+                            <!-- Cloche de notifications -->
+                            <div class="relative">
                                 <NotificationBell />
                             </div>
-                            <!-- Sélecteur de société (multi-sociétés §3 MLT) -->
-                            <div class="relative mr-3">
-                                <Dropdown align="right" width="48">
+
+                            <!-- Séparateur -->
+                            <div class="mx-2 h-6 w-px bg-gray-200"></div>
+
+                            <!-- Sélecteur de société + badge plan groupés -->
+                            <div class="relative">
+                                <Dropdown align="right" width="56">
                                     <template #trigger>
                                         <button
                                             type="button"
-                                            class="inline-flex max-w-[190px] items-center gap-1.5 rounded-md border border-gray-200 bg-white px-2.5 py-1.5 text-sm font-medium text-gray-600 transition duration-150 ease-in-out hover:border-brand-300 hover:text-gray-800 focus:outline-none"
+                                            class="inline-flex max-w-[200px] items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:border-brand-300 hover:bg-brand-50 focus:outline-none"
                                         >
                                             <img
                                                 v-if="currentCompany?.logo_path"
@@ -301,57 +306,61 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                                                 alt=""
                                                 class="h-5 w-5 shrink-0 rounded-full object-cover"
                                             />
-                                            <span v-else class="shrink-0">🏢</span>
-                                            <span class="truncate">{{ currentCompany?.name ?? 'Société' }}</span>
-                                            <svg class="h-4 w-4 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                            <span v-else class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-100 text-[10px] font-bold text-brand-700">
+                                                {{ (currentCompany?.name ?? 'S').charAt(0).toUpperCase() }}
+                                            </span>
+                                            <span class="truncate max-w-[110px]">{{ currentCompany?.name ?? 'Société' }}</span>
+                                            <span
+                                                v-if="license"
+                                                class="shrink-0 rounded-full px-1.5 py-0.5 text-[10px] font-bold"
+                                                :class="license.is_trial ? 'bg-amber-100 text-amber-700' : 'bg-brand-100 text-brand-700'"
+                                            >
+                                                {{ license.plan }}
+                                            </span>
+                                            <svg class="h-3.5 w-3.5 shrink-0 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                                 <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                             </svg>
                                         </button>
                                     </template>
 
                                     <template #content>
-                                        <div class="px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                                        <div class="px-4 py-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
                                             Mes sociétés
                                         </div>
                                         <button
                                             v-for="c in companies"
                                             :key="c.id"
                                             type="button"
-                                            class="flex w-full items-center gap-2 px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none"
+                                            class="flex w-full items-center gap-2 px-4 py-2 text-start text-sm leading-5 text-gray-700 transition hover:bg-gray-100 focus:outline-none"
                                             @click="switchCompany(c)"
                                         >
                                             <span class="w-4 shrink-0 font-bold text-brand-600">{{ c.is_current ? '✓' : '' }}</span>
                                             <span class="truncate" :class="{ 'font-semibold': c.is_current }">{{ c.name }}</span>
                                         </button>
                                         <div class="my-1 border-t border-gray-100"></div>
-                                        <DropdownLink :href="route('companies.settings')">⚙ Paramètres de la société</DropdownLink>
+                                        <DropdownLink :href="route('companies.settings')">⚙ Paramètres société</DropdownLink>
                                         <DropdownLink :href="route('companies.index')">+ Nouvelle société</DropdownLink>
                                     </template>
                                 </Dropdown>
                             </div>
 
-                            <span
-                                v-if="license"
-                                class="mr-3 rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                                :class="license.is_trial ? 'bg-gold-400/20 text-gold-600' : 'bg-brand-50 text-brand-700'"
-                            >
-                                {{ license.plan }}{{ license.is_trial ? ' · ESSAI' : '' }}
-                            </span>
-
-                            <div class="relative ms-3">
+                            <!-- Avatar utilisateur + menu -->
+                            <div class="relative">
                                 <Dropdown align="right" width="48">
                                     <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button
-                                                type="button"
-                                                class="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
-                                            >
-                                                {{ $page.props.auth.user.name }}
-                                                <svg class="-me-0.5 ms-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </span>
+                                        <button
+                                            type="button"
+                                            class="inline-flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm font-medium text-gray-600 transition hover:bg-gray-100 focus:outline-none"
+                                        >
+                                            <!-- Avatar initiales -->
+                                            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
+                                                {{ ($page.props.auth.user.name ?? 'U').split(' ').map(w => w[0]).slice(0,2).join('').toUpperCase() }}
+                                            </span>
+                                            <span class="hidden lg:block max-w-[100px] truncate">{{ $page.props.auth.user.name }}</span>
+                                            <svg class="h-3.5 w-3.5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
                                     </template>
 
                                     <template #content>
