@@ -492,3 +492,8 @@ require __DIR__.'/feature_warehouses.php';
 require __DIR__.'/feature_accounting.php';
 require __DIR__.'/feature_payment_enhance.php';
 require __DIR__.'/feature_real_estate.php';
+
+// PWA Install page
+Route::get('/pwa-install', function () {
+    return \Inertia\Inertia::render('PwaInstall');
+})->name('pwa.install');
