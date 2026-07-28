@@ -27,35 +27,35 @@
     .doc-status { text-align: right; margin-top: 4px; }
     .doc-status span { font-size: 8px; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: {{ $primaryColor }}; color: #fff; }
 
-    /* Bloc bas de page : signatures + footer fusionnés en un seul élément fixe
-       bottom: -110px = utilise toute la marge basse => bord physique bas de page
-       height: 210px = 160px signatures + 50px footer */
-    .bottom-fixed {
-        position: fixed; bottom: -110px; left: 0; right: 0; height: 210px;
+    /* footer élargi contient signatures + texte pied de page
+       bottom: -92px = position PROUVÉE qui fonctionne en DomPDF
+       height: 210px = 160px signatures + 50px texte pied */
+    footer {
+        position: fixed; bottom: -92px; left: 0; right: 0; height: 210px;
         background: #fff;
     }
-    .bottom-fixed .sig-section {
+    footer .sig-section {
         height: 160px; padding-top: 8px; border-top: 1px solid #e2e8f0;
     }
-    .bottom-fixed .sig-heading {
+    footer .sig-heading {
         font-size: 7.5px; text-transform: uppercase; color: #6B7C93;
         letter-spacing: 1px; margin-bottom: 8px;
         border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;
     }
-    .bottom-fixed .sig-row td { width: 50%; vertical-align: top; padding: 0 10px; }
-    .bottom-fixed .sig-row td:first-child { padding-left: 0; border-right: 1px solid #e5eaf1; }
-    .bottom-fixed .sig-row td:last-child  { padding-right: 0; }
-    .bottom-fixed .sig-label { font-size: 8px; color: #4a5568; text-align: center; margin-bottom: 5px; font-weight: bold; }
-    .bottom-fixed .sig-box {
+    footer .sig-row td { width: 50%; vertical-align: top; padding: 0 10px; }
+    footer .sig-row td:first-child { padding-left: 0; border-right: 1px solid #e5eaf1; }
+    footer .sig-row td:last-child  { padding-right: 0; }
+    footer .sig-label { font-size: 8px; color: #4a5568; text-align: center; margin-bottom: 5px; font-weight: bold; }
+    footer .sig-box {
         border: 1px solid #c8d3e0; border-radius: 4px;
         height: 82px; background: #fafbfc; position: relative;
     }
-    .bottom-fixed .sig-photo-zone { position: absolute; top: 6px; left: 0; right: 0; text-align: center; }
-    .bottom-fixed .sig-photo-zone img { max-height: 36px; max-width: 80%; display: block; margin: 0 auto; }
-    .bottom-fixed .sig-name-line  { border-bottom: 1px dashed #c8d3e0; position: absolute; bottom: 18px; left: 8px; right: 8px; }
-    .bottom-fixed .sig-date-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 9px; left: 8px; }
-    .bottom-fixed .sig-name-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 1px; left: 8px; }
-    .bottom-fixed .footer-line {
+    footer .sig-photo-zone { position: absolute; top: 6px; left: 0; right: 0; text-align: center; }
+    footer .sig-photo-zone img { max-height: 36px; max-width: 80%; display: block; margin: 0 auto; }
+    footer .sig-name-line  { border-bottom: 1px dashed #c8d3e0; position: absolute; bottom: 18px; left: 8px; right: 8px; }
+    footer .sig-date-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 9px; left: 8px; }
+    footer .sig-name-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 1px; left: 8px; }
+    footer .footer-line {
         height: 50px; border-top: 2px solid {{ $accentColor ?? $primaryColor }};
         padding-top: 7px; font-size: 7.5px; color: #6B7C93;
     }
@@ -227,8 +227,8 @@
     </table>
 </header>
 
-{{-- Bloc bas de page unique : signatures + footer text, ancré au bas physique de la page --}}
-<div class="bottom-fixed">
+{{-- footer élargi : signatures en haut + texte pied en bas — bottom:-92px PROUVÉ fonctionnel --}}
+<footer>
     @if($showSigSection)
     <div class="sig-section">
         <div class="sig-heading">Signatures</div>
@@ -277,7 +277,7 @@
             </tr>
         </table>
     </div>
-</div>
+</footer>
 
 <main>
     <div class="header-accent"></div>
