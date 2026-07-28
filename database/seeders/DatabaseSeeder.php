@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'admin@ibigsoft.com'],
             [
                 'name' => 'Superadmin IBIG',
-                'password' => Hash::make('Admin@Factpro2026'),
+                'password' => Hash::make(env('SUPERADMIN_PASSWORD', 'Admin@Factpro2026!')),
                 'is_superadmin' => true,
                 'country' => 'CI',
                 'email_verified_at' => now(),
