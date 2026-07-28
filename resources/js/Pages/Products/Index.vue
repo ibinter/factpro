@@ -91,9 +91,9 @@ const destroy = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <div class="flex items-center justify-between">
+            <div class="flex flex-wrap items-center justify-between gap-2">
                 <h2 class="text-xl font-semibold leading-tight text-gray-800">Produits & Services</h2>
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                     <a :href="route('import.index')" class="inline-flex items-center gap-1 rounded-md border border-indigo-300 bg-indigo-50 px-3 py-1.5 text-sm font-medium text-indigo-700 hover:bg-indigo-100 transition">
                         📥 Importer CSV
                     </a>
@@ -112,6 +112,7 @@ const destroy = () => {
                 />
 
                 <div class="overflow-hidden rounded-lg bg-white shadow">
+                    <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
                             <tr>
@@ -159,6 +160,7 @@ const destroy = () => {
                             </tr>
                         </tbody>
                     </table>
+                    </div>
                 </div>
 
                 <div v-if="products.links.length > 3" class="flex flex-wrap gap-1">

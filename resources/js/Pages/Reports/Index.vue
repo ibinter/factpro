@@ -183,6 +183,7 @@ const excelExportUrl = (dataset) => {
                 <div class="grid gap-6 lg:grid-cols-2">
                     <div class="overflow-hidden rounded-lg bg-white shadow">
                         <h3 class="border-b px-6 py-4 font-semibold text-gray-800">Top 10 clients</h3>
+                        <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
                                 <tr>
@@ -210,10 +211,12 @@ const excelExportUrl = (dataset) => {
                                 </tr>
                             </tbody>
                         </table>
+                        </div>
                     </div>
 
                     <div class="overflow-hidden rounded-lg bg-white shadow">
                         <h3 class="border-b px-6 py-4 font-semibold text-gray-800">Top 10 produits</h3>
+                        <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
                                 <tr>
@@ -239,6 +242,7 @@ const excelExportUrl = (dataset) => {
                                 </tr>
                             </tbody>
                         </table>
+                        </div>
                     </div>
                 </div>
 
@@ -246,6 +250,7 @@ const excelExportUrl = (dataset) => {
                 <div class="grid gap-6 lg:grid-cols-2">
                     <div class="overflow-hidden rounded-lg bg-white shadow">
                         <h3 class="border-b px-6 py-4 font-semibold text-gray-800">Ventes par type de document</h3>
+                        <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
                                 <tr>
@@ -265,11 +270,13 @@ const excelExportUrl = (dataset) => {
                                 </tr>
                             </tbody>
                         </table>
+                        </div>
                     </div>
 
                     <div class="space-y-6">
                         <div class="overflow-hidden rounded-lg bg-white shadow">
                             <h3 class="border-b px-6 py-4 font-semibold text-gray-800">Encaissements par moyen</h3>
+                            <div class="overflow-x-auto">
                             <table class="w-full text-sm">
                                 <thead class="bg-gray-50 text-left text-xs uppercase tracking-wide text-gray-500">
                                     <tr>
@@ -291,6 +298,7 @@ const excelExportUrl = (dataset) => {
                                     </tr>
                                 </tbody>
                             </table>
+                            </div>
                         </div>
 
                         <!-- Conversion devis -->
