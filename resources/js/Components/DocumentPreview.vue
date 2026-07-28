@@ -28,7 +28,7 @@ async function fetchPreview() {
     revokePrev();
     try {
         // Récupérer le token CSRF depuis le cookie XSRF-TOKEN (Laravel Inertia)
-        const csrfToken = decodeURIComponent(
+        const xsrfToken = decodeURIComponent(
             document.cookie.split('; ').find(r => r.startsWith('XSRF-TOKEN='))?.split('=')[1] ?? ''
         );
 
@@ -36,7 +36,7 @@ async function fetchPreview() {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
+                'X-XSRF-TOKEN': xsrfToken,
                 'Accept': 'application/pdf',
             },
             body: JSON.stringify(props.formData),
