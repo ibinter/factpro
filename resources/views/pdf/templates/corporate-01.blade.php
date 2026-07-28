@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>{{ $document->number }}</title>
 <style>
-    @@page { margin: 145px 45px 220px 45px; }
+    @@page { margin: 145px 45px 110px 45px; }
 
     * { box-sizing: border-box; }
     body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #1a2332; margin: 0; }
@@ -27,16 +27,18 @@
     .doc-status { text-align: right; margin-top: 4px; }
     .doc-status span { font-size: 8px; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: {{ $primaryColor }}; color: #fff; }
 
-    /* SOLUTION RADICALE :
-       - margin basse = 220px (toute la zone bas de page réservée)
-       - footer position: fixed; bottom: -220px => élément ENTIÈREMENT dans la marge basse
-       - aucun dépassement dans la zone contenu => DomPDF ne peut pas couper l'élément */
+    /* cbh (DomPDF) = 650.64pt (page 841.89pt - top 108.75pt - bottom 82.5pt)
+       Formule : y_page = cbh - (H-N)*0.75
+       Pour bas physique (841.89pt) : y + H*0.75 = 841.89
+       => 650.64 - (H-N)*0.75 + H*0.75 = 841.89
+       => N*0.75 = 841.89 - 650.64 = 191.25 => N = 255px
+       => bottom: -255px ; height: 200px => élément de 82.2% à 100% de la page */
     footer {
-        position: fixed; bottom: -220px; left: 0; right: 0; height: 220px;
+        position: fixed; bottom: -255px; left: 0; right: 0; height: 200px;
         background: #fff;
     }
     footer .sig-section {
-        height: 165px; padding-top: 10px; border-top: 2px solid #e2e8f0;
+        height: 155px; padding-top: 10px; border-top: 2px solid #e2e8f0;
     }
     footer .sig-heading {
         font-size: 7.5px; text-transform: uppercase; color: #6B7C93;
@@ -49,19 +51,19 @@
     footer .sig-label { font-size: 8px; color: #4a5568; text-align: center; margin-bottom: 5px; font-weight: bold; }
     footer .sig-box {
         border: 1px solid #c8d3e0; border-radius: 4px;
-        height: 90px; background: #fafbfc; position: relative;
+        height: 85px; background: #fafbfc; position: relative;
     }
     footer .sig-photo-zone { position: absolute; top: 6px; left: 0; right: 0; text-align: center; }
-    footer .sig-photo-zone img { max-height: 40px; max-width: 80%; display: block; margin: 0 auto; }
+    footer .sig-photo-zone img { max-height: 38px; max-width: 80%; display: block; margin: 0 auto; }
     footer .sig-name-line  { border-bottom: 1px dashed #c8d3e0; position: absolute; bottom: 20px; left: 8px; right: 8px; }
     footer .sig-date-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 10px; left: 8px; }
     footer .sig-name-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 2px; left: 8px; }
     footer .footer-line {
-        height: 55px; border-top: 2px solid {{ $accentColor ?? $primaryColor }};
+        height: 45px; border-top: 2px solid {{ $accentColor ?? $primaryColor }};
         padding-top: 8px; font-size: 7.5px; color: #6B7C93;
     }
 
-    main { margin-top: 22px; }
+    main { margin-top: 22px; padding-bottom: 210px; }
 
     .header-accent {
         background: {{ $primaryColor }}; height: 4px; margin-bottom: 20px; border-radius: 2px;
