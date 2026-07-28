@@ -267,4 +267,16 @@ class Document extends Model
     {
         return $this->hasOne(\App\Models\DocumentArchive::class);
     }
+
+    /**
+     * Retourne l'URL de paiement public du document, ou null si aucun token n'existe.
+     */
+    public function paymentUrl(): ?string
+    {
+        if (empty($this->public_token)) {
+            return null;
+        }
+
+        return route('pay.public', $this->public_token);
+    }
 }

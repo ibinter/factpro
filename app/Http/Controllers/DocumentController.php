@@ -203,6 +203,7 @@ class DocumentController extends Controller
             'publicUrl' => $document->public_token
                 ? route('doc.public', $document->public_token)
                 : null,
+            'paymentUrl' => $document->paymentUrl(),
             'convertTargets' => $this->convertTargets($document),
             'paymentPlan' => $paymentPlan ? $this->presentPaymentPlan($paymentPlan) : null,
             'canCreatePlan' => $canCreatePlan,

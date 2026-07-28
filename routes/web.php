@@ -22,6 +22,7 @@ use App\Http\Controllers\Admin\RevenueController;
 use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\Settings\PaymentMethodSettingsController;
 use App\Http\Controllers\Settings\ReminderRuleController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentCatalogController;
@@ -165,6 +166,10 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::delete('/documents/{document}/comments/{comment}', [\App\Http\Controllers\DocumentCommentController::class, 'destroy'])->name('documents.comments.destroy');
 
     Route::get('/search', \App\Http\Controllers\GlobalSearchController::class)->name('search.global');
+
+    // Méthodes de paiement — configuration par entreprise
+    Route::get('/settings/payment-methods', [PaymentMethodSettingsController::class, 'index'])->name('settings.payment-methods');
+    Route::put('/settings/payment-methods', [PaymentMethodSettingsController::class, 'update'])->name('settings.payment-methods.update');
 
     // Règles de rappel de paiement intelligentes (§9)
     Route::resource('settings/reminder-rules', ReminderRuleController::class)

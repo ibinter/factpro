@@ -28,6 +28,7 @@ const props = defineProps({
     templates: { type: Array, default: () => [] },
     comments: { type: Array, default: () => [] },
     publicUrl: { type: String, default: null },
+    paymentUrl: { type: String, default: null },
 });
 
 /* ── Copier le lien public dans le presse-papiers ──────────────────────── */
@@ -41,6 +42,27 @@ const copyPublicUrl = async () => {
     } catch {
         window.prompt('Copiez ce lien :', props.publicUrl);
     }
+};
+
+/* ── Copier le lien de paiement ──────────────────────────────────────── */
+const paymentLinkCopied = ref(false);
+const copyPaymentUrl = async () => {
+    if (!props.paymentUrl) return;
+    try {
+        await navigator.clipboard.writeText(props.paymentUrl);
+        paymentLinkCopied.value = true;
+        setTimeout(() => { paymentLinkCopied.value = false; }, 2500);
+    } catch {
+        window.prompt('Copiez ce lien de paiement :', props.paymentUrl);
+    }
+};
+const sharePaymentWhatsApp = () => {
+    if (!props.paymentUrl) return;
+    const num = props.document?.number ?? '';
+    const total = props.document?.total ?? '';
+    const currency = props.document?.currency ?? '';
+    const text = `Bonjour, votre facture ${num} d'un montant de ${total} ${currency} est disponible. Payez en ligne ici : ${props.paymentUrl}`;
+    window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 };
 
 const fmt = (n) => new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 0 }).format(n ?? 0);
@@ -347,6 +369,23 @@ const planProgress = computed(() => {
                         :title="publicUrl"
                     >
                         {{ publicLinkCopied ? '✅ Lien copié !' : '🔗 Lien public' }}
+                    </button>
+                    <!-- Bouton Lien de paiement -->
+                    <button
+                        v-if="paymentUrl && document.status !== 'paid' && document.status !== 'draft'"
+                        @click="copyPaymentUrl"
+                        class="rounded-md border border-green-300 bg-green-50 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-100"
+                        :title="paymentUrl"
+                    >
+                        {{ paymentLinkCopied ? '✅ Copié !' : '💳 Lien de paiement' }}
+                    </button>
+                    <button
+                        v-if="paymentUrl && document.status !== 'paid' && document.status !== 'draft'"
+                        @click="sharePaymentWhatsApp"
+                        class="rounded-md border border-green-400 bg-green-600 px-3 py-2 text-sm font-semibold text-white hover:bg-green-700"
+                        title="Envoyer par WhatsApp"
+                    >
+                        📱 WhatsApp
                     </button>
                     <button
                         v-if="templates.length && acceptsCosmeticTemplate"

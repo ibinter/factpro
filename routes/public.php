@@ -11,6 +11,7 @@ use App\Http\Controllers\TestimonialsController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\PublicController;
+use App\Http\Controllers\PaymentLinkController;
 use App\Http\Controllers\PublicDocumentController;
 use App\Http\Controllers\PublicVerifyController;
 use App\Http\Controllers\SecurityController;
@@ -68,6 +69,20 @@ Route::get('/pricing-data', [PublicController::class, 'plansJson'])
 Route::get('/doc/{token}', [PublicDocumentController::class, 'show'])
     ->middleware('throttle:120,1')
     ->name('doc.public');
+
+// ── Lien de paiement public ───────────────────────────────────────────────
+Route::get('/pay/{token}', [PaymentLinkController::class, 'show'])
+    ->middleware('throttle:60,1')
+    ->name('pay.public');
+Route::post('/pay/{token}/online', [PaymentLinkController::class, 'initiateOnline'])
+    ->middleware('throttle:10,1')
+    ->name('pay.online');
+Route::get('/pay/{token}/success', [PaymentLinkController::class, 'callbackSuccess'])
+    ->name('pay.success');
+Route::get('/pay/{token}/cancel', [PaymentLinkController::class, 'callbackCancel'])
+    ->name('pay.cancel');
+Route::post('/webhooks/cinetpay', [PaymentLinkController::class, 'webhookCinetpay'])
+    ->name('webhooks.cinetpay');
 
 // ── Vérification publique de documents (Phase 16 — §verify.factpro.ibigsoft.com) ──
 // Page Inertia multi-langue (FR/EN/AR/PT/ES) — sans authentification.

@@ -50,4 +50,51 @@ class Company extends Model
     {
         return $this->hasMany(ReminderRule::class);
     }
+
+    /**
+     * Retourne les méthodes de paiement actives groupées par catégorie.
+     *
+     * @return array<string, array<int, array<string, mixed>>>
+     */
+    public function activePaymentMethods(): array
+    {
+        $methods = $this->payment_methods;
+
+        if (empty($methods)) {
+            return [];
+        }
+
+        $categories = ['online' => [], 'mobile_money' => [], 'classic' => [], 'crypto' => []];
+
+        foreach ($methods as $method) {
+            $category = $method['category'] ?? null;
+            $active   = $method['active'] ?? false;
+
+            if ($active && isset($categories[$category])) {
+                $categories[$category][] = $method;
+            }
+        }
+
+        return array_filter($categories, fn (array $items) => count($items) > 0);
+    }
+
+    /**
+     * Indique si au moins une méthode de paiement online est activée.
+     */
+    public function hasOnlinePayment(): bool
+    {
+        $methods = $this->payment_methods;
+
+        if (empty($methods)) {
+            return false;
+        }
+
+        foreach ($methods as $method) {
+            if (($method['category'] ?? null) === 'online' && ($method['active'] ?? false)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
