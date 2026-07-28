@@ -104,12 +104,13 @@ class AnalyticsController extends Controller
         }
 
         // Top 5 clients par CA (tous temps)
-        $topClients = Document::where('company_id', $companyId)
-            ->where('type', 'invoice')
-            ->whereNotIn('status', ['draft', 'cancelled'])
-            ->whereNotNull('customer_id')
-            ->selectRaw('customer_id, customer_name, SUM(total) as total, COUNT(*) as invoice_count')
-            ->groupBy('customer_id', 'customer_name')
+        $topClients = Document::where('documents.company_id', $companyId)
+            ->where('documents.type', 'invoice')
+            ->whereNotIn('documents.status', ['draft', 'cancelled'])
+            ->whereNotNull('documents.customer_id')
+            ->leftJoin('customers', 'customers.id', '=', 'documents.customer_id')
+            ->selectRaw('documents.customer_id, COALESCE(customers.name, documents.customer_id) as customer_name, SUM(documents.total) as total, COUNT(*) as invoice_count')
+            ->groupBy('documents.customer_id', 'customers.name')
             ->orderByDesc('total')
             ->limit(5)
             ->get()
@@ -411,13 +412,14 @@ class AnalyticsController extends Controller
 
     private function topClients(int $companyId, Carbon $from): array
     {
-        $rows = Document::where('company_id', $companyId)
-            ->where('type', 'invoice')
-            ->whereNotIn('status', ['draft', 'cancelled'])
-            ->where('issue_date', '>=', $from)
-            ->whereNotNull('customer_id')
-            ->selectRaw('customer_id, customer_name, SUM(total) as total')
-            ->groupBy('customer_id', 'customer_name')
+        $rows = Document::where('documents.company_id', $companyId)
+            ->where('documents.type', 'invoice')
+            ->whereNotIn('documents.status', ['draft', 'cancelled'])
+            ->where('documents.issue_date', '>=', $from)
+            ->whereNotNull('documents.customer_id')
+            ->leftJoin('customers', 'customers.id', '=', 'documents.customer_id')
+            ->selectRaw('documents.customer_id, COALESCE(customers.name, documents.customer_id) as customer_name, SUM(documents.total) as total')
+            ->groupBy('documents.customer_id', 'customers.name')
             ->orderByDesc('total')
             ->limit(10)
             ->get();
