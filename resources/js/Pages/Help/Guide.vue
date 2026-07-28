@@ -195,10 +195,10 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                       Paramétrer les modes de paiement acceptés
                     </h3>
                     <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                      <li class="flex gap-2"><span class="text-blue-500 font-bold">1.</span> Allez dans <strong>Paramètres &gt; Paiements</strong>.</li>
-                      <li class="flex gap-2"><span class="text-blue-500 font-bold">2.</span> Activez chaque mode : Orange Money, Wave, MTN MoMo, Moov Money, Espèces, Virement, Carte.</li>
-                      <li class="flex gap-2"><span class="text-blue-500 font-bold">3.</span> Pour chaque Mobile Money, renseignez le numéro du compte et le nom du titulaire.</li>
-                      <li class="flex gap-2"><span class="text-blue-500 font-bold">4.</span> Ces modes apparaissent sur les liens de paiement envoyés aux clients.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">1.</span> Allez dans <strong>Paramètres &gt; Société</strong>, onglet <em>Paiements</em>.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">2.</span> Activez chaque mode disponible : Orange Money, Wave, MTN MoMo, Moov Money, Espèces, Chèque, Virement, Carte, CinetPay, FedaPay.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">3.</span> Pour chaque Mobile Money, renseignez le numéro de compte et le nom du titulaire.</li>
+                      <li class="flex gap-2"><span class="text-blue-500 font-bold">4.</span> Ces modes apparaissent sur les liens de paiement et les documents envoyés aux clients.</li>
                     </ol>
                   </div>
 
@@ -986,7 +986,7 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                     <span class="text-3xl">⚙️</span>
                     <div>
                       <h2 class="text-xl font-bold text-gray-800 dark:text-gray-100">Module 9 — Paramètres</h2>
-                      <p class="text-sm text-gray-500 dark:text-gray-400">Société, TVA, devises, sauvegardes et sécurité</p>
+                      <p class="text-sm text-gray-500 dark:text-gray-400">6 onglets : Identité, Coordonnées, Facturation, Apparence, Signature, Paiements</p>
                     </div>
                   </div>
                 </div>
@@ -995,12 +995,16 @@ onUnmounted(() => { if (observer) observer.disconnect(); });
                   <div>
                     <h3 class="text-base font-bold text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2">
                       <span class="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-900 text-teal-700 dark:text-teal-300 text-xs font-bold flex items-center justify-center">1</span>
-                      Configurer les informations légales de la société
+                      Configurer les informations de la société (6 onglets)
                     </h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">La page Paramètres &gt; Société est organisée en <strong>6 onglets</strong> accessibles en haut de page.</p>
                     <ol class="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                      <li class="flex gap-2"><span class="text-teal-600 font-bold">1.</span> Allez dans <strong>Paramètres &gt; Société</strong>.</li>
-                      <li class="flex gap-2"><span class="text-teal-600 font-bold">2.</span> Renseignez ou mettez à jour : raison sociale, forme juridique, capital, RCCM, NIF, adresse du siège.</li>
-                      <li class="flex gap-2"><span class="text-teal-600 font-bold">3.</span> Ces informations sont imprimées sur chaque document émis et sont obligatoires pour la conformité OHADA.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">①</span> <strong>Identité</strong> — Raison sociale, logo, RCCM, NIF, forme juridique, capital social, secteur d'activité.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">②</span> <strong>Coordonnées</strong> — Adresse, ville, pays (18 choix), téléphone, email, site web, réseaux sociaux.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">③</span> <strong>Facturation</strong> — Devise principale (9 choix), TVA par défaut, mentions légales, conditions de paiement, délai d'échéance.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">④</span> <strong>Apparence</strong> — Couleur primaire et secondaire des documents PDF.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">⑤</span> <strong>Signature</strong> — Activation et configuration des blocs de signature émetteur et client sur les documents.</li>
+                      <li class="flex gap-2"><span class="text-teal-600 font-bold">⑥</span> <strong>Paiements</strong> — Activation des modes de paiement affichés sur les documents et liens de paiement.</li>
                     </ol>
                   </div>
 

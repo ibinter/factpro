@@ -19,7 +19,7 @@ const categories = [
     color: '#0062CC',
     faqs: [
       { q: "Comment créer mon compte FactPro ?", a: "Rendez-vous sur factpro.ibigsoft.com, cliquez sur 'Essai gratuit', renseignez votre email et choisissez un mot de passe. Votre compte est actif immédiatement, sans carte bancaire." },
-      { q: "Comment configurer ma société ?", a: "Dans le menu Paramètres > Société, renseignez le nom, l'adresse, le RCCM, le numéro fiscal et uploadez votre logo. Ces informations apparaissent automatiquement sur tous vos documents." },
+      { q: "Comment configurer ma société ?", a: "Dans le menu Paramètres > Société, vous trouverez 6 onglets : Identité (nom, logo, RCCM, NIF), Coordonnées (adresse, pays, téléphone), Facturation (devise, TVA, conditions), Apparence (couleurs PDF), Signature (blocs de signature) et Paiements (modes acceptés). Ces informations apparaissent automatiquement sur tous vos documents." },
       { q: "Combien de temps dure l'essai gratuit ?", a: "L'essai gratuit dure 7 jours avec accès complet à toutes les fonctionnalités. Aucune carte bancaire n'est requise. À la fin de l'essai, vous choisissez l'abonnement qui vous convient." },
       { q: "Comment importer mes données existantes ?", a: "Allez dans Paramètres > Import, puis choisissez le type de données (clients, produits). Téléchargez le modèle CSV fourni, remplissez-le et importez-le. L'import est rapide et signale les erreurs ligne par ligne." },
       { q: "Puis-je utiliser FactPro sur mobile ?", a: "Oui. FactPro est une PWA (Progressive Web App) installable sur Android et iPhone sans passer par l'App Store. Ouvrez le site dans Chrome, puis 'Ajouter à l'écran d'accueil'. L'application fonctionne même hors connexion." },

@@ -165,7 +165,7 @@ const slide = computed(() => ({ ...slideBase.value, ...slideBase.value[lang.valu
 
 /* ── Compteur animé ── */
 const counters = ref({ clients: 0, docs: 0, pays: 0, uptime: 0 });
-const targets  = { clients: 120, docs: 4800, pays: 5, uptime: 99 };
+const targets  = { clients: 200, docs: 9500, pays: 9, uptime: 99 };
 onMounted(() => {
     const duration = 2000;
     const step = 16;
@@ -214,6 +214,8 @@ const FR = {
         { icon: '⚡', title: 'API REST', text: 'Connectez vos outils : Zapier, Make, vos propres apps. 100% documentée.' },
         { icon: '📂', title: '498+ modèles de documents', text: 'Catalogue sectoriel couvrant 24 secteurs d\'activité : BTP, commerce, santé, restauration, services, ONG et plus encore.' },
         { icon: '🎨', title: 'Templates PDF intelligents', text: 'Sélection automatique du style visuel selon votre secteur. Vos documents reflètent votre métier dès la première impression.' },
+        { icon: '📊', title: 'Dashboard BI avancé', text: 'KPIs en temps réel, graphique CA sur 12 mois, accès rapides à tous les modules, alertes intelligentes.' },
+        { icon: '⚙️', title: 'Paramètres complets', text: 'Identité société, facturation, apparence, signature électronique, modes de paiement — tout configurable en quelques clics.' },
     ],
     whyTitle: 'Pourquoi IBIG FactPro ?',
     why: [
@@ -236,7 +238,7 @@ const FR = {
     faqs: [
         { q: 'L\'essai est-il vraiment gratuit ?', a: 'Oui. 7 jours complets, sans carte bancaire. Aucun prélèvement automatique à la fin.' },
         { q: 'Qu\'est-ce que le filigrane d\'essai ?', a: 'Pendant l\'essai, vos documents portent la mention « VERSION ESSAI ». Elle disparaît dès votre premier abonnement.' },
-        { q: 'Quels moyens de paiement acceptez-vous ?', a: 'Mobile Money (Orange Money, Wave, MTN, Moov), virement bancaire national et international.' },
+        { q: 'Quels moyens de paiement acceptez-vous ?', a: 'Mobile Money (Orange Money, Wave, MTN MoMo, Moov Money), espèces, chèque, virement bancaire national et international, et paiement en ligne via CinetPay / FedaPay / Flutterwave.' },
         { q: 'Puis-je résilier à tout moment ?', a: 'Oui. Aucun engagement : abonnements mensuels ou annuels, résiliables depuis votre espace.' },
         { q: 'Fonctionne-t-il sans connexion internet ?', a: 'Oui, grâce au mode PWA hors-ligne avec synchronisation automatique dès le retour de connexion.' },
         { q: 'Puis-je utiliser ma propre imprimante thermique ?', a: 'Oui. Compatible avec toutes les imprimantes thermiques 58mm et 80mm du marché.' },
@@ -278,6 +280,8 @@ const EN = {
         { icon: '⚡', title: 'REST API', text: 'Connect your tools: Zapier, Make, your own apps. Fully documented.' },
         { icon: '📂', title: '498+ document templates', text: 'Sector catalog covering 24 industries: construction, retail, healthcare, restaurants, services, NGOs and more.' },
         { icon: '🎨', title: 'Smart PDF templates', text: 'Automatic visual style selection based on your industry. Your documents reflect your trade from the very first print.' },
+        { icon: '📊', title: 'Advanced BI dashboard', text: 'Real-time KPIs, 12-month revenue chart, quick access to all modules, smart alerts.' },
+        { icon: '⚙️', title: 'Full settings', text: 'Company identity, billing, appearance, e-signature, payment methods — all configurable in a few clicks.' },
     ],
     whyTitle: 'Why IBIG FactPro?',
     why: [
@@ -300,7 +304,7 @@ const EN = {
     faqs: [
         { q: 'Is the trial really free?', a: 'Yes. Full 7 days, no credit card. No automatic billing at the end.' },
         { q: 'What is the trial watermark?', a: 'During trial, your documents display "TRIAL VERSION". It disappears with your first subscription.' },
-        { q: 'What payment methods do you accept?', a: 'Mobile Money (Orange Money, Wave, MTN, Moov), national and international bank transfer.' },
+        { q: 'What payment methods do you accept?', a: 'Mobile Money (Orange Money, Wave, MTN MoMo, Moov Money), cash, cheque, bank transfer, and online payment via CinetPay / FedaPay / Flutterwave.' },
         { q: 'Can I cancel anytime?', a: 'Yes. No commitment: monthly or yearly subscriptions, cancellable from your account.' },
         { q: 'Does it work offline?', a: 'Yes, thanks to PWA offline mode with automatic sync when connection returns.' },
         { q: 'Can I use my own thermal printer?', a: 'Yes. Compatible with all 58mm and 80mm thermal printers on the market.' },
@@ -442,8 +446,8 @@ const howSteps = [
             "description": "Logiciel de facturation et gestion commerciale pour PME africaines, conforme OHADA",
             "url": "https://factpro.ibigsoft.com",
             "author": { "@type": "Organization", "name": "IBIG Soft SARL", "address": { "@type": "PostalAddress", "addressLocality": "Abidjan", "addressCountry": "CI" } },
-            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "XOF", "description": "Essai gratuit 14 jours" },
-            "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "312" }
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "XOF", "description": "Essai gratuit 7 jours" },
+            "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "487" }
         }
         </script>
     </Head>

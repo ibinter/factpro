@@ -30,9 +30,29 @@ const filterOptions = [
 // Fallback static data if no server data provided
 const staticEntries = [
     {
+        version: '2.6.0',
+        date: '28 juillet 2026',
+        isNew: true,
+        type: 'major',
+        changes: [
+            { type: 'improvement', text: 'Navigation publique redessinée : menus déroulants Produit / Ressources / Entreprise pour une meilleure lisibilité sur tous les écrans' },
+            { type: 'improvement', text: 'Paramètres société entièrement repensés en 6 onglets : Identité, Coordonnées, Facturation, Apparence, Signature, Paiements' },
+            { type: 'improvement', text: 'Dashboard BI : devise dynamique selon la société, alertes individuelles dismissibles, accès rapides à 12 modules en un clic' },
+            { type: 'improvement', text: 'Dashboard : graphique CA sur 12 mois avec affichage du nombre de factures au survol' },
+            { type: 'feature', text: 'Footer interne FactPro © 2026 — Un produit IBIG Soft, liens Aide / Nouveautés / CGU / Support' },
+            { type: 'improvement', text: 'Responsive mobile : overflow-x-auto sur tous les tableaux (Clients, Produits, Rapports)' },
+            { type: 'improvement', text: 'En-têtes de liste avec flex-wrap pour éviter le débordement sur petits écrans' },
+            { type: 'feature', text: '3 nouveaux modes de paiement configurables : Moov Money, Espèces, Chèque' },
+            { type: 'improvement', text: 'Sélecteur pays (18 pays) et devise (9 devises) avec menus déroulants dans les paramètres société' },
+            { type: 'fix', text: 'Correction doublon blocs signature dans les paramètres société' },
+            { type: 'fix', text: 'Correction incohérence "14 jours" → "7 jours" dans les métadonnées Schema.org' },
+            { type: 'improvement', text: 'Mode sombre complet (dark mode) sur le dashboard, les paramètres société et les listes' },
+        ],
+    },
+    {
         version: '2.5.0',
         date: '27 juillet 2026',
-        isNew: true,
+        isNew: false,
         type: 'major',
         changes: [
             { type: 'feature', text: 'Catalogue de 498 modèles de documents organisés par secteur (Vente, BTP, Santé, Agriculture, IT, Restauration, Finance, etc.)' },
