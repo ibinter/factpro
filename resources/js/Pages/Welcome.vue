@@ -46,111 +46,123 @@ const slideIndex = ref(0);
 const slidePaused = ref(false);
 const SLIDES = [
     {
-        bg: 'linear-gradient(135deg,#001120 0%,#001d3d 50%,#003580 100%)',
-        accent: '#0062CC',
-        accentLight: '#3b89ff',
+        bg: 'linear-gradient(135deg,#001120 0%,#002D5B 60%,#0062CC 100%)',
+        accent: '#1e3a5f',
+        accentLight: '#3b82f6',
         fr: { tag: '✦ Facturation conforme OHADA', h1: 'Votre première facture\nen 90 secondes', sub: 'QR anti-falsification, Mobile Money intégré, email & WhatsApp en un clic. La facturation professionnelle enfin accessible à tous.', cta1: 'Créer ma première facture →', cta2: 'Voir la démo' },
         en: { tag: '✦ OHADA-compliant invoicing', h1: 'Your first invoice\nin 90 seconds', sub: 'Anti-fraud QR code, integrated Mobile Money, email & WhatsApp in one click. Professional invoicing finally accessible to everyone.', cta1: 'Create my first invoice →', cta2: 'Watch demo' },
         doc: {
             type: 'FACTURE', num: 'FAC-2026-0842',
             emetteur: 'IBIG TECH SOLUTIONS SARL',
-            emetteurSub: 'RC CI-ABJ-2022-B-15234 · NIF 2248761A',
+            emetteurSub: 'RC CI-ABJ-2022-B-15234 · NIF 2248761A · Capital 5 000 000 FCFA',
+            emetteurAddr: '12 Rue du Commerce, Zone Industrielle · Abidjan, Côte d\'Ivoire',
+            emetteurContact: 'Tél : +225 07 08 09 10 · contact@ibigtechci.com',
             client: 'NEXATEC INDUSTRIES CI',
-            clientSub: 'Direction des Systèmes d\'Information · Abidjan-Plateau',
+            clientSub: 'M. KOUASSI Rodrigue · Direction SI',
+            clientAddr: 'Plateau, Abidjan · NIF 1122334455A',
             date: '22 juillet 2026', echeance: '21 août 2026',
             statusLabel: '✓ PAYÉE', statusBg: '#d1fae5', statusFg: '#065f46',
-            headerBg: '#001d3d',
             rows: [
-                { desc: 'Intégration ERP & migration données (lot 1)', qty: '1', pu: '480 000', total: '480 000' },
-                { desc: 'Développement API REST sur mesure', qty: '3', pu: '95 000', total: '285 000' },
-                { desc: 'Formation équipe IT (6 techniciens × 2j)', qty: '12j', pu: '22 000', total: '264 000' },
-                { desc: 'Maintenance & support prioritaire 12 mois', qty: '1', pu: '216 000', total: '216 000' },
+                { desc: 'Intégration ERP & migration données (lot 1)', qty: '1', unite: 'Forfait', pu: '480 000', tva: '18%', total: '480 000' },
+                { desc: 'Développement API REST sur mesure', qty: '3', unite: 'Module', pu: '95 000', tva: '18%', total: '285 000' },
+                { desc: 'Formation équipe IT (6 techniciens × 2j)', qty: '12', unite: 'Jour', pu: '22 000', tva: '18%', total: '264 000' },
+                { desc: 'Maintenance & support prioritaire 12 mois', qty: '1', unite: 'An', pu: '216 000', tva: '18%', total: '216 000' },
             ],
             ht: '1 245 000', tva: '224 100', ttc: '1 469 100', devise: 'FCFA',
             equiv: '≈ 2 239 € · 2 440 $',
-            payMode: 'Wave CI — +225 07 08 09 10',
-            qrNote: 'Vérifiez sur factpro.ibigsoft.com',
+            payModes: ['Wave CI — +225 07 08 09 10', 'Orange Money — +225 05 55 00 00'],
+            qrLabel: 'Vérifiez sur factpro.ibigsoft.com',
+            footer: 'IBIG TECH SOLUTIONS SARL · RC CI-ABJ-2022-B-15234 · Généré par IBIG FactPro — factpro.ibigsoft.com',
         },
     },
     {
-        bg: 'linear-gradient(135deg,#0d1117 0%,#1a1000 50%,#3d2200 100%)',
-        accent: '#d97706',
-        accentLight: '#fbbf24',
+        bg: 'linear-gradient(135deg,#071a0d 0%,#0d3320 60%,#166534 100%)',
+        accent: '#166534',
+        accentLight: '#22c55e',
         fr: { tag: '✦ Devis signable en ligne', h1: 'Devis accepté,\nsigné, facturé — sans papier', sub: 'Lien de signature unique par SMS ou email. Votre client accepte en un tap depuis son téléphone. Conversion en facture automatique.', cta1: 'Créer mon premier devis →', cta2: 'Voir la démo' },
         en: { tag: '✦ Online signable quotes', h1: 'Quoted, signed,\nbilled — paperless', sub: 'Unique signature link via SMS or email. Your client accepts with one tap from their phone. Automatic conversion to invoice.', cta1: 'Create my first quote →', cta2: 'Watch demo' },
         doc: {
             type: 'DEVIS', num: 'DEV-2026-0317',
             emetteur: 'BATIMEX CONSTRUCTION SARL',
-            emetteurSub: 'RCCM CI-ABJ-2021-B-8811 · NIF 0089241B',
+            emetteurSub: 'RCCM CI-ABJ-2021-B-8811 · NIF 0089241B · NINEA 00789241',
+            emetteurAddr: 'Zone Industrielle de Yopougon · Abidjan, CI',
+            emetteurContact: 'Tél : +225 01 02 03 04 · devis@batimex.ci',
             client: 'AKIBA PROMOTIONS IMMOBILIÈRES SA',
-            clientSub: 'Direction des Travaux & Aménagements · Abidjan',
-            date: '18 juillet 2026', echeance: 'Valide 30 jours',
+            clientSub: 'Mme DIALLO Aminata · Direction Travaux',
+            clientAddr: 'Cocody Riviera, Abidjan · NIF 9988776655B',
+            date: '18 juillet 2026', echeance: 'Valable 30 jours — jusqu\'au 17/08/2026',
             statusLabel: '✍ ACCEPTÉ', statusBg: '#fef3c7', statusFg: '#92400e',
-            headerBg: '#3d2200',
             rows: [
-                { desc: 'Étude géotechnique & plan de masse', qty: '1', pu: '750 000', total: '750 000' },
-                { desc: 'Fourniture & pose béton armé (m³)', qty: '120m³', pu: '18 500', total: '2 220 000' },
-                { desc: 'Main-d\'œuvre qualifiée — maçonnerie', qty: '45j', pu: '25 000', total: '1 125 000' },
-                { desc: 'Location engins & équipements lourds', qty: '10j', pu: '95 000', total: '950 000' },
+                { desc: 'Étude géotechnique & plan de masse', qty: '1', unite: 'Forfait', pu: '750 000', tva: '18%', total: '750 000' },
+                { desc: 'Fourniture & pose béton armé', qty: '120', unite: 'm³', pu: '18 500', tva: '18%', total: '2 220 000' },
+                { desc: 'Main-d\'œuvre qualifiée — maçonnerie', qty: '45', unite: 'Jour', pu: '25 000', tva: '18%', total: '1 125 000' },
+                { desc: 'Location engins & équipements lourds', qty: '10', unite: 'Jour', pu: '95 000', tva: '18%', total: '950 000' },
             ],
             ht: '5 045 000', tva: '908 100', ttc: '5 953 100', devise: 'FCFA',
             equiv: '≈ 9 074 € · 9 886 $',
-            payMode: 'Virement UBA CI — IBAN joint',
-            qrNote: '✍ Signé électroniquement le 19/07/2026',
+            payModes: ['Virement UBA CI — IBAN : CI42 0000 0000 0000 0000 00', 'Chèque à l\'ordre de BATIMEX CONSTRUCTION SARL'],
+            qrLabel: '✍ Signé électroniquement le 19/07/2026',
+            footer: 'BATIMEX CONSTRUCTION SARL · RCCM CI-ABJ-2021-B-8811 · Généré par IBIG FactPro — factpro.ibigsoft.com',
         },
     },
     {
-        bg: 'linear-gradient(135deg,#001a0d 0%,#003320 50%,#00552e 100%)',
-        accent: '#059669',
-        accentLight: '#34d399',
-        fr: { tag: '✦ Caisse POS hors-ligne', h1: 'Votre caisse tactile,\npartout en Afrique', sub: 'Ventes, tickets thermiques 58/80mm, gestion de stock en temps réel, rapport de caisse journalier. Fonctionne sans connexion internet.', cta1: 'Ouvrir ma caisse →', cta2: 'Voir la démo' },
-        en: { tag: '✦ Offline POS register', h1: 'Your touchscreen POS,\nanywhere in Africa', sub: 'Sales, 58/80mm thermal receipts, real-time stock management, daily cash report. Works without internet connection.', cta1: 'Open my cash register →', cta2: 'Watch demo' },
+        bg: 'linear-gradient(135deg,#1a0800 0%,#3d1200 60%,#c2410c 100%)',
+        accent: '#c2410c',
+        accentLight: '#f97316',
+        fr: { tag: '✦ Caisse POS & bons de livraison', h1: 'Votre caisse tactile,\npartout en Afrique', sub: 'Ventes, tickets thermiques 58/80mm, gestion de stock en temps réel, rapport de caisse journalier. Fonctionne sans connexion internet.', cta1: 'Ouvrir ma caisse →', cta2: 'Voir la démo' },
+        en: { tag: '✦ POS & delivery notes', h1: 'Your touchscreen POS,\nanywhere in Africa', sub: 'Sales, 58/80mm thermal receipts, real-time stock management, daily cash report. Works without internet connection.', cta1: 'Open my cash register →', cta2: 'Watch demo' },
         doc: {
             type: 'BON DE LIVRAISON', num: 'BL-2026-1124',
             emetteur: 'IBIG DISTRIBUTION SARL',
-            emetteurSub: 'RC CI-ABJ-2020-B-3344 · NIF P012345678',
+            emetteurSub: 'RC CI-ABJ-2020-B-3344 · NIF P012345678 · Capital 2 000 000 FCFA',
+            emetteurAddr: 'Zone Industrielle d\'Adjamé, Abidjan, CI',
+            emetteurContact: 'Tél : +225 27 22 00 00 · livraison@ibigdist.ci',
             client: 'MARCHÉ GRAND SURFACE KORHOGO',
-            clientSub: 'Service Approvisionnement · Korhogo, CI',
+            clientSub: 'M. COULIBALY Issouf · Service Appro.',
+            clientAddr: 'Korhogo, Côte d\'Ivoire · NIF 5544332211C',
             date: '22 juillet 2026', echeance: 'Livré le 22/07/2026',
             statusLabel: '✓ LIVRÉ', statusBg: '#d1fae5', statusFg: '#065f46',
-            headerBg: '#003a1a',
             rows: [
-                { desc: 'Huile végétale raffinée 5L (cartons)', qty: '120 crt', pu: '3 500', total: '420 000' },
-                { desc: 'Riz étuvé longue grain 25kg', qty: '40 sacs', pu: '8 200', total: '328 000' },
-                { desc: 'Farine de blé premium 50kg', qty: '30 sacs', pu: '7 500', total: '225 000' },
-                { desc: 'Sucre en poudre 50kg', qty: '25 sacs', pu: '9 000', total: '225 000' },
+                { desc: 'Huile végétale raffinée 5L', qty: '120', unite: 'Carton', pu: '3 500', tva: 'Ex.', total: '420 000' },
+                { desc: 'Riz étuvé longue grain 25kg', qty: '40', unite: 'Sac', pu: '8 200', tva: 'Ex.', total: '328 000' },
+                { desc: 'Farine de blé premium 50kg', qty: '30', unite: 'Sac', pu: '7 500', tva: 'Ex.', total: '225 000' },
+                { desc: 'Sucre en poudre 50kg', qty: '25', unite: 'Sac', pu: '9 000', tva: 'Ex.', total: '225 000' },
             ],
-            ht: '1 198 000', tva: '0 (exonéré)', ttc: '1 198 000', devise: 'FCFA',
+            ht: '1 198 000', tva: 'Exonéré', ttc: '1 198 000', devise: 'FCFA',
             equiv: '≈ 1 826 € · 1 990 $',
-            payMode: 'MTN MoMo Business — +225 07 00 00 00',
-            qrNote: '📍 Livraison confirmée GPS · 22/07/2026',
+            payModes: ['MTN MoMo Business — +225 07 00 00 00', 'Espèces à la livraison'],
+            qrLabel: '📍 Livraison confirmée GPS · 22/07/2026',
+            footer: 'IBIG DISTRIBUTION SARL · RC CI-ABJ-2020-B-3344 · Généré par IBIG FactPro — factpro.ibigsoft.com',
         },
     },
     {
-        bg: 'linear-gradient(135deg,#0d0020 0%,#1a0040 50%,#2d0070 100%)',
+        bg: 'linear-gradient(135deg,#0d0020 0%,#2d006a 60%,#7c3aed 100%)',
         accent: '#7c3aed',
         accentLight: '#a78bfa',
-        fr: { tag: '✦ Dashboard & rapports BI', h1: 'Tous vos KPIs\nen un coup d\'œil', sub: 'CA mensuel, taux de recouvrement, top clients, alertes stock — votre activité visualisée en temps réel. Rapports exportables en PDF et Excel.', cta1: 'Accéder au dashboard →', cta2: 'Voir la démo' },
-        en: { tag: '✦ Dashboard & BI reports', h1: 'All your KPIs\nat a glance', sub: 'Monthly revenue, collection rate, top clients, stock alerts — your business visualized in real time. Reports exportable to PDF and Excel.', cta1: 'Go to dashboard →', cta2: 'Watch demo' },
+        fr: { tag: '✦ Factures récurrentes & abonnements', h1: 'Automatisez vos\nfactures mensuelles', sub: 'CA mensuel, taux de recouvrement, top clients, alertes stock — votre activité visualisée en temps réel. Rapports exportables en PDF et Excel.', cta1: 'Accéder au dashboard →', cta2: 'Voir la démo' },
+        en: { tag: '✦ Recurring invoices & subscriptions', h1: 'Automate your\nmonthly invoices', sub: 'Monthly revenue, collection rate, top clients, stock alerts — your business visualized in real time. Reports exportable to PDF and Excel.', cta1: 'Go to dashboard →', cta2: 'Watch demo' },
         doc: {
-            type: 'FACTURE RÉCURRENTE', num: 'FAC-2026-R-0088',
+            type: 'FACTURE', num: 'FAC-2026-0961',
             emetteur: 'IBIG SOFT SARL',
-            emetteurSub: 'RC CI-ABJ-2018-B-00421 · NIF 1874532C',
+            emetteurSub: 'RC CI-ABJ-2018-B-00421 · NIF 1874532C · Capital 10 000 000 FCFA',
+            emetteurAddr: 'Marcory Zone 4, Abidjan, Côte d\'Ivoire',
+            emetteurContact: 'Tél : +225 05 55 05 99 · facturation@ibigsoft.com',
             client: 'AURIFEX MINING & RESOURCES SARL',
-            clientSub: 'Direction Administrative & Financière · Abidjan',
+            clientSub: 'Mme TRAORÉ Fatoumata · Dir. Financière',
+            clientAddr: 'Zone Industrielle, Abidjan · NIF 7766554433D',
             date: '01 juillet 2026', echeance: '31 juillet 2026',
             statusLabel: '◉ EN ATTENTE', statusBg: '#ede9fe', statusFg: '#5b21b6',
-            headerBg: '#2d0070',
             rows: [
-                { desc: 'Abonnement FactPro Business — juillet 2026', qty: '1', pu: '49 000', total: '49 000' },
-                { desc: 'Module RH & Paie — 12 bulletins', qty: '12', pu: '2 500', total: '30 000' },
-                { desc: 'Hébergement VPS dédié haute dispo.', qty: '1', pu: '35 000', total: '35 000' },
-                { desc: 'Support prioritaire 24h/24 — juillet', qty: '1', pu: '15 000', total: '15 000' },
+                { desc: 'Abonnement FactPro Business — juil. 2026', qty: '1', unite: 'Mois', pu: '49 000', tva: '18%', total: '49 000' },
+                { desc: 'Module RH & Paie — 12 bulletins de salaire', qty: '12', unite: 'Bulletin', pu: '2 500', tva: '18%', total: '30 000' },
+                { desc: 'Hébergement VPS haute disponibilité', qty: '1', unite: 'Mois', pu: '35 000', tva: '18%', total: '35 000' },
+                { desc: 'Support prioritaire 24h/24 — juillet', qty: '1', unite: 'Mois', pu: '15 000', tva: '18%', total: '15 000' },
             ],
             ht: '129 000', tva: '23 220', ttc: '152 220', devise: 'FCFA',
             equiv: '≈ 232 € · 253 $',
-            payMode: 'Orange Money CI — +225 05 55 05 99',
-            qrNote: '🔄 Facture récurrente mensuelle automatique',
+            payModes: ['Orange Money CI — +225 05 55 05 99', 'Wave CI — +225 07 07 07 07'],
+            qrLabel: '🔄 Facture récurrente mensuelle · IBIG FactPro',
+            footer: 'IBIG SOFT SARL · RC CI-ABJ-2018-B-00421 · Généré par IBIG FactPro — factpro.ibigsoft.com',
         },
     },
 ];
@@ -577,114 +589,129 @@ const howSteps = [
                             <!-- Ombre portée -->
                             <div class="absolute inset-x-4 bottom-0 h-8 rounded-b-2xl blur-2xl opacity-40" :style="`background:${slide.accent}`"></div>
 
-                            <!-- Document A4 simulé -->
+                            <!-- Document PDF simulé — fidèle au vrai rendu IBIG FactPro -->
                             <div class="relative w-full max-w-sm rounded-xl overflow-hidden shadow-2xl bg-white"
-                                 style="font-size:10px;line-height:1.4;transform:rotateY(-2deg) rotateX(1deg);box-shadow:0 32px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08)">
+                                 style="font-size:9.5px;line-height:1.4;transform:rotateY(-2deg) rotateX(1deg);box-shadow:0 32px 80px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08)">
 
-                                <!-- ═ EN-TÊTE DOCUMENT ═ -->
-                                <div class="flex items-start justify-between px-5 py-4" :style="`background:${slide.doc.headerBg}`">
-                                    <div>
-                                        <!-- Logo zone -->
-                                        <div class="flex items-center gap-2 mb-2">
-                                            <div class="h-7 w-7 rounded flex items-center justify-center font-black text-sm" :style="`background:${slide.accent};color:white`">FP</div>
+                                <!-- ═ EN-TÊTE : Logo gauche + Titre droit (layout réel PDF) ═ -->
+                                <div class="flex items-start justify-between px-4 pt-4 pb-3 bg-white">
+                                    <!-- Colonne gauche : logo + société émettrice -->
+                                    <div style="width:55%">
+                                        <div class="flex items-center gap-2 mb-1.5">
+                                            <div class="h-8 w-8 rounded flex items-center justify-center font-black text-xs text-white flex-shrink-0"
+                                                 :style="`background:${slide.accent}`">FP</div>
                                             <div>
-                                                <div class="text-white font-extrabold text-xs">{{ slide.doc.emetteur }}</div>
-                                                <div class="text-xs" style="color:rgba(255,255,255,.5)">{{ slide.doc.emetteurSub }}</div>
+                                                <div class="font-extrabold text-xs" :style="`color:${slide.accent}`">{{ slide.doc.emetteur }}</div>
+                                                <div style="color:#6b7280;font-size:7.5px">{{ slide.doc.emetteurSub }}</div>
                                             </div>
                                         </div>
+                                        <div style="color:#374151;font-size:7.5px;line-height:1.5">{{ slide.doc.emetteurAddr }}</div>
+                                        <div style="color:#374151;font-size:7.5px">{{ slide.doc.emetteurContact }}</div>
                                     </div>
-                                    <div class="text-right">
-                                        <div class="text-lg font-black uppercase tracking-wider" :style="`color:${slide.accentLight}`">{{ slide.doc.type }}</div>
-                                        <div class="text-xs text-white font-bold mt-0.5">{{ slide.doc.num }}</div>
-                                        <div class="mt-1.5 rounded px-2 py-0.5 text-xs font-bold inline-block" :style="`background:${slide.doc.statusBg};color:${slide.doc.statusFg}`">{{ slide.doc.statusLabel }}</div>
-                                    </div>
-                                </div>
-
-                                <!-- ═ INFOS CLIENT / DATE ═ -->
-                                <div class="grid grid-cols-2 gap-0 border-b" style="border-color:#e5e7eb">
-                                    <div class="px-5 py-3 border-r" style="border-color:#e5e7eb">
-                                        <div class="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Facturé à</div>
-                                        <div class="font-extrabold text-gray-800 text-xs">{{ slide.doc.client }}</div>
-                                        <div class="text-gray-400 text-xs mt-0.5">{{ slide.doc.clientSub }}</div>
-                                    </div>
-                                    <div class="px-5 py-3">
-                                        <div class="text-xs font-black uppercase tracking-widest text-gray-400 mb-1">Dates</div>
-                                        <div class="text-gray-700 text-xs"><span class="text-gray-400">Émis :</span> {{ slide.doc.date }}</div>
-                                        <div class="text-gray-700 text-xs mt-0.5"><span class="text-gray-400">Échéance :</span> {{ slide.doc.echeance }}</div>
+                                    <!-- Colonne droite : boîte type + numéro (layout réel) -->
+                                    <div class="text-right" style="width:43%">
+                                        <div class="inline-block rounded px-3 py-2 text-white mb-1.5" :style="`background:${slide.accent}`">
+                                            <div class="font-black uppercase tracking-wider" style="font-size:12px">{{ slide.doc.type }}</div>
+                                            <div style="font-size:8px;opacity:.85">{{ slide.doc.num }}</div>
+                                        </div>
+                                        <div class="flex flex-col items-end gap-0.5">
+                                            <div style="color:#374151;font-size:7.5px"><span style="color:#9ca3af">Émission :</span> {{ slide.doc.date }}</div>
+                                            <div style="color:#374151;font-size:7.5px"><span style="color:#9ca3af">Échéance :</span> {{ slide.doc.echeance }}</div>
+                                            <div class="mt-1 rounded px-2 py-0.5 font-bold" style="font-size:8px" :style="`background:${slide.doc.statusBg};color:${slide.doc.statusFg}`">{{ slide.doc.statusLabel }}</div>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <!-- ═ TABLEAU DES LIGNES ═ -->
-                                <div class="px-5 pt-3">
+                                <!-- Ligne séparatrice primaryColor (layout réel) -->
+                                <div class="mx-4" style="height:2px;border-radius:1px" :style="`background:${slide.accent}`"></div>
+
+                                <!-- ═ BLOC CLIENT (layout réel : border-left 3px primaryColor) ═ -->
+                                <div class="mx-4 my-2 px-3 py-2 rounded" :style="`background:#f9fafb;border:1px solid #e5e7eb;border-left:3px solid ${slide.accent}`">
+                                    <div class="font-black uppercase mb-0.5" style="font-size:7px;color:#9ca3af;letter-spacing:.08em">Facturé à</div>
+                                    <div class="font-extrabold" style="font-size:10px;color:#111827">{{ slide.doc.client }}</div>
+                                    <div style="color:#374151;font-size:7.5px">{{ slide.doc.clientSub }}</div>
+                                    <div style="color:#9ca3af;font-size:7px">{{ slide.doc.clientAddr }}</div>
+                                </div>
+
+                                <!-- ═ TABLEAU LIGNES (layout réel : en-tête coloré) ═ -->
+                                <div class="mx-4 mb-2 rounded overflow-hidden" style="border:1px solid #e5e7eb">
                                     <!-- En-tête tableau -->
-                                    <div class="grid text-xs font-black uppercase tracking-widest text-gray-400 pb-1.5 border-b" style="grid-template-columns:1fr 3rem 4.5rem 4.5rem;border-color:#e5e7eb">
+                                    <div class="grid text-white font-black uppercase px-2 py-1.5"
+                                         :style="`background:${slide.accent};grid-template-columns:1fr 2.2rem 2.8rem 2.2rem 3.2rem;font-size:7px;letter-spacing:.06em`">
                                         <span>Description</span>
                                         <span class="text-center">Qté</span>
-                                        <span class="text-right">P.U.</span>
-                                        <span class="text-right">Total</span>
+                                        <span class="text-center">Unité</span>
+                                        <span class="text-right">TVA</span>
+                                        <span class="text-right">Total HT</span>
                                     </div>
-                                    <!-- Lignes -->
+                                    <!-- Lignes alternées -->
                                     <div v-for="(row, i) in slide.doc.rows" :key="i"
-                                         class="grid py-2 border-b"
-                                         :style="`grid-template-columns:1fr 3rem 4.5rem 4.5rem;border-color:${i%2===0?'#f3f4f6':'#e5e7eb'};background:${i%2===0?'white':'#fafafa'}`">
-                                        <span class="text-gray-700 pr-2" style="line-height:1.3">{{ row.desc }}</span>
-                                        <span class="text-center text-gray-500">{{ row.qty }}</span>
-                                        <span class="text-right text-gray-600">{{ row.pu }}</span>
-                                        <span class="text-right font-bold text-gray-800">{{ row.total }}</span>
+                                         class="grid px-2 py-1.5"
+                                         :style="`grid-template-columns:1fr 2.2rem 2.8rem 2.2rem 3.2rem;background:${i%2===0?'#ffffff':'#f9fafb'};border-top:1px solid #e5e7eb`">
+                                        <span class="font-semibold pr-1" style="color:#111827;font-size:8px;line-height:1.3">{{ row.desc }}</span>
+                                        <span class="text-center" style="color:#6b7280;font-size:8px">{{ row.qty }}</span>
+                                        <span class="text-center" style="color:#6b7280;font-size:8px">{{ row.unite }}</span>
+                                        <span class="text-right" style="color:#6b7280;font-size:8px">{{ row.tva }}</span>
+                                        <span class="text-right font-bold" style="color:#111827;font-size:8px;font-family:monospace">{{ row.total }}</span>
                                     </div>
                                 </div>
 
-                                <!-- ═ TOTAUX + QR ═ -->
-                                <div class="flex items-end gap-4 px-5 py-3">
-                                    <!-- QR code zone -->
-                                    <div class="flex-shrink-0">
-                                        <div class="h-16 w-16 rounded-lg flex items-center justify-center" :style="`background:${slide.doc.headerBg}`">
-                                            <svg viewBox="0 0 44 44" fill="none" class="h-12 w-12">
-                                                <rect x="1" y="1" width="5" height="5" fill="white"/><rect x="2" y="2" width="3" height="3" :fill="slide.accent"/>
-                                                <rect x="8" y="1" width="2" height="5" fill="white"/>
-                                                <rect x="12" y="1" width="5" height="5" fill="white"/><rect x="13" y="2" width="3" height="3" :fill="slide.accent"/>
-                                                <rect x="1" y="8" width="5" height="2" fill="white"/><rect x="12" y="8" width="5" height="2" fill="white"/>
-                                                <rect x="1" y="12" width="5" height="5" fill="white"/><rect x="2" y="13" width="3" height="3" :fill="slide.accent"/>
-                                                <rect x="8" y="12" width="2" height="2" fill="white"/>
-                                                <rect x="12" y="12" width="5" height="5" fill="white"/><rect x="13" y="13" width="3" height="3" :fill="slide.accent"/>
-                                                <rect x="19" y="1" width="3" height="3" fill="white"/><rect x="23" y="2" width="5" height="2" fill="white"/>
-                                                <rect x="19" y="6" width="5" height="2" fill="white"/><rect x="25" y="5" width="3" height="3" fill="white"/>
-                                                <rect x="19" y="10" width="3" height="7" fill="white"/><rect x="23" y="8" width="5" height="5" fill="white"/>
-                                                <rect x="1" y="19" width="8" height="2" fill="white"/><rect x="11" y="19" width="6" height="2" fill="white"/>
-                                                <rect x="1" y="23" width="4" height="4" fill="white"/><rect x="6" y="23" width="3" height="3" fill="white"/>
-                                                <rect x="12" y="22" width="3" height="5" fill="white"/>
-                                                <rect x="17" y="19" width="3" height="8" fill="white"/>
-                                                <rect x="21" y="21" width="4" height="3" fill="white"/>
-                                                <rect x="21" y="25" width="3" height="3" fill="white"/>
+                                <!-- ═ TOTAUX + QR (layout réel : 52% QR / 48% tableau totaux) ═ -->
+                                <div class="flex gap-3 mx-4 mb-2">
+                                    <!-- QR code (gauche) -->
+                                    <div class="flex-shrink-0 flex flex-col items-center" style="width:52px">
+                                        <div class="rounded-lg flex items-center justify-center" style="border:1px solid #e5e7eb;background:#fafafa;width:44px;height:44px">
+                                            <svg viewBox="0 0 32 32" fill="none" style="width:36px;height:36px">
+                                                <rect x="1" y="1" width="4" height="4" :fill="slide.accent" rx=".5"/>
+                                                <rect x="6" y="1" width="1" height="4" fill="#111"/>
+                                                <rect x="8" y="1" width="1" height="2" fill="#111"/><rect x="10" y="2" width="2" height="1" fill="#111"/>
+                                                <rect x="13" y="1" width="4" height="4" :fill="slide.accent" rx=".5"/>
+                                                <rect x="1" y="6" width="4" height="1" fill="#111"/><rect x="13" y="6" width="4" height="1" fill="#111"/>
+                                                <rect x="1" y="8" width="4" height="4" :fill="slide.accent" rx=".5"/>
+                                                <rect x="6" y="9" width="2" height="2" fill="#111"/>
+                                                <rect x="9" y="8" width="3" height="2" fill="#111"/><rect x="9" y="11" width="2" height="3" fill="#111"/>
+                                                <rect x="13" y="8" width="4" height="4" :fill="slide.accent" rx=".5"/>
+                                                <rect x="1" y="14" width="6" height="1" fill="#111"/><rect x="8" y="14" width="4" height="1" fill="#111"/>
+                                                <rect x="1" y="16" width="3" height="3" fill="#111"/><rect x="5" y="17" width="2" height="2" fill="#111"/>
+                                                <rect x="9" y="16" width="2" height="4" fill="#111"/><rect x="12" y="15" width="2" height="3" fill="#111"/>
+                                                <rect x="15" y="16" width="2" height="2" fill="#111"/><rect x="15" y="19" width="2" height="2" fill="#111"/>
                                             </svg>
                                         </div>
-                                        <div class="text-center text-xs mt-1 text-gray-400">{{ slide.doc.qrNote }}</div>
+                                        <div class="text-center mt-1" style="color:#9ca3af;font-size:6px;line-height:1.3">Anti-falsification<br>Certifié IBIG FactPro</div>
                                     </div>
-
-                                    <!-- Blocs totaux -->
-                                    <div class="flex-1 space-y-1.5">
-                                        <div class="flex justify-between text-gray-500">
-                                            <span>Sous-total HT</span>
-                                            <span class="font-semibold text-gray-700">{{ slide.doc.ht }} {{ slide.doc.devise }}</span>
+                                    <!-- Tableau totaux (droite) -->
+                                    <div class="flex-1 rounded" style="border:1px solid #e5e7eb;overflow:hidden">
+                                        <div class="flex justify-between px-2 py-1" style="border-bottom:1px solid #e5e7eb">
+                                            <span style="color:#374151;font-size:8px">Sous-total HT</span>
+                                            <span class="font-semibold" style="color:#374151;font-size:8px;font-family:monospace">{{ slide.doc.ht }} {{ slide.doc.devise }}</span>
                                         </div>
-                                        <div class="flex justify-between text-gray-500">
-                                            <span>TVA</span>
-                                            <span class="font-semibold text-gray-700">{{ slide.doc.tva }} {{ slide.doc.devise }}</span>
+                                        <div class="flex justify-between px-2 py-1" style="border-bottom:1px solid #e5e7eb">
+                                            <span style="color:#374151;font-size:8px">TVA</span>
+                                            <span class="font-semibold" style="color:#374151;font-size:8px;font-family:monospace">{{ slide.doc.tva }} {{ slide.doc.devise }}</span>
                                         </div>
-                                        <div class="flex justify-between rounded-lg px-3 py-2 mt-1" :style="`background:${slide.accent};color:white`">
-                                            <span class="font-black uppercase text-xs tracking-widest">Total TTC</span>
+                                        <!-- Ligne TOTAL TTC (fond primaryColor, blanc) -->
+                                        <div class="flex items-center justify-between px-2 py-1.5 text-white" :style="`background:${slide.accent}`">
+                                            <span class="font-black uppercase" style="font-size:7.5px;letter-spacing:.06em">TOTAL TTC</span>
                                             <div class="text-right">
-                                                <div class="font-black text-sm">{{ slide.doc.ttc }} {{ slide.doc.devise }}</div>
-                                                <div class="text-xs opacity-70">{{ slide.doc.equiv }}</div>
+                                                <div class="font-black" style="font-size:10px;font-family:monospace">{{ slide.doc.ttc }} {{ slide.doc.devise }}</div>
+                                                <div style="font-size:6.5px;opacity:.75">{{ slide.doc.equiv }}</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <!-- ═ FOOTER DOCUMENT ═ -->
-                                <div class="px-5 py-2.5 flex items-center justify-between" :style="`background:${slide.doc.headerBg}22;border-top:1px solid ${slide.doc.headerBg}33`">
-                                    <span class="text-gray-500">Mode de paiement : <strong class="text-gray-700">{{ slide.doc.payMode }}</strong></span>
-                                    <span class="rounded px-2 py-0.5 text-xs font-bold" :style="`background:${slide.accentLight}22;color:${slide.accent}`">IBIG FactPro</span>
+                                <!-- ═ MODES DE PAIEMENT ═ -->
+                                <div class="mx-4 mb-2 px-3 py-1.5 rounded" :style="`background:${slide.accent}0d;border:1px solid ${slide.accent}30`">
+                                    <div class="font-black uppercase mb-0.5" :style="`color:${slide.accent};font-size:7px;letter-spacing:.06em`">Moyens de paiement acceptés</div>
+                                    <div v-for="(pm, i) in slide.doc.payModes" :key="i" style="color:#374151;font-size:7.5px">· {{ pm }}</div>
+                                </div>
+
+                                <!-- ═ FOOTER LÉGAL (layout réel) ═ -->
+                                <div class="mx-4 mb-3" :style="`border-top:2px solid ${slide.accent};padding-top:4px`">
+                                    <div style="color:#9ca3af;font-size:6.5px;line-height:1.5;text-align:center">
+                                        {{ slide.doc.qrLabel }}<br>
+                                        <span :style="`color:${slide.accent}`">■</span> {{ slide.doc.footer }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
