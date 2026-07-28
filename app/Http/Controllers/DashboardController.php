@@ -81,6 +81,7 @@ class DashboardController extends Controller
         })->values();
 
         return Inertia::render('Dashboard', [
+            'currency' => $company->currency ?? 'XOF',
             'stats' => $stats,
             'statusBreakdown' => $statusBreakdown,
             'recentDocuments' => $recentDocuments,
