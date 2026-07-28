@@ -75,7 +75,7 @@ class OnboardingChecklistController extends Controller
                 'route'       => '/team',
                 'icon'        => '👥',
                 'done'        => $company
-                    ? \App\Models\User::where('company_id', $company->id)
+                    ? \App\Models\User::where('current_company_id', $company->id)
                         ->where('id', '!=', $user->id)
                         ->exists()
                     : false,

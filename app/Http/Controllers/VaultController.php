@@ -22,7 +22,7 @@ class VaultController extends Controller
 
     public function index(Request $request): Response
     {
-        $company = Auth::user()->company;
+        $company = Auth::user()->currentCompany;
 
         $query = VaultDocument::forCompany($company->id)
             ->when($request->type, fn ($q) => $q->where('document_type', $request->type))
@@ -114,7 +114,7 @@ class VaultController extends Controller
 
     public function integrityReport(): JsonResponse
     {
-        $company = Auth::user()->company;
+        $company = Auth::user()->currentCompany;
         $report  = $this->vault->generateIntegrityReport($company);
 
         return response()->json($report);
@@ -145,7 +145,7 @@ class VaultController extends Controller
 
     private function authorizeDoc(VaultDocument $vault): void
     {
-        $companyId = Auth::user()->company_id;
+        $companyId = Auth::user()->current_company_id;
         if ($vault->company_id !== $companyId) {
             abort(403);
         }
