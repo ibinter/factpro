@@ -27,10 +27,10 @@ async function fetchPreview() {
     errorMsg.value = '';
     revokePrev();
     try {
-        // Récupérer le token CSRF depuis le cookie ou la meta
-        const csrfToken = document
-            .querySelector('meta[name="csrf-token"]')
-            ?.getAttribute('content') ?? '';
+        // Récupérer le token CSRF depuis le cookie XSRF-TOKEN (Laravel Inertia)
+        const csrfToken = decodeURIComponent(
+            document.cookie.split('; ').find(r => r.startsWith('XSRF-TOKEN='))?.split('=')[1] ?? ''
+        );
 
         const res = await fetch('/documents/preview', {
             method: 'POST',
