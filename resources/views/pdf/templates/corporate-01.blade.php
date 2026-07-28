@@ -27,38 +27,37 @@
     .doc-status { text-align: right; margin-top: 4px; }
     .doc-status span { font-size: 8px; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: {{ $primaryColor }}; color: #fff; }
 
-    footer {
-        position: fixed; bottom: -92px; left: 0; right: 0; height: 250px;
-        background: #fff;
+    /* Signatures : collées en bas — bottom:-47px + height:160px
+       => top edge = 113px DANS la zone de contenu à partir du bas */
+    .sig-band {
+        position: fixed; bottom: -47px; left: 0; right: 0; height: 160px;
+        background: #fff; padding-top: 6px;
     }
-    .footer-sigs { padding-bottom: 8px; }
-    .footer-sigs .sig-heading {
+    .sig-band .sig-heading {
         font-size: 7.5px; text-transform: uppercase; color: #6B7C93;
         letter-spacing: 1px; margin-bottom: 8px;
         border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;
     }
-    .footer-sigs .sig-row td { width: 50%; vertical-align: top; padding: 0 10px; }
-    .footer-sigs .sig-row td:first-child { padding-left: 0; border-right: 1px solid #e5eaf1; }
-    .footer-sigs .sig-row td:last-child  { padding-right: 0; }
-    .footer-sigs .sig-label { font-size: 8px; color: #4a5568; text-align: center; margin-bottom: 6px; font-weight: bold; }
-    .footer-sigs .sig-box {
+    .sig-band .sig-row td { width: 50%; vertical-align: top; padding: 0 10px; }
+    .sig-band .sig-row td:first-child { padding-left: 0; border-right: 1px solid #e5eaf1; }
+    .sig-band .sig-row td:last-child  { padding-right: 0; }
+    .sig-band .sig-label { font-size: 8px; color: #4a5568; text-align: center; margin-bottom: 5px; font-weight: bold; }
+    .sig-band .sig-box {
         border: 1px solid #c8d3e0; border-radius: 4px;
-        height: 80px; background: #fafbfc; position: relative;
+        height: 85px; background: #fafbfc; position: relative;
     }
-    .footer-sigs .sig-photo-zone { position: absolute; top: 6px; left: 0; right: 0; text-align: center; }
-    .footer-sigs .sig-photo-zone img { max-height: 38px; max-width: 80%; display: block; margin: 0 auto; }
-    .footer-sigs .sig-name-line  { border-bottom: 1px dashed #c8d3e0; position: absolute; bottom: 20px; left: 8px; right: 8px; }
-    .footer-sigs .sig-date-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 10px; left: 8px; }
-    .footer-sigs .sig-name-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 2px; left: 8px; }
-    .footer-text {
+    .sig-band .sig-photo-zone { position: absolute; top: 6px; left: 0; right: 0; text-align: center; }
+    .sig-band .sig-photo-zone img { max-height: 38px; max-width: 80%; display: block; margin: 0 auto; }
+    .sig-band .sig-name-line  { border-bottom: 1px dashed #c8d3e0; position: absolute; bottom: 20px; left: 8px; right: 8px; }
+    .sig-band .sig-date-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 10px; left: 8px; }
+    .sig-band .sig-name-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 2px; left: 8px; }
+
+    /* Footer texte : juste en dessous des signatures, dans la marge */
+    footer {
+        position: fixed; bottom: -92px; left: 0; right: 0; height: 45px;
         border-top: 2px solid {{ $accentColor ?? $primaryColor }}; padding-top: 7px;
-        font-size: 7.5px; color: #6B7C93;
+        font-size: 7.5px; color: #6B7C93; background: #fff;
     }
-    .legal-foot {
-        background: #f8f9fb; border: 1px solid #e2e8f0;
-        border-radius: 3px; padding: 4px 12px; text-align: center; margin-bottom: 6px;
-    }
-    .legal-foot-text { font-size: 6.5px; color: #9aa7b8; line-height: 1.7; }
 
     main { margin-top: 22px; }
 
@@ -227,60 +226,59 @@
     </table>
 </header>
 
+{{-- Signatures fixes en bas (bottom:-47px = 113px dans la zone contenu) --}}
+@if($showSigSection)
+<div class="sig-band">
+    <div class="sig-heading">Signatures</div>
+    <table class="sig-row" style="width:100%;border-collapse:collapse;">
+        <tr>
+            @if($sigShowEmitter)
+            <td @if(!$sigShowClient) style="padding-right:0; border-right:none;" @endif>
+                <div class="sig-label">{{ $emitterLabel }}</div>
+                <div class="sig-box">
+                    @if(in_array($sigMode, ['digital','both']) && !empty($sigDigitalBase64))
+                    <div class="sig-photo-zone"><img src="{{ $sigDigitalBase64 }}" alt="Signature"></div>
+                    @endif
+                    @if(!empty($sigStampBase64))
+                    <div style="position:absolute;top:6px;right:6px;"><img src="{{ $sigStampBase64 }}" style="height:38px;width:38px;opacity:0.8;"></div>
+                    @endif
+                    <div class="sig-name-line"></div>
+                    <div class="sig-date-label">Date :</div>
+                    <div class="sig-name-label">Nom et cachet</div>
+                </div>
+            </td>
+            @endif
+            @if($sigShowClient)
+            <td @if(!$sigShowEmitter) style="padding-left:0; border-right:none;" @endif>
+                <div class="sig-label">{{ $clientLabel }}</div>
+                <div class="sig-box">
+                    <div class="sig-name-line"></div>
+                    <div class="sig-date-label">Date :</div>
+                    <div class="sig-name-label">Nom et cachet</div>
+                </div>
+            </td>
+            @endif
+        </tr>
+    </table>
+</div>
+@endif
+
+{{-- Footer texte seul — dans la marge basse --}}
 <footer>
-    {{-- Signatures en bas de chaque page --}}
-    @if($showSigSection)
-    <div class="footer-sigs">
-        <div class="sig-heading">Signatures</div>
-        <table class="sig-row" style="width:100%;border-collapse:collapse;">
-            <tr>
-                @if($sigShowEmitter)
-                <td @if(!$sigShowClient) style="padding-right:0; border-right:none;" @endif>
-                    <div class="sig-label">{{ $emitterLabel }}</div>
-                    <div class="sig-box">
-                        @if(in_array($sigMode, ['digital','both']) && !empty($sigDigitalBase64))
-                        <div class="sig-photo-zone"><img src="{{ $sigDigitalBase64 }}" alt="Signature"></div>
-                        @endif
-                        @if(!empty($sigStampBase64))
-                        <div style="position:absolute;top:6px;right:6px;"><img src="{{ $sigStampBase64 }}" style="height:38px;width:38px;opacity:0.8;"></div>
-                        @endif
-                        <div class="sig-name-line"></div>
-                        <div class="sig-date-label">Date :</div>
-                        <div class="sig-name-label">Nom et cachet</div>
-                    </div>
-                </td>
-                @endif
-                @if($sigShowClient)
-                <td @if(!$sigShowEmitter) style="padding-left:0; border-right:none;" @endif>
-                    <div class="sig-label">{{ $clientLabel }}</div>
-                    <div class="sig-box">
-                        <div class="sig-name-line"></div>
-                        <div class="sig-date-label">Date :</div>
-                        <div class="sig-name-label">Nom et cachet</div>
-                    </div>
-                </td>
-                @endif
-            </tr>
-        </table>
-    </div>
-    @endif
-    {{-- Ligne de pied identité --}}
-    <div class="footer-text">
-        <table style="width:100%; border-collapse:collapse;">
-            <tr>
-                <td style="width:65%;">
-                    @if($sigMention){!! nl2br(e($sigMention)) !!}@else{{ $company->invoice_footer ?? 'Tout retard de paiement entraîne des pénalités au taux légal en vigueur.' }}@endif
-                </td>
-                <td style="width:35%; text-align:right; font-size:7px; color:#9aa7b8;">
-                    @if(count($ids2)){{ implode(' · ', $ids2) }} &nbsp;·&nbsp; @endif
-                    Propulsé par <b style="color:{{ $primaryColor }}">IBIG FactPro</b>
-                </td>
-            </tr>
-        </table>
-    </div>
+    <table style="width:100%; border-collapse:collapse;">
+        <tr>
+            <td style="width:65%;">
+                @if($sigMention){!! nl2br(e($sigMention)) !!}@else{{ $company->invoice_footer ?? 'Tout retard de paiement entraîne des pénalités au taux légal en vigueur.' }}@endif
+            </td>
+            <td style="width:35%; text-align:right; font-size:7px; color:#9aa7b8;">
+                @if(count($ids2)){{ implode(' · ', $ids2) }} &nbsp;·&nbsp; @endif
+                Propulsé par <b style="color:{{ $primaryColor }}">IBIG FactPro</b>
+            </td>
+        </tr>
+    </table>
 </footer>
 
-<main style="padding-bottom:185px;">
+<main style="padding-bottom:115px;">
     <div class="header-accent"></div>
 
     {{-- Infos document + client --}}
