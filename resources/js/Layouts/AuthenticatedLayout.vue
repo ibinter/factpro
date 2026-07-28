@@ -526,6 +526,28 @@ watch(() => flash.value.error,   (v) => { if (v) showToast(v, 'error'); });
                 <slot />
             </main>
 
+            <!-- Footer interne -->
+            <footer class="hidden md:block border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-6 py-3">
+                <div class="mx-auto max-w-7xl flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-400 dark:text-gray-600">
+                    <div class="flex items-center gap-2">
+                        <span class="font-semibold text-brand-600 dark:text-brand-500">FactPro</span>
+                        <span class="text-gray-300 dark:text-gray-700">•</span>
+                        <span>© {{ new Date().getFullYear() }} — Un produit</span>
+                        <a href="https://ibigsoft.com" target="_blank" rel="noopener"
+                            class="font-medium text-gray-500 dark:text-gray-500 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
+                            IBIG Soft
+                        </a>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <a href="/aide" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">Aide</a>
+                        <a href="/changelog" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">Nouveautés</a>
+                        <a href="/legal/cgu" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">CGU</a>
+                        <a href="/legal/confidentialite" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">Confidentialité</a>
+                        <a href="/support" class="hover:text-gray-600 dark:hover:text-gray-400 transition-colors">Support</a>
+                    </div>
+                </div>
+            </footer>
+
             <UpgradeModal
                 :show="upgradeModal.show.value"
                 :feature="upgradeModal.feature.value"
