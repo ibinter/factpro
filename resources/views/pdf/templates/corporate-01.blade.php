@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <title>{{ $document->number }}</title>
 <style>
-    @@page { margin: 145px 45px 110px 45px; }
+    @@page { margin: 145px 45px 220px 45px; }
 
     * { box-sizing: border-box; }
     body { font-family: DejaVu Sans, sans-serif; font-size: 10px; color: #1a2332; margin: 0; }
@@ -27,15 +27,16 @@
     .doc-status { text-align: right; margin-top: 4px; }
     .doc-status span { font-size: 8px; font-weight: bold; padding: 2px 8px; border-radius: 10px; background: {{ $primaryColor }}; color: #fff; }
 
-    /* footer élargi contient signatures + texte pied de page
-       bottom: -92px = position PROUVÉE qui fonctionne en DomPDF
-       height: 210px = 160px signatures + 50px texte pied */
+    /* SOLUTION RADICALE :
+       - margin basse = 220px (toute la zone bas de page réservée)
+       - footer position: fixed; bottom: -220px => élément ENTIÈREMENT dans la marge basse
+       - aucun dépassement dans la zone contenu => DomPDF ne peut pas couper l'élément */
     footer {
-        position: fixed; bottom: -92px; left: 0; right: 0; height: 210px;
+        position: fixed; bottom: -220px; left: 0; right: 0; height: 220px;
         background: #fff;
     }
     footer .sig-section {
-        height: 160px; padding-top: 8px; border-top: 1px solid #e2e8f0;
+        height: 165px; padding-top: 10px; border-top: 2px solid #e2e8f0;
     }
     footer .sig-heading {
         font-size: 7.5px; text-transform: uppercase; color: #6B7C93;
@@ -48,19 +49,19 @@
     footer .sig-label { font-size: 8px; color: #4a5568; text-align: center; margin-bottom: 5px; font-weight: bold; }
     footer .sig-box {
         border: 1px solid #c8d3e0; border-radius: 4px;
-        height: 82px; background: #fafbfc; position: relative;
+        height: 90px; background: #fafbfc; position: relative;
     }
     footer .sig-photo-zone { position: absolute; top: 6px; left: 0; right: 0; text-align: center; }
-    footer .sig-photo-zone img { max-height: 36px; max-width: 80%; display: block; margin: 0 auto; }
-    footer .sig-name-line  { border-bottom: 1px dashed #c8d3e0; position: absolute; bottom: 18px; left: 8px; right: 8px; }
-    footer .sig-date-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 9px; left: 8px; }
-    footer .sig-name-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 1px; left: 8px; }
+    footer .sig-photo-zone img { max-height: 40px; max-width: 80%; display: block; margin: 0 auto; }
+    footer .sig-name-line  { border-bottom: 1px dashed #c8d3e0; position: absolute; bottom: 20px; left: 8px; right: 8px; }
+    footer .sig-date-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 10px; left: 8px; }
+    footer .sig-name-label { font-size: 6px; color: #9aa7b8; position: absolute; bottom: 2px; left: 8px; }
     footer .footer-line {
-        height: 50px; border-top: 2px solid {{ $accentColor ?? $primaryColor }};
-        padding-top: 7px; font-size: 7.5px; color: #6B7C93;
+        height: 55px; border-top: 2px solid {{ $accentColor ?? $primaryColor }};
+        padding-top: 8px; font-size: 7.5px; color: #6B7C93;
     }
 
-    main { margin-top: 22px; padding-bottom: 105px; }
+    main { margin-top: 22px; }
 
     .header-accent {
         background: {{ $primaryColor }}; height: 4px; margin-bottom: 20px; border-radius: 2px;
