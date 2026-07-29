@@ -18,8 +18,11 @@
       @endif
       <div style="font-size:8.5px;color:#374151;margin-top:6px;line-height:1.75;">
         @if(!empty($company->address)){{ $company->address }}<br>@endif
-        @if(!empty($company->city)){{ $company->city }}@if(!empty($company->postal_code)) – {{ $company->postal_code }}@endif@if(!empty($company->country)) · {{ $company->country }}@endif<br>@endif
-        @if(!empty($company->phone))<span style="color:#9ca3af;">Tél :</span> {{ $company->phone }}@if(!empty($company->email)) &nbsp;·&nbsp; <span style="color:#9ca3af;">Email :</span> {{ $company->email }}@endif<br>@elseif(!empty($company->email))<span style="color:#9ca3af;">Email :</span> {{ $company->email }}<br>@endif
+        @if(!empty($company->city)){{ $company->city }}@if(!empty($company->postal_code)) – {{ $company->postal_code }}@endif
+        @if(!empty($company->country)) · {{ $company->country }}@endif<br>@endif
+        @if(!empty($company->phone))<span style="color:#9ca3af;">Tél :</span> {{ $company->phone }}
+        @if(!empty($company->email)) &nbsp;·&nbsp; <span style="color:#9ca3af;">Email :</span> {{ $company->email }}@endif<br>
+        @elseif(!empty($company->email))<span style="color:#9ca3af;">Email :</span> {{ $company->email }}<br>@endif
         @if(!empty($company->website))<span style="color:#9ca3af;">Web :</span> {{ $company->website }}<br>@endif
       </div>
       @php
