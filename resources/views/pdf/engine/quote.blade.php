@@ -69,7 +69,7 @@
     <tr>
       <td style="font-size:8.5px;color:#374151;padding:2px 0;width:33%;">
         <span style="color:#6b7280;">Durée de validité :</span>
-        @if(!empty($document->validity_days)){{ $document->validity_days }} jours@else 30 jours@endif
+        {{ !empty($document->validity_days) ? $document->validity_days.' jours' : '30 jours' }}
       </td>
       <td style="font-size:8.5px;color:#374151;padding:2px 0;width:33%;text-align:center;">
         <span style="color:#6b7280;">Conditions de règlement :</span>

@@ -17,7 +17,7 @@
           @endif
           @if(!empty($document->due_date))
           <tr>
-            <td style="font-size:8px;color:#6b7280;padding-bottom:4px;">@if(in_array($document->type ?? '', ['quote','estimate']))Valide jusqu'au@else Date d'échéance@endif</td>
+            <td style="font-size:8px;color:#6b7280;padding-bottom:4px;">{{ in_array($document->type ?? '', ['quote','estimate']) ? 'Valide jusqu\'au' : 'Date d\'échéance' }}</td>
             <td style="font-size:8.5px;color:#111827;font-weight:600;padding-bottom:4px;">
               {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}
             </td>
