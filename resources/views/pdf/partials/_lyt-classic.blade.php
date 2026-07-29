@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -22,7 +22,7 @@
             background: #ffffff;
         }
 
-        /* ── HEADER FIXE ── */
+        /* â”€â”€ HEADER FIXE â”€â”€ */
         #header {
             position: fixed;
             top: -135px;
@@ -117,14 +117,14 @@
             border: 1px solid {{ $sc['color'] }}33;
         }
 
-        /* ── FILET ACCENT ── */
+        /* â”€â”€ FILET ACCENT â”€â”€ */
         .accent-rule {
             height: 3px;
             background: {{ $primaryColor }};
             margin-bottom: 12px;
         }
 
-        /* ── WATERMARK ── */
+        /* â”€â”€ WATERMARK â”€â”€ */
         .watermark {
             position: fixed;
             top: 40%;
@@ -139,7 +139,7 @@
             pointer-events: none;
         }
 
-        /* ── ADRESSES ── */
+        /* â”€â”€ ADRESSES â”€â”€ */
         .addresses {
             display: table;
             width: 100%;
@@ -218,7 +218,7 @@
             line-height: 1.6;
         }
 
-        /* ── SUBJECT ── */
+        /* â”€â”€ SUBJECT â”€â”€ */
         .subject-bar {
             background: #EFF6FF;
             border-left: 3px solid {{ $primaryColor }};
@@ -232,7 +232,7 @@
             font-weight: bold;
         }
 
-        /* ── TABLEAU LIGNES ── */
+        /* â”€â”€ TABLEAU LIGNES â”€â”€ */
         table.lines-table {
             width: 100%;
             border-collapse: collapse;
@@ -312,7 +312,7 @@
             margin-left: 3px;
         }
 
-        /* ── QR + TOTAUX ── */
+        /* â”€â”€ QR + TOTAUX â”€â”€ */
         .bottom-section {
             display: table;
             width: 100%;
@@ -396,7 +396,7 @@
             border-bottom: none;
         }
 
-        /* ── NOTES / CONDITIONS ── */
+        /* â”€â”€ NOTES / CONDITIONS â”€â”€ */
         .notes-section {
             margin-bottom: 10px;
         }
@@ -420,7 +420,7 @@
             border-radius: 0 2px 2px 0;
         }
 
-        /* ── SIGNATURES ── */
+        /* â”€â”€ SIGNATURES â”€â”€ */
         .sig-section {
             margin-top: 16px;
             padding-top: 10px;
@@ -510,7 +510,7 @@
         }
         @endif
 
-        /* ── PIED DE PAGE ── */
+        /* â”€â”€ PIED DE PAGE â”€â”€ */
         .doc-footer {
             margin-top: 14px;
             border-top: 2px solid {{ $accentColor }};
@@ -543,7 +543,7 @@
             color: {{ $primaryColor }};
         }
 
-        /* ── UTILITAIRES ── */
+        /* â”€â”€ UTILITAIRES â”€â”€ */
         main { display: block; }
         .mt-8  { margin-top: 8px; }
         .mb-8  { margin-bottom: 8px; }
@@ -555,7 +555,7 @@
 </head>
 <body>
 
-{{-- ══ HEADER FIXE ══ --}}
+{{-- â•â• HEADER FIXE â•â• --}}
 <div id="header">
     <div class="header-inner">
         <div class="header-left">
@@ -568,48 +568,48 @@
             @endif
             <div class="company-coords">
                 @if(!empty($company->address)){{ $company->address }}@if(!empty($company->city)), {{ $company->city }}@endif
-                @if(!empty($company->country)) – {{ $company->country }}@endif<br/>@endif
-                @if(!empty($company->phone))Tél : {{ $company->phone }}@if(!empty($company->email))  |  {{ $company->email }}@endif<br/>@endif
-                @if(!empty($company->tax_id))N° Fiscal : {{ $company->tax_id }}@endif
+                @if(!empty($company->country)) â€“ {{ $company->country }}@endif<br/>@endif
+                @if(!empty($company->phone))TÃ©l : {{ $company->phone }}@if(!empty($company->email))  |  {{ $company->email }}@endif<br/>@endif
+                @if(!empty($company->tax_id))NÂ° Fiscal : {{ $company->tax_id }}@endif
             </div>
         </div>
         <div class="header-right">
             <div class="doc-type">{{ $document->type_label ?? 'Document' }}</div>
-            <div class="doc-number">N° {{ $document->number ?? '—' }}</div>
+            <div class="doc-number">NÂ° {{ $document->number ?? 'â€”' }}</div>
             <div class="doc-status">{{ $document->status_label ?? '' }}</div>
         </div>
     </div>
 </div>
 
-{{-- ══ WATERMARK ══ --}}
+{{-- â•â• WATERMARK â•â• --}}
 @if($watermark ?? false)
 <div class="watermark">{{ $watermark }}</div>
 @endif
 
-{{-- ══ CONTENU PRINCIPAL ══ --}}
-<main>
+{{-- â•â• CONTENU PRINCIPAL â•â• --}}
+<div id="main-content">
 
     {{-- Filet accent --}}
     <div class="accent-rule"></div>
 
-    {{-- ── ADRESSES ── --}}
+    {{-- â”€â”€ ADRESSES â”€â”€ --}}
     <div class="addresses">
         <div class="col-doc-info">
             <div class="card">
                 <div class="card-title">Informations du document</div>
                 <div class="card-row">
-                    <span class="card-label">Date d'émission</span>
-                    <span class="card-value">{{ $document->issue_date ? \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') : '—' }}</span>
+                    <span class="card-label">Date d'Ã©mission</span>
+                    <span class="card-value">{{ $document->issue_date ? \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') : 'â€”' }}</span>
                 </div>
                 @if(!empty($document->due_date))
                 <div class="card-row">
-                    <span class="card-label">Date d'échéance</span>
+                    <span class="card-label">Date d'Ã©chÃ©ance</span>
                     <span class="card-value">{{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}</span>
                 </div>
                 @endif
                 @if(!empty($document->reference))
                 <div class="card-row">
-                    <span class="card-label">Référence</span>
+                    <span class="card-label">RÃ©fÃ©rence</span>
                     <span class="card-value">{{ $document->reference }}</span>
                 </div>
                 @endif
@@ -622,26 +622,26 @@
         <div class="col-client">
             <div class="card-client">
                 <div class="card-title">Destinataire</div>
-                <div class="client-name">{{ $document->customer->name ?? '—' }}</div>
+                <div class="client-name">{{ $document->customer->name ?? 'â€”' }}</div>
                 <div class="client-detail">
                     @if(!empty($document->customer->address)){{ $document->customer->address }}<br/>@endif
                     @if(!empty($document->customer->city)){{ $document->customer->city }}@if(!empty($document->customer->country)), {{ $document->customer->country }}@endif<br/>@endif
-                    @if(!empty($document->customer->phone))Tél : {{ $document->customer->phone }}<br/>@endif
+                    @if(!empty($document->customer->phone))TÃ©l : {{ $document->customer->phone }}<br/>@endif
                     @if(!empty($document->customer->email)){{ $document->customer->email }}<br/>@endif
-                    @if(!empty($document->customer->tax_number))N° Fiscal : {{ $document->customer->tax_number }}@endif
+                    @if(!empty($document->customer->tax_number))NÂ° Fiscal : {{ $document->customer->tax_number }}@endif
                 </div>
             </div>
         </div>
     </div>
 
-    {{-- ── OBJET ── --}}
+    {{-- â”€â”€ OBJET â”€â”€ --}}
     @if(!empty($document->subject))
     <div class="subject-bar">
         <span>Objet :</span> {{ $document->subject }}
     </div>
     @endif
 
-    {{-- ── TABLEAU DES LIGNES ── --}}
+    {{-- â”€â”€ TABLEAU DES LIGNES â”€â”€ --}}
     @php
         $totalHT = collect($document->lines)->sum(fn($l) => (float)($l->line_total ?? 0));
     @endphp
@@ -649,8 +649,8 @@
         <thead>
             <tr>
                 <th style="width:4%;">#</th>
-                <th style="width:38%;">Désignation</th>
-                <th class="text-right" style="width:10%;">Qté</th>
+                <th style="width:38%;">DÃ©signation</th>
+                <th class="text-right" style="width:10%;">QtÃ©</th>
                 <th class="text-right" style="width:13%;">P.U. HT</th>
                 <th class="text-right" style="width:10%;">Remise</th>
                 <th class="text-right" style="width:13%;">TVA</th>
@@ -662,7 +662,7 @@
             <tr class="{{ $index % 2 === 0 ? 'row-even' : 'row-odd' }}">
                 <td>{{ $index + 1 }}</td>
                 <td>
-                    <strong>{{ $line->description ?? $line->name ?? '—' }}</strong>
+                    <strong>{{ $line->description ?? $line->name ?? 'â€”' }}</strong>
                     @if(!empty($line->note))
                         <br/><span class="desc">{{ $line->note }}</span>
                     @endif
@@ -673,14 +673,14 @@
                     @if((float)($line->discount_percent ?? 0) > 0)
                         <span class="discount-badge">{{ number_format((float)$line->discount_percent, 1) }}%</span>
                     @else
-                        —
+                        â€”
                     @endif
                 </td>
                 <td class="text-right">
                     @if(!empty($line->tax_rate))
                         {{ number_format((float)$line->tax_rate, 0) }}%
                     @else
-                        —
+                        â€”
                     @endif
                 </td>
                 <td class="text-right">{{ number_format((float)($line->line_total ?? 0), 0, ',', ' ') }}</td>
@@ -695,13 +695,13 @@
         </tfoot>
     </table>
 
-    {{-- ── QR + TOTAUX ── --}}
+    {{-- â”€â”€ QR + TOTAUX â”€â”€ --}}
     <div class="bottom-section">
         <div class="bottom-left">
             @if($qrDataUri ?? null)
             <div class="qr-block">
                 <img src="{{ $qrDataUri }}" alt="QR Code"/>
-                <div class="qr-label">Scanner pour vérifier</div>
+                <div class="qr-label">Scanner pour vÃ©rifier</div>
             </div>
             @endif
         </div>
@@ -729,13 +729,13 @@
                 </tr>
                 @if((float)($document->amount_paid ?? 0) > 0)
                 <tr class="total-paid">
-                    <td>Montant payé</td>
+                    <td>Montant payÃ©</td>
                     <td>- {{ number_format((float)$document->amount_paid, 0, ',', ' ') }} {{ $document->currency ?? 'XOF' }}</td>
                 </tr>
                 @php $amountDue = (float)($document->total ?? 0) - (float)($document->amount_paid ?? 0); @endphp
                 @if($amountDue > 0)
                 <tr class="total-due">
-                    <td>RESTE À PAYER</td>
+                    <td>RESTE Ã€ PAYER</td>
                     <td>{{ number_format($amountDue, 0, ',', ' ') }} {{ $document->currency ?? 'XOF' }}</td>
                 </tr>
                 @endif
@@ -744,14 +744,14 @@
         </div>
     </div>
 
-    {{-- ── INFORMATIONS DE PAIEMENT ── --}}
+    {{-- â”€â”€ INFORMATIONS DE PAIEMENT â”€â”€ --}}
     @include('pdf.engine.blocks._payment-info', [
         'company'      => $company,
         'document'     => $document,
         'primaryColor' => $primaryColor,
     ])
 
-    {{-- ── NOTES ── --}}
+    {{-- â”€â”€ NOTES â”€â”€ --}}
     @if(!empty($document->notes))
     <div class="notes-section mb-12">
         <div class="notes-title">Notes</div>
@@ -759,22 +759,22 @@
     </div>
     @endif
 
-    {{-- ── CONDITIONS ── --}}
+    {{-- â”€â”€ CONDITIONS â”€â”€ --}}
     @if(!empty($document->terms))
     <div class="notes-section mb-12">
-        <div class="notes-title">Conditions générales</div>
+        <div class="notes-title">Conditions gÃ©nÃ©rales</div>
         <div class="notes-content">{{ $document->terms }}</div>
     </div>
     @endif
 
-    {{-- ── SIGNATURES ── --}}
+    {{-- â”€â”€ SIGNATURES â”€â”€ --}}
     @php
         $sigShowEmitter  = $sigConfig['show_emitter'] ?? true;
         $sigShowClient   = $sigConfig['show_client']  ?? true;
         $showSigSection  = $sigShowEmitter || $sigShowClient;
         $sigMode         = $sigConfig['mode']          ?? 'photo';
-        $sigMention      = $sigConfig['mention']       ?? 'Lu et approuvé';
-        $sigEmitterLabel = $sigConfig['emitter_label'] ?? 'Émetteur';
+        $sigMention      = $sigConfig['mention']       ?? 'Lu et approuvÃ©';
+        $sigEmitterLabel = $sigConfig['emitter_label'] ?? 'Ã‰metteur';
         $sigClientLabel  = $sigConfig['client_label']  ?? 'Client';
     @endphp
 
@@ -788,7 +788,7 @@
                 <div class="sig-box-label">{{ $sigEmitterLabel }}</div>
                 <div class="sig-photo-zone">
                     @if($sigDigitalBase64 ?? null)
-                        <img src="{{ $sigDigitalBase64 }}" alt="Signature émetteur"/>
+                        <img src="{{ $sigDigitalBase64 }}" alt="Signature Ã©metteur"/>
                     @elseif($sigStampBase64 ?? null)
                         <img src="{{ $sigStampBase64 }}" alt="Cachet"/>
                     @else
@@ -827,7 +827,7 @@
     </div>
     @endif
 
-    {{-- ── PIED DE PAGE ── --}}
+    {{-- â”€â”€ PIED DE PAGE â”€â”€ --}}
     <div class="doc-footer">
         <div class="doc-footer-inner">
             <div class="doc-footer-left">
@@ -835,17 +835,17 @@
                     {{ $company->invoice_footer }}
                 @else
                     {{ $company->legal_name ?? $company->name ?? '' }}
-                    @if(!empty($company->capital)) — Capital : {{ $company->capital }}@endif
+                    @if(!empty($company->capital)) â€” Capital : {{ $company->capital }}@endif
                 @endif
             </div>
             <div class="doc-footer-right">
-                @if(!empty($company->rccm))RCCM : {{ $company->rccm }} — @endif
-                @if(!empty($company->trade_register))RC : {{ $company->trade_register }} — @endif
+                @if(!empty($company->rccm))RCCM : {{ $company->rccm }} â€” @endif
+                @if(!empty($company->trade_register))RC : {{ $company->trade_register }} â€” @endif
                 <strong>IBIG FactPro</strong>
             </div>
         </div>
     </div>
 
-</main>
+</div>
 </body>
 </html>
