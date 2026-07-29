@@ -566,7 +566,8 @@
                 <div class="company-tagline">{{ $company->tagline }}</div>
             @endif
             <div class="company-coords">
-                @if(!empty($company->address)){{ $company->address }}@if(!empty($company->city)), {{ $company->city }}@endif@if(!empty($company->country)) – {{ $company->country }}@endif<br/>@endif
+                @if(!empty($company->address)){{ $company->address }}@if(!empty($company->city)), {{ $company->city }}@endif
+                @if(!empty($company->country)) – {{ $company->country }}@endif<br/>@endif
                 @if(!empty($company->phone))Tél : {{ $company->phone }}@if(!empty($company->email))  |  {{ $company->email }}@endif<br/>@endif
                 @if(!empty($company->tax_id))N° Fiscal : {{ $company->tax_id }}@endif
             </div>
