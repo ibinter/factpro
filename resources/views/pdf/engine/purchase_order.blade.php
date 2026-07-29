@@ -104,7 +104,7 @@
         <div style="font-size:8.5px;font-weight:bold;color:#374151;text-transform:uppercase;">Bon pour réception</div>
         <div style="font-size:8px;color:#9ca3af;margin-top:2px;">
           Date livraison prévue :
-          @if(!empty($document->due_date)){{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}@else________________@endif
+          {{ !empty($document->due_date) ? \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') : '________________' }}
         </div>
         <div style="height:40px;border-bottom:1px dotted #d1d5db;margin:8px 4px 0;"></div>
         <div style="font-size:7.5px;color:#9ca3af;margin-top:4px;">Signature fournisseur : ________________</div>

@@ -62,7 +62,7 @@
       </td>
       <td style="padding:6px 10px;font-size:9px;">
         <span style="color:#6b7280;">Date :</span>
-        <strong>@if(!empty($document->issue_date)){{ \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') }}@else____________________@endif</strong>
+        <strong>{{ !empty($document->issue_date) ? \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') : '____________________' }}</strong>
       </td>
     </tr>
   </table>

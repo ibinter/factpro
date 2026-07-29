@@ -89,7 +89,7 @@
         <div class="field-row">
           <div class="field-label">Date de départ</div>
           <div class="field-value">
-            @if(!empty($document->issue_date)){{ \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') }}@else____________________@endif
+            {{ !empty($document->issue_date) ? \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') : '____________________' }}
           </div>
         </div>
       </td>
@@ -97,7 +97,7 @@
         <div class="field-row">
           <div class="field-label">Date de reprise</div>
           <div class="field-value">
-            @if(!empty($document->due_date)){{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}@else____________________@endif
+            {{ !empty($document->due_date) ? \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') : '____________________' }}
           </div>
         </div>
       </td>

@@ -157,7 +157,7 @@
 <div style="margin-top:24px;">
   <div style="font-size:9px;color:#6b7280;margin-bottom:16px;text-align:center;">
     Fait en deux exemplaires originaux, à ____________________,
-    le @if(!empty($document->issue_date)){{ \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') }}@else____________________@endif
+    le {{ !empty($document->issue_date) ? \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') : '____________________' }}
   </div>
   <table style="width:100%;border-collapse:collapse;">
     <tr>

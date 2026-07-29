@@ -39,7 +39,7 @@
   @endif
   <div style="font-size:13px;font-weight:bold;color:{{ $primaryColor }};">{{ $company->name ?? '' }}</div>
   @if(!empty($company->address))
-    <div style="font-size:8.5px;color:#6b7280;">{{ $company->address }}@if(!empty($company->city)), {{ $company->city }}@endif</div>
+    <div style="font-size:8.5px;color:#6b7280;">{{ $company->address }} @if(!empty($company->city)), {{ $company->city }}@endif</div>
   @endif
 </div>
 
@@ -60,7 +60,7 @@
     <tr>
       <td style="padding:6px 10px;font-size:8.5px;width:33%;border-right:1px solid #e5e7eb;">
         <span style="color:#6b7280;display:block;margin-bottom:2px;">Date</span>
-        <strong>@if(!empty($document->issue_date)){{ \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') }}@else________________@endif</strong>
+        <strong>{{ !empty($document->issue_date) ? \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') : '________________' }}</strong>
       </td>
       <td style="padding:6px 10px;font-size:8.5px;width:33%;border-right:1px solid #e5e7eb;text-align:center;">
         <span style="color:#6b7280;display:block;margin-bottom:2px;">Heure</span>

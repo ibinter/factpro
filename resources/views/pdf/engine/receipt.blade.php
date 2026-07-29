@@ -112,9 +112,9 @@
 {{-- Date et lieu --}}
 <div style="font-size:8.5px;color:#374151;margin-bottom:14px;">
   <span style="color:#6b7280;">Fait à</span>
-  @if(!empty($company->city)){{ $company->city }}@else____________________@endif,
+  {{ !empty($company->city) ? $company->city : '____________________' }},
   <span style="color:#6b7280;">le</span>
-  @if(!empty($document->issue_date)){{ \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') }}@else____________________@endif
+  {{ !empty($document->issue_date) ? \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') : '____________________' }}
 </div>
 
 {{-- QR --}}

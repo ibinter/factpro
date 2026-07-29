@@ -126,7 +126,11 @@
     Réserves formulées
   </div>
   <div style="font-size:8.5px;color:#374151;min-height:30px;line-height:1.7;">
-    @if(!empty($document->notes)){!! nl2br(e($document->notes)) !!}@else<span style="color:#9ca3af;font-style:italic;">Aucune réserve</span>@endif
+    @if(!empty($document->notes))
+    {!! nl2br(e($document->notes)) !!}
+    @else
+    <span style="color:#9ca3af;font-style:italic;">Aucune réserve</span>
+    @endif
   </div>
 </div>
 

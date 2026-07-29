@@ -69,7 +69,7 @@
         <tr style="border-bottom:1px solid #e5e7eb;">
           @php $taxRate = $document->tax_rate ?? null; @endphp
           <td style="padding:7px 12px;font-size:8.5px;color:#374151;">
-            TVA@if($taxRate) ({{ $taxRate }}%)@endif
+            TVA{{ $taxRate ? ' ('.$taxRate.'%)' : '' }}
           </td>
           <td style="padding:7px 12px;text-align:right;font-size:8.5px;font-family:monospace;color:#374151;">
             {{ number_format($taxAmount, 0, ',', ' ') }} {{ $currency }}
