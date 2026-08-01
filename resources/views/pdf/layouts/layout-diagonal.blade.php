@@ -167,7 +167,8 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
         <table style="width:100%"><tr>
             <td style="padding-left:25mm">N° {{ $document->number }}</td>
             <td style="text-align:center">{{ \Carbon\Carbon::parse($document->issue_date ?? $document->date)->format('d/m/Y') }}</td>
-            <td style="text-align:right;padding-right:4mm">@if($document->due_date)Échéance : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}@endif</td>
+            <td style="text-align:right;padding-right:4mm">@if($document->due_date)Échéance : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}
+@endif</td>
         </tr></table>
     </div>
     <div id="accent-corner"></div>
@@ -180,9 +181,12 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
         <div class="name">{{ $company->name }}</div>
         <div class="detail">
             {{ $company->address ?? '' }}<br>
-            {{ $company->city ?? '' }}@if($company->country), {{ $company->country }}@endif<br>
+            {{ $company->city ?? '' }}
+@if($company->country), {{ $company->country }}
+@endif<br>
             @if($company->trade_register)RCCM : {{ $company->trade_register }}<br>@endif
-            @if($company->tax_id)NIF : {{ $company->tax_id }}@endif
+            @if($company->tax_id)NIF : {{ $company->tax_id }}
+@endif
         </div>
     </div>
     <div class="party-spacer"></div>

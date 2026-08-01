@@ -39,7 +39,8 @@
         <div style="font-size:8.5px;color:#374151;margin-top:3px;line-height:1.6;">
           @if(!empty($company->address)){{ $company->address }}<br>@endif
           @if(!empty($company->phone))Tél : {{ $company->phone }}<br>@endif
-          @if(!empty($company->email)){{ $company->email }}@endif
+          @if(!empty($company->email)){{ $company->email }}
+@endif
         </div>
       </div>
     </td>
@@ -51,7 +52,8 @@
           <div style="font-size:8.5px;color:#374151;margin-top:3px;line-height:1.6;">
             @if(!empty($document->customer->address)){{ $document->customer->address }}<br>@endif
             @if(!empty($document->customer->phone))Tél : {{ $document->customer->phone }}<br>@endif
-            @if(!empty($document->customer->email)){{ $document->customer->email }}@endif
+            @if(!empty($document->customer->email)){{ $document->customer->email }}
+@endif
           </div>
         @else
           <div style="font-size:9px;color:#9ca3af;font-style:italic;">— À renseigner —</div>

@@ -282,10 +282,15 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
         @endif
         <div class="co-name">{{ $company->name }}</div>
         <div class="co-coords">
-            {{ $company->address ?? '' }}@if($company->city ?? null), {{ $company->city }}@endif
-            @if($company->phone ?? null) &nbsp;·&nbsp; {{ $company->phone }}@endif
-            @if($company->email ?? null) &nbsp;·&nbsp; {{ $company->email }}@endif
-            @if($company->tax_id ?? null) &nbsp;·&nbsp; NIF : {{ $company->tax_id }}@endif
+            {{ $company->address ?? '' }}
+@if($company->city ?? null), {{ $company->city }}
+@endif
+            @if($company->phone ?? null) &nbsp;·&nbsp; {{ $company->phone }}
+@endif
+            @if($company->email ?? null) &nbsp;·&nbsp; {{ $company->email }}
+@endif
+            @if($company->tax_id ?? null) &nbsp;·&nbsp; NIF : {{ $company->tax_id }}
+@endif
         </div>
     </div>
     <div id="hdr-right">
@@ -308,10 +313,13 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
             <div class="addr-name">{{ $company->legal_name ?? $company->name }}</div>
             <div class="addr-detail">
                 @if($company->address ?? null){{ $company->address }}<br>@endif
-                @if($company->city ?? null){{ $company->city }}@if($company->country ?? null), {{ $company->country }}@endif<br>@endif
+                @if($company->city ?? null){{ $company->city }}
+@if($company->country ?? null), {{ $company->country }}
+@endif<br>@endif
                 @if($company->trade_register ?? null)RC : {{ $company->trade_register }}<br>@endif
                 @if($company->rccm ?? null)RCCM : {{ $company->rccm }}<br>@endif
-                @if($company->capital ?? null)Capital : {{ $company->capital }}@endif
+                @if($company->capital ?? null)Capital : {{ $company->capital }}
+@endif
             </div>
         </div>
 
@@ -323,10 +331,13 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
             <div class="addr-name">{{ $document->customer->name }}</div>
             <div class="addr-detail">
                 @if($document->customer->address ?? null){{ $document->customer->address }}<br>@endif
-                @if($document->customer->city ?? null){{ $document->customer->city }}@if($document->customer->country ?? null), {{ $document->customer->country }}@endif<br>@endif
+                @if($document->customer->city ?? null){{ $document->customer->city }}
+@if($document->customer->country ?? null), {{ $document->customer->country }}
+@endif<br>@endif
                 @if($document->customer->phone ?? null)Tél : {{ $document->customer->phone }}<br>@endif
                 @if($document->customer->email ?? null){{ $document->customer->email }}<br>@endif
-                @if($document->customer->tax_number ?? null)NIF : {{ $document->customer->tax_number }}@endif
+                @if($document->customer->tax_number ?? null)NIF : {{ $document->customer->tax_number }}
+@endif
             </div>
         </div>
         @endif
@@ -337,7 +348,8 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
         <div class="doc-info-col">
             <div class="di-row">
                 <div class="di-key">Date d'émission</div>
-                <div class="di-val">@if($issueDate){{ \Carbon\Carbon::parse($issueDate)->format('d/m/Y') }}@endif</div>
+                <div class="di-val">@if($issueDate){{ \Carbon\Carbon::parse($issueDate)->format('d/m/Y') }}
+@endif</div>
             </div>
             <div class="di-sep"></div>
             @if($document->due_date ?? null)

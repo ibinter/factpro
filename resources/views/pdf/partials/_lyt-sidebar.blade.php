@@ -686,11 +686,14 @@
                 </div>
                 <div style="font-size:8.5px; color:#555555; line-height:1.6;">
                     @if(!empty($company->address)){{ $company->address }}<br/>@endif
-                    @if(!empty($company->city)){{ $company->city }}@if(!empty($company->country)), {{ $company->country }}@endif<br/>@endif
+                    @if(!empty($company->city)){{ $company->city }}
+@if(!empty($company->country)), {{ $company->country }}
+@endif<br/>@endif
                     @if(!empty($company->phone))TÃ©l : {{ $company->phone }}<br/>@endif
                     @if(!empty($company->email)){{ $company->email }}<br/>@endif
                     @if(!empty($company->tax_id))NÂ° Fiscal : {{ $company->tax_id }}<br/>@endif
-                    @if(!empty($company->rccm))RCCM : {{ $company->rccm }}@endif
+                    @if(!empty($company->rccm))RCCM : {{ $company->rccm }}
+@endif
                 </div>
                 @if(!empty($document->reference))
                 <div class="addr-row" style="margin-top:6px;">
@@ -706,10 +709,13 @@
                 <div class="client-name">{{ $document->customer->name ?? 'â€”' }}</div>
                 <div class="client-detail">
                     @if(!empty($document->customer->address)){{ $document->customer->address }}<br/>@endif
-                    @if(!empty($document->customer->city)){{ $document->customer->city }}@if(!empty($document->customer->country)), {{ $document->customer->country }}@endif<br/>@endif
+                    @if(!empty($document->customer->city)){{ $document->customer->city }}
+@if(!empty($document->customer->country)), {{ $document->customer->country }}
+@endif<br/>@endif
                     @if(!empty($document->customer->phone))TÃ©l : {{ $document->customer->phone }}<br/>@endif
                     @if(!empty($document->customer->email)){{ $document->customer->email }}<br/>@endif
-                    @if(!empty($document->customer->tax_number))NÂ° Fiscal : {{ $document->customer->tax_number }}@endif
+                    @if(!empty($document->customer->tax_number))NÂ° Fiscal : {{ $document->customer->tax_number }}
+@endif
                 </div>
             </div>
         </div>
@@ -919,7 +925,8 @@
                     {{ $company->invoice_footer }}
                 @else
                     {{ $company->legal_name ?? $company->name ?? '' }}
-                    @if(!empty($company->capital)) â€” Capital : {{ $company->capital }}@endif
+                    @if(!empty($company->capital)) â€” Capital : {{ $company->capital }}
+@endif
                 @endif
             </div>
             <div class="doc-footer-right">

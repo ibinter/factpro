@@ -135,8 +135,10 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
         @if($logoBase64)<div class="logo"><img src="{{ $logoBase64 }}" alt="logo"></div>@endif
         <div class="co-name">{{ $company->name }}</div>
         <div class="co-sub">
-            @if($company->phone){{ $company->phone }}@endif
-            @if($company->email) · {{ $company->email }}@endif
+            @if($company->phone){{ $company->phone }}
+@endif
+            @if($company->email) · {{ $company->email }}
+@endif
         </div>
     </div>
     <div id="dh-right">
@@ -148,7 +150,8 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
     <table style="width:100%"><tr>
         <td>N° {{ $document->number }}</td>
         <td style="text-align:center">Émis le {{ \Carbon\Carbon::parse($document->issue_date ?? $document->date)->format('d/m/Y') }}</td>
-        <td style="text-align:right">@if($document->due_date)Échéance : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}@endif</td>
+        <td style="text-align:right">@if($document->due_date)Échéance : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}
+@endif</td>
     </tr></table>
 </div>
 
@@ -158,9 +161,12 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
         <div class="name">{{ $company->name }}</div>
         <div class="detail">
             {{ $company->address ?? '' }}<br>
-            {{ $company->city ?? '' }}@if($company->country), {{ $company->country }}@endif<br>
+            {{ $company->city ?? '' }}
+@if($company->country), {{ $company->country }}
+@endif<br>
             @if($company->trade_register)RCCM : {{ $company->trade_register }}<br>@endif
-            @if($company->tax_id)NIF : {{ $company->tax_id }}@endif
+            @if($company->tax_id)NIF : {{ $company->tax_id }}
+@endif
         </div>
     </div>
     <div class="party-spacer"></div>

@@ -24,7 +24,8 @@
         @if(!empty($company->city)){{ $company->city }}<br>@endif
         @if(!empty($company->phone))Tél : {{ $company->phone }}<br>@endif
         @if(!empty($company->rpps))RPPS : {{ $company->rpps }}<br>@endif
-        @if(!empty($company->ordre_number))N° Ordre : {{ $company->ordre_number }}@endif
+        @if(!empty($company->ordre_number))N° Ordre : {{ $company->ordre_number }}
+@endif
       </div>
     </td>
     <td style="width:40%;vertical-align:top;text-align:right;">
@@ -32,7 +33,8 @@
         <img src="{{ $company->logo_url }}" style="max-height:45px;max-width:80px;">
       @endif
       <div style="font-size:8px;color:#6b7280;margin-top:4px;">
-        @if(!empty($document->issue_date))Le {{ \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') }}@endif
+        @if(!empty($document->issue_date))Le {{ \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') }}
+@endif
       </div>
     </td>
   </tr>

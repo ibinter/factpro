@@ -39,7 +39,8 @@
   @endif
   <div style="font-size:13px;font-weight:bold;color:{{ $primaryColor }};">{{ $company->name ?? '' }}</div>
   @if(!empty($company->address))
-    <div style="font-size:8.5px;color:#6b7280;">{{ $company->address }} @if(!empty($company->city)), {{ $company->city }}@endif</div>
+    <div style="font-size:8.5px;color:#6b7280;">{{ $company->address }} @if(!empty($company->city)), {{ $company->city }}
+@endif</div>
   @endif
 </div>
 

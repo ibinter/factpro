@@ -35,7 +35,7 @@
                             </p>
 
                             <p style="margin:0 0 16px; font-size:15px; line-height:1.6;">
-                                @if ($invitation->inviter)<strong>{{ $invitation->inviter->name }}</strong> vous invite@else Vous êtes invité(e) @endif
+                                @if ($invitation->inviter)<strong>{{ $invitation->inviter->name }}</strong> vous invite @else Vous êtes invité(e) @endif
                                 à rejoindre l'équipe de <strong>{{ $company->name }}</strong> sur IBIG FactPro
                                 en tant que <strong style="color:#0062CC;">{{ $roleLabel }}</strong>.
                             </p>

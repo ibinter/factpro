@@ -182,7 +182,8 @@
             <table>
                 @foreach ($document->payments as $payment)
                     <tr>
-                        <td>{{ strtoupper($methodLabels[$payment->method] ?? $payment->method) }}@if ($payment->paid_at) {{ $payment->paid_at->format('d/m') }}@endif</td>
+                        <td>{{ strtoupper($methodLabels[$payment->method] ?? $payment->method) }}@if ($payment->paid_at) {{ $payment->paid_at->format('d/m') }}
+@endif</td>
                         <td class="right">{{ $fmt($payment->amount) }}</td>
                     </tr>
                 @endforeach

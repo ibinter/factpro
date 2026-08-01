@@ -128,9 +128,14 @@
         @endif
         <div style="font-size:7.5px;color:#374151;margin-top:2.5mm;line-height:1.7;">
           @if(!empty($company->address)){{ $company->address }}<br>@endif
-          @if(!empty($company->city)){{ $company->city }}@if(!empty($company->postal_code)) {{ $company->postal_code }}@endif
-          @if(!empty($company->country)) · {{ $company->country }}@endif<br>@endif
-          @if(!empty($company->phone))Tél : {{ $company->phone }}@if(!empty($company->email))  ·  {{ $company->email }}@endif<br>@elseif(!empty($company->email)){{ $company->email }}<br>@endif
+          @if(!empty($company->city)){{ $company->city }}
+@if(!empty($company->postal_code)) {{ $company->postal_code }}
+@endif
+          @if(!empty($company->country)) · {{ $company->country }}
+@endif<br>@endif
+          @if(!empty($company->phone))Tél : {{ $company->phone }}
+@if(!empty($company->email))  ·  {{ $company->email }}
+@endif<br>@elseif(!empty($company->email)){{ $company->email }}<br>@endif
         </div>
       </td>
 
@@ -182,8 +187,10 @@
     <tr>
       <td style="font-size:6.5px;color:#6b7280;line-height:1.7;vertical-align:top;">
         <strong style="color:#374151;">{{ $company->name }}</strong>
-        @if(!empty($company->address)) · {{ $company->address }}@endif
-        @if(!empty($company->city)), {{ $company->city }}@endif
+        @if(!empty($company->address)) · {{ $company->address }}
+@endif
+        @if(!empty($company->city)), {{ $company->city }}
+@endif
         @php
           $ftrIds = array_filter([
             !empty($company->trade_register) ? 'RCCM '.$company->trade_register : null,
@@ -193,7 +200,8 @@
             !empty($company->capital)        ? 'Capital '.$company->capital     : null,
           ]);
         @endphp
-        @if(count($ftrIds)) · {{ implode(' · ', $ftrIds) }}@endif
+        @if(count($ftrIds)) · {{ implode(' · ', $ftrIds) }}
+@endif
       </td>
       <td style="font-size:6.5px;color:#9ca3af;text-align:right;vertical-align:top;white-space:nowrap;">
         Document certifié · IBIG FactPro<br>
@@ -258,11 +266,15 @@
           @endif
           <div style="font-size:8px;color:#374151;line-height:1.9;">
             @if(!empty($document->customer->address)){{ $document->customer->address }}<br>@endif
-            @if(!empty($document->customer->city)){{ $document->customer->city }}@if(!empty($document->customer->postal_code)) {{ $document->customer->postal_code }}@endif
-            @if(!empty($document->customer->country)) · {{ $document->customer->country }}@endif<br>@endif
+            @if(!empty($document->customer->city)){{ $document->customer->city }}
+@if(!empty($document->customer->postal_code)) {{ $document->customer->postal_code }}
+@endif
+            @if(!empty($document->customer->country)) · {{ $document->customer->country }}
+@endif<br>@endif
             @if(!empty($document->customer->phone))<span style="color:#9ca3af;">Tél :</span> {{ $document->customer->phone }}<br>@endif
             @if(!empty($document->customer->email))<span style="color:#9ca3af;">Email :</span> {{ $document->customer->email }}<br>@endif
-            @if(!empty($document->customer->tax_number))<span style="color:#9ca3af;">N° fiscal :</span> {{ $document->customer->tax_number }}@endif
+            @if(!empty($document->customer->tax_number))<span style="color:#9ca3af;">N° fiscal :</span> {{ $document->customer->tax_number }}
+@endif
           </div>
         @else
           <div style="font-size:9px;color:#9ca3af;font-style:italic;">— Non renseigné —</div>

@@ -608,7 +608,8 @@ body {
                 @if(!empty($company->tax_id)) NIF : {{ $company->tax_id }}<br>@endif
                 @if(!empty($company->trade_register)) RC : {{ $company->trade_register }}<br>@endif
                 @if(!empty($company->rccm)) RCCM : {{ $company->rccm }}<br>@endif
-                @if(!empty($company->capital)) Capital : {{ $company->capital }}@endif
+                @if(!empty($company->capital)) Capital : {{ $company->capital }}
+@endif
             </div>
         </div>
 
@@ -626,7 +627,8 @@ body {
             <div class="addr-meta">
                 @if(!empty($customer->phone)) Tél : {{ $customer->phone }}<br>@endif
                 @if(!empty($customer->email)) {{ $customer->email }}<br>@endif
-                @if(!empty($customer->tax_number)) NIF : {{ $customer->tax_number }}@endif
+                @if(!empty($customer->tax_number)) NIF : {{ $customer->tax_number }}
+@endif
             </div>
             @endif
         </div>
@@ -788,12 +790,18 @@ body {
         {{ $company->invoice_footer }}
         @else
         {{ $company->legal_name ?? $company->name ?? '' }}
-        @if(!empty($company->address)) — {{ $company->address }}@endif
-        @if(!empty($company->city)) {{ $company->city }}@endif
-        @if(!empty($company->phone)) — Tél : {{ $company->phone }}@endif
-        @if(!empty($company->email)) — {{ $company->email }}@endif
-        @if(!empty($company->tax_id)) | NIF : {{ $company->tax_id }}@endif
-        @if(!empty($company->trade_register)) | RC : {{ $company->trade_register }}@endif
+        @if(!empty($company->address)) — {{ $company->address }}
+@endif
+        @if(!empty($company->city)) {{ $company->city }}
+@endif
+        @if(!empty($company->phone)) — Tél : {{ $company->phone }}
+@endif
+        @if(!empty($company->email)) — {{ $company->email }}
+@endif
+        @if(!empty($company->tax_id)) | NIF : {{ $company->tax_id }}
+@endif
+        @if(!empty($company->trade_register)) | RC : {{ $company->trade_register }}
+@endif
         @endif
     </div>
 

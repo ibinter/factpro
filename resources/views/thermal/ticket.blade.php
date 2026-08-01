@@ -129,7 +129,8 @@
         <div class="center bold upper">{{ $document->type_label }} {{ $document->number }}</div>
         <div class="center small">{{ $document->issue_date?->format('d/m/Y') }} {{ now()->format('H:i') }}</div>
         @if ($document->customer)
-            <div class="small">CLIENT : {{ $document->customer->name }}@if ($document->customer->phone) — {{ $document->customer->phone }}@endif</div>
+            <div class="small">CLIENT : {{ $document->customer->name }}@if ($document->customer->phone) — {{ $document->customer->phone }}
+@endif</div>
         @endif
 
         <div class="sep">{{ $sep }}</div>
@@ -163,7 +164,8 @@
             <table>
                 @foreach ($document->payments as $payment)
                     <tr>
-                        <td>{{ strtoupper($methodLabels[$payment->method] ?? $payment->method) }}@if ($payment->paid_at) {{ $payment->paid_at->format('d/m') }}@endif</td>
+                        <td>{{ strtoupper($methodLabels[$payment->method] ?? $payment->method) }}@if ($payment->paid_at) {{ $payment->paid_at->format('d/m') }}
+@endif</td>
                         <td class="right">{{ $fmt($payment->amount) }}</td>
                     </tr>
                 @endforeach

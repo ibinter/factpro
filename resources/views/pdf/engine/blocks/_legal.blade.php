@@ -42,9 +42,12 @@
   <div style="background:#f1f3f5;border:1px solid #e5e7eb;border-radius:3px;padding:6px 12px;text-align:center;">
     <div style="font-size:7px;color:#6b7280;line-height:1.8;">
       @if(!empty($company->name))<strong style="color:#374151;">{{ $company->name }}</strong>@endif
-      @if(!empty($company->legal_name) && $company->legal_name !== $company->name) · {{ $company->legal_name }}@endif
-      @if(!empty($company->address)) · {{ $company->address }}@endif
-      @if(!empty($company->city)), {{ $company->city }}@endif
+      @if(!empty($company->legal_name) && $company->legal_name !== $company->name) · {{ $company->legal_name }}
+@endif
+      @if(!empty($company->address)) · {{ $company->address }}
+@endif
+      @if(!empty($company->city)), {{ $company->city }}
+@endif
       @php
         $ids = array_filter([
           !empty($company->trade_register) ? 'RCCM '.$company->trade_register : null,
@@ -54,7 +57,8 @@
           !empty($company->capital)        ? 'Capital '.$company->capital     : null,
         ]);
       @endphp
-      @if(count($ids)) · {{ implode(' · ', $ids) }}@endif
+      @if(count($ids)) · {{ implode(' · ', $ids) }}
+@endif
     </div>
     <div style="font-size:6.5px;color:#9ca3af;margin-top:3px;border-top:1px solid #e5e7eb;padding-top:3px;">
       Généré par <strong style="color:#6b7280;">IBIG FactPro</strong> — factpro.ibigsoft.com

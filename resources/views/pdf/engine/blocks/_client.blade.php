@@ -67,8 +67,11 @@
           @endif
           <div style="font-size:8.5px;color:#374151;margin-top:6px;line-height:1.75;">
             @if(!empty($document->customer->address)){{ $document->customer->address }}<br>@endif
-            @if(!empty($document->customer->city)){{ $document->customer->city }}@if(!empty($document->customer->postal_code)) – {{ $document->customer->postal_code }}@endif
-            @if(!empty($document->customer->country)) · {{ $document->customer->country }}@endif<br>@endif
+            @if(!empty($document->customer->city)){{ $document->customer->city }}
+@if(!empty($document->customer->postal_code)) – {{ $document->customer->postal_code }}
+@endif
+            @if(!empty($document->customer->country)) · {{ $document->customer->country }}
+@endif<br>@endif
             @if(!empty($document->customer->phone))<span style="color:#9ca3af;">Tél :</span> {{ $document->customer->phone }}<br>@endif
             @if(!empty($document->customer->email))<span style="color:#9ca3af;">Email :</span> {{ $document->customer->email }}<br>@endif
             @if(!empty($document->customer->tax_number))<span style="color:#9ca3af;">N° fiscal :</span> {{ $document->customer->tax_number }}<br>@endif

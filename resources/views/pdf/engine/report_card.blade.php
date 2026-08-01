@@ -26,7 +26,9 @@
     </td>
     <td style="width:60%;text-align:center;vertical-align:middle;">
       <div style="font-size:15px;font-weight:bold;color:{{ $primaryColor }};">{{ $company->name ?? '' }}</div>
-      @if(!empty($company->address))<div style="font-size:8.5px;color:#6b7280;margin-top:3px;">{{ $company->address }}@if(!empty($company->city)), {{ $company->city }}@endif</div>@endif
+      @if(!empty($company->address))<div style="font-size:8.5px;color:#6b7280;margin-top:3px;">{{ $company->address }}
+@if(!empty($company->city)), {{ $company->city }}
+@endif</div>@endif
       <div style="font-size:11px;font-weight:bold;margin-top:6px;text-transform:uppercase;color:#374151;">
         {{ $document->type_label ?? 'BULLETIN DE NOTES' }}
       </div>

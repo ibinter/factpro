@@ -174,8 +174,10 @@ body { font-family: DejaVu Sans, serif; font-size: 11px; color: #1a1a1a; backgro
 <div class="co-name-center">
     {{ $company->name }}
     <div class="sub">
-        @if($company->trade_register)RCCM : {{ $company->trade_register }}@endif
-        @if($company->tax_id) &nbsp;|&nbsp; NIF : {{ $company->tax_id }}@endif
+        @if($company->trade_register)RCCM : {{ $company->trade_register }}
+@endif
+        @if($company->tax_id) &nbsp;|&nbsp; NIF : {{ $company->tax_id }}
+@endif
     </div>
 </div>
 
@@ -200,9 +202,12 @@ body { font-family: DejaVu Sans, serif; font-size: 11px; color: #1a1a1a; backgro
         <div class="name">{{ $company->name }}</div>
         <div class="detail">
             {{ $company->address ?? '' }}<br>
-            {{ $company->city ?? '' }}@if($company->country), {{ $company->country }}@endif<br>
+            {{ $company->city ?? '' }}
+@if($company->country), {{ $company->country }}
+@endif<br>
             @if($company->phone){{ $company->phone }}<br>@endif
-            @if($company->email){{ $company->email }}@endif
+            @if($company->email){{ $company->email }}
+@endif
         </div>
     </div>
     <div class="party-lux-sep"></div>

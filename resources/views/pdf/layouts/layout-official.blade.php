@@ -172,7 +172,9 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9.5px; color: #111; back
     <div class="co-name">{{ $company->name }}</div>
     <div class="co-coords">
         @if($company->address)<span>{{ $company->address }}</span>@endif
-        @if($company->city)<span>{{ $company->city }}@if($company->country), {{ $company->country }}@endif</span>@endif
+        @if($company->city)<span>{{ $company->city }}
+@if($company->country), {{ $company->country }}
+@endif</span>@endif
         @if($company->phone)<span>Tél : {{ $company->phone }}</span>@endif
         @if($company->email)<span>{{ $company->email }}</span>@endif
         @if($company->trade_register)<span>RCCM : {{ $company->trade_register }}</span>@endif
@@ -199,11 +201,14 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9.5px; color: #111; back
         <div class="name">{{ $company->name }}</div>
         <div class="detail">
             {{ $company->address ?? '' }}<br>
-            {{ $company->city ?? '' }}@if($company->country), {{ $company->country }}@endif<br>
+            {{ $company->city ?? '' }}
+@if($company->country), {{ $company->country }}
+@endif<br>
             @if($company->phone){{ $company->phone }}<br>@endif
             @if($company->email){{ $company->email }}<br>@endif
             @if($company->trade_register)RCCM : {{ $company->trade_register }}<br>@endif
-            @if($company->tax_id)NIF : {{ $company->tax_id }}@endif
+            @if($company->tax_id)NIF : {{ $company->tax_id }}
+@endif
         </div>
     </div>
     <div class="party-off-sep"></div>

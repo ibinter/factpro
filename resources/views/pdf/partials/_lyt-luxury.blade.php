@@ -518,9 +518,13 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #1a1a1a; 
                 {{ $company->legal_name }}<br>
             @endif
             {{ $company->address ?? '' }}<br>
-            {{ $company->city ?? '' }}@if($company->country), {{ $company->country }}@endif
-            @if($company->phone)<br>{{ $company->phone }}@endif
-            @if($company->email)<br>{{ $company->email }}@endif
+            {{ $company->city ?? '' }}
+@if($company->country), {{ $company->country }}
+@endif
+            @if($company->phone)<br>{{ $company->phone }}
+@endif
+            @if($company->email)<br>{{ $company->email }}
+@endif
             @if($company->tax_id)<br><span style="color:#999;">NIF : {{ $company->tax_id }}</span>@endif
             @if($company->trade_register)<br><span style="color:#999;">RCCM : {{ $company->trade_register }}</span>@endif
         </div>
@@ -533,9 +537,13 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #1a1a1a; 
         <div class="lux-addr-detail">
             {{ $document->customer->address ?? '' }}
             @if($document->customer->address)<br>@endif
-            {{ $document->customer->city ?? '' }}@if($document->customer->country) {{ $document->customer->country }}@endif
-            @if($document->customer->phone)<br>{{ $document->customer->phone }}@endif
-            @if($document->customer->email)<br>{{ $document->customer->email }}@endif
+            {{ $document->customer->city ?? '' }}
+@if($document->customer->country) {{ $document->customer->country }}
+@endif
+            @if($document->customer->phone)<br>{{ $document->customer->phone }}
+@endif
+            @if($document->customer->email)<br>{{ $document->customer->email }}
+@endif
             @if($document->customer->tax_number)<br><span style="color:#999;">NIF : {{ $document->customer->tax_number }}</span>@endif
         </div>
         @endif
@@ -693,14 +701,20 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 10px; color: #1a1a1a; 
     <div class="lux-footer-top">
         <div class="lux-footer-col">
             {{ $company->name }}
-            @if($company->address) — {{ $company->address }}@endif
-            @if($company->city), {{ $company->city }}@endif
-            @if($company->phone) · {{ $company->phone }}@endif
+            @if($company->address) — {{ $company->address }}
+@endif
+            @if($company->city), {{ $company->city }}
+@endif
+            @if($company->phone) · {{ $company->phone }}
+@endif
         </div>
         <div class="lux-footer-col center">
-            @if($company->tax_id)NIF : {{ $company->tax_id }}@endif
-            @if($company->trade_register) · RCCM : {{ $company->trade_register }}@endif
-            @if($company->capital) · Capital : {{ $company->capital }}@endif
+            @if($company->tax_id)NIF : {{ $company->tax_id }}
+@endif
+            @if($company->trade_register) · RCCM : {{ $company->trade_register }}
+@endif
+            @if($company->capital) · Capital : {{ $company->capital }}
+@endif
         </div>
         <div class="lux-footer-col right">
             <div class="lux-footer-brand">IBIG FactPro</div>

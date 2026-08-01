@@ -123,9 +123,14 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 9px; color: #333; }
             <div class="co-name">{{ $company->name ?? '' }}</div>
             <div class="co-info">
                 @if(!empty($company->address)){{ $company->address }}<br/>@endif
-                @if(!empty($company->city)){{ $company->city }}@if(!empty($company->country)), {{ $company->country }}@endif<br/>@endif
-                @if(!empty($company->phone))Tél : {{ $company->phone }}@if(!empty($company->email))  |  {{ $company->email }}@endif<br/>@endif
-                @if(!empty($company->tax_id))N° Fiscal : {{ $company->tax_id }}@endif
+                @if(!empty($company->city)){{ $company->city }}
+@if(!empty($company->country)), {{ $company->country }}
+@endif<br/>@endif
+                @if(!empty($company->phone))Tél : {{ $company->phone }}
+@if(!empty($company->email))  |  {{ $company->email }}
+@endif<br/>@endif
+                @if(!empty($company->tax_id))N° Fiscal : {{ $company->tax_id }}
+@endif
             </div>
         </td>
         <td style="width:40%;vertical-align:middle;">
@@ -179,10 +184,13 @@ body { font-family: 'DejaVu Sans', sans-serif; font-size: 9px; color: #333; }
                     <div class="client-name">{{ $document->customer->name ?? '—' }}</div>
                     <div class="client-detail">
                         @if(!empty($document->customer->address)){{ $document->customer->address }}<br/>@endif
-                        @if(!empty($document->customer->city)){{ $document->customer->city }}@if(!empty($document->customer->country)), {{ $document->customer->country }}@endif<br/>@endif
+                        @if(!empty($document->customer->city)){{ $document->customer->city }}
+@if(!empty($document->customer->country)), {{ $document->customer->country }}
+@endif<br/>@endif
                         @if(!empty($document->customer->phone))Tél : {{ $document->customer->phone }}<br/>@endif
                         @if(!empty($document->customer->email)){{ $document->customer->email }}<br/>@endif
-                        @if(!empty($document->customer->tax_number))N° Fiscal : {{ $document->customer->tax_number }}@endif
+                        @if(!empty($document->customer->tax_number))N° Fiscal : {{ $document->customer->tax_number }}
+@endif
                     </div>
                 </div>
             </td>

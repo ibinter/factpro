@@ -473,11 +473,14 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #1e293b; bac
 
     {{-- Ligne 2 : sous-titre --}}
     <div id="ldh-row2">
-        @if(!empty($company->tagline)){{ $company->tagline }}@endif
+        @if(!empty($company->tagline)){{ $company->tagline }}
+@endif
         @if(!empty($company->tagline) && (!empty($company->phone) || !empty($company->email))) &nbsp;·&nbsp; @endif
-        @if(!empty($company->phone)){{ $company->phone }}@endif
+        @if(!empty($company->phone)){{ $company->phone }}
+@endif
         @if(!empty($company->phone) && !empty($company->email)) &nbsp;·&nbsp; @endif
-        @if(!empty($company->email)){{ $company->email }}@endif
+        @if(!empty($company->email)){{ $company->email }}
+@endif
     </div>
 
     {{-- Séparateur --}}
@@ -524,12 +527,15 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #1e293b; bac
                 <div class="party-name">{{ $document->customer->name }}</div>
                 <div class="party-detail">
                     @if(!empty($document->customer->address)){{ $document->customer->address }}<br>@endif
-                    @if(!empty($document->customer->city)){{ $document->customer->city }}@endif
-                    @if(!empty($document->customer->country)) {{ $document->customer->country }}@endif
+                    @if(!empty($document->customer->city)){{ $document->customer->city }}
+@endif
+                    @if(!empty($document->customer->country)) {{ $document->customer->country }}
+@endif
                     @if(!empty($document->customer->city) || !empty($document->customer->country))<br>@endif
                     @if(!empty($document->customer->phone)){{ $document->customer->phone }}<br>@endif
                     @if(!empty($document->customer->email)){{ $document->customer->email }}<br>@endif
-                    @if(!empty($document->customer->tax_number))NIF : {{ $document->customer->tax_number }}@endif
+                    @if(!empty($document->customer->tax_number))NIF : {{ $document->customer->tax_number }}
+@endif
                 </div>
             @endif
         </div>
@@ -744,11 +750,16 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #1e293b; bac
     <div class="lyt-dark-flow-footer">
         <div class="ff-left">
             {{ $company->name }}
-            @if(!empty($company->address)) — {{ $company->address }}@endif
-            @if(!empty($company->city)) {{ $company->city }}@endif
-            @if(!empty($company->country)), {{ $company->country }}@endif
-            @if(!empty($company->phone)) · {{ $company->phone }}@endif
-            @if(!empty($company->email)) · {{ $company->email }}@endif
+            @if(!empty($company->address)) — {{ $company->address }}
+@endif
+            @if(!empty($company->city)) {{ $company->city }}
+@endif
+            @if(!empty($company->country)), {{ $company->country }}
+@endif
+            @if(!empty($company->phone)) · {{ $company->phone }}
+@endif
+            @if(!empty($company->email)) · {{ $company->email }}
+@endif
         </div>
         <div class="ff-right">
             Propulsé par <span class="ff-brand">IBIG FactPro</span>

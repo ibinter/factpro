@@ -172,8 +172,10 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
             @if($logoBase64)<div class="logo"><img src="{{ $logoBase64 }}" alt="logo"></div>@endif
             <div class="co-name">{{ $company->name }}</div>
             <div class="co-sub">
-                @if($company->phone){{ $company->phone }}@endif
-                @if($company->email) · {{ $company->email }}@endif
+                @if($company->phone){{ $company->phone }}
+@endif
+                @if($company->email) · {{ $company->email }}
+@endif
             </div>
         </div>
         <div id="hdr-right">
@@ -181,7 +183,8 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
                 <div class="doc-type">{{ $document->type_label }}</div>
                 <div class="doc-number">N° {{ $document->number }}</div>
                 <div class="doc-date">{{ \Carbon\Carbon::parse($document->issue_date ?? $document->date)->format('d/m/Y') }}
-                    @if($document->due_date) · Éch. {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}@endif
+                    @if($document->due_date) · Éch. {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}
+@endif
                 </div>
             </div>
         </div>
@@ -196,9 +199,12 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; backgr
             <div class="emetteur-name">{{ $company->name }}</div>
             <div class="emetteur-detail">
                 {{ $company->address ?? '' }}<br>
-                {{ $company->city ?? '' }}@if($company->country), {{ $company->country }}@endif<br>
+                {{ $company->city ?? '' }}
+@if($company->country), {{ $company->country }}
+@endif<br>
                 @if($company->trade_register)RCCM : {{ $company->trade_register }}<br>@endif
-                @if($company->tax_id)NIF : {{ $company->tax_id }}@endif
+                @if($company->tax_id)NIF : {{ $company->tax_id }}
+@endif
             </div>
         </div>
         <div class="emetteur-right">

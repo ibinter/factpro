@@ -101,9 +101,12 @@
                 <td style="width:55%">
                     <div class="company-name">{{ $company->name }}</div>
                     <div class="company-meta">
-                        {{ $company->address }}@if($company->city), {{ $company->city }}@endif — {{ $company->country }}<br>
+                        {{ $company->address }}
+@if($company->city), {{ $company->city }}
+@endif — {{ $company->country }}<br>
                         @if($company->phone)Tél : {{ $company->phone }} · @endif{{ $company->email }}
-                        @if($company->tax_id) · N° Fiscal : {{ $company->tax_id }}@endif
+                        @if($company->tax_id) · N° Fiscal : {{ $company->tax_id }}
+@endif
                     </div>
                 </td>
                 <td style="width:45%">
@@ -154,9 +157,12 @@
                         <div class="meta">
                             @if($document->customer->address){{ $document->customer->address }}<br>@endif
                             @if($document->customer->city){{ $document->customer->city }} — @endif{{ $document->customer->country }}<br>
-                            @if($document->customer->phone){{ $document->customer->phone }}@endif
-                            @if($document->customer->email) · {{ $document->customer->email }}@endif
-                            @if($document->customer->tax_id)<br>N° Fiscal : {{ $document->customer->tax_id }}@endif
+                            @if($document->customer->phone){{ $document->customer->phone }}
+@endif
+                            @if($document->customer->email) · {{ $document->customer->email }}
+@endif
+                            @if($document->customer->tax_id)<br>N° Fiscal : {{ $document->customer->tax_id }}
+@endif
                         </div>
                     @else
                         <div class="name" style="color:#aaa;font-style:italic;">— Non renseigné —</div>

@@ -44,7 +44,8 @@
         Réf. : {{ $document->number }}<br>
         @if(!empty($document->reference))Référence : {{ $document->reference }}<br>@endif
         @if(!empty($document->issue_date))Date : {{ \Carbon\Carbon::parse($document->issue_date)->format('d/m/Y') }}<br>@endif
-        @if(!empty($document->due_date))Valide jusqu'au : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}@endif
+        @if(!empty($document->due_date))Valide jusqu'au : {{ \Carbon\Carbon::parse($document->due_date)->format('d/m/Y') }}
+@endif
       </div>
     </td>
   </tr>

@@ -46,9 +46,11 @@
 @endif
 @if(!empty($session->company->rccm) || !empty($session->company->tax_id))
 <div class="center" style="font-size:8px;">
-  @if(!empty($session->company->rccm))RCCM : {{ $session->company->rccm }}@endif
+  @if(!empty($session->company->rccm))RCCM : {{ $session->company->rccm }}
+@endif
   @if(!empty($session->company->rccm) && !empty($session->company->tax_id)) — @endif
-  @if(!empty($session->company->tax_id))NINEA : {{ $session->company->tax_id }}@endif
+  @if(!empty($session->company->tax_id))NINEA : {{ $session->company->tax_id }}
+@endif
 </div>
 @endif
 

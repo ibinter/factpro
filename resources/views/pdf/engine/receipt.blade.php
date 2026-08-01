@@ -58,7 +58,8 @@
           <div style="font-size:11px;font-weight:bold;">{{ $document->customer->name ?? '' }}</div>
           <div style="font-size:8.5px;color:#374151;margin-top:3px;line-height:1.6;">
             @if(!empty($document->customer->address)){{ $document->customer->address }}<br>@endif
-            @if(!empty($document->customer->phone))Tél: {{ $document->customer->phone }}@endif
+            @if(!empty($document->customer->phone))Tél: {{ $document->customer->phone }}
+@endif
           </div>
         @else
           <div style="font-size:10px;color:#9ca3af;font-style:italic;">— Non renseigné —</div>

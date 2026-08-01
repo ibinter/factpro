@@ -125,7 +125,9 @@ body { font-family: DejaVu Sans, sans-serif; font-size: 9px; color: #222; }
     <div class="co-name">{{ $company->name }}</div>
     <div class="co-info">
         @if($company->address)<p>{{ $company->address }}</p>@endif
-        @if($company->city)<p>{{ $company->city }}@if($company->country), {{ $company->country }}@endif</p>@endif
+        @if($company->city)<p>{{ $company->city }}
+@if($company->country), {{ $company->country }}
+@endif</p>@endif
         @if($company->phone)<p>Tél : {{ $company->phone }}</p>@endif
         @if($company->email)<p>{{ $company->email }}</p>@endif
         @if($company->trade_register)<p>RCCM : {{ $company->trade_register }}</p>@endif

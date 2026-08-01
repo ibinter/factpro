@@ -128,9 +128,12 @@
                             </p>
                             <p style="margin:0; font-size:13px; line-height:1.6; color:#374151;">
                                 <strong>{{ $company->name }}</strong>
-                                @if (!empty($company->email))<br>Email : {{ $company->email }}@endif
-                                @if (!empty($company->phone))<br>Téléphone : {{ $company->phone }}@endif
-                                @if (!empty($company->address))<br>{{ $company->address }}@endif
+                                @if (!empty($company->email))<br>Email : {{ $company->email }}
+@endif
+                                @if (!empty($company->phone))<br>Téléphone : {{ $company->phone }}
+@endif
+                                @if (!empty($company->address))<br>{{ $company->address }}
+@endif
                             </p>
 
                             @if (!empty($company->invoice_footer))

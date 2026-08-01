@@ -16,7 +16,9 @@
 <div style="border-top:1px solid #e5e7eb;margin-top:14px;padding-top:6px;text-align:center;">
   <div style="font-size:7px;color:#9ca3af;">
     @if(!empty($company->name)){{ $company->name }} — @endif
-    @if(!empty($company->address)){{ $company->address }}@if(!empty($company->city)), {{ $company->city }}@endif — @endif
+    @if(!empty($company->address)){{ $company->address }}
+@if(!empty($company->city)), {{ $company->city }}
+@endif — @endif
     Merci de votre confiance.
   </div>
 </div>
