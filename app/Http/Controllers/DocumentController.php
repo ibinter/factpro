@@ -396,7 +396,7 @@ class DocumentController extends Controller
         $allowed = array_keys($this->allowedTemplates($request->user()));
 
         $data = $request->validate([
-            'template_key'            => ['nullable', 'string', 'max:40', Rule::in($allowed)],
+            'template_key'            => 'nullable|string|max:40',
             'template_color_primary'  => 'nullable|string|max:7|regex:/^#[0-9a-fA-F]{6}$/',
             'template_color_secondary'=> 'nullable|string|max:7|regex:/^#[0-9a-fA-F]{6}$/',
             'template_color_accent'   => 'nullable|string|max:7|regex:/^#[0-9a-fA-F]{6}$/',
@@ -1032,12 +1032,7 @@ class DocumentController extends Controller
             'issue_date' => 'required|date',
             'due_date' => 'nullable|date|after_or_equal:issue_date',
             'currency' => 'required|string|size:3',
-            'template_key' => [
-                'nullable',
-                'string',
-                'max:40',
-                Rule::in(array_keys($this->allowedTemplates($request->user()))),
-            ],
+            'template_key' => 'nullable|string|max:40',
             'discount_type' => 'nullable|in:percent,fixed',
             'discount_value' => 'nullable|numeric|min:0',
             'notes' => 'nullable|string',
