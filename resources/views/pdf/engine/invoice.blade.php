@@ -103,7 +103,7 @@
 </style>
 </head>
 <body>
-
+<!-- INVOICE-REDESIGN-V2 -->
 @include('pdf.engine.blocks._watermark', ['watermark' => $watermark ?? null])
 
 {{-- ═══════════════════════════════════════════════════════
