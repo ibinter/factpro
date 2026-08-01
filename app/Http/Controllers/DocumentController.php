@@ -580,24 +580,8 @@ class DocumentController extends Controller
      * Les autres types ont un moteur PDF dédié (payslip, prescription, etc.)
      * et doivent toujours utiliser leur vue engine — jamais un layout facture.
      */
-    private const COSMETIC_TEMPLATE_TYPES = [
-        'invoice', 'simple_invoice', 'credit_note', 'proforma', 'deposit_invoice', 'balance_invoice',
-        'recurring_invoice', 'final_invoice', 'corrective_invoice', 'tax_invoice',
-        'commercial_invoice', 'supplier_invoice',
-        'quote', 'price_offer', 'service_quote', 'work_quote', 'repair_estimate',
-        'sales_order', 'dispatch_order',
-        'delivery_note', 'packing_list', 'shipping_order', 'picking_list',
-        'transfer_note', 'goods_receipt', 'return_note', 'goods_return',
-        'purchase_order', 'supplier_order', 'rfq',
-        'payment_receipt', 'cash_receipt', 'petty_cash_receipt', 'advance_receipt', 'refund_receipt',
-        'contract', 'service_contract', 'lease_agreement', 'maintenance_contract',
-        'partnership_agreement', 'nda', 'framework_agreement', 'subcontracting_contract',
-        'meeting_minutes', 'pv_reception', 'pv_handover', 'acceptance_report',
-        'conflict_pv', 'general_assembly_pv',
-        'mission_order', 'travel_request', 'expense_report',
-        'site_report', 'inspection_report', 'progress_report', 'daily_report',
-        'rental_inventory', 'inventory_check', 'property_inspection',
-    ];
+    // Les templates cosmétiques ne fournissent QUE les couleurs — le moteur gère toujours le rendu.
+    private const COSMETIC_TEMPLATE_TYPES = [];
 
     /**
      * Résout la vue Blade du modèle visuel.
