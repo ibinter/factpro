@@ -507,9 +507,9 @@ function bulkExportUrl() {
 
                 <!-- ── Toolbar sélection groupée ─────────────────────────── -->
                 <Transition name="menu-drop">
-                    <div v-if="selected.value.size > 0"
+                    <div v-if="selected.size > 0"
                         class="sticky top-0 z-20 flex items-center gap-3 rounded-xl bg-brand-900 px-5 py-3 shadow-lg">
-                        <span class="text-sm font-semibold text-white">{{ selected.value.size }} sélectionné{{ selected.value.size > 1 ? 's' : '' }}</span>
+                        <span class="text-sm font-semibold text-white">{{ selected.size }} sélectionné{{ selected.size > 1 ? 's' : '' }}</span>
                         <div class="ml-auto flex items-center gap-2">
                             <button @click="bulkMarkPaid" type="button"
                                 class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors">
@@ -523,7 +523,7 @@ function bulkExportUrl() {
                                 class="inline-flex items-center gap-1.5 rounded-lg bg-red-500 hover:bg-red-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors">
                                 🗑 Supprimer
                             </button>
-                            <button @click="selected.value = new Set()" type="button"
+                            <button @click="selected = new Set()" type="button"
                                 class="ml-2 text-white/60 hover:text-white text-xs transition-colors">
                                 Annuler
                             </button>
