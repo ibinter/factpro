@@ -2,7 +2,7 @@ name: Deploy — Production LWS
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
     inputs:
       environment:
