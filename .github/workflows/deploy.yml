@@ -44,8 +44,9 @@ jobs:
             --exclude='.git' \
             --exclude='node_modules' \
             --exclude='tests' \
-            --exclude='storage/logs/*' \
-            .
+            --exclude='storage/logs' \
+            --exclude='storage/framework/cache' \
+            . || [ $? -eq 1 ]
 
       - name: Upload to LWS via SSH
         uses: appleboy/scp-action@v0.1.7
