@@ -485,6 +485,14 @@ const MODES_PAIEMENT = ['Espèces','Virement bancaire','Chèque','Mobile Money (
         <div class="py-8">
             <form @submit.prevent="submit" class="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
 
+                <!-- ── Bandeau erreurs global ────────────────────────────── -->
+                <div v-if="form.hasErrors" class="rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-800">
+                    <p class="font-semibold mb-1">Le formulaire contient des erreurs :</p>
+                    <ul class="list-disc list-inside space-y-0.5">
+                        <li v-for="(msg, field) in form.errors" :key="field">{{ msg }}</li>
+                    </ul>
+                </div>
+
                 <!-- ── En-tête commun ────────────────────────────────────── -->
                 <div class="rounded-xl bg-white p-6 shadow-sm border border-gray-100 space-y-4">
                     <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

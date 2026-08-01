@@ -141,8 +141,14 @@ class DocumentController extends Controller
             return $typeDefaults[$type];
         }
 
-        // 3. Défaut société
-        return $company->default_template;
+        // 3. Défaut société (filtré par le forfait)
+        $companyDefault = $company->default_template;
+        if ($companyDefault && in_array($companyDefault, $allowed, true)) {
+            return $companyDefault;
+        }
+
+        // 4. Premier template autorisé
+        return $allowed[0] ?? null;
     }
 
     public function store(Request $request): RedirectResponse
