@@ -22,16 +22,15 @@
     right: -13mm;
     height: 36mm;
     background: #ffffff;
-    border-bottom: 3px solid {{ $primaryColor }};
   }
   #hdr-inner {
     height: 36mm;
-    /* table layout handled by real <table> inside */
   }
   #hdr-logo-cell {
     width: 52%;
     padding: 6mm 4mm 5mm 13mm;
     vertical-align: middle;
+    border-bottom: 3px solid {{ $primaryColor }};
   }
   #hdr-doc-cell {
     width: 48%;
@@ -39,6 +38,7 @@
     padding: 5mm 13mm 5mm 6mm;
     vertical-align: middle;
     text-align: right;
+    border-bottom: 3px solid {{ $primaryColor }};
   }
 
   /* ── PIED DE PAGE FIXE ───────────────────────────────────── */
