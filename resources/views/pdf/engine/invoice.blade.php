@@ -35,7 +35,7 @@
   #hdr-doc-cell {
     width: 48%;
     background: {{ $primaryColor }};
-    padding: 5mm 13mm 5mm 6mm;
+    padding: 5mm 15mm 5mm 6mm;
     vertical-align: middle;
     text-align: right;
     border-bottom: 3px solid {{ $primaryColor }};
@@ -465,23 +465,6 @@
 {{-- Moyens de paiement --}}
 @include('pdf.engine.blocks._payment-info', ['company' => $company, 'document' => $document, 'primaryColor' => $primaryColor])
 
-{{-- ── MENTIONS LÉGALES ─────────────────────────────────── --}}
-@php
-  $conditions = $document->terms ?? $company->default_terms ?? null;
-  $isInvoice  = in_array($document->type ?? '', ['invoice','simple_invoice','proforma','deposit_invoice','export_invoice','tax_exempt_invoice','rectification_invoice','balance_invoice']);
-@endphp
-
-<div style="border-top:1px solid #e5e7eb;padding-top:8px;margin-top:14px;">
-  @if($isInvoice)
-  <div style="font-size:6.5px;color:#9ca3af;line-height:1.8;margin-bottom:4px;">
-    En cas de retard de paiement, des pénalités au taux légal en vigueur seront appliquées de plein droit, ainsi qu'une indemnité forfaitaire pour frais de recouvrement de 40 €/40 000 FCFA. Escompte pour règlement anticipé : néant. Tout litige est soumis à la juridiction compétente du ressort du siège social de l'émetteur.
-  </div>
-  @endif
-  @if(!empty($conditions))
-  <div style="font-size:6.5px;color:#9ca3af;line-height:1.7;">{!! nl2br(e($conditions)) !!}</div>
-  @endif
-</div>
-
 {{-- ── SIGNATURES ────────────────────────────────────────── --}}
 @php $labels = $signatureLabels ?? ['Émetteur', 'Destinataire']; @endphp
 <div style="margin-top:30px;page-break-inside:avoid;">
@@ -492,7 +475,7 @@
         <div style="border:1px solid #d1d5db;border-radius:5px;padding:16px 18px 14px;background:#fafafa;">
           <div style="font-size:9.5px;font-weight:bold;color:#1a2332;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">{{ $label }}</div>
           <div style="font-size:7.5px;color:#9ca3af;margin-bottom:14px;">Lu et approuvé &nbsp;·&nbsp; Date : _____________________</div>
-          <div style="height:160px;"></div>
+          <div style="height:200px;"></div>
           <div style="border-top:1px solid #9ca3af;padding-top:6px;">
             <div style="font-size:7px;color:#9ca3af;">Signature et cachet</div>
           </div>
@@ -501,6 +484,22 @@
       @endforeach
     </tr>
   </table>
+</div>
+
+{{-- ── MENTIONS LÉGALES (après signatures) ─────────────── --}}
+@php
+  $conditions = $document->terms ?? $company->default_terms ?? null;
+  $isInvoice  = in_array($document->type ?? '', ['invoice','simple_invoice','proforma','deposit_invoice','export_invoice','tax_exempt_invoice','rectification_invoice','balance_invoice']);
+@endphp
+<div style="border-top:1px solid #e5e7eb;padding-top:7px;margin-top:18px;">
+  @if($isInvoice)
+  <div style="font-size:6.5px;color:#b0b7c3;line-height:1.8;">
+    En cas de retard de paiement, des pénalités au taux légal en vigueur seront appliquées de plein droit, ainsi qu'une indemnité forfaitaire pour frais de recouvrement de 40 €/40 000 FCFA. Escompte pour règlement anticipé : néant. Tout litige est soumis à la juridiction compétente du ressort du siège social de l'émetteur.
+  </div>
+  @endif
+  @if(!empty($conditions))
+  <div style="font-size:6.5px;color:#b0b7c3;line-height:1.7;margin-top:3px;">{!! nl2br(e($conditions)) !!}</div>
+  @endif
 </div>
 
 </body>
