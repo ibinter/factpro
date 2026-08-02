@@ -462,29 +462,13 @@
 {{-- Moyens de paiement --}}
 @include('pdf.engine.blocks._payment-info', ['company' => $company, 'document' => $document, 'primaryColor' => $primaryColor])
 
-{{-- ── SIGNATURE COMPACTE ────────────────────────────────── --}}
-@php $labels = $signatureLabels ?? ['Émetteur', 'Destinataire']; @endphp
-<table style="width:100%;border-collapse:collapse;margin-top:14px;margin-bottom:6px;">
-  <tr>
-    @foreach($labels as $label)
-    <td style="width:{{ round(100/count($labels)) }}%;vertical-align:top;padding:0 6px;text-align:center;">
-      <div style="border-top:2px solid {{ $primaryColor }};padding-top:4px;">
-        <div style="font-size:7.5px;font-weight:bold;color:#1a2332;text-transform:uppercase;letter-spacing:0.5px;">{{ $label }}</div>
-        <div style="font-size:7px;color:#9ca3af;margin-top:1px;">Lu et approuvé · Date : ___________</div>
-        <div style="height:22px;"></div>
-      </div>
-    </td>
-    @endforeach
-  </tr>
-</table>
-
-{{-- ── MENTIONS LÉGALES CONDENSÉES ─────────────────────── --}}
+{{-- ── MENTIONS LÉGALES ─────────────────────────────────── --}}
 @php
   $conditions = $document->terms ?? $company->default_terms ?? null;
   $isInvoice  = in_array($document->type ?? '', ['invoice','simple_invoice','proforma','deposit_invoice','export_invoice','tax_exempt_invoice','rectification_invoice','balance_invoice']);
 @endphp
 
-<div style="border-top:1px solid #e5e7eb;padding-top:8px;margin-top:6px;">
+<div style="border-top:1px solid #e5e7eb;padding-top:8px;margin-top:14px;">
   @if($isInvoice)
   <div style="font-size:6.5px;color:#9ca3af;line-height:1.8;margin-bottom:4px;">
     En cas de retard de paiement, des pénalités au taux légal en vigueur seront appliquées de plein droit, ainsi qu'une indemnité forfaitaire pour frais de recouvrement de 40 €/40 000 FCFA. Escompte pour règlement anticipé : néant. Tout litige est soumis à la juridiction compétente du ressort du siège social de l'émetteur.
@@ -496,6 +480,27 @@
   @if(!empty($company->invoice_footer))
   <div style="font-size:6.5px;color:#9ca3af;line-height:1.7;margin-top:3px;">{!! nl2br(e($company->invoice_footer)) !!}</div>
   @endif
+</div>
+
+{{-- ── SIGNATURES ────────────────────────────────────────── --}}
+@php $labels = $signatureLabels ?? ['Émetteur', 'Destinataire']; @endphp
+<div style="margin-top:50px;page-break-inside:avoid;">
+  <table style="width:100%;border-collapse:collapse;">
+    <tr>
+      @foreach($labels as $label)
+      <td style="width:{{ round(100/count($labels)) }}%;vertical-align:top;padding:0 16px;text-align:center;">
+        <div style="border:1px solid #d1d5db;border-radius:5px;padding:16px 18px 12px;background:#fafafa;">
+          <div style="font-size:9.5px;font-weight:bold;color:#1a2332;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">{{ $label }}</div>
+          <div style="font-size:7.5px;color:#9ca3af;margin-bottom:16px;">Lu et approuvé &nbsp;·&nbsp; Date : _____________________</div>
+          <div style="height:100px;"></div>
+          <div style="border-top:1px solid #9ca3af;padding-top:6px;">
+            <div style="font-size:7px;color:#9ca3af;">Signature et cachet</div>
+          </div>
+        </div>
+      </td>
+      @endforeach
+    </tr>
+  </table>
 </div>
 
 </body>
