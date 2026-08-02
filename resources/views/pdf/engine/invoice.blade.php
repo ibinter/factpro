@@ -202,6 +202,9 @@
         @endphp
         @if(count($ftrIds)) · {{ implode(' · ', $ftrIds) }}
 @endif
+        @if(!empty($company->invoice_footer))
+          &nbsp;·&nbsp; <em>{{ $company->invoice_footer }}</em>
+        @endif
       </td>
       <td style="font-size:6.5px;color:#9ca3af;text-align:right;vertical-align:top;white-space:nowrap;">
         Document certifié · IBIG FactPro<br>
@@ -477,22 +480,19 @@
   @if(!empty($conditions))
   <div style="font-size:6.5px;color:#9ca3af;line-height:1.7;">{!! nl2br(e($conditions)) !!}</div>
   @endif
-  @if(!empty($company->invoice_footer))
-  <div style="font-size:6.5px;color:#9ca3af;line-height:1.7;margin-top:3px;">{!! nl2br(e($company->invoice_footer)) !!}</div>
-  @endif
 </div>
 
 {{-- ── SIGNATURES ────────────────────────────────────────── --}}
 @php $labels = $signatureLabels ?? ['Émetteur', 'Destinataire']; @endphp
-<div style="margin-top:50px;page-break-inside:avoid;">
+<div style="margin-top:30px;page-break-inside:avoid;">
   <table style="width:100%;border-collapse:collapse;">
     <tr>
       @foreach($labels as $label)
-      <td style="width:{{ round(100/count($labels)) }}%;vertical-align:top;padding:0 16px;text-align:center;">
-        <div style="border:1px solid #d1d5db;border-radius:5px;padding:16px 18px 12px;background:#fafafa;">
+      <td style="width:{{ round(100/count($labels)) }}%;vertical-align:top;padding:0 14px;text-align:center;">
+        <div style="border:1px solid #d1d5db;border-radius:5px;padding:16px 18px 14px;background:#fafafa;">
           <div style="font-size:9.5px;font-weight:bold;color:#1a2332;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">{{ $label }}</div>
-          <div style="font-size:7.5px;color:#9ca3af;margin-bottom:16px;">Lu et approuvé &nbsp;·&nbsp; Date : _____________________</div>
-          <div style="height:100px;"></div>
+          <div style="font-size:7.5px;color:#9ca3af;margin-bottom:14px;">Lu et approuvé &nbsp;·&nbsp; Date : _____________________</div>
+          <div style="height:160px;"></div>
           <div style="border-top:1px solid #9ca3af;padding-top:6px;">
             <div style="font-size:7px;color:#9ca3af;">Signature et cachet</div>
           </div>
