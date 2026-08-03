@@ -65,15 +65,17 @@ it('refuse à un simple membre d\'inviter (403)', function () {
     expect(TeamInvitation::count())->toBe(0);
 });
 
-it('applique la limite de sièges du forfait PRO (3 sièges)', function () {
+it('applique la limite de sièges du forfait PRO (5 sièges)', function () {
     Mail::fake();
-    $owner = createUserWithCompanyAndTrial(); // pro = 3
+    $owner = createUserWithCompanyAndTrial(); // pro = 5
     $company = $owner->currentCompany;
-    attachTeamMember($company, 'member'); // 2e siège
-    attachTeamMember($company, 'cashier'); // 3e siège → plein
+    attachTeamMember($company, 'member');  // 2e siège
+    attachTeamMember($company, 'cashier'); // 3e siège
+    attachTeamMember($company, 'member');  // 4e siège
+    attachTeamMember($company, 'member');  // 5e siège → plein
 
     $response = $this->actingAs($owner)->post(route('team.invite'), [
-        'email' => 'quatrieme@example.com',
+        'email' => 'sixieme@example.com',
         'role' => 'member',
     ]);
 

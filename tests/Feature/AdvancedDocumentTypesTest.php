@@ -22,7 +22,7 @@ it('creates a quittance document', function () {
 
     $response->assertRedirect(route('documents.show', $document));
     expect($document->type)->toBe('quittance')
-        ->and($document->type_label)->toBe('Quittance');
+        ->and($document->type_label)->toBe('Quittance de Loyer');
 });
 
 it('creates an rma document', function () {

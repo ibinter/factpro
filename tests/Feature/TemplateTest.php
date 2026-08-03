@@ -36,7 +36,7 @@ it('persists a valid template_key when storing a document', function () {
         'type' => 'invoice',
         'issue_date' => now()->toDateString(),
         'currency' => 'XOF',
-        'template_key' => 'luxury-01',
+        'template_key' => 'corporate-classic',
         'lines' => [
             ['description' => 'Prestation', 'quantity' => 1, 'unit_price' => 10000, 'tax_rate' => 18],
         ],
@@ -45,18 +45,18 @@ it('persists a valid template_key when storing a document', function () {
     $document = Document::where('company_id', $user->current_company_id)->firstOrFail();
 
     $response->assertRedirect(route('documents.show', $document));
-    expect($document->template_key)->toBe('luxury-01');
+    expect($document->template_key)->toBe('corporate-classic');
 });
 
 it('rejects a template_key beyond the starter plan limit with a validation error', function () {
     $user = createUserWithStarterLicense(); // starter → 5 premiers templates seulement
 
-    // africa-01 est le 11e modèle du registre : hors forfait starter
+    // finance-classic est le 11e modèle du registre : hors forfait starter (limite = 5)
     $response = $this->actingAs($user)->post('/documents', [
         'type' => 'invoice',
         'issue_date' => now()->toDateString(),
         'currency' => 'XOF',
-        'template_key' => 'africa-01',
+        'template_key' => 'finance-classic',
         'lines' => [
             ['description' => 'Prestation', 'quantity' => 1, 'unit_price' => 10000, 'tax_rate' => 18],
         ],
@@ -65,12 +65,12 @@ it('rejects a template_key beyond the starter plan limit with a validation error
     $response->assertSessionHasErrors('template_key');
     expect(Document::where('company_id', $user->current_company_id)->count())->toBe(0);
 
-    // Le 5e modèle du registre (luxury-01) reste, lui, autorisé pour starter
+    // corporate-slate est le 5e modèle du registre : autorisé pour starter
     $ok = $this->actingAs($user)->post('/documents', [
         'type' => 'invoice',
         'issue_date' => now()->toDateString(),
         'currency' => 'XOF',
-        'template_key' => 'luxury-01',
+        'template_key' => 'corporate-slate',
         'lines' => [
             ['description' => 'Prestation', 'quantity' => 1, 'unit_price' => 10000, 'tax_rate' => 18],
         ],

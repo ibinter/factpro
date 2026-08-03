@@ -276,10 +276,33 @@ class LicenseService
         });
     }
 
+    /**
+     * Licence applicable dans le contexte courant d'un utilisateur.
+     * Un membre d'équipe (non propriétaire) bénéficie de la licence du propriétaire
+     * de sa société courante — il n'a pas besoin de son propre abonnement.
+     */
+    public function currentForContext(User $user): ?License
+    {
+        $own = $this->currentFor($user);
+        if ($own) {
+            return $own;
+        }
+
+        $company = $user->currentCompany;
+        if ($company && $company->owner_id && $company->owner_id !== $user->id) {
+            $owner = $company->owner;
+            if ($owner) {
+                return $this->currentFor($owner);
+            }
+        }
+
+        return null;
+    }
+
     /** L'utilisateur a-t-il une licence utilisable (essai ou payante) ? */
     public function isActive(User $user): bool
     {
-        return (bool) $this->currentFor($user)?->isUsable();
+        return (bool) $this->currentForContext($user)?->isUsable();
     }
 
     /** Le filigrane essai doit-il être appliqué aux documents ? */
@@ -298,7 +321,7 @@ class LicenseService
     /** Vérifie une limite du plan (null = illimité). Retourne true si la limite est atteinte. */
     public function limitReached(User $user, string $key, int $currentCount): bool
     {
-        $license = $this->currentFor($user);
+        $license = $this->currentForContext($user);
         if (! $license) {
             return true;
         }

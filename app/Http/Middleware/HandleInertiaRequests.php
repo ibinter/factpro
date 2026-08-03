@@ -40,7 +40,7 @@ class HandleInertiaRequests extends Middleware
         $rates = null;
 
         if ($user) {
-            $current = app(LicenseService::class)->currentFor($user);
+            $current = app(LicenseService::class)->currentForContext($user);
             if ($current) {
                 $license = [
                     'plan' => $current->plan?->name,
