@@ -459,7 +459,7 @@ const howSteps = [
             "url": "https://factpro.ibigsoft.com",
             "author": { "@type": "Organization", "name": "IBIG Soft SARL", "address": { "@type": "PostalAddress", "addressLocality": "Abidjan", "addressCountry": "CI" } },
             "offers": { "@type": "Offer", "price": "0", "priceCurrency": "XOF", "description": "Essai gratuit 7 jours" },
-            "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "reviewCount": "487" }
+            "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "487" }
         }
         </script>
     </Head>
@@ -552,7 +552,7 @@ const howSteps = [
                             </div>
                             <div class="text-sm">
                                 <span class="font-bold text-white">{{ lang === 'fr' ? '120+ clients actifs' : '120+ active clients' }}</span>
-                                <span class="ml-2" style="color:#F0C040">★★★★★ 4.9</span>
+                                <span class="ml-2" style="color:#F0C040">★★★★★ 4.8</span>
                             </div>
                         </div>
 

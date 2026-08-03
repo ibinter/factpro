@@ -119,7 +119,7 @@ class ContractController extends Controller
     public function uploadVersion(Request $request, CommercialContract $contract): RedirectResponse
     {
         $request->validate([
-            'file'         => 'required|file|max:51200', // 50 MB
+            'file'         => 'required|file|mimes:pdf,doc,docx,odt|max:51200', // 50 MB
             'change_notes' => 'nullable|string|max:1000',
         ]);
 

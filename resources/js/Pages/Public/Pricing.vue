@@ -96,24 +96,24 @@ const enrichedFaqs = [
     { q: 'Quels moyens de paiement acceptez-vous ?',
       a: 'Wave, Orange Money, MTN MoMo, Moov, CinetPay, Stripe (carte internationale), virement bancaire, et plus encore.' },
     { q: 'Proposez-vous des remises annuelles ?',
-      a: 'Oui ! Payez annuellement et économisez 2 mois (≈ 17 % de réduction). Contactez-nous pour les tarifs entreprise sur mesure.' },
+      a: 'Oui ! Payez annuellement et bénéficiez de 20 % de réduction, soit environ 2 mois offerts. Contactez-nous pour les tarifs entreprise sur mesure.' },
 ];
 const openEnrichedFaq = ref(null);
 const toggleEnrichedFaq = (i) => (openEnrichedFaq.value = openEnrichedFaq.value === i ? null : i);
 
 /* ── Données statiques comparateur enrichi ── */
-const staticPlans = ['Gratuit', 'Starter', 'Pro', 'Business'];
+const staticPlans = ['Starter', 'Pro', 'Business', 'Enterprise'];
 const staticRows = [
-    { label: 'Factures / mois',    values: ['5', 'Illimité', 'Illimité', 'Illimité'] },
-    { label: 'Clients',            values: ['10', '200', 'Illimité', 'Illimité'] },
-    { label: 'Utilisateurs',       values: ['1', '2', '5', '20'] },
-    { label: 'Templates PDF',      values: ['3', '10', '30', '100+'] },
+    { label: 'Documents / mois',   values: ['50', '500', 'Illimité', 'Illimité'] },
+    { label: 'Clients',            values: ['25', 'Illimité', 'Illimité', 'Illimité'] },
+    { label: 'Utilisateurs',       values: ['1', '5', 'Illimité', 'Illimité'] },
+    { label: 'Templates PDF',      values: ['5', '30', 'Illimité', 'Illimité'] },
     { label: 'Devis / Proforma',   values: ['✅', '✅', '✅', '✅'] },
-    { label: 'Module stocks',      values: ['❌', '✅', '✅', '✅'] },
-    { label: 'Multi-sociétés',     values: ['❌', '❌', '✅', '✅'] },
+    { label: 'Module stocks',      values: ['✅', '✅', '✅', '✅'] },
+    { label: 'Multi-sociétés',     values: ['❌', '❌', '3 sociétés', 'Illimité'] },
     { label: 'API REST',           values: ['❌', '❌', '✅', '✅'] },
     { label: 'White label',        values: ['❌', '❌', '❌', '✅'] },
-    { label: 'Support prioritaire',values: ['❌', 'Email', 'Chat', 'Dédié'] },
+    { label: 'Support',            values: ['Email', 'Email', 'Chat', 'Dédié'] },
     { label: 'SARA IA',            values: ['Limité', '✅', '✅', '✅'] },
 ];
 </script>

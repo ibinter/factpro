@@ -59,7 +59,7 @@ class GedController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'file'          => 'required|file|max:102400', // 100 MB
+            'file'          => 'required|file|mimes:pdf,jpg,jpeg,png,webp,gif,doc,docx,xls,xlsx,ppt,pptx,csv,txt,zip,rar,7z|max:102400', // 100 MB
             'title'         => 'required|string|max:255',
             'category'      => 'nullable|string|max:50',
             'tags'          => 'nullable|array',
