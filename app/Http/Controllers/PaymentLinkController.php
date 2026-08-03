@@ -207,7 +207,7 @@ class PaymentLinkController extends Controller
             'description'       => 'Paiement ' . ($document->number ?? $document->id),
             'return_url'        => route('pay.success', ['token' => $document->public_token, 'gateway' => 'cinetpay', 'transaction_id' => $transactionId]),
             'cancel_url'        => route('pay.cancel', ['token' => $document->public_token]),
-            'notify_url'        => route('webhooks.cinetpay'),
+            'notify_url'        => route('webhooks.cinetpay.document'),
             'channels'          => 'ALL',
             'lang'              => 'fr',
         ]);

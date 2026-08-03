@@ -9,6 +9,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ProcessImportJob implements ShouldQueue
 {
@@ -28,5 +30,15 @@ class ProcessImportJob implements ShouldQueue
         } else {
             $service->importProducts($this->company, $this->rows, $this->columnMap);
         }
+    }
+
+    public function failed(Throwable $exception): void
+    {
+        Log::error('[ProcessImportJob] Échec de l\'import', [
+            'company_id' => $this->company->id,
+            'type'       => $this->type,
+            'rows'       => count($this->rows),
+            'error'      => $exception->getMessage(),
+        ]);
     }
 }

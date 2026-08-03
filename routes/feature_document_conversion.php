@@ -3,7 +3,7 @@
 use App\Http\Controllers\DocumentConversionController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::post('/documents/{document}/convert', [DocumentConversionController::class, 'convert'])
         ->name('documents.convert');
 

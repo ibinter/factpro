@@ -998,7 +998,7 @@ const howSteps = [
                         <div class="text-xs text-gray-500">{{ lang === 'fr' ? 'Niveaux de commission' : 'Commission levels' }}</div>
                     </div>
                     <div class="text-center">
-                        <div class="text-2xl font-extrabold" style="color:#0062CC">50%</div>
+                        <div class="text-2xl font-extrabold" style="color:#0062CC">20%</div>
                         <div class="text-xs text-gray-500">{{ lang === 'fr' ? 'Commission max N1' : 'Max N1 commission' }}</div>
                     </div>
                     <div class="text-center">

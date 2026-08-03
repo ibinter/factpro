@@ -81,8 +81,8 @@ Route::get('/pay/{token}/success', [PaymentLinkController::class, 'callbackSucce
     ->name('pay.success');
 Route::get('/pay/{token}/cancel', [PaymentLinkController::class, 'callbackCancel'])
     ->name('pay.cancel');
-Route::post('/webhooks/cinetpay', [PaymentLinkController::class, 'webhookCinetpay'])
-    ->name('webhooks.cinetpay');
+Route::post('/webhooks/cinetpay/document', [PaymentLinkController::class, 'webhookCinetpay'])
+    ->name('webhooks.cinetpay.document');
 
 // ── Vérification publique de documents (Phase 16 — §verify.factpro.ibigsoft.com) ──
 // Page Inertia multi-langue (FR/EN/AR/PT/ES) — sans authentification.

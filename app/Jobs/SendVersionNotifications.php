@@ -11,6 +11,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class SendVersionNotifications implements ShouldQueue
 {
@@ -49,5 +51,14 @@ class SendVersionNotifications implements ShouldQueue
 
         // Mise à jour du timestamp d'envoi
         $this->version->update(['notification_sent_at' => now()]);
+    }
+
+    public function failed(Throwable $exception): void
+    {
+        Log::error('[SendVersionNotifications] Échec des notifications de version', [
+            'version_id' => $this->version->id,
+            'version'    => $this->version->version,
+            'error'      => $exception->getMessage(),
+        ]);
     }
 }

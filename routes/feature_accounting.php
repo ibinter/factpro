@@ -3,7 +3,7 @@
 use App\Http\Controllers\DoubleEntryController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::prefix('comptabilite')->name('accounting.')->group(function () {
         Route::get('comptes',            [DoubleEntryController::class, 'accounts'])->name('accounts');
         Route::post('comptes',           [DoubleEntryController::class, 'createAccount'])->name('accounts.store');

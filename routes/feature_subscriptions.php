@@ -3,7 +3,7 @@
 use App\Http\Controllers\CustomerSubscriptionController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::resource('abonnements', CustomerSubscriptionController::class)
         ->names('subscriptions');
 

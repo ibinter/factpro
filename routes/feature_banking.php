@@ -3,7 +3,7 @@
 use App\Http\Controllers\BankReconciliationController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::get('/rapprochement-bancaire', [BankReconciliationController::class, 'index'])->name('banking.index');
     Route::post('/rapprochement-bancaire/comptes', [BankReconciliationController::class, 'createAccount'])->name('banking.account.create');
     Route::get('/rapprochement-bancaire/{account}', [BankReconciliationController::class, 'show'])->name('banking.show');

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 class DispatchWebhookJob implements ShouldQueue
 {
@@ -28,5 +29,13 @@ class DispatchWebhookJob implements ShouldQueue
     public function handle(OutgoingWebhookService $service): void
     {
         $service->sendDelivery($this->delivery);
+    }
+
+    public function failed(Throwable $exception): void
+    {
+        $this->delivery->update([
+            'status'       => 'failed',
+            'response_body' => $exception->getMessage(),
+        ]);
     }
 }

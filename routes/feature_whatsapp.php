@@ -7,7 +7,7 @@ Route::post('/webhooks/whatsapp', [App\Http\Controllers\WhatsAppController::clas
 Route::get('/webhooks/whatsapp', [App\Http\Controllers\WhatsAppController::class, 'webhook'])->name('webhooks.whatsapp.verify');
 
 // Routes privées
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::post('/whatsapp/envoyer', [App\Http\Controllers\WhatsAppController::class, 'sendMessage'])->name('whatsapp.send');
     Route::post('/whatsapp/tester', [App\Http\Controllers\WhatsAppController::class, 'test'])->name('whatsapp.test');
     Route::get('/whatsapp/historique', [App\Http\Controllers\WhatsAppController::class, 'history'])->name('whatsapp.history');

@@ -4,7 +4,7 @@ use App\Http\Controllers\WarehouseController;
 use App\Http\Controllers\WarehouseTransferController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'license'])->group(function () {
     Route::resource('entrepots', WarehouseController::class)->names('warehouses');
     Route::post('entrepots/{warehouse}/ajuster-stock', [WarehouseController::class, 'adjustStock'])->name('warehouses.adjust-stock');
 
