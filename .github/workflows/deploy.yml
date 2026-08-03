@@ -91,10 +91,6 @@ jobs:
             php artisan storage:link
             php artisan queue:restart
 
-            # Vider OPcache / views compilées
-            php artisan view:clear
-            php artisan config:clear
-
             # Redémarrer PHP-FPM pour vider l'OPcache en mémoire
             systemctl restart php8.3-fpm || service php8.3-fpm restart || true
 
