@@ -92,7 +92,7 @@ const enrichedFaqs = [
     { q: 'Y a-t-il des frais cachés ?',
       a: 'Non. Le prix affiché inclut tout — hébergement, sauvegardes automatiques, mises à jour et support standard.' },
     { q: "Que se passe-t-il à la fin de l'essai gratuit ?",
-      a: 'Votre compte passe automatiquement en mode lecture seule. Vos données sont conservées pendant 90 jours, le temps de choisir un forfait.' },
+      a: 'Votre compte passe automatiquement en mode lecture seule. Vos données sont conservées le temps de choisir un forfait — aucune perte de données, aucune urgence.' },
     { q: 'Quels moyens de paiement acceptez-vous ?',
       a: 'Wave, Orange Money, MTN MoMo, Moov, CinetPay, Stripe (carte internationale), virement bancaire, et plus encore.' },
     { q: 'Proposez-vous des remises annuelles ?',
