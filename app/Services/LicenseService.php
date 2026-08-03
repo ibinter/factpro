@@ -31,10 +31,20 @@ class LicenseService
     /** Licence courante (la plus favorable) d'un utilisateur. */
     public function currentFor(User $user): ?License
     {
-        return $user->licenses()
-            ->whereIn('status', ['trial', 'provisional', 'active', 'grace_period'])
-            ->orderByDesc('ends_at')
-            ->first();
+        return cache()->remember(
+            "license_current_user_{$user->id}",
+            now()->addMinutes(5),
+            fn () => $user->licenses()
+                ->whereIn('status', ['trial', 'provisional', 'active', 'grace_period'])
+                ->orderByDesc('ends_at')
+                ->first()
+        );
+    }
+
+    /** Invalide le cache de licence d'un utilisateur (après paiement, expiration...). */
+    public function forgetCache(User $user): void
+    {
+        cache()->forget("license_current_user_{$user->id}");
     }
 
     /** Démarre l'essai gratuit 7 jours (à l'inscription). Idempotent. */
@@ -68,6 +78,8 @@ class LicenseService
         // E-mail #5 : "Essai gratuit démarré" (§20.1 cahier des charges)
         $user->notify(new TrialStartedNotification($license));
 
+        $this->forgetCache($user);
+
         return $license;
     }
 
@@ -77,7 +89,7 @@ class LicenseService
      */
     public function activateFromOrder(Order $order, PaymentTransaction $transaction, ?int $adminId = null): License
     {
-        return DB::transaction(function () use ($order, $transaction, $adminId) {
+        $license = DB::transaction(function () use ($order, $transaction, $adminId) {
             // Idempotence : transaction déjà consommée → renvoyer la licence existante
             $existing = License::where('transaction_id', $transaction->id)->first();
             if ($existing) {
@@ -146,6 +158,10 @@ class LicenseService
 
             return $license;
         });
+
+        $this->forgetCache($order->user);
+
+        return $license;
     }
 
     /**
