@@ -104,10 +104,14 @@ class HandleInertiaRequests extends Middleware
                 'ga4_id'   => config('factpro.analytics.ga4_id', ''),
                 'pixel_id' => config('factpro.analytics.pixel_id', ''),
             ],
-            'announcements' => \App\Models\Announcement::visible()->orderByDesc('created_at')->get()->map(fn($a) => [
-                'id' => $a->id, 'title' => $a->title, 'message' => $a->message,
-                'type' => $a->type, 'link_text' => $a->link_text, 'link_url' => $a->link_url,
-            ]),
+            'announcements' => fn () => rescue(
+                fn () => \App\Models\Announcement::visible()->orderByDesc('created_at')->get()->map(fn($a) => [
+                    'id' => $a->id, 'title' => $a->title, 'message' => $a->message,
+                    'type' => $a->type, 'link_text' => $a->link_text, 'link_url' => $a->link_url,
+                ]),
+                [],
+                report: false,
+            ),
             'app_version' => fn () => \App\Models\AppVersion::published()->latest('published_at')->value('version') ?? '14.0',
             'new_version' => fn () => auth()->check()
                 ? \App\Models\AppVersion::published()

@@ -8,15 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('companies', function (Blueprint $table) {
-            $table->json('payment_methods')->nullable()->after('invoice_footer');
-        });
+        // Duplicate of 2026_07_28_000001 — column already added; kept for migration history integrity
+        if (!Schema::hasColumn('companies', 'payment_methods')) {
+            Schema::table('companies', function (Blueprint $table) {
+                $table->json('payment_methods')->nullable()->after('invoice_footer');
+            });
+        }
     }
 
     public function down(): void
     {
-        Schema::table('companies', function (Blueprint $table) {
-            $table->dropColumn('payment_methods');
-        });
+        // No-op: the paired migration 2026_07_28_000001 handles the rollback
     }
 };

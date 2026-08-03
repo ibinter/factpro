@@ -31,6 +31,7 @@ class RegistrationTest extends TestCase
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        // After registration, app redirects to onboarding (/welcome), not directly to dashboard
+        $response->assertRedirect(route('welcome', absolute: false));
     }
 }
