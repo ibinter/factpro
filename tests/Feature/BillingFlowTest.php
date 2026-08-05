@@ -11,7 +11,7 @@ beforeEach(function () {
     $this->user = createUserWithCompanyAndTrial();
 });
 
-it('creates a pending_payment order (10 000 XOF for pro monthly) and redirects to checkout', function () {
+it('creates a pending_payment order (12 900 XOF for pro monthly) and redirects to checkout', function () {
     $response = $this->actingAs($this->user)->post(route('billing.subscribe'), [
         'plan_code' => 'pro',
         'months' => 1,
@@ -23,7 +23,7 @@ it('creates a pending_payment order (10 000 XOF for pro monthly) and redirects t
     expect($order->status)->toBe('pending_payment')
         ->and($order->user_id)->toBe($this->user->id)
         ->and($order->duration_months)->toBe(1)
-        ->and((float) $order->total_amount)->toBe(10000.00)
+        ->and((float) $order->total_amount)->toBe(12900.00)
         ->and($order->currency)->toBe('XOF')
         ->and($order->expires_at->isFuture())->toBeTrue();
 
@@ -45,7 +45,8 @@ it('applies the annual discount: 12 months billed as 10', function () {
         'months' => 12,
     ]);
 
-    expect((float) Order::firstOrFail()->total_amount)->toBe(100000.00);
+    // pro = 12 900 XOF/mois ; 12 mois facturés 10 → 129 000 XOF.
+    expect((float) Order::firstOrFail()->total_amount)->toBe(129000.00);
 });
 
 it('stores a manual payment proof privately and moves the order to proof_submitted', function () {

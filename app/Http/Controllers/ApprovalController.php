@@ -15,7 +15,8 @@ use Inertia\Response;
 
 class ApprovalController extends Controller
 {
-    private const ALLOWED_PLANS = ['starter', 'pro', 'business', 'enterprise'];
+    // Circuit de validation multi-niveaux : fonctionnalité réservée aux plans BUSINESS+.
+    private const ALLOWED_PLANS = ['business', 'enterprise'];
 
     public function __construct(
         private ApprovalService $approvalService,

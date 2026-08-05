@@ -21,7 +21,8 @@ $payload = [
 it('creates the user, his company (owner pivot) and a 7-day pro trial license', function () use ($payload) {
     $response = $this->post('/register', $payload);
 
-    $response->assertRedirect(route('dashboard', absolute: false));
+    // Après inscription, l'utilisateur passe par le flux d'onboarding (pas directement le dashboard).
+    $response->assertRedirect(route('onboarding.welcome', absolute: false));
     $this->assertAuthenticated();
 
     $user = User::where('email', 'awa@example.com')->firstOrFail();
