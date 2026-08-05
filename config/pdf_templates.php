@@ -262,15 +262,6 @@ return [
     // ══════════════════════════════════════════════════════════════════════
     // ── AFRIQUE (10) ──────────────────────────────────────────────────────
     // ══════════════════════════════════════════════════════════════════════
-    'africa-kente' => [
-        'name'        => 'Africa Kente',
-        'family'      => 'Afrique',
-        'description' => 'Or kente et ambre — inspiré des tissus royaux d\'Afrique de l\'Ouest.',
-        'plan_min'    => 'starter',
-        'primary'     => '#B45309',
-        'secondary'   => '#92400E',
-        'accent'      => '#D97706',
-    ],
     'africa-baobab' => [
         'name'        => 'Africa Baobab',
         'family'      => 'Afrique',
@@ -1074,15 +1065,6 @@ return [
         'secondary'   => '#2E1065',
         'accent'      => '#A78BFA',
     ],
-    'digital-neon' => [
-        'name'        => 'Digital Neon',
-        'family'      => 'Digital',
-        'description' => 'Cyber nuit et fuchsia — marketing digital agressif et disruption.',
-        'plan_min'    => 'pro',
-        'primary'     => '#020617',
-        'secondary'   => '#000308',
-        'accent'      => '#F472B6',
-    ],
     'digital-sidebar' => [
         'name'        => 'Digital Sidebar',
         'family'      => 'Digital',
@@ -1171,6 +1153,49 @@ return [
         'primary'     => '#1C1917',
         'secondary'   => '#0C0A09',
         'accent'      => '#F59E0B',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Collection Centenniale — 4 modèles premium (clôture du registre)
+    |--------------------------------------------------------------------------
+    | africa-kente DOIT rester le dernier élément du tableau.
+    */
+    'corporate-diamond' => [
+        'name'        => 'Corporate Diamond',
+        'family'      => 'Corporate B2B',
+        'description' => 'Charbon profond et or diamant — grandes entreprises et cabinets de prestige.',
+        'plan_min'    => 'business',
+        'primary'     => '#1a1a1a',
+        'secondary'   => '#2b2b2b',
+        'accent'      => '#F0C040',
+    ],
+    'eco-nature' => [
+        'name'        => 'Eco Nature',
+        'family'      => 'Naturel & Bio',
+        'description' => 'Palette verte forêt et émeraude — filières bio, agro-écologie et éco-responsables.',
+        'plan_min'    => 'pro',
+        'primary'     => '#2D6A4F',
+        'secondary'   => '#1B4332',
+        'accent'      => '#40916C',
+    ],
+    'digital-neon' => [
+        'name'        => 'Digital Neon',
+        'family'      => 'Futuriste & Tech',
+        'description' => 'Fond nuit et cyan néon — startups tech, SaaS et studios digitaux.',
+        'plan_min'    => 'business',
+        'primary'     => '#0D0D1A',
+        'secondary'   => '#151528',
+        'accent'      => '#00F5FF',
+    ],
+    'africa-kente' => [
+        'name'        => 'Africa Kente',
+        'family'      => 'Afrique & Export',
+        'description' => 'Motifs kente or, terre et vert — négoce panafricain et maisons d\'export.',
+        'plan_min'    => 'pro',
+        'primary'     => '#8B5A2B',
+        'secondary'   => '#5C3A1E',
+        'accent'      => '#E0A82E',
     ],
 
 ];

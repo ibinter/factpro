@@ -1,8 +1,8 @@
-{{-- Collection Centenniale · Africa Kente · Terre + Or + Vert — motif kente tissé --}}
+{{-- Collection Centenniale · Eco Nature · Vert forêt #2D6A4F + Émeraude #40916C --}}
 @php
-    $primary   = '#8B5A2B';
-    $secondary = '#5C3A1E';
-    $accent    = '#E0A82E';
+    $primary   = '#2D6A4F';
+    $secondary = '#1B4332';
+    $accent    = '#40916C';
     $lines     = $document->lines ?? collect();
     $totalHT   = collect($lines)->sum(fn($l) => (float)($l->line_total ?? 0));
     $cur       = $document->currency ?? 'XOF';
@@ -14,56 +14,55 @@
 <meta charset="UTF-8">
 <title>{{ $document->type_label ?? 'Document' }} {{ $document->number ?? '' }}</title>
 <style>
-    @@page { margin: 40mm 13mm 22mm 13mm; }
+    @@page { margin: 40mm 13mm 20mm 13mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'DejaVu Sans', sans-serif; font-size: 9px; color: #3a2a1a; }
+    body { font-family: 'DejaVu Sans', sans-serif; font-size: 9px; color: #24352c; }
     #header { position: fixed; top: -40mm; left: -13mm; right: -13mm; height: 38mm;
-        background: {{ $primary }}; color: #fff; padding: 5mm 13mm; }
+        background: {{ $primary }}; color: #fff; padding: 6mm 13mm; }
     #header table { width: 100%; }
-    .co-name { font-size: 16px; font-weight: bold; color: {{ $accent }}; letter-spacing: .5px; }
-    .co-info { font-size: 7.5px; color: #f0e2cf; line-height: 1.6; margin-top: 1mm; }
-    .doc-type { font-size: 21px; font-weight: bold; color: {{ $accent }}; text-transform: uppercase; text-align: right; letter-spacing: 1px; }
-    .doc-num  { font-size: 8.5px; color: #ecdcc4; text-align: right; margin-top: 1mm; }
-    /* Bandeau kente tissé sous l'en-tête */
-    #kente-band { position: fixed; top: -2mm; left: -13mm; right: -13mm; height: 5mm; }
-    #kente-band svg { display: block; width: 100%; height: 5mm; }
-    #footer { position: fixed; bottom: -20mm; left: -13mm; right: -13mm; height: 18mm;
-        border-top: 3px solid {{ $accent }}; padding: 2mm 13mm 0; font-size: 7px; color: #8a7a68; }
+    .co-name { font-size: 16px; font-weight: bold; color: #fff; letter-spacing: .5px; }
+    .co-info { font-size: 7.5px; color: #d9ece2; line-height: 1.6; margin-top: 1mm; }
+    .doc-type { font-size: 21px; font-weight: bold; color: #fff; text-transform: uppercase; text-align: right; letter-spacing: 1px; }
+    .doc-num  { font-size: 8.5px; color: #cfe7da; text-align: right; margin-top: 1mm; }
+    #footer { position: fixed; bottom: -18mm; left: -13mm; right: -13mm; height: 16mm;
+        border-top: 2px solid {{ $accent }}; padding: 2mm 13mm 0; font-size: 7px; color: #7d8f85; }
     #footer table { width: 100%; }
     .ft-brand { color: {{ $primary }}; font-weight: bold; }
     #watermark { position: fixed; top: 62mm; left: 28mm; font-size: 52px; font-weight: bold;
-        color: rgba(224,168,46,.12); transform: rotate(-35deg); white-space: nowrap; }
-    .kente-rule { height: 4px; background: {{ $accent }}; margin: 2mm 0 4mm; }
+        color: rgba(45,106,79,.10); transform: rotate(-35deg); white-space: nowrap; }
+    .leaf-rule { height: 4px; background: {{ $accent }}; margin-bottom: 4mm; }
     .addr-table { width: 100%; margin-bottom: 4mm; }
-    .info-card { background: #f8f0e2; border-top: 3px solid {{ $accent }}; padding: 3mm 4mm; }
+    .info-card { background: #eef6f1; border-top: 2px solid {{ $accent }}; padding: 3mm 4mm; }
     .client-card { background: #fff; border-left: 3px solid {{ $primary }}; padding: 3mm 4mm; }
     .sect-label { font-size: 7px; font-weight: bold; text-transform: uppercase; color: {{ $primary }};
-        letter-spacing: .8px; border-bottom: 1px solid #e5d5bd; padding-bottom: 1mm; margin-bottom: 2mm; }
-    .client-name { font-size: 11px; font-weight: bold; color: {{ $secondary }}; margin-bottom: 1mm; }
-    .client-detail { font-size: 8px; color: #6a5a48; line-height: 1.6; }
-    .meta-label { color: #a08a6e; font-size: 8px; } .meta-value { font-weight: bold; font-size: 8.5px; color: {{ $secondary }}; }
+        letter-spacing: .8px; border-bottom: 1px solid #cfe3d7; padding-bottom: 1mm; margin-bottom: 2mm; }
+    .client-name { font-size: 11px; font-weight: bold; color: {{ $primary }}; margin-bottom: 1mm; }
+    .client-detail { font-size: 8px; color: #556; line-height: 1.6; }
+    .meta-label { color: #8aa397; font-size: 8px; } .meta-value { font-weight: bold; font-size: 8.5px; color: {{ $primary }}; }
     .lines-table { width: 100%; border-collapse: collapse; margin-bottom: 4mm; }
-    .lines-table thead tr { background: {{ $secondary }}; color: {{ $accent }}; }
+    .lines-table thead tr { background: {{ $primary }}; color: #fff; }
     .lines-table thead th { padding: 2.2mm 2mm; font-size: 7.5px; text-align: left; text-transform: uppercase; letter-spacing: .5px; }
     .lines-table thead th.r { text-align: right; }
-    .lines-table tbody tr.even { background: #faf3e8; }
-    .lines-table tbody td { padding: 2mm; font-size: 8px; border-bottom: 1px solid #ece0cc; vertical-align: top; }
+    .lines-table tbody tr.even { background: #f2f8f4; }
+    .lines-table tbody td { padding: 2mm; font-size: 8px; border-bottom: 1px solid #dcebe2; vertical-align: top; }
     .lines-table tbody td.r { text-align: right; }
     .totals-table { width: 100%; font-size: 8.5px; }
     .totals-table td { padding: 1mm 2mm; } .totals-table td:last-child { text-align: right; font-weight: bold; }
-    .row-total td { font-size: 12px; color: {{ $secondary }}; background: {{ $accent }};
+    .row-total td { font-size: 12px; color: #fff; background: {{ $primary }};
         border-top: 2px solid {{ $secondary }}; padding: 2mm; }
     .row-due td { color: #b00; font-size: 10px; }
     .bottom-row { display: table; width: 100%; margin-bottom: 4mm; }
     .bottom-qr { display: table-cell; width: 28mm; vertical-align: bottom; padding-right: 4mm; }
-    .bottom-qr img { width: 24mm; height: 24mm; } .qr-lbl { font-size: 6px; color: #a08a6e; text-align: center; margin-top: 1mm; }
+    .bottom-qr img { width: 24mm; height: 24mm; } .qr-lbl { font-size: 6px; color: #8aa397; text-align: center; margin-top: 1mm; }
     .bottom-totals { display: table-cell; vertical-align: top; }
-    .notes-box { font-size: 8px; color: #6a5a48; margin-bottom: 3mm; border-top: 1px solid #ece0cc; padding-top: 2mm; }
+    .notes-box { font-size: 8px; color: #556; margin-bottom: 3mm; border-top: 1px solid #dcebe2; padding-top: 2mm; }
     .notes-title { font-weight: bold; color: {{ $primary }}; margin-bottom: 1mm; }
+    .eco-badge { background: #eef6f1; border: 1px solid {{ $accent }}; color: {{ $primary }};
+        font-size: 7px; padding: 1.5mm 3mm; margin-bottom: 3mm; }
     .sig-row { display: table; width: 100%; margin-top: 6mm; }
     .sig-col { display: table-cell; width: 50%; padding: 0 4mm; }
-    .sig-line { border-bottom: 1px solid {{ $secondary }}; height: 8mm; margin-bottom: 1.5mm; }
-    .sig-meta { font-size: 7px; color: #6a5a48; line-height: 1.7; }
+    .sig-line { border-bottom: 1px solid {{ $primary }}; height: 8mm; margin-bottom: 1.5mm; }
+    .sig-meta { font-size: 7px; color: #556; line-height: 1.7; }
 </style>
 </head>
 <body>
@@ -87,27 +86,16 @@
     </tr></table>
 </div>
 
-{{-- Bandeau de motif kente tissé (triangles or / terre / vert) --}}
-<div id="kente-band">
-    <svg viewBox="0 0 300 10" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0" y="0" width="300" height="10" fill="{{ $secondary }}"/>
-        @for($x = 0; $x < 300; $x += 20)
-            <polygon points="{{ $x }},0 {{ $x + 10 }},10 {{ $x + 20 }},0" fill="{{ $accent }}"/>
-            <polygon points="{{ $x }},10 {{ $x + 10 }},0 {{ $x + 20 }},10" fill="#2E7D32"/>
-            <rect x="{{ $x + 9 }}" y="0" width="2" height="10" fill="{{ $primary }}"/>
-        @endfor
-    </svg>
-</div>
-
 @if($watermark ?? false)<div id="watermark">{{ $watermark }}</div>@endif
 
 <div id="footer"><table><tr>
-    <td>{{ $company->name ?? '' }} — motif kente</td>
+    <td>{{ $company->name ?? '' }}</td>
     <td style="text-align:center;">{{ $document->number ?? '' }}</td>
     <td style="text-align:right;"><span class="ft-brand">IBIG FactPro</span></td>
 </tr></table></div>
 
-<div class="kente-rule"></div>
+<div class="leaf-rule"></div>
+<div class="eco-badge">🌿 Document éco-responsable — merci de privilégier l'archivage numérique à l'impression.</div>
 
 <table class="addr-table"><tr>
     <td style="width:45%;vertical-align:top;padding-right:4mm;">
