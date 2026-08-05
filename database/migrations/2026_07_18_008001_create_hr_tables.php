@@ -45,7 +45,9 @@ return new class extends Migration
         Schema::create('payslips', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('contract_id')->constrained()->cascadeOnDelete();
+            // Le contrat de paie vit dans employee_contracts (modèle App\Models\Contract),
+            // à ne pas confondre avec la table `contracts` du module signature e-contrats.
+            $table->foreignId('contract_id')->constrained('employee_contracts')->cascadeOnDelete();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->tinyInteger('period_month');
             $table->smallInteger('period_year');
