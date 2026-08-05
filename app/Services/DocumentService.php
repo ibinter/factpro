@@ -118,6 +118,10 @@ class DocumentService
             $copy = $source->replicate([
                 'uuid', 'number', 'status', 'integrity_hash', 'finalized_at',
                 'sent_at', 'amount_paid',
+                // Jetons uniques : régénérés par le hook creating (sinon collision UNIQUE).
+                'public_token',
+                // La signature client du devis ne doit pas être héritée par la facture.
+                'signature_path', 'signed_by_name', 'signed_at', 'signature_ip',
             ]);
             $copy->type = $targetType;
             $copy->status = 'draft';
