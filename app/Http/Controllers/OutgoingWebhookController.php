@@ -98,7 +98,7 @@ class OutgoingWebhookController extends Controller
             'is_active' => true,
         ]);
 
-        return redirect()->route('webhooks.index')->with('success', 'Endpoint webhook créé.');
+        return redirect()->route('outgoing-webhooks.index')->with('success', 'Endpoint webhook créé.');
     }
 
     public function update(Request $request, WebhookEndpoint $endpoint): RedirectResponse
@@ -115,7 +115,7 @@ class OutgoingWebhookController extends Controller
 
         $endpoint->update($data);
 
-        return redirect()->route('webhooks.index')->with('success', 'Endpoint webhook mis à jour.');
+        return redirect()->route('outgoing-webhooks.index')->with('success', 'Endpoint webhook mis à jour.');
     }
 
     public function destroy(Request $request, WebhookEndpoint $endpoint): RedirectResponse
@@ -125,7 +125,7 @@ class OutgoingWebhookController extends Controller
 
         $endpoint->delete();
 
-        return redirect()->route('webhooks.index')->with('success', 'Endpoint webhook supprimé.');
+        return redirect()->route('outgoing-webhooks.index')->with('success', 'Endpoint webhook supprimé.');
     }
 
     public function test(Request $request, WebhookEndpoint $endpoint): RedirectResponse
@@ -141,6 +141,6 @@ class OutgoingWebhookController extends Controller
             'timestamp' => now()->toIso8601String(),
         ]);
 
-        return redirect()->route('webhooks.index')->with('success', 'Ping test envoyé.');
+        return redirect()->route('outgoing-webhooks.index')->with('success', 'Ping test envoyé.');
     }
 }

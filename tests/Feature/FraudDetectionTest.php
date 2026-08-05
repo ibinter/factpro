@@ -91,7 +91,8 @@ it('detects duplicate proof hash', function () {
 });
 
 it('detects amount mismatch above 5 percent', function () {
-    $order   = fraudOrder();  // total_amount = 10 000 XOF
+    // total_amount fixé à 10 000 XOF pour un écart déterministe (indépendant du tarif du plan).
+    $order   = fraudOrder(['amount' => 10000, 'total_amount' => 10000]);
     $service = app(FraudDetectionService::class);
 
     // Déclare 8 000 XOF alors qu'on attend 10 000 XOF → écart de 20 %
@@ -102,7 +103,8 @@ it('detects amount mismatch above 5 percent', function () {
 });
 
 it('does not flag amount mismatch within 5 percent tolerance', function () {
-    $order   = fraudOrder();  // total_amount = 10 000 XOF
+    // total_amount fixé à 10 000 XOF pour un écart déterministe (indépendant du tarif du plan).
+    $order   = fraudOrder(['amount' => 10000, 'total_amount' => 10000]);
     $service = app(FraudDetectionService::class);
 
     // Déclare 9 950 XOF → écart de 0,5 % < seuil
@@ -236,15 +238,19 @@ it('returns available manual methods filtered by amount range', function () {
 });
 
 it('manual payment method seed creates defaults', function () {
-    expect(ManualPaymentMethod::count())->toBe(0);
+    // Une migration peut pré-insérer des coordonnées IBIG (ex. Moov Money CI, active) :
+    // on raisonne en delta plutôt qu'en supposant une table vierge.
+    $baseline       = ManualPaymentMethod::count();
+    $baselineActive = ManualPaymentMethod::where('is_active', true)->count();
 
     $service = app(ManualPaymentMethodService::class);
     $service->seedDefaults();
 
-    expect(ManualPaymentMethod::count())->toBeGreaterThanOrEqual(10);
+    expect(ManualPaymentMethod::count())->toBeGreaterThanOrEqual($baseline + 10);
 
-    // Les méthodes créées par défaut sont inactives (le superadmin les active manuellement)
-    expect(ManualPaymentMethod::where('is_active', true)->count())->toBe(0);
+    // Les méthodes créées par seedDefaults sont inactives (le superadmin les active
+    // manuellement) : aucun actif supplémentaire par rapport à l'existant.
+    expect(ManualPaymentMethod::where('is_active', true)->count())->toBe($baselineActive);
 
     // Idempotent : un deuxième appel ne crée pas de doublons
     $countBefore = ManualPaymentMethod::count();

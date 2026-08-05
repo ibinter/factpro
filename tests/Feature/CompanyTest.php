@@ -120,7 +120,7 @@ it('lets the owner update the company settings', function () {
         'country' => 'CI',
         'currency' => 'XOF',
         'default_tax_rate' => 18,
-        'default_template' => 'corporate-01',
+        'default_template' => 'corporate-classic',
         'invoice_footer' => 'Merci de votre confiance.',
     ]);
 
@@ -129,7 +129,7 @@ it('lets the owner update the company settings', function () {
 
     $company = $user->currentCompany->fresh();
     expect($company->name)->toBe('Nouveau Nom SARL')
-        ->and($company->default_template)->toBe('corporate-01')
+        ->and($company->default_template)->toBe('corporate-classic')
         ->and($company->invoice_footer)->toBe('Merci de votre confiance.');
 });
 
