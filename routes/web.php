@@ -158,6 +158,8 @@ Route::middleware(['auth', 'license'])->group(function () {
     Route::post('/documents/{document}/payments', [DocumentController::class, 'registerPayment'])->name('documents.payments');
     Route::get('/documents/{document}/pdf', [DocumentController::class, 'pdf'])->name('documents.pdf');
     Route::get('/documents/{document}/docx', [DocumentController::class, 'docx'])->name('documents.docx');
+    // Streame la signature client (PNG) capturée via le portail — réservé au propriétaire.
+    Route::get('/documents/{document}/signature-image', [DocumentController::class, 'signature'])->name('documents.signature');
     Route::post('/documents/{document}/send', DocumentSendController::class)->name('documents.send');
     Route::post('/documents/{document}/clone', [DocumentController::class, 'clone'])->name('documents.clone');
     Route::post('/documents/{document}/share', [DocumentController::class, 'share'])->name('documents.share');

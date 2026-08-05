@@ -492,6 +492,33 @@ class DocumentController extends Controller
         return redirect()->route('documents.show', $document)->with('success', 'Paiement enregistré.');
     }
 
+    /**
+     * Streame l'image PNG de la signature client (capturée via le portail lors
+     * de l'acceptation d'un devis) au propriétaire du document.
+     *
+     * 404 — et non 403 — pour une société tierce ou un document non signé,
+     * afin de ne pas divulguer l'existence de la preuve.
+     */
+    public function signature(Request $request, Document $document)
+    {
+        if ($document->company_id !== $request->user()->current_company_id) {
+            abort(404);
+        }
+
+        $path = $document->signature_path;
+        $disk = Storage::disk(config('factpro.proofs.disk'));
+
+        if (! $path || ! $disk->exists($path)) {
+            abort(404);
+        }
+
+        return response($disk->get($path), 200, [
+            'Content-Type'        => 'image/png',
+            'Content-Disposition' => 'inline; filename="signature-'.$document->id.'.png"',
+            'Cache-Control'       => 'private, no-store',
+        ]);
+    }
+
     /** Télécharge le PDF (avec QR anti-falsification + filigrane essai le cas échéant). */
     public function pdf(Request $request, Document $document, QrCodeService $qr)
     {
